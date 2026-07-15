@@ -10,6 +10,8 @@ export const navItems = [
   "Settings",
 ];
 
+const landmarkImage = `${import.meta.env.BASE_URL}assets/picture-round-landmarks.jpg`;
+
 export const seedState = {
   joinCode: "CAA824",
   selectedQuizId: "quiz-crown-anchor",
@@ -98,7 +100,7 @@ export const seedState = {
           type: "Picture round",
           instructions: "Name the numbered landmarks. Sheet can be shown whole or question by question.",
           scoringRules: "One point per landmark. Allow common names.",
-          answerImage: "/assets/picture-round-landmarks.jpg",
+          answerImage: landmarkImage,
           questions: [
             {
               id: "q-pic-1",
@@ -108,7 +110,7 @@ export const seedState = {
               alternatives: ["Opera House", "The Sydney Opera House"],
               points: 1,
               type: "Picture",
-              image: "/assets/picture-round-landmarks.jpg",
+              image: landmarkImage,
               category: "Landmarks",
               difficulty: "Easy",
               autoMark: true,
@@ -122,7 +124,7 @@ export const seedState = {
               alternatives: ["Elizabeth Tower"],
               points: 1,
               type: "Picture",
-              image: "/assets/picture-round-landmarks.jpg",
+              image: landmarkImage,
               category: "Landmarks",
               difficulty: "Easy",
               autoMark: true,
@@ -136,7 +138,7 @@ export const seedState = {
               alternatives: ["London Tower Bridge"],
               points: 1,
               type: "Picture",
-              image: "/assets/picture-round-landmarks.jpg",
+              image: landmarkImage,
               category: "Landmarks",
               difficulty: "Easy",
               autoMark: true,
@@ -150,7 +152,7 @@ export const seedState = {
               alternatives: ["Saint Peter's Basilica", "St Peters Basilica"],
               points: 1,
               type: "Picture",
-              image: "/assets/picture-round-landmarks.jpg",
+              image: landmarkImage,
               category: "Landmarks",
               difficulty: "Medium",
               autoMark: true,
