@@ -136,6 +136,7 @@ export default function TeamView({ state, updateState }) {
   const leaderboard = useMemo(() => computeLeaderboard(state), [state]);
   const teamRank = leaderboard.findIndex((item) => item.id === team?.id) + 1;
   const teamScore = leaderboard.find((item) => item.id === team?.id)?.score ?? 0;
+  const audioLabel = question?.audioName || (question?.audio?.startsWith("data:") ? "Attached audio" : question?.audio);
 
   if (!team) {
     return <JoinForm state={state} updateState={updateState} onRegistered={setTeamId} />;
@@ -192,15 +193,25 @@ export default function TeamView({ state, updateState }) {
         </div>
         {question.image ? (
           <div className="team-media-frame">
-            <img src={question.image} alt="Question media" />
+            <img src={question.image} alt={question.imageName || "Question media"} />
           </div>
         ) : question.audio ? (
           <div className="team-audio-frame">
             <Volume2 size={25} />
-            <span>{question.audio}</span>
+            <span>{audioLabel}</span>
+            {question.audio.startsWith("data:") || question.audio.startsWith("http") ? (
+              <audio controls src={question.audio} />
+            ) : null}
           </div>
         ) : null}
         <h1>{question.text}</h1>
+        {question.type === "Multiple choice" && question.options?.some((option) => option.trim()) ? (
+          <div className="team-choice-list">
+            {question.options.map((option, index) => (
+              option.trim() ? <button type="button" key={index} onClick={() => setAnswerText(option)}>{option}</button> : null
+            ))}
+          </div>
+        ) : null}
         <form onSubmit={submitAnswer} className="team-answer-form">
           <div className="answer-label-row">
             <label>Your answer</label>

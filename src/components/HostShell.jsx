@@ -8,7 +8,6 @@ import {
   Gauge,
   Home,
   Image,
-  Library,
   Monitor,
   Radio,
   Settings,
@@ -23,7 +22,6 @@ import {
   LiveQuizPage,
   MarkingPage,
   MediaLibraryPage,
-  QuestionLibraryPage,
   QuizzesPage,
   ResultsPage,
   SettingsPage,
@@ -33,7 +31,6 @@ import {
 const iconMap = {
   Dashboard: Home,
   Quizzes: CalendarDays,
-  "Question Library": Library,
   "Media Library": Image,
   "Live Quiz": Radio,
   Teams: Users,
@@ -125,8 +122,6 @@ export default function HostShell({ state, updateState, resetState }) {
         return <DashboardPage {...props} />;
       case "Quizzes":
         return <QuizzesPage {...props} />;
-      case "Question Library":
-        return <QuestionLibraryPage {...props} />;
       case "Media Library":
         return <MediaLibraryPage {...props} />;
       case "Teams":

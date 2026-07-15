@@ -1,5 +1,4 @@
 import {
-  AlertTriangle,
   Archive,
   BarChart3,
   CalendarDays,
@@ -8,9 +7,11 @@ import {
   ClipboardList,
   Copy,
   Eye,
-  FileUp,
+  FileAudio,
+  FileImage,
+  Folder,
   Image as ImageIcon,
-  Library,
+  ListChecks,
   Lock,
   MailCheck,
   Mic2,
@@ -22,7 +23,6 @@ import {
   RefreshCcw,
   RotateCcw,
   Save,
-  Search,
   Settings,
   SkipForward,
   Unlock,
@@ -32,7 +32,7 @@ import {
   X,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   autoScoreAnswer,
   computeLeaderboard,
@@ -45,9 +45,6 @@ import {
   getSelectedQuiz,
   nextQuestionPosition,
   pointsLabel,
-  parseCsv,
-  similarQuestionWarnings,
-  validateImportRows,
 } from "../utils/quiz.js";
 
 function Panel({ title, action, children, className = "" }) {
@@ -108,12 +105,63 @@ function questionTypeForRound(type = "") {
   const lowerType = type.toLowerCase();
   if (lowerType.includes("picture")) return "Picture";
   if (lowerType.includes("music")) return "Music";
+  if (lowerType.includes("multiple")) return "Multiple choice";
+  if (lowerType.includes("numerical")) return "Numerical";
   if (lowerType.includes("nearest")) return "Nearest wins";
   return "Text";
 }
 
+function defaultOptions(options = []) {
+  return [0, 1, 2, 3].map((index) => options[index] ?? "");
+}
+
+function normalizeQuestionForType(question, type) {
+  const next = { ...question, type };
+  if (type === "Multiple choice") {
+    return {
+      ...next,
+      options: defaultOptions(next.options),
+      answer: next.answer ?? "",
+      autoMark: true,
+    };
+  }
+  if (type === "Numerical" || type === "Nearest wins") {
+    return {
+      ...next,
+      tolerance: next.tolerance ?? 0,
+      units: next.units ?? "",
+      autoMark: type === "Numerical" ? next.autoMark : false,
+    };
+  }
+  if (type === "Music") {
+    return {
+      ...next,
+      audio: next.audio ?? "",
+      audioName: next.audioName ?? "",
+    };
+  }
+  if (type === "Picture") {
+    return {
+      ...next,
+      image: next.image ?? "",
+      imageName: next.imageName ?? "",
+    };
+  }
+  return next;
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
 function createQuestion(number, overrides = {}) {
-  return {
+  const type = overrides.type ?? "Text";
+  return normalizeQuestionForType({
     id: createId("question"),
     number,
     text: "",
@@ -129,7 +177,7 @@ function createQuestion(number, overrides = {}) {
     timeLimit: 60,
     autoMark: true,
     ...overrides,
-  };
+  }, type);
 }
 
 function createRound(order, overrides = {}) {
@@ -176,10 +224,18 @@ function scoreClass(status) {
   return "pending";
 }
 
+function QuestionTypeIcon({ type, size = 25 }) {
+  if (type === "Music") return <Mic2 size={size} />;
+  if (type === "Picture") return <FileImage size={size} />;
+  if (type === "Multiple choice") return <ListChecks size={size} />;
+  return <ClipboardList size={size} />;
+}
+
 export function DashboardPage({ state, setActivePage }) {
   const upcoming = state.quizzes.filter((quiz) => ["Ready", "Scheduled", "Live"].includes(quiz.status));
   const drafts = state.quizzes.filter((quiz) => quiz.status === "Draft");
   const completed = state.quizzes.filter((quiz) => quiz.status === "Completed");
+  const totalRounds = state.quizzes.reduce((count, quiz) => count + (quiz.rounds?.length ?? 0), 0);
   const leaderboard = computeLeaderboard(state).slice(0, 4);
   const currentQuestion = getCurrentQuestion(state);
 
@@ -188,7 +244,7 @@ export function DashboardPage({ state, setActivePage }) {
       <div className="page-title-row">
         <div>
           <h1>Dashboard</h1>
-          <p>Plan future events, monitor the live room, and keep the question bank fresh.</p>
+          <p>Plan future events, monitor the live room, and keep quiz materials organised.</p>
         </div>
         <button className="primary-button" onClick={() => setActivePage("Quizzes")}>
           <Plus size={16} />
@@ -198,8 +254,8 @@ export function DashboardPage({ state, setActivePage }) {
       <div className="stats-grid">
         <StatTile label="Upcoming quizzes" value={upcoming.length} detail="Ready or scheduled" tone="good" />
         <StatTile label="Draft quizzes" value={drafts.length} detail="Need review" tone="warn" />
-        <StatTile label="Completed" value={completed.length} detail="Available for review" />
-        <StatTile label="Question bank" value={state.questionBank.length} detail="Original records" />
+        <StatTile label="Rounds built" value={totalRounds} detail="Across all quizzes" />
+        <StatTile label="Media files" value={state.media.length} detail="In round folders" />
       </div>
       <div className="dashboard-grid">
         <Panel title="Upcoming quizzes">
@@ -247,25 +303,25 @@ export function DashboardPage({ state, setActivePage }) {
             <ChevronRight size={16} />
           </button>
         </Panel>
-        <Panel title="Question reuse warnings">
-          {state.questionBank.some((question) => question.lastUsed) ? (
-            <div className="warning-list">
-              {state.questionBank
-                .filter((question) => question.lastUsed)
-                .slice(0, 3)
-                .map((question) => (
-                  <div className="warning-row" key={question.id}>
-                    <AlertTriangle size={17} />
-                    <div>
-                      <strong>{question.text}</strong>
-                      <span>Previously used on {question.lastUsed}</span>
-                    </div>
-                  </div>
-                ))}
+        <Panel title="Quiz build progress">
+          <div className="health-grid">
+            <div>
+              <span>Completed</span>
+              <strong>{completed.length}</strong>
             </div>
-          ) : (
-            <EmptyState icon={AlertTriangle} title="No reuse warnings" detail="Warnings appear after you build up a question library." />
-          )}
+            <div>
+              <span>Teams</span>
+              <strong>{state.teams.length}</strong>
+            </div>
+            <div>
+              <span>Answers</span>
+              <strong>{Object.values(state.answers).reduce((count, answers) => count + Object.keys(answers).length, 0)}</strong>
+            </div>
+            <div>
+              <span>Media</span>
+              <strong>{state.media.length}</strong>
+            </div>
+          </div>
         </Panel>
         <Panel title="Current leaderboard">
           {leaderboard.length ? (
@@ -287,6 +343,7 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
   const leaderboard = computeLeaderboard(state);
   const teamUrl = `${window.location.origin}${window.location.pathname}#/join/${state.joinCode}`;
   const teamUrlLabel = `${window.location.host}${window.location.pathname}#/join`;
+  const audioLabel = question?.audioName || (question?.audio?.startsWith("data:") ? "Attached audio" : question?.audio) || "No track attached";
   const pendingAnswers = state.teams
     .map((team) => ({ team, answer: answers[team.id] }))
     .filter(({ answer }) => answer?.status === "pending");
@@ -465,7 +522,7 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
           <Panel className="current-panel">
             <div className="current-header">
               <div className="round-icon">
-                {question?.type === "Music" ? <Mic2 size={25} /> : <ImageIcon size={25} />}
+                <QuestionTypeIcon type={question?.type} />
               </div>
               <div>
                 <span className="utility-label">Current</span>
@@ -488,7 +545,7 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
               ) : question?.audio ? (
                 <div className="audio-art">
                   <Mic2 size={42} />
-                  <span>{question.audio}</span>
+                  <span>{audioLabel}</span>
                 </div>
               ) : (
                 <div className="audio-art">
@@ -506,6 +563,19 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
                   </StatusPill>
                   {question?.category ? <StatusPill>{question.category}</StatusPill> : null}
                 </div>
+                {question?.type === "Multiple choice" && question.options?.some((option) => option.trim()) ? (
+                  <ol className="choice-preview">
+                    {question.options.map((option, index) => (
+                      option.trim() ? <li key={index}>{option}</li> : null
+                    ))}
+                  </ol>
+                ) : null}
+                {(question?.type === "Numerical" || question?.type === "Nearest wins") && question.units ? (
+                  <div className="mini-meta">
+                    <StatusPill>{question.units}</StatusPill>
+                    {question?.type === "Numerical" ? <StatusPill>+/- {question.tolerance ?? 0}</StatusPill> : null}
+                  </div>
+                ) : null}
                 {state.live.answerRevealed ? (
                   <div className="answer-reveal">
                     <span>Correct answer</span>
@@ -527,7 +597,7 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
                 <Volume2 size={19} />
                 <div>
                   <span>Audio controls {question?.type === "Music" ? "" : "(if playing)"}</span>
-                  <strong>{question?.audio ?? "No track playing"}</strong>
+                  <strong>{audioLabel}</strong>
                 </div>
               </div>
               <input
@@ -676,7 +746,6 @@ export function QuizzesPage({ state, updateState }) {
   const quiz = getSelectedQuiz(state);
   const [selectedRoundId, setSelectedRoundId] = useState(quiz?.rounds[0]?.id ?? "");
   const [selectedQuestionId, setSelectedQuestionId] = useState(quiz?.rounds[0]?.questions?.[0]?.id ?? "");
-  const [csvText, setCsvText] = useState("");
 
   useEffect(() => {
     if (!quiz) {
@@ -700,14 +769,9 @@ export function QuizzesPage({ state, updateState }) {
     setSelectedQuestionId(selectedRound?.questions?.[0]?.id ?? "");
   }, [selectedQuestionId, selectedRound?.id, selectedRound?.questions]);
 
-  const importRows = useMemo(
-    () => validateImportRows(parseCsv(csvText), selectedRound?.questions ?? [], state.media),
-    [csvText, selectedRound?.questions, state.media],
-  );
   const currentQuestion =
     selectedRound?.questions?.find((question) => question.id === selectedQuestionId) ??
     selectedRound?.questions?.[0];
-  const reuseWarnings = similarQuestionWarnings(state.questionBank, currentQuestion?.text ?? "");
 
   function selectQuiz(quizId) {
     const nextQuiz = state.quizzes.find((item) => item.id === quizId);
@@ -789,11 +853,20 @@ export function QuizzesPage({ state, updateState }) {
 
   function updateSelectedRound(field, value) {
     if (!quiz || !selectedRound) return;
+    const nextQuestionType = field === "type" ? questionTypeForRound(value) : null;
     updateState((current) =>
       updateQuiz(current, current.selectedQuizId, (item) => ({
         ...item,
         rounds: item.rounds.map((round) =>
-          round.id === selectedRound.id ? { ...round, [field]: value } : round,
+          round.id === selectedRound.id
+            ? {
+                ...round,
+                [field]: value,
+                questions: nextQuestionType
+                  ? round.questions.map((question) => normalizeQuestionForType(question, nextQuestionType))
+                  : round.questions,
+              }
+            : round,
         ),
       })),
     );
@@ -905,49 +978,6 @@ export function QuizzesPage({ state, updateState }) {
     setSelectedQuestionId(nextQuestion?.id ?? "");
   }
 
-  function importPreviewRows() {
-    if (!selectedRound) return;
-    const validRows = importRows
-      .filter((row) => !row.__warnings.includes("Missing question") && !row.__warnings.includes("Missing answer"))
-      .map((row) => ({ ...row, id: createId("question") }));
-    updateState((current) =>
-      updateQuiz(current, current.selectedQuizId, (item) => ({
-        ...item,
-        rounds: item.rounds.map((round) =>
-          round.id === selectedRound.id
-            ? {
-                ...round,
-                questions: [
-                  ...round.questions,
-                  ...validRows
-                    .map((row, index) => ({
-                      id: row.id,
-                      number: Number(row["Question Number"] || round.questions.length + index + 1),
-                      text: row.Question,
-                      answer: row.Answer,
-                      alternatives: String(row["Alternative Answers"] ?? "")
-                        .split(";")
-                        .map((item) => item.trim())
-                        .filter(Boolean),
-                      points: Number(row.Points || 1),
-                      type: row["Round Type"] || "Text",
-                      category: row.Category || "",
-                      difficulty: row.Difficulty || "Medium",
-                      image: row["Image Filename"] ? `${import.meta.env.BASE_URL}assets/${row["Image Filename"]}` : "",
-                      audio: row["Audio Filename"],
-                      notes: row.Notes,
-                      timeLimit: 60,
-                      autoMark: true,
-                    })),
-                ],
-              }
-            : round,
-        ),
-      })),
-    );
-    setSelectedQuestionId(validRows[validRows.length - 1]?.id ?? selectedQuestionId);
-  }
-
   return (
     <main className="page quizzes-page">
       <div className="page-title-row">
@@ -989,14 +1019,14 @@ export function QuizzesPage({ state, updateState }) {
         <Panel title="Quiz details">
           {quiz ? (
             <div className="form-grid">
-              <label>Title<input value={quiz.title} onChange={(event) => updateSelectedQuiz("title", event.target.value)} /></label>
-              <label>Date<input type="date" value={quiz.date} onChange={(event) => updateSelectedQuiz("date", event.target.value)} /></label>
-              <label>Time<input type="time" value={quiz.time} onChange={(event) => updateSelectedQuiz("time", event.target.value)} /></label>
-              <label>Status<select value={quiz.status} onChange={(event) => updateSelectedQuiz("status", event.target.value)}>
+              <label>Title<input aria-label="Quiz title" value={quiz.title} onChange={(event) => updateSelectedQuiz("title", event.target.value)} /></label>
+              <label>Date<input aria-label="Quiz date" type="date" value={quiz.date} onChange={(event) => updateSelectedQuiz("date", event.target.value)} /></label>
+              <label>Time<input aria-label="Quiz time" type="time" value={quiz.time} onChange={(event) => updateSelectedQuiz("time", event.target.value)} /></label>
+              <label>Status<select aria-label="Quiz status" value={quiz.status} onChange={(event) => updateSelectedQuiz("status", event.target.value)}>
                 {["Draft", "Ready", "Scheduled", "Live", "Completed"].map((status) => <option key={status}>{status}</option>)}
               </select></label>
-              <label className="span-2">Venue<input value={quiz.venue} onChange={(event) => updateSelectedQuiz("venue", event.target.value)} /></label>
-              <label className="span-2">Notes<textarea value={quiz.notes} onChange={(event) => updateSelectedQuiz("notes", event.target.value)} /></label>
+              <label className="span-2">Venue<input aria-label="Quiz venue" value={quiz.venue} onChange={(event) => updateSelectedQuiz("venue", event.target.value)} /></label>
+              <label className="span-2">Notes<textarea aria-label="Quiz notes" value={quiz.notes} onChange={(event) => updateSelectedQuiz("notes", event.target.value)} /></label>
             </div>
           ) : (
             <EmptyState icon={CalendarDays} title="No quiz selected" detail="Create a quiz to edit its details." />
@@ -1034,19 +1064,19 @@ export function QuizzesPage({ state, updateState }) {
         >
           {selectedRound ? (
             <div className="form-grid">
-              <label>Round title<input value={selectedRound.title} onChange={(event) => updateSelectedRound("title", event.target.value)} /></label>
-              <label>Round type<select value={selectedRound.type} onChange={(event) => updateSelectedRound("type", event.target.value)}>
+              <label>Round title<input aria-label="Round title" value={selectedRound.title} onChange={(event) => updateSelectedRound("title", event.target.value)} /></label>
+              <label>Round type<select aria-label="Round type" value={selectedRound.type} onChange={(event) => updateSelectedRound("type", event.target.value)}>
                 {ROUND_TYPES.map((type) => <option key={type}>{type}</option>)}
               </select></label>
-              <label className="span-2">Instructions<textarea value={selectedRound.instructions} onChange={(event) => updateSelectedRound("instructions", event.target.value)} /></label>
-              <label className="span-2">Scoring rules<textarea value={selectedRound.scoringRules} onChange={(event) => updateSelectedRound("scoringRules", event.target.value)} /></label>
+              <label className="span-2">Instructions<textarea aria-label="Round instructions" value={selectedRound.instructions} onChange={(event) => updateSelectedRound("instructions", event.target.value)} /></label>
+              <label className="span-2">Scoring rules<textarea aria-label="Round scoring rules" value={selectedRound.scoringRules} onChange={(event) => updateSelectedRound("scoringRules", event.target.value)} /></label>
             </div>
           ) : (
             <EmptyState icon={ClipboardList} title="No round selected" detail="Add or select a round to edit its details." />
           )}
         </Panel>
         <Panel
-          title="Fast question editor"
+          title="Question editor"
           action={
             selectedRound ? (
               <button className="primary-button compact" onClick={addQuestion}>
@@ -1061,7 +1091,6 @@ export function QuizzesPage({ state, updateState }) {
               round={selectedRound}
               question={currentQuestion}
               questions={selectedRound.questions}
-              reuseWarnings={reuseWarnings}
               selectedQuestionId={selectedQuestionId}
               setSelectedQuestionId={setSelectedQuestionId}
               updateState={updateState}
@@ -1073,53 +1102,6 @@ export function QuizzesPage({ state, updateState }) {
             <EmptyState icon={Plus} title="Create a round first" detail="Questions belong to rounds." />
           )}
         </Panel>
-        <Panel title="CSV question upload" className="wide-panel">
-          <div className="csv-grid">
-            <div>
-              <textarea className="csv-textarea" value={csvText} onChange={(event) => setCsvText(event.target.value)} />
-              <div className="button-row-inline">
-                <label className="file-button">
-                  <FileUp size={16} />
-                  Upload CSV
-                  <input
-                    type="file"
-                    accept=".csv,text/csv"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      if (!file) return;
-                      file.text().then(setCsvText);
-                    }}
-                  />
-                </label>
-                <button className="primary-button compact" onClick={importPreviewRows}><Upload size={15} /> Save valid rows</button>
-              </div>
-            </div>
-            <div className="import-preview">
-              <div className="table-wrap">
-                {importRows.length ? (
-                  <table>
-                    <thead>
-                      <tr><th>Row</th><th>Question</th><th>Answer</th><th>Warnings</th><th>Media</th></tr>
-                    </thead>
-                    <tbody>
-                      {importRows.map((row) => (
-                        <tr key={row.__row} className={row.__warnings.length ? "warning-table-row" : ""}>
-                          <td>{row.__row}</td>
-                          <td>{row.Question}</td>
-                          <td>{row.Answer || "-"}</td>
-                          <td>{row.__warnings.length ? row.__warnings.join(", ") : "Ready"}</td>
-                          <td>{row.__matchedMedia.length ? row.__matchedMedia.join(", ") : "-"}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <EmptyState icon={FileUp} title="No CSV loaded" detail="Paste CSV text or upload a CSV file to preview rows." />
-                )}
-              </div>
-            </div>
-          </div>
-        </Panel>
       </section>
     </main>
   );
@@ -1129,7 +1111,6 @@ function QuestionEditor({
   round,
   question,
   questions,
-  reuseWarnings,
   selectedQuestionId,
   setSelectedQuestionId,
   updateState,
@@ -1150,6 +1131,10 @@ function QuestionEditor({
   }
 
   function updateQuestion(field, value) {
+    updateQuestionPatch({ [field]: value });
+  }
+
+  function updateQuestionPatch(patch) {
     updateState((current) =>
       updateQuiz(current, current.selectedQuizId, (quiz) => ({
         ...quiz,
@@ -1158,12 +1143,172 @@ function QuestionEditor({
             ? {
                 ...item,
                 questions: item.questions.map((candidate) =>
-                  candidate.id === question.id ? { ...candidate, [field]: value } : candidate,
+                  candidate.id === question.id ? { ...candidate, ...patch } : candidate,
                 ),
               }
             : item,
         ),
       })),
+    );
+  }
+
+  function updateQuestionType(type) {
+    updateQuestionPatch(normalizeQuestionForType(question, type));
+  }
+
+  function updateChoiceOption(index, value) {
+    const options = defaultOptions(question.options);
+    const previousValue = options[index];
+    options[index] = value;
+    updateQuestionPatch({
+      options,
+      answer: question.answer === previousValue ? value : question.answer,
+    });
+  }
+
+  async function attachMedia(field, file) {
+    if (!file) return;
+    const src = await readFileAsDataUrl(file);
+    const isAudio = field === "audio";
+    const nameField = isAudio ? "audioName" : "imageName";
+    const mediaItem = {
+      id: createId("media"),
+      name: file.name,
+      type: isAudio ? "Audio" : "Image",
+      src,
+      quizId: "",
+      roundId: round.id,
+      questionId: question.id,
+      usage: round.title || "Round media",
+      status: "Attached",
+    };
+
+    updateState((current) => {
+      const nextMedia = {
+        ...mediaItem,
+        quizId: current.selectedQuizId,
+      };
+      return updateQuiz(
+        {
+          ...current,
+          media: [...current.media, nextMedia],
+        },
+        current.selectedQuizId,
+        (quiz) => ({
+          ...quiz,
+          rounds: quiz.rounds.map((item) =>
+            item.id === round.id
+              ? {
+                  ...item,
+                  questions: item.questions.map((candidate) =>
+                    candidate.id === question.id
+                      ? { ...candidate, [field]: src, [nameField]: file.name }
+                      : candidate,
+                  ),
+                }
+              : item,
+          ),
+        }),
+      );
+    });
+  }
+
+  const effectiveType = question.type || questionTypeForRound(round.type);
+  const choices = defaultOptions(question.options);
+
+  function renderTypeFields() {
+    if (effectiveType === "Multiple choice") {
+      return (
+        <div className="type-fields form-grid">
+          {choices.map((option, index) => (
+            <label key={index}>
+              Option {String.fromCharCode(65 + index)}
+              <input aria-label={`Option ${String.fromCharCode(65 + index)}`} value={option} onChange={(event) => updateChoiceOption(index, event.target.value)} />
+            </label>
+          ))}
+          <label className="span-2">
+            Correct option
+            <select aria-label="Correct option" value={question.answer ?? ""} onChange={(event) => updateQuestion("answer", event.target.value)}>
+              <option value="">Select correct option</option>
+              {choices.map((option, index) => (
+                <option key={index} value={option} disabled={!option.trim()}>
+                  {option.trim() || `Option ${String.fromCharCode(65 + index)}`}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      );
+    }
+
+    if (effectiveType === "Picture") {
+      const imageLabel = question.imageName || (question.image?.startsWith("data:") ? "Attached image" : question.image);
+      return (
+        <div className="type-fields form-grid">
+          <label className="span-2">
+            Picture file
+            <input aria-label="Picture file" type="file" accept="image/*" onChange={(event) => attachMedia("image", event.target.files?.[0])} />
+          </label>
+          <label className="span-2">
+            Image URL
+            <input aria-label="Image URL" value={question.image?.startsWith("data:") ? "" : question.image ?? ""} onChange={(event) => updateQuestion("image", event.target.value)} />
+          </label>
+          {question.image ? (
+            <div className="attached-media span-2">
+              <img src={question.image} alt={imageLabel || "Question image"} />
+              <span>{imageLabel}</span>
+            </div>
+          ) : null}
+          <label>Correct answer<input aria-label="Correct answer" value={question.answer} onChange={(event) => updateQuestion("answer", event.target.value)} /></label>
+          <label>Accepted alternatives<input aria-label="Accepted alternatives" value={(question.alternatives ?? []).join("; ")} onChange={(event) => updateQuestion("alternatives", event.target.value.split(";").map((item) => item.trim()).filter(Boolean))} /></label>
+        </div>
+      );
+    }
+
+    if (effectiveType === "Music") {
+      const audioLabel = question.audioName || (question.audio?.startsWith("data:") ? "Attached audio" : question.audio);
+      return (
+        <div className="type-fields form-grid">
+          <label className="span-2">
+            Audio file
+            <input aria-label="Audio file" type="file" accept="audio/*" onChange={(event) => attachMedia("audio", event.target.files?.[0])} />
+          </label>
+          <label className="span-2">
+            Audio label
+            <input aria-label="Audio label" value={question.audioName ?? ""} onChange={(event) => updateQuestion("audioName", event.target.value)} />
+          </label>
+          {question.audio ? (
+            <div className="attached-media span-2">
+              <FileAudio size={22} />
+              <span>{audioLabel}</span>
+              {question.audio.startsWith("data:") || question.audio.startsWith("http") ? (
+                <audio controls src={question.audio} />
+              ) : null}
+            </div>
+          ) : null}
+          <label>Correct answer<input aria-label="Correct answer" value={question.answer} onChange={(event) => updateQuestion("answer", event.target.value)} /></label>
+          <label>Accepted alternatives<input aria-label="Accepted alternatives" value={(question.alternatives ?? []).join("; ")} onChange={(event) => updateQuestion("alternatives", event.target.value.split(";").map((item) => item.trim()).filter(Boolean))} /></label>
+        </div>
+      );
+    }
+
+    if (effectiveType === "Numerical" || effectiveType === "Nearest wins") {
+      return (
+        <div className="type-fields form-grid">
+          <label>{effectiveType === "Nearest wins" ? "Target number" : "Correct number"}<input aria-label={effectiveType === "Nearest wins" ? "Target number" : "Correct number"} type="number" value={question.answer} onChange={(event) => updateQuestion("answer", event.target.value)} /></label>
+          {effectiveType === "Numerical" ? (
+            <label>Tolerance<input aria-label="Tolerance" type="number" min="0" step="0.01" value={question.tolerance ?? 0} onChange={(event) => updateQuestion("tolerance", Number(event.target.value))} /></label>
+          ) : null}
+          <label>Units<input aria-label="Units" value={question.units ?? ""} onChange={(event) => updateQuestion("units", event.target.value)} /></label>
+        </div>
+      );
+    }
+
+    return (
+      <div className="type-fields form-grid">
+        <label>Correct answer<input aria-label="Correct answer" value={question.answer} onChange={(event) => updateQuestion("answer", event.target.value)} /></label>
+        <label className="span-2">Accepted alternatives<input aria-label="Accepted alternatives" value={(question.alternatives ?? []).join("; ")} onChange={(event) => updateQuestion("alternatives", event.target.value.split(";").map((item) => item.trim()).filter(Boolean))} /></label>
+      </div>
     );
   }
 
@@ -1191,113 +1336,73 @@ function QuestionEditor({
           </button>
         </div>
       </div>
+      <div className="question-type-strip">
+        <StatusPill tone={effectiveType === "Music" || effectiveType === "Picture" ? "live" : "neutral"}>{effectiveType}</StatusPill>
+        <span>{round.type}</span>
+      </div>
       <div className="form-grid">
-        <label>Number<input type="number" min="1" value={question.number} onChange={(event) => updateQuestion("number", Number(event.target.value))} /></label>
-        <label>Type<select value={question.type} onChange={(event) => updateQuestion("type", event.target.value)}>
+        <label>Number<input aria-label="Question number" type="number" min="1" value={question.number} onChange={(event) => updateQuestion("number", Number(event.target.value))} /></label>
+        <label>Question format<select aria-label="Question format" value={effectiveType} onChange={(event) => updateQuestionType(event.target.value)}>
           {QUESTION_TYPES.map((item) => <option key={item}>{item}</option>)}
         </select></label>
-        <label className="span-2">Question<input value={question.text} onChange={(event) => updateQuestion("text", event.target.value)} /></label>
-        <label>Correct answer<input value={question.answer} onChange={(event) => updateQuestion("answer", event.target.value)} /></label>
-        <label>Points<input type="number" min="0" step="0.5" value={question.points} onChange={(event) => updateQuestion("points", Number(event.target.value))} /></label>
-        <label>Time limit<input type="number" min="5" step="5" value={question.timeLimit ?? 60} onChange={(event) => updateQuestion("timeLimit", Number(event.target.value))} /></label>
-        <label>Category<input value={question.category} onChange={(event) => updateQuestion("category", event.target.value)} /></label>
-        <label>Difficulty<select value={question.difficulty} onChange={(event) => updateQuestion("difficulty", event.target.value)}>
+        <label className="span-2">Question<input aria-label="Question text" value={question.text} onChange={(event) => updateQuestion("text", event.target.value)} /></label>
+        <label>Points<input aria-label="Question points" type="number" min="0" step="0.5" value={question.points} onChange={(event) => updateQuestion("points", Number(event.target.value))} /></label>
+        <label>Time limit<input aria-label="Question time limit" type="number" min="5" step="5" value={question.timeLimit ?? 60} onChange={(event) => updateQuestion("timeLimit", Number(event.target.value))} /></label>
+      </div>
+      {renderTypeFields()}
+      <div className="form-grid">
+        <label>Category<input aria-label="Question category" value={question.category} onChange={(event) => updateQuestion("category", event.target.value)} /></label>
+        <label>Difficulty<select aria-label="Question difficulty" value={question.difficulty} onChange={(event) => updateQuestion("difficulty", event.target.value)}>
           {["Easy", "Medium", "Hard"].map((item) => <option key={item}>{item}</option>)}
         </select></label>
-        <label className="span-2">Accepted alternatives<input value={(question.alternatives ?? []).join("; ")} onChange={(event) => updateQuestion("alternatives", event.target.value.split(";").map((item) => item.trim()).filter(Boolean))} /></label>
-        <label>Image path or URL<input value={question.image ?? ""} onChange={(event) => updateQuestion("image", event.target.value)} /></label>
-        <label>Audio filename<input value={question.audio ?? ""} onChange={(event) => updateQuestion("audio", event.target.value)} /></label>
-        <label className="span-2">Quizmaster notes<textarea value={question.notes ?? ""} onChange={(event) => updateQuestion("notes", event.target.value)} /></label>
-        <label className="checkbox-line span-2">
-          <input type="checkbox" checked={question.autoMark} onChange={(event) => updateQuestion("autoMark", event.target.checked)} />
-          Automatic marking on
-        </label>
-      </div>
-      <div className="warning-list editor-warnings">
-        {reuseWarnings.map(({ question: warning, ratio }) => (
-          <div className="warning-row" key={warning.id}>
-            <AlertTriangle size={17} />
-            <div>
-              <strong>Possible reuse: {warning.text}</strong>
-              <span>{Math.round(ratio * 100)}% similar - last used {warning.lastUsed || "not yet"}</span>
-            </div>
-          </div>
-        ))}
+        <label className="span-2">Quizmaster notes<textarea aria-label="Quizmaster notes" value={question.notes ?? ""} onChange={(event) => updateQuestion("notes", event.target.value)} /></label>
+        {effectiveType !== "Nearest wins" ? (
+          <label className="checkbox-line span-2">
+            <input type="checkbox" checked={question.autoMark} onChange={(event) => updateQuestion("autoMark", event.target.checked)} />
+            Automatic marking on
+          </label>
+        ) : null}
       </div>
     </div>
   );
 }
 
-export function QuestionLibraryPage({ state, updateState }) {
-  const [query, setQuery] = useState("");
-  const filtered = state.questionBank.filter((question) =>
-    `${question.text} ${question.answer} ${question.category}`.toLowerCase().includes(query.toLowerCase()),
-  );
-
-  function approveQuestion(questionId) {
-    updateState((current) => ({
-      ...current,
-      questionBank: current.questionBank.map((question) =>
-        question.id === questionId ? { ...question, approved: !question.approved } : question,
-      ),
-    }));
-  }
-
-  return (
-    <main className="page">
-      <div className="page-title-row">
-        <div>
-          <h1>Question Library</h1>
-          <p>Track originality, sources, possible duplicates, and previous use.</p>
-        </div>
-        <div className="search-box">
-          <Search size={17} />
-          <input aria-label="Search questions" value={query} onChange={(event) => setQuery(event.target.value)} />
-        </div>
-      </div>
-      <Panel>
-        {filtered.length ? (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr><th>Question</th><th>Answer</th><th>Category</th><th>Difficulty</th><th>Last used</th><th>Approved</th><th>Source</th></tr>
-              </thead>
-              <tbody>
-                {filtered.map((question) => (
-                  <tr key={question.id}>
-                    <td>{question.text}</td>
-                    <td>{question.answer}</td>
-                    <td>{question.category}</td>
-                    <td>{question.difficulty}</td>
-                    <td>{question.lastUsed || "Never"}</td>
-                    <td>
-                      <button className={question.approved ? "score-button good text" : "score-button text"} onClick={() => approveQuestion(question.id)}>
-                        {question.approved ? "Approved" : "Needs review"}
-                      </button>
-                    </td>
-                    <td>{question.source}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <EmptyState icon={Library} title="No library questions" detail="Questions you save for reuse will appear here." />
-        )}
-      </Panel>
-    </main>
-  );
-}
-
 export function MediaLibraryPage({ state, updateState }) {
-  function addFiles(files) {
-    const additions = [...files].map((file) => ({
+  const roundFolders = state.quizzes.flatMap((quiz) =>
+    (quiz.rounds ?? []).map((round, index) => ({
+      id: round.id,
+      quizId: quiz.id,
+      quizTitle: quizDisplayName(quiz),
+      title: roundDisplayName(round, index),
+      type: round.type,
+      count: state.media.filter((item) => item.roundId === round.id).length,
+    })),
+  );
+  const [selectedFolderId, setSelectedFolderId] = useState(roundFolders[0]?.id ?? "unassigned");
+  const selectedFolder = roundFolders.find((folder) => folder.id === selectedFolderId) ?? null;
+  const visibleMedia =
+    selectedFolderId === "unassigned"
+      ? state.media.filter((item) => !item.roundId)
+      : state.media.filter((item) => item.roundId === selectedFolderId);
+
+  useEffect(() => {
+    if (selectedFolderId === "unassigned" || roundFolders.some((folder) => folder.id === selectedFolderId)) {
+      return;
+    }
+    setSelectedFolderId(roundFolders[0]?.id ?? "unassigned");
+  }, [roundFolders, selectedFolderId]);
+
+  async function addFiles(files) {
+    const additions = await Promise.all([...files].map(async (file) => ({
       id: createId("media"),
       name: file.name,
       type: file.type.startsWith("audio") ? "Audio" : "Image",
-      usage: "Unassigned",
+      src: await readFileAsDataUrl(file),
+      quizId: selectedFolder?.quizId ?? "",
+      roundId: selectedFolder?.id ?? "",
+      usage: selectedFolder ? selectedFolder.title : "Unassigned",
       status: "Uploaded",
-    }));
+    })));
     updateState((current) => ({ ...current, media: [...current.media, ...additions] }));
   }
 
@@ -1306,29 +1411,74 @@ export function MediaLibraryPage({ state, updateState }) {
       <div className="page-title-row">
         <div>
           <h1>Media Library</h1>
-          <p>Keep picture-round sheets, answer images, and music clips matched to questions.</p>
+          <p>Keep images and audio grouped by the round they belong to.</p>
         </div>
         <label className="file-button primary-like">
           <Upload size={16} />
           Upload media
-          <input type="file" multiple accept="image/*,audio/*" onChange={(event) => addFiles(event.target.files ?? [])} />
+          <input aria-label="Upload media" type="file" multiple accept="image/*,audio/*" onChange={(event) => addFiles(event.target.files ?? [])} />
         </label>
       </div>
-      <section className="media-grid">
-        {state.media.length ? (
-          state.media.map((item) => (
-            <Panel key={item.id} className="media-card">
-              <div className="media-icon">{item.type === "Audio" ? <Volume2 size={28} /> : <ImageIcon size={28} />}</div>
-              <strong>{item.name}</strong>
-              <span>{item.usage}</span>
-              <StatusPill tone={item.status === "Matched" || item.status === "Ready" ? "good" : "warn"}>{item.status}</StatusPill>
-            </Panel>
-          ))
-        ) : (
-          <Panel className="wide-panel">
-            <EmptyState icon={Upload} title="No media uploaded" detail="Upload images or audio files when a round needs them." />
-          </Panel>
-        )}
+      <section className="media-library-layout">
+        <Panel title="Round folders">
+          <div className="folder-list">
+            {roundFolders.map((folder) => (
+              <button
+                key={folder.id}
+                className={folder.id === selectedFolderId ? "folder-row active" : "folder-row"}
+                onClick={() => setSelectedFolderId(folder.id)}
+              >
+                <Folder size={18} />
+                <div>
+                  <strong>{folder.title}</strong>
+                  <span>{folder.quizTitle} - {folder.type}</span>
+                </div>
+                <b>{folder.count}</b>
+              </button>
+            ))}
+            <button
+              className={selectedFolderId === "unassigned" ? "folder-row active" : "folder-row"}
+              onClick={() => setSelectedFolderId("unassigned")}
+            >
+              <Folder size={18} />
+              <div>
+                <strong>Unassigned</strong>
+                <span>Files not linked to a round</span>
+              </div>
+              <b>{state.media.filter((item) => !item.roundId).length}</b>
+            </button>
+          </div>
+          {!roundFolders.length ? (
+            <EmptyState icon={Folder} title="No round folders" detail="Create rounds in a quiz and their media folders will appear here." />
+          ) : null}
+        </Panel>
+        <Panel
+          title={selectedFolder ? selectedFolder.title : "Unassigned media"}
+          action={
+            <label className="file-button compact">
+              <Upload size={15} />
+              Upload
+              <input aria-label="Upload media to folder" type="file" multiple accept="image/*,audio/*" onChange={(event) => addFiles(event.target.files ?? [])} />
+            </label>
+          }
+        >
+          {visibleMedia.length ? (
+            <div className="media-grid">
+              {visibleMedia.map((item) => (
+                <div key={item.id} className="media-card">
+                  <div className="media-icon">{item.type === "Audio" ? <FileAudio size={28} /> : <FileImage size={28} />}</div>
+                  {item.type === "Image" && item.src ? <img src={item.src} alt={item.name} /> : null}
+                  {item.type === "Audio" && item.src ? <audio controls src={item.src} /> : null}
+                  <strong>{item.name}</strong>
+                  <span>{item.usage}</span>
+                  <StatusPill tone="good">{item.status}</StatusPill>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState icon={Upload} title="No media in this folder" detail="Upload images or audio for the selected round." />
+          )}
+        </Panel>
       </section>
     </main>
   );

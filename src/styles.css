@@ -435,7 +435,7 @@ img {
 .dashboard-grid > *,
 .stats-grid > *,
 .builder-grid > *,
-.csv-grid > *,
+.media-library-layout > *,
 .results-grid > *,
 .settings-grid > *,
 .live-right > * {
@@ -1094,20 +1094,53 @@ textarea {
   align-items: end;
 }
 
-.editor-warnings {
-  margin-top: 4px;
+.question-type-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-soft);
+  padding: 10px;
 }
 
-.csv-grid {
+.question-type-strip > span:last-child {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.type-fields {
+  border: 1px solid #dce6ef;
+  border-radius: 8px;
+  background: #fbfdff;
+  padding: 12px;
+}
+
+.attached-media {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px;
   display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: 16px;
+  gap: 10px;
 }
 
-.csv-textarea {
-  min-height: 236px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 12px;
+.attached-media img {
+  width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+  background: #eef3f7;
+  border-radius: 6px;
+}
+
+.attached-media audio {
+  width: 100%;
+}
+
+.attached-media span {
+  color: var(--muted);
+  font-weight: 800;
+  overflow-wrap: anywhere;
 }
 
 .file-button {
@@ -1131,36 +1164,96 @@ textarea {
   cursor: pointer;
 }
 
-.warning-table-row td {
-  background: #fff9e8;
+.choice-preview {
+  margin: 0;
+  padding-left: 22px;
+  display: grid;
+  gap: 7px;
+  color: var(--ink-2);
+  font-weight: 700;
 }
 
-.search-box {
-  min-width: min(420px, 100%);
-  display: flex;
-  align-items: center;
+.media-library-layout {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.folder-list {
+  display: grid;
   gap: 8px;
-  border: 1px solid var(--line);
-  background: #fff;
-  border-radius: 6px;
-  padding: 0 10px;
 }
 
-.search-box input {
-  border: 0;
-  padding-left: 0;
+.folder-row {
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  padding: 10px;
+  text-align: left;
+}
+
+.folder-row.active {
+  border-color: #90d7c4;
+  background: var(--teal-soft);
+}
+
+.folder-row div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.folder-row span,
+.media-card span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.folder-row b {
+  min-width: 26px;
+  min-height: 26px;
+  border-radius: 99px;
+  display: grid;
+  place-items: center;
+  background: #eef3f7;
+  color: var(--ink);
 }
 
 .media-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
   gap: 16px;
 }
 
 .media-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 14px;
   display: grid;
   gap: 10px;
   min-height: 170px;
+}
+
+.media-card img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #eef3f7;
+}
+
+.media-card audio {
+  width: 100%;
 }
 
 .media-icon {
@@ -1403,6 +1496,32 @@ textarea {
   min-height: 150px;
 }
 
+.team-audio-frame audio {
+  width: min(100%, 280px);
+}
+
+.team-choice-list {
+  display: grid;
+  gap: 8px;
+}
+
+.team-choice-list button {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--ink);
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 800;
+}
+
+.team-choice-list button:focus,
+.team-choice-list button:hover {
+  border-color: #90d7c4;
+  background: var(--teal-soft);
+}
+
 .answer-label-row {
   display: flex;
   justify-content: space-between;
@@ -1585,7 +1704,7 @@ textarea {
   .dashboard-grid,
   .stats-grid,
   .builder-grid,
-  .csv-grid,
+  .media-library-layout,
   .results-grid,
   .settings-grid {
     grid-template-columns: 1fr;

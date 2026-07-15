@@ -1,7 +1,6 @@
 export const navItems = [
   "Dashboard",
   "Quizzes",
-  "Question Library",
   "Media Library",
   "Live Quiz",
   "Teams",
@@ -39,6 +38,5 @@ export function createInitialState() {
     quizzes: [],
     teams: [],
     answers: {},
-    questionBank: [],
   };
 }
