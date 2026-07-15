@@ -5,7 +5,6 @@ import {
   ChevronRight,
   ClipboardList,
   Copy,
-  Download,
   Eye,
   FileUp,
   Image as ImageIcon,
@@ -21,15 +20,13 @@ import {
   Save,
   Search,
   SkipForward,
-  Timer,
   Unlock,
   Upload,
   Volume2,
-  Wand2,
   X,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   autoScoreAnswer,
   computeLeaderboard,
@@ -88,6 +85,36 @@ function updateQuiz(state, quizId, updater) {
   return {
     ...state,
     quizzes: state.quizzes.map((quiz) => (quiz.id === quizId ? updater(quiz) : quiz)),
+  };
+}
+
+const QUESTION_TYPES = ["Text", "Picture", "Music", "Multiple choice", "Numerical", "Nearest wins"];
+
+function questionTypeForRound(type = "") {
+  const lowerType = type.toLowerCase();
+  if (lowerType.includes("picture")) return "Picture";
+  if (lowerType.includes("music")) return "Music";
+  if (lowerType.includes("nearest")) return "Nearest wins";
+  return "Text";
+}
+
+function createQuestion(number, overrides = {}) {
+  return {
+    id: createId("question"),
+    number,
+    text: `Question ${number}`,
+    answer: "",
+    alternatives: [],
+    points: 1,
+    type: "Text",
+    category: "General",
+    difficulty: "Medium",
+    image: "",
+    audio: "",
+    notes: "",
+    timeLimit: 60,
+    autoMark: true,
+    ...overrides,
   };
 }
 
@@ -400,9 +427,7 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
               <IconButton label="Lock Answers" icon={Lock} className="danger" onClick={lockAnswers} disabled={state.live.locked} />
               <IconButton label="Show Scores" icon={ClipboardList} onClick={() => setScreen("scores")} />
               <IconButton label="Next Question" icon={SkipForward} onClick={nextQuestion} />
-              <button className="icon-only-button" aria-label="More live actions">
-                <MoreHorizontal size={18} />
-              </button>
+              <IconButton label="Edit questions" icon={MoreHorizontal} onClick={() => setActivePage("Quizzes")} />
             </div>
             <div className="audio-controls">
               <div className="audio-left">
@@ -557,31 +582,57 @@ function EmptyState({ icon: Icon, title, detail }) {
 export function QuizzesPage({ state, updateState }) {
   const quiz = getSelectedQuiz(state);
   const [selectedRoundId, setSelectedRoundId] = useState(quiz.rounds[0]?.id ?? "");
+  const [selectedQuestionId, setSelectedQuestionId] = useState(quiz.rounds[0]?.questions?.[0]?.id ?? "");
   const [csvText, setCsvText] = useState(
     "Quiz,Round,Round Type,Question Number,Question,Answer,Alternative Answers,Points,Category,Difficulty,Image Filename,Audio Filename,Notes\nAugust Quiz,General Knowledge,Text,1,Which planet is closest to the Sun?,Mercury,,1,Science,Easy,,,Confirmed against NASA\nAugust Quiz,General Knowledge,Text,1,What is the capital of Slovenia?,Ljubljana,Lubiana; Lubljana,1,Geography,Medium,picture-round-landmarks.jpg,,Potential reuse warning",
   );
+
+  useEffect(() => {
+    if (quiz.rounds.some((round) => round.id === selectedRoundId)) {
+      return;
+    }
+    setSelectedRoundId(quiz.rounds[0]?.id ?? "");
+  }, [quiz.id, quiz.rounds, selectedRoundId]);
+
   const selectedRound = quiz.rounds.find((round) => round.id === selectedRoundId) ?? quiz.rounds[0];
+
+  useEffect(() => {
+    const questionIds = new Set((selectedRound?.questions ?? []).map((item) => item.id));
+    if (selectedQuestionId && questionIds.has(selectedQuestionId)) {
+      return;
+    }
+    setSelectedQuestionId(selectedRound?.questions?.[0]?.id ?? "");
+  }, [selectedQuestionId, selectedRound?.id, selectedRound?.questions]);
+
   const importRows = useMemo(
     () => validateImportRows(parseCsv(csvText), selectedRound?.questions ?? [], state.media),
     [csvText, selectedRound?.questions, state.media],
   );
-  const currentQuestion = selectedRound?.questions?.[0];
+  const currentQuestion =
+    selectedRound?.questions?.find((question) => question.id === selectedQuestionId) ??
+    selectedRound?.questions?.[0];
   const reuseWarnings = similarQuestionWarnings(state.questionBank, currentQuestion?.text ?? "");
 
   function selectQuiz(quizId) {
+    const nextQuiz = state.quizzes.find((item) => item.id === quizId);
+    const nextRound = nextQuiz?.rounds?.[0];
+    setSelectedRoundId(nextRound?.id ?? "");
+    setSelectedQuestionId(nextRound?.questions?.[0]?.id ?? "");
     updateState((current) => ({ ...current, selectedQuizId: quizId }));
   }
 
   function addQuiz() {
+    const quizId = createId("quiz");
+    const roundId = createId("round");
+    const questionId = createId("question");
     updateState((current) => {
-      const id = createId("quiz");
       return {
         ...current,
-        selectedQuizId: id,
+        selectedQuizId: quizId,
         quizzes: [
           ...current.quizzes,
           {
-            id,
+            id: quizId,
             title: "Untitled quiz",
             date: "2026-11-01",
             time: "20:00",
@@ -589,12 +640,23 @@ export function QuizzesPage({ state, updateState }) {
             status: "Draft",
             notes: "",
             archived: false,
-            rounds: [],
+            rounds: [
+              {
+                id: roundId,
+                title: "Round 1",
+                type: "Standard question round",
+                instructions: "",
+                scoringRules: "One point per correct answer.",
+                questions: [createQuestion(1, { id: questionId })],
+              },
+            ],
             finalLeaderboard: [],
           },
         ],
       };
     });
+    setSelectedRoundId(roundId);
+    setSelectedQuestionId(questionId);
   }
 
   function duplicateQuiz() {
@@ -635,6 +697,7 @@ export function QuizzesPage({ state, updateState }) {
 
   function addRound(type = "Standard question round") {
     const roundId = createId("round");
+    const questionId = createId("question");
     updateState((current) =>
       updateQuiz(current, current.selectedQuizId, (item) => ({
         ...item,
@@ -646,16 +709,102 @@ export function QuizzesPage({ state, updateState }) {
             type,
             instructions: "",
             scoringRules: "One point per correct answer.",
-            questions: [],
+            questions: [
+              createQuestion(1, {
+                id: questionId,
+                type: questionTypeForRound(type),
+              }),
+            ],
           },
         ],
       })),
     );
     setSelectedRoundId(roundId);
+    setSelectedQuestionId(questionId);
+  }
+
+  function addQuestion() {
+    if (!selectedRound) {
+      addRound();
+      return;
+    }
+
+    const questionId = createId("question");
+    updateState((current) =>
+      updateQuiz(current, current.selectedQuizId, (item) => ({
+        ...item,
+        rounds: item.rounds.map((round) => {
+          if (round.id !== selectedRound.id) {
+            return round;
+          }
+          const nextNumber = Math.max(0, ...round.questions.map((question) => Number(question.number) || 0)) + 1;
+          return {
+            ...round,
+            questions: [
+              ...round.questions,
+              createQuestion(nextNumber, {
+                id: questionId,
+                type: questionTypeForRound(round.type),
+              }),
+            ],
+          };
+        }),
+      })),
+    );
+    setSelectedQuestionId(questionId);
+  }
+
+  function duplicateQuestion() {
+    if (!selectedRound || !currentQuestion) return;
+    const questionId = createId("question");
+    updateState((current) =>
+      updateQuiz(current, current.selectedQuizId, (item) => ({
+        ...item,
+        rounds: item.rounds.map((round) => {
+          if (round.id !== selectedRound.id) {
+            return round;
+          }
+          const nextNumber = Math.max(0, ...round.questions.map((question) => Number(question.number) || 0)) + 1;
+          return {
+            ...round,
+            questions: [
+              ...round.questions,
+              {
+                ...currentQuestion,
+                id: questionId,
+                number: nextNumber,
+                text: `${currentQuestion.text} copy`,
+              },
+            ],
+          };
+        }),
+      })),
+    );
+    setSelectedQuestionId(questionId);
+  }
+
+  function deleteQuestion() {
+    if (!selectedRound || !currentQuestion) return;
+    const nextQuestion =
+      selectedRound.questions.find((question) => question.id !== currentQuestion.id) ?? null;
+    updateState((current) =>
+      updateQuiz(current, current.selectedQuizId, (item) => ({
+        ...item,
+        rounds: item.rounds.map((round) =>
+          round.id === selectedRound.id
+            ? { ...round, questions: round.questions.filter((question) => question.id !== currentQuestion.id) }
+            : round,
+        ),
+      })),
+    );
+    setSelectedQuestionId(nextQuestion?.id ?? "");
   }
 
   function importPreviewRows() {
     if (!selectedRound) return;
+    const validRows = importRows
+      .filter((row) => !row.__warnings.includes("Missing question") && !row.__warnings.includes("Missing answer"))
+      .map((row) => ({ ...row, id: createId("question") }));
     updateState((current) =>
       updateQuiz(current, current.selectedQuizId, (item) => ({
         ...item,
@@ -665,10 +814,9 @@ export function QuizzesPage({ state, updateState }) {
                 ...round,
                 questions: [
                   ...round.questions,
-                  ...importRows
-                    .filter((row) => !row.__warnings.includes("Missing question") && !row.__warnings.includes("Missing answer"))
+                  ...validRows
                     .map((row, index) => ({
-                      id: createId("question"),
+                      id: row.id,
                       number: Number(row["Question Number"] || round.questions.length + index + 1),
                       text: row.Question,
                       answer: row.Answer,
@@ -680,9 +828,10 @@ export function QuizzesPage({ state, updateState }) {
                       type: row["Round Type"] || "Text",
                       category: row.Category || "Uncategorised",
                       difficulty: row.Difficulty || "Medium",
-                      image: row["Image Filename"] ? `/assets/${row["Image Filename"]}` : "",
+                      image: row["Image Filename"] ? `${import.meta.env.BASE_URL}assets/${row["Image Filename"]}` : "",
                       audio: row["Audio Filename"],
                       notes: row.Notes,
+                      timeLimit: 60,
                       autoMark: true,
                     })),
                 ],
@@ -691,6 +840,7 @@ export function QuizzesPage({ state, updateState }) {
         ),
       })),
     );
+    setSelectedQuestionId(validRows[validRows.length - 1]?.id ?? selectedQuestionId);
   }
 
   return (
@@ -757,14 +907,29 @@ export function QuizzesPage({ state, updateState }) {
             {!quiz.rounds.length ? <EmptyState icon={ClipboardList} title="No rounds yet" detail="Add a text, picture, music, multiple-choice, numerical, multi-part, or nearest-wins round." /> : null}
           </div>
         </Panel>
-        <Panel title="Fast question editor">
+        <Panel
+          title="Fast question editor"
+          action={
+            selectedRound ? (
+              <button className="primary-button compact" onClick={addQuestion}>
+                <Plus size={15} />
+                Add question
+              </button>
+            ) : null
+          }
+        >
           {selectedRound ? (
             <QuestionEditor
-              state={state}
               round={selectedRound}
               question={currentQuestion}
+              questions={selectedRound.questions}
               reuseWarnings={reuseWarnings}
+              selectedQuestionId={selectedQuestionId}
+              setSelectedQuestionId={setSelectedQuestionId}
               updateState={updateState}
+              onAddQuestion={addQuestion}
+              onDuplicateQuestion={duplicateQuestion}
+              onDeleteQuestion={deleteQuestion}
             />
           ) : (
             <EmptyState icon={Plus} title="Create a round first" detail="Questions live inside permanent quiz rounds." />
@@ -818,9 +983,28 @@ export function QuizzesPage({ state, updateState }) {
   );
 }
 
-function QuestionEditor({ state, round, question, reuseWarnings, updateState }) {
+function QuestionEditor({
+  round,
+  question,
+  questions,
+  reuseWarnings,
+  selectedQuestionId,
+  setSelectedQuestionId,
+  updateState,
+  onAddQuestion,
+  onDuplicateQuestion,
+  onDeleteQuestion,
+}) {
   if (!question) {
-    return <EmptyState icon={Plus} title="No questions in this round" detail="Use CSV upload or add a new question." />;
+    return (
+      <div className="question-editor">
+        <EmptyState icon={Plus} title="No questions in this round" detail="Add a question to start building this round." />
+        <button className="primary-button" onClick={onAddQuestion}>
+          <Plus size={16} />
+          Add first question
+        </button>
+      </div>
+    );
   }
 
   function updateQuestion(field, value) {
@@ -843,17 +1027,44 @@ function QuestionEditor({ state, round, question, reuseWarnings, updateState }) 
 
   return (
     <div className="question-editor">
+      <div className="question-editor-toolbar">
+        <label>
+          Editing
+          <select value={selectedQuestionId} onChange={(event) => setSelectedQuestionId(event.target.value)}>
+            {questions.map((item) => (
+              <option key={item.id} value={item.id}>
+                Q{item.number}: {item.text || "Untitled question"}
+              </option>
+            ))}
+          </select>
+        </label>
+        <div className="button-row-inline">
+          <button className="ghost-button compact" onClick={onDuplicateQuestion}>
+            <Copy size={15} />
+            Duplicate
+          </button>
+          <button className="danger-soft-button compact" onClick={onDeleteQuestion} disabled={questions.length <= 1}>
+            <X size={15} />
+            Delete
+          </button>
+        </div>
+      </div>
       <div className="form-grid">
+        <label>Number<input type="number" min="1" value={question.number} onChange={(event) => updateQuestion("number", Number(event.target.value))} /></label>
+        <label>Type<select value={question.type} onChange={(event) => updateQuestion("type", event.target.value)}>
+          {QUESTION_TYPES.map((item) => <option key={item}>{item}</option>)}
+        </select></label>
         <label className="span-2">Question<input value={question.text} onChange={(event) => updateQuestion("text", event.target.value)} /></label>
         <label>Correct answer<input value={question.answer} onChange={(event) => updateQuestion("answer", event.target.value)} /></label>
         <label>Points<input type="number" min="0" step="0.5" value={question.points} onChange={(event) => updateQuestion("points", Number(event.target.value))} /></label>
+        <label>Time limit<input type="number" min="5" step="5" value={question.timeLimit ?? 60} onChange={(event) => updateQuestion("timeLimit", Number(event.target.value))} /></label>
         <label>Category<input value={question.category} onChange={(event) => updateQuestion("category", event.target.value)} /></label>
         <label>Difficulty<select value={question.difficulty} onChange={(event) => updateQuestion("difficulty", event.target.value)}>
           {["Easy", "Medium", "Hard"].map((item) => <option key={item}>{item}</option>)}
         </select></label>
         <label className="span-2">Accepted alternatives<input value={(question.alternatives ?? []).join("; ")} onChange={(event) => updateQuestion("alternatives", event.target.value.split(";").map((item) => item.trim()).filter(Boolean))} /></label>
-        <label>Image upload<input value={question.image ?? ""} onChange={(event) => updateQuestion("image", event.target.value)} /></label>
-        <label>Audio upload<input value={question.audio ?? ""} onChange={(event) => updateQuestion("audio", event.target.value)} /></label>
+        <label>Image path or URL<input value={question.image ?? ""} onChange={(event) => updateQuestion("image", event.target.value)} /></label>
+        <label>Audio filename<input value={question.audio ?? ""} onChange={(event) => updateQuestion("audio", event.target.value)} /></label>
         <label className="span-2">Quizmaster notes<textarea value={question.notes ?? ""} onChange={(event) => updateQuestion("notes", event.target.value)} /></label>
         <label className="checkbox-line span-2">
           <input type="checkbox" checked={question.autoMark} onChange={(event) => updateQuestion("autoMark", event.target.checked)} />

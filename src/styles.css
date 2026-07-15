@@ -39,6 +39,7 @@ body {
   color: var(--ink);
   font-size: 14px;
   letter-spacing: 0;
+  overflow-x: hidden;
 }
 
 button,
@@ -74,6 +75,10 @@ img {
   grid-template-columns: 252px minmax(0, 1fr);
 }
 
+.host-app.sidebar-collapsed {
+  grid-template-columns: 86px minmax(0, 1fr);
+}
+
 .sidebar {
   position: sticky;
   top: 0;
@@ -82,6 +87,22 @@ img {
   flex-direction: column;
   background: #fbfdff;
   border-right: 1px solid var(--line);
+}
+
+.sidebar.collapsed .sidebar-brand strong,
+.sidebar.collapsed .nav-item span,
+.sidebar.collapsed .sidebar-footer span {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-brand {
+  padding: 0;
+  justify-content: center;
+}
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 0;
 }
 
 .brand-lockup {
@@ -279,6 +300,7 @@ img {
   border-radius: var(--radius);
   box-shadow: 0 1px 0 rgba(9, 29, 52, 0.02);
   padding: 16px;
+  min-width: 0;
 }
 
 .panel-header {
@@ -424,6 +446,7 @@ img {
   grid-template-columns: minmax(0, 1fr) 292px;
   gap: 18px;
   max-width: 1380px;
+  min-width: 0;
 }
 
 .live-left {
@@ -442,6 +465,19 @@ img {
   display: grid;
   grid-template-columns: 1.2fr 1fr 0.7fr;
   gap: 16px;
+  min-width: 0;
+}
+
+.top-metrics > *,
+.bottom-grid > *,
+.dashboard-grid > *,
+.stats-grid > *,
+.builder-grid > *,
+.csv-grid > *,
+.results-grid > *,
+.settings-grid > *,
+.live-right > * {
+  min-width: 0;
 }
 
 .join-panel {
@@ -1089,6 +1125,13 @@ textarea {
   gap: 14px;
 }
 
+.question-editor-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
 .editor-warnings {
   margin-top: 4px;
 }
@@ -1505,15 +1548,33 @@ textarea {
   }
 
   .sidebar {
-    position: static;
-    height: auto;
-    flex-direction: row;
-    overflow: auto;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    height: 56px;
+    display: block;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
   }
 
   .side-nav {
     display: flex;
+    gap: 8px;
+    padding: 8px 10px;
     min-width: max-content;
+  }
+
+  .nav-item {
+    width: auto;
+    min-height: 40px;
+    gap: 8px;
+    padding: 0 10px;
+  }
+
+  .nav-item span {
+    display: inline;
+    font-size: 12px;
   }
 
   .sidebar-footer,
@@ -1522,14 +1583,45 @@ textarea {
   }
 
   .topbar {
-    position: static;
-    flex-wrap: wrap;
-    padding: 12px;
+    position: sticky;
+    top: 56px;
+    z-index: 9;
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: 0;
+    align-items: stretch;
+    padding: 10px 12px;
+    gap: 10px;
   }
 
-  .topbar-actions,
   .topbar-title {
     flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .topbar-title strong {
+    max-width: calc(100vw - 120px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .topbar-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    width: 100%;
+    gap: 8px;
+  }
+
+  .topbar .connection-dot,
+  .topbar .connected-text,
+  .host-avatar {
+    display: none;
+  }
+
+  .topbar .ghost-button {
+    width: 100%;
+    min-width: 0;
+    padding: 0 10px;
   }
 
   .top-metrics,
@@ -1577,11 +1669,54 @@ textarea {
   .inline-form {
     grid-template-columns: 1fr;
   }
+
+  .mark-row.large,
+  .question-editor-toolbar {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 520px) {
+  html,
+  body,
+  #root {
+    width: 100%;
+  }
+
   .page {
     padding: 14px 10px 24px;
+    max-width: 100vw;
+  }
+
+  .side-nav {
+    padding: 8px;
+  }
+
+  .nav-item {
+    min-width: 42px;
+    padding: 0 9px;
+  }
+
+  .nav-item span {
+    display: none;
+  }
+
+  .topbar-title {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .topbar-title > svg,
+  .topbar-title span:not(.live-pill) {
+    display: none;
+  }
+
+  .topbar-title strong {
+    max-width: none;
+  }
+
+  .topbar-actions {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   }
 
   .join-panel,
@@ -1592,6 +1727,28 @@ textarea {
 
   .qr-box {
     width: 100%;
+  }
+
+  .join-copy strong {
+    font-size: 32px;
+    overflow-wrap: anywhere;
+  }
+
+  .current-header h1,
+  .question-copy h2 {
+    font-size: 20px;
+  }
+
+  .mark-row,
+  .mark-row.large,
+  .list-row,
+  .warning-row {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .mark-actions {
+    justify-content: flex-start;
   }
 
   .host-command-row,
@@ -1607,6 +1764,14 @@ textarea {
   .danger-outline-button,
   .file-button {
     width: 100%;
+  }
+
+  .topbar .ghost-button {
+    width: 100%;
+  }
+
+  .topbar .icon-button {
+    width: 40px;
   }
 
   .phone-shell {

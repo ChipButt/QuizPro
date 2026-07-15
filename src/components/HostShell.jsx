@@ -1,6 +1,5 @@
 import {
   BarChart3,
-  BookOpen,
   CalendarDays,
   ChevronDown,
   ChevronsLeft,
@@ -11,7 +10,6 @@ import {
   Home,
   Image,
   Library,
-  ListChecks,
   Monitor,
   Radio,
   Settings,
@@ -95,9 +93,9 @@ function HostLogin({ onUnlock }) {
   );
 }
 
-function Sidebar({ activePage, setActivePage }) {
+function Sidebar({ activePage, setActivePage, collapsed, setCollapsed }) {
   return (
-    <aside className="sidebar">
+    <aside className={collapsed ? "sidebar collapsed" : "sidebar"}>
       <div className="brand-lockup sidebar-brand">
         <span className="brand-mark">
           <Crown size={23} />
@@ -120,11 +118,11 @@ function Sidebar({ activePage, setActivePage }) {
         })}
       </nav>
       <div className="sidebar-footer">
-        <button className="nav-item">
+        <button className="nav-item" onClick={() => setActivePage("Settings")}>
           <FileQuestion size={18} />
           <span>Support</span>
         </button>
-        <button className="nav-item">
+        <button className="nav-item" onClick={() => setCollapsed(!collapsed)}>
           <ChevronsLeft size={18} />
           <span>Collapse</span>
         </button>
@@ -133,7 +131,7 @@ function Sidebar({ activePage, setActivePage }) {
   );
 }
 
-function TopBar({ state, resetState }) {
+function TopBar({ state, resetState, setActivePage }) {
   const quiz = getSelectedQuiz(state);
   const teamUrl = `${window.location.origin}${window.location.pathname}#/join/${state.joinCode}`;
 
@@ -157,7 +155,7 @@ function TopBar({ state, resetState }) {
           <Monitor size={16} />
           Team link
         </a>
-        <button className="icon-button" aria-label="Display settings">
+        <button className="icon-button" aria-label="Display settings" onClick={() => setActivePage("Settings")}>
           <SlidersHorizontal size={17} />
         </button>
         <button className="ghost-button" onClick={resetState}>
@@ -182,6 +180,7 @@ export default function HostShell({ state, updateState, resetState }) {
     () => window.localStorage.getItem("quizmaster-pro-host-unlocked") === "true",
   );
   const [activePage, setActivePage] = useState("Live Quiz");
+  const [collapsed, setCollapsed] = useState(false);
 
   const page = useMemo(() => {
     const props = { state, updateState, setActivePage };
@@ -213,10 +212,15 @@ export default function HostShell({ state, updateState, resetState }) {
   }
 
   return (
-    <div className="host-app">
-      <Sidebar activePage={activePage} setActivePage={setActivePage} />
+    <div className={collapsed ? "host-app sidebar-collapsed" : "host-app"}>
+      <Sidebar
+        activePage={activePage}
+        collapsed={collapsed}
+        setActivePage={setActivePage}
+        setCollapsed={setCollapsed}
+      />
       <div className="host-main">
-        <TopBar state={state} resetState={resetState} />
+        <TopBar state={state} resetState={resetState} setActivePage={setActivePage} />
         {page}
       </div>
     </div>
