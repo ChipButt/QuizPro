@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { seedState } from "../data/seed.js";
+import { createInitialState } from "../data/seed.js";
 
-const STORAGE_KEY = "quizmaster-pro-state-v1";
+const STORAGE_KEY = "quizmaster-pro-state-v2";
+const LEGACY_STORAGE_KEYS = ["quizmaster-pro-state-v1", "quizmaster-pro-host-unlocked"];
 
 function readStoredState() {
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    return stored ? { ...seedState, ...JSON.parse(stored) } : seedState;
+    return stored ? { ...createInitialState(), ...JSON.parse(stored) } : createInitialState();
   } catch {
-    return seedState;
+    return createInitialState();
   }
 }
 
@@ -36,8 +37,9 @@ export function useQuizState() {
   }, []);
 
   const resetState = useCallback(() => {
-    setState(seedState);
+    setState(createInitialState());
     window.localStorage.removeItem(STORAGE_KEY);
+    LEGACY_STORAGE_KEYS.forEach((key) => window.localStorage.removeItem(key));
     window.localStorage.removeItem("quizmaster-pro-team-id");
   }, []);
 

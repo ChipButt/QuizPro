@@ -3,7 +3,7 @@ export function createId(prefix) {
 }
 
 export function getSelectedQuiz(state) {
-  return state.quizzes.find((quiz) => quiz.id === state.selectedQuizId) ?? state.quizzes[0];
+  return state.quizzes.find((quiz) => quiz.id === state.selectedQuizId) ?? state.quizzes[0] ?? null;
 }
 
 export function getCurrentRound(state) {
@@ -220,6 +220,9 @@ export function similarQuestionWarnings(questionBank, text) {
 }
 
 export function nextQuestionPosition(quiz, live) {
+  if (!quiz?.rounds?.length) {
+    return null;
+  }
   const currentRound = quiz.rounds[live.roundIndex];
   if (currentRound?.questions?.[live.questionIndex + 1]) {
     return { roundIndex: live.roundIndex, questionIndex: live.questionIndex + 1 };

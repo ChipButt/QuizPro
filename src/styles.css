@@ -221,7 +221,6 @@ img {
   border-radius: 5px;
 }
 
-.connection-dot,
 .amber-dot {
   width: 9px;
   height: 9px;
@@ -232,43 +231,6 @@ img {
 
 .amber-dot {
   background: var(--amber);
-}
-
-.connected-text {
-  color: #27db99;
-}
-
-.host-avatar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-left: 1px solid rgba(255, 255, 255, 0.18);
-  padding-left: 16px;
-}
-
-.host-avatar > span {
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  border-radius: 99px;
-  background: #273b56;
-  color: #dbe7f7;
-  font-size: 12px;
-}
-
-.host-avatar div {
-  display: grid;
-  gap: 1px;
-}
-
-.host-avatar strong {
-  font-size: 13px;
-}
-
-.host-avatar small {
-  color: #c3cedc;
-  font-size: 12px;
 }
 
 .page {
@@ -1548,8 +1510,8 @@ textarea {
   }
 
   .sidebar {
-    position: sticky;
-    top: 0;
+    position: static;
+    top: auto;
     z-index: 10;
     height: 56px;
     display: block;
@@ -1583,8 +1545,8 @@ textarea {
   }
 
   .topbar {
-    position: sticky;
-    top: 56px;
+    position: static;
+    top: auto;
     z-index: 9;
     display: grid;
     grid-template-columns: 1fr;
@@ -1610,12 +1572,6 @@ textarea {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     width: 100%;
     gap: 8px;
-  }
-
-  .topbar .connection-dot,
-  .topbar .connected-text,
-  .host-avatar {
-    display: none;
   }
 
   .topbar .ghost-button {

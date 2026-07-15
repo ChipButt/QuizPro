@@ -5,7 +5,6 @@ import {
   ChevronsLeft,
   ClipboardCheck,
   Crown,
-  FileQuestion,
   Gauge,
   Home,
   Image,
@@ -13,7 +12,6 @@ import {
   Monitor,
   Radio,
   Settings,
-  ShieldCheck,
   SlidersHorizontal,
   Users,
 } from "lucide-react";
@@ -44,55 +42,6 @@ const iconMap = {
   Settings,
 };
 
-function HostLogin({ onUnlock }) {
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-
-  function submit(event) {
-    event.preventDefault();
-    if (password.trim().toLowerCase() === "demo") {
-      window.localStorage.setItem("quizmaster-pro-host-unlocked", "true");
-      onUnlock();
-      return;
-    }
-    setError("Use demo for this local MVP.");
-  }
-
-  return (
-    <main className="login-screen">
-      <section className="login-panel">
-        <div className="brand-lockup">
-          <span className="brand-mark">
-            <Crown size={24} />
-          </span>
-          <strong>Quizmaster<span>Pro</span></strong>
-        </div>
-        <h1>Private quizmaster console</h1>
-        <p>
-          Host pages are gated separately from the team join link. This local build uses a demo
-          password for the first version.
-        </p>
-        <form onSubmit={submit} className="login-form">
-          <label>
-            Host password
-            <input
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              type="password"
-              placeholder="demo"
-            />
-          </label>
-          <button className="primary-button" type="submit">
-            <ShieldCheck size={16} />
-            Unlock host view
-          </button>
-          {error ? <span className="form-error">{error}</span> : null}
-        </form>
-      </section>
-    </main>
-  );
-}
-
 function Sidebar({ activePage, setActivePage, collapsed, setCollapsed }) {
   return (
     <aside className={collapsed ? "sidebar collapsed" : "sidebar"}>
@@ -118,10 +67,6 @@ function Sidebar({ activePage, setActivePage, collapsed, setCollapsed }) {
         })}
       </nav>
       <div className="sidebar-footer">
-        <button className="nav-item" onClick={() => setActivePage("Settings")}>
-          <FileQuestion size={18} />
-          <span>Support</span>
-        </button>
         <button className="nav-item" onClick={() => setCollapsed(!collapsed)}>
           <ChevronsLeft size={18} />
           <span>Collapse</span>
@@ -134,23 +79,25 @@ function Sidebar({ activePage, setActivePage, collapsed, setCollapsed }) {
 function TopBar({ state, resetState, setActivePage }) {
   const quiz = getSelectedQuiz(state);
   const teamUrl = `${window.location.origin}${window.location.pathname}#/join/${state.joinCode}`;
+  const quizTitle = quiz?.title?.trim() || "Quiz builder";
+  const dateLabel = quiz?.date
+    ? new Date(`${quiz.date}T12:00:00`).toLocaleDateString(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      })
+    : "";
 
   return (
     <header className="topbar">
       <div className="topbar-title">
-        <span className="live-pill">Live</span>
-        <strong>{quiz.title}</strong>
-        <ChevronDown size={16} />
-        <span>{new Date(`${quiz.date}T12:00:00`).toLocaleDateString(undefined, {
-          weekday: "short",
-          month: "short",
-          day: "numeric",
-        })}</span>
-        <span>{quiz.time}</span>
+        <span className="live-pill">{state.live.status}</span>
+        <strong>{quizTitle}</strong>
+        {quiz ? <ChevronDown size={16} /> : null}
+        {dateLabel ? <span>{dateLabel}</span> : null}
+        {quiz?.time ? <span>{quiz.time}</span> : null}
       </div>
       <div className="topbar-actions">
-        <span className="connection-dot" />
-        <span className="connected-text">Connected</span>
         <a className="ghost-button" href={teamUrl} target="_blank" rel="noreferrer">
           <Monitor size={16} />
           Team link
@@ -160,26 +107,15 @@ function TopBar({ state, resetState, setActivePage }) {
         </button>
         <button className="ghost-button" onClick={resetState}>
           <Gauge size={16} />
-          Reset demo
+          Clear workspace
         </button>
-        <div className="host-avatar">
-          <span>JM</span>
-          <div>
-            <strong>John</strong>
-            <small>Host</small>
-          </div>
-          <ChevronDown size={15} />
-        </div>
       </div>
     </header>
   );
 }
 
 export default function HostShell({ state, updateState, resetState }) {
-  const [unlocked, setUnlocked] = useState(
-    () => window.localStorage.getItem("quizmaster-pro-host-unlocked") === "true",
-  );
-  const [activePage, setActivePage] = useState("Live Quiz");
+  const [activePage, setActivePage] = useState("Quizzes");
   const [collapsed, setCollapsed] = useState(false);
 
   const page = useMemo(() => {
@@ -206,10 +142,6 @@ export default function HostShell({ state, updateState, resetState }) {
         return <LiveQuizPage {...props} />;
     }
   }, [activePage, resetState, state, updateState]);
-
-  if (!unlocked) {
-    return <HostLogin onUnlock={() => setUnlocked(true)} />;
-  }
 
   return (
     <div className={collapsed ? "host-app sidebar-collapsed" : "host-app"}>

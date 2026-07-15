@@ -1,6 +1,8 @@
 import {
   AlertTriangle,
   Archive,
+  BarChart3,
+  CalendarDays,
   Check,
   ChevronRight,
   ClipboardList,
@@ -8,6 +10,7 @@ import {
   Eye,
   FileUp,
   Image as ImageIcon,
+  Library,
   Lock,
   MailCheck,
   Mic2,
@@ -15,13 +18,16 @@ import {
   Pause,
   Play,
   Plus,
+  Radio,
   RefreshCcw,
   RotateCcw,
   Save,
   Search,
+  Settings,
   SkipForward,
   Unlock,
   Upload,
+  Users,
   Volume2,
   X,
 } from "lucide-react";
@@ -89,6 +95,14 @@ function updateQuiz(state, quizId, updater) {
 }
 
 const QUESTION_TYPES = ["Text", "Picture", "Music", "Multiple choice", "Numerical", "Nearest wins"];
+const ROUND_TYPES = [
+  "Standard question round",
+  "Picture round",
+  "Music round",
+  "Multiple choice round",
+  "Numerical round",
+  "Nearest-wins question",
+];
 
 function questionTypeForRound(type = "") {
   const lowerType = type.toLowerCase();
@@ -102,12 +116,12 @@ function createQuestion(number, overrides = {}) {
   return {
     id: createId("question"),
     number,
-    text: `Question ${number}`,
+    text: "",
     answer: "",
     alternatives: [],
     points: 1,
     type: "Text",
-    category: "General",
+    category: "",
     difficulty: "Medium",
     image: "",
     audio: "",
@@ -116,6 +130,43 @@ function createQuestion(number, overrides = {}) {
     autoMark: true,
     ...overrides,
   };
+}
+
+function createRound(order, overrides = {}) {
+  return {
+    id: createId("round"),
+    title: "",
+    type: "Standard question round",
+    instructions: "",
+    scoringRules: "",
+    questions: [],
+    order,
+    ...overrides,
+  };
+}
+
+function createQuiz(overrides = {}) {
+  return {
+    id: createId("quiz"),
+    title: "",
+    date: "",
+    time: "",
+    venue: "",
+    status: "Draft",
+    notes: "",
+    archived: false,
+    rounds: [],
+    finalLeaderboard: [],
+    ...overrides,
+  };
+}
+
+function quizDisplayName(quiz) {
+  return quiz?.title?.trim() || "Quiz";
+}
+
+function roundDisplayName(round, index = 0) {
+  return round?.title?.trim() || `Round ${index + 1}`;
 }
 
 function scoreClass(status) {
@@ -130,6 +181,7 @@ export function DashboardPage({ state, setActivePage }) {
   const drafts = state.quizzes.filter((quiz) => quiz.status === "Draft");
   const completed = state.quizzes.filter((quiz) => quiz.status === "Completed");
   const leaderboard = computeLeaderboard(state).slice(0, 4);
+  const currentQuestion = getCurrentQuestion(state);
 
   return (
     <main className="page dashboard-page">
@@ -151,21 +203,25 @@ export function DashboardPage({ state, setActivePage }) {
       </div>
       <div className="dashboard-grid">
         <Panel title="Upcoming quizzes">
-          <div className="stack-list">
-            {upcoming.map((quiz) => (
-              <button
-                className="list-row button-row"
-                key={quiz.id}
-                onClick={() => setActivePage("Quizzes")}
-              >
-                <div>
-                  <strong>{quiz.title}</strong>
-                  <span>{quiz.venue} - {quiz.date} at {quiz.time}</span>
-                </div>
-                <StatusPill tone={quiz.status === "Live" ? "live" : "good"}>{quiz.status}</StatusPill>
-              </button>
-            ))}
-          </div>
+          {upcoming.length ? (
+            <div className="stack-list">
+              {upcoming.map((quiz) => (
+                <button
+                  className="list-row button-row"
+                  key={quiz.id}
+                  onClick={() => setActivePage("Quizzes")}
+                >
+                  <div>
+                    <strong>{quizDisplayName(quiz)}</strong>
+                    <span>{[quiz.venue, quiz.date, quiz.time].filter(Boolean).join(" - ")}</span>
+                  </div>
+                  <StatusPill tone={quiz.status === "Live" ? "live" : "good"}>{quiz.status}</StatusPill>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <EmptyState icon={CalendarDays} title="No scheduled quizzes" detail="Create a quiz and set its status when it is ready." />
+          )}
         </Panel>
         <Panel title="Live room health">
           <div className="health-grid">
@@ -183,7 +239,7 @@ export function DashboardPage({ state, setActivePage }) {
             </div>
             <div>
               <span>Submissions</span>
-              <strong>{Object.keys(getQuestionAnswers(state, getCurrentQuestion(state)?.id)).length}</strong>
+              <strong>{Object.keys(getQuestionAnswers(state, currentQuestion?.id)).length}</strong>
             </div>
           </div>
           <button className="ghost-button full-width" onClick={() => setActivePage("Live Quiz")}>
@@ -192,23 +248,31 @@ export function DashboardPage({ state, setActivePage }) {
           </button>
         </Panel>
         <Panel title="Question reuse warnings">
-          <div className="warning-list">
-            {state.questionBank
-              .filter((question) => question.lastUsed)
-              .slice(0, 3)
-              .map((question) => (
-                <div className="warning-row" key={question.id}>
-                  <AlertTriangle size={17} />
-                  <div>
-                    <strong>{question.text}</strong>
-                    <span>Previously used on {question.lastUsed}</span>
+          {state.questionBank.some((question) => question.lastUsed) ? (
+            <div className="warning-list">
+              {state.questionBank
+                .filter((question) => question.lastUsed)
+                .slice(0, 3)
+                .map((question) => (
+                  <div className="warning-row" key={question.id}>
+                    <AlertTriangle size={17} />
+                    <div>
+                      <strong>{question.text}</strong>
+                      <span>Previously used on {question.lastUsed}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
-          </div>
+                ))}
+            </div>
+          ) : (
+            <EmptyState icon={AlertTriangle} title="No reuse warnings" detail="Warnings appear after you build up a question library." />
+          )}
         </Panel>
         <Panel title="Current leaderboard">
-          <LeaderboardList leaderboard={leaderboard} />
+          {leaderboard.length ? (
+            <LeaderboardList leaderboard={leaderboard} />
+          ) : (
+            <EmptyState icon={BarChart3} title="No scores yet" detail="Teams and marked answers will appear here." />
+          )}
         </Panel>
       </div>
     </main>
@@ -222,6 +286,7 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
   const answers = getQuestionAnswers(state, question?.id);
   const leaderboard = computeLeaderboard(state);
   const teamUrl = `${window.location.origin}${window.location.pathname}#/join/${state.joinCode}`;
+  const teamUrlLabel = `${window.location.host}${window.location.pathname}#/join`;
   const pendingAnswers = state.teams
     .map((team) => ({ team, answer: answers[team.id] }))
     .filter(({ answer }) => answer?.status === "pending");
@@ -257,6 +322,9 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
   function nextQuestion() {
     updateState((current) => {
       const selected = getSelectedQuiz(current);
+      if (!selected) {
+        return current;
+      }
       const next = nextQuestionPosition(selected, current.live);
       if (!next) {
         return {
@@ -294,6 +362,7 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
   }
 
   function markAnswer(teamId, score) {
+    if (!question) return;
     updateState((current) => ({
       ...current,
       answers: {
@@ -311,6 +380,7 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
   }
 
   function markAllCorrect() {
+    if (!question) return;
     updateState((current) => {
       const currentAnswers = getQuestionAnswers(current, question.id);
       return {
@@ -328,6 +398,24 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
     });
   }
 
+  if (!quiz || !round || !question) {
+    return (
+      <main className="page live-page">
+        <Panel className="empty-workspace-panel">
+          <EmptyState
+            icon={Radio}
+            title="No live question ready"
+            detail="Create a quiz, add at least one round, then add a question before running the live view."
+          />
+          <button className="primary-button" onClick={() => setActivePage("Quizzes")}>
+            <Plus size={16} />
+            Open quiz builder
+          </button>
+        </Panel>
+      </main>
+    );
+  }
+
   return (
     <main className="page live-page">
       <section className="live-layout">
@@ -338,7 +426,7 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
                 <span>Join code</span>
                 <strong>{state.joinCode}</strong>
                 <a href={teamUrl} target="_blank" rel="noreferrer">
-                  join.quizmaster.pro
+                  {teamUrlLabel}
                 </a>
               </div>
               <div className="qr-box">
@@ -369,7 +457,7 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
             <Panel className="status-panel">
               <span className="utility-label">Quiz status</span>
               <strong className="status-line"><span className="amber-dot" /> {state.live.status}</strong>
-              <small>Started at 8:12 PM</small>
+              <small>{formatClock(state.live.elapsedSeconds)} elapsed</small>
               <button className="danger-outline-button" onClick={() => setScreen("final")}>End Quiz</button>
             </Panel>
           </div>
@@ -381,7 +469,7 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
               </div>
               <div>
                 <span className="utility-label">Current</span>
-                <h1>{round?.title}</h1>
+                <h1>{round?.title || "Round"}</h1>
                 <p>Q{question?.number} of {round?.questions.length} - {pointsLabel(question?.points)}</p>
               </div>
               <div className="timer-box">
@@ -395,12 +483,17 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
             <div className="question-display">
               {question?.image ? (
                 <div className="media-frame">
-                  <img src={question.image} alt="Picture round landmarks" />
+                  <img src={question.image} alt="Question media" />
+                </div>
+              ) : question?.audio ? (
+                <div className="audio-art">
+                  <Mic2 size={42} />
+                  <span>{question.audio}</span>
                 </div>
               ) : (
                 <div className="audio-art">
-                  <Mic2 size={42} />
-                  <span>{question?.audio ?? "Audio clip hidden"}</span>
+                  <ImageIcon size={42} />
+                  <span>No media added</span>
                 </div>
               )}
               <div className="question-copy">
@@ -411,7 +504,7 @@ export function LiveQuizPage({ state, updateState, setActivePage }) {
                   <StatusPill tone={question?.autoMark ? "good" : "warn"}>
                     {question?.autoMark ? "Auto marking on" : "Manual marking"}
                   </StatusPill>
-                  <StatusPill>{question?.category}</StatusPill>
+                  {question?.category ? <StatusPill>{question.category}</StatusPill> : null}
                 </div>
                 {state.live.answerRevealed ? (
                   <div className="answer-reveal">
@@ -581,20 +674,23 @@ function EmptyState({ icon: Icon, title, detail }) {
 
 export function QuizzesPage({ state, updateState }) {
   const quiz = getSelectedQuiz(state);
-  const [selectedRoundId, setSelectedRoundId] = useState(quiz.rounds[0]?.id ?? "");
-  const [selectedQuestionId, setSelectedQuestionId] = useState(quiz.rounds[0]?.questions?.[0]?.id ?? "");
-  const [csvText, setCsvText] = useState(
-    "Quiz,Round,Round Type,Question Number,Question,Answer,Alternative Answers,Points,Category,Difficulty,Image Filename,Audio Filename,Notes\nAugust Quiz,General Knowledge,Text,1,Which planet is closest to the Sun?,Mercury,,1,Science,Easy,,,Confirmed against NASA\nAugust Quiz,General Knowledge,Text,1,What is the capital of Slovenia?,Ljubljana,Lubiana; Lubljana,1,Geography,Medium,picture-round-landmarks.jpg,,Potential reuse warning",
-  );
+  const [selectedRoundId, setSelectedRoundId] = useState(quiz?.rounds[0]?.id ?? "");
+  const [selectedQuestionId, setSelectedQuestionId] = useState(quiz?.rounds[0]?.questions?.[0]?.id ?? "");
+  const [csvText, setCsvText] = useState("");
 
   useEffect(() => {
+    if (!quiz) {
+      setSelectedRoundId("");
+      setSelectedQuestionId("");
+      return;
+    }
     if (quiz.rounds.some((round) => round.id === selectedRoundId)) {
       return;
     }
     setSelectedRoundId(quiz.rounds[0]?.id ?? "");
-  }, [quiz.id, quiz.rounds, selectedRoundId]);
+  }, [quiz, selectedRoundId]);
 
-  const selectedRound = quiz.rounds.find((round) => round.id === selectedRoundId) ?? quiz.rounds[0];
+  const selectedRound = quiz?.rounds.find((round) => round.id === selectedRoundId) ?? quiz?.rounds[0];
 
   useEffect(() => {
     const questionIds = new Set((selectedRound?.questions ?? []).map((item) => item.id));
@@ -622,47 +718,24 @@ export function QuizzesPage({ state, updateState }) {
   }
 
   function addQuiz() {
-    const quizId = createId("quiz");
-    const roundId = createId("round");
-    const questionId = createId("question");
+    const nextQuiz = createQuiz();
     updateState((current) => {
       return {
         ...current,
-        selectedQuizId: quizId,
-        quizzes: [
-          ...current.quizzes,
-          {
-            id: quizId,
-            title: "Untitled quiz",
-            date: "2026-11-01",
-            time: "20:00",
-            venue: "New venue",
-            status: "Draft",
-            notes: "",
-            archived: false,
-            rounds: [
-              {
-                id: roundId,
-                title: "Round 1",
-                type: "Standard question round",
-                instructions: "",
-                scoringRules: "One point per correct answer.",
-                questions: [createQuestion(1, { id: questionId })],
-              },
-            ],
-            finalLeaderboard: [],
-          },
-        ],
+        selectedQuizId: nextQuiz.id,
+        quizzes: [...current.quizzes, nextQuiz],
       };
     });
-    setSelectedRoundId(roundId);
-    setSelectedQuestionId(questionId);
+    setSelectedRoundId("");
+    setSelectedQuestionId("");
   }
 
   function duplicateQuiz() {
+    if (!quiz) return;
     updateState((current) => {
       const original = getSelectedQuiz(current);
       const id = createId("quiz");
+      if (!original) return current;
       return {
         ...current,
         selectedQuizId: id,
@@ -671,9 +744,8 @@ export function QuizzesPage({ state, updateState }) {
           {
             ...original,
             id,
-            title: `${original.title} copy`,
+            title: original.title,
             status: "Draft",
-            date: "2026-11-08",
             rounds: original.rounds.map((round) => ({
               ...round,
               id: createId("round"),
@@ -685,42 +757,76 @@ export function QuizzesPage({ state, updateState }) {
     });
   }
 
-  function archiveQuiz() {
-    updateState((current) =>
-      updateQuiz(current, current.selectedQuizId, (item) => ({ ...item, archived: true, status: "Archived" })),
-    );
+  function deleteQuiz() {
+    if (!quiz) return;
+    const nextQuiz = state.quizzes.find((item) => item.id !== quiz.id) ?? null;
+    updateState((current) => ({
+      ...current,
+      selectedQuizId: nextQuiz?.id ?? "",
+      quizzes: current.quizzes.filter((item) => item.id !== quiz.id),
+    }));
+    setSelectedRoundId(nextQuiz?.rounds[0]?.id ?? "");
+    setSelectedQuestionId(nextQuiz?.rounds[0]?.questions[0]?.id ?? "");
   }
 
   function updateSelectedQuiz(field, value) {
+    if (!quiz) return;
     updateState((current) => updateQuiz(current, current.selectedQuizId, (item) => ({ ...item, [field]: value })));
   }
 
   function addRound(type = "Standard question round") {
-    const roundId = createId("round");
-    const questionId = createId("question");
+    if (!quiz) return;
+    const round = createRound((selectedRound?.order ?? quiz.rounds.length) + 1, { type });
     updateState((current) =>
       updateQuiz(current, current.selectedQuizId, (item) => ({
         ...item,
-        rounds: [
-          ...item.rounds,
-          {
-            id: roundId,
-            title: `Round ${item.rounds.length + 1}`,
-            type,
-            instructions: "",
-            scoringRules: "One point per correct answer.",
-            questions: [
-              createQuestion(1, {
-                id: questionId,
-                type: questionTypeForRound(type),
-              }),
-            ],
-          },
-        ],
+        rounds: [...item.rounds, round],
       })),
     );
-    setSelectedRoundId(roundId);
-    setSelectedQuestionId(questionId);
+    setSelectedRoundId(round.id);
+    setSelectedQuestionId("");
+  }
+
+  function updateSelectedRound(field, value) {
+    if (!quiz || !selectedRound) return;
+    updateState((current) =>
+      updateQuiz(current, current.selectedQuizId, (item) => ({
+        ...item,
+        rounds: item.rounds.map((round) =>
+          round.id === selectedRound.id ? { ...round, [field]: value } : round,
+        ),
+      })),
+    );
+  }
+
+  function duplicateRound() {
+    if (!quiz || !selectedRound) return;
+    const round = {
+      ...selectedRound,
+      id: createId("round"),
+      questions: selectedRound.questions.map((question) => ({ ...question, id: createId("question") })),
+    };
+    updateState((current) =>
+      updateQuiz(current, current.selectedQuizId, (item) => ({
+        ...item,
+        rounds: [...item.rounds, round],
+      })),
+    );
+    setSelectedRoundId(round.id);
+    setSelectedQuestionId(round.questions[0]?.id ?? "");
+  }
+
+  function deleteRound() {
+    if (!quiz || !selectedRound) return;
+    const nextRound = quiz.rounds.find((round) => round.id !== selectedRound.id) ?? null;
+    updateState((current) =>
+      updateQuiz(current, current.selectedQuizId, (item) => ({
+        ...item,
+        rounds: item.rounds.filter((round) => round.id !== selectedRound.id),
+      })),
+    );
+    setSelectedRoundId(nextRound?.id ?? "");
+    setSelectedQuestionId(nextRound?.questions[0]?.id ?? "");
   }
 
   function addQuestion() {
@@ -773,7 +879,6 @@ export function QuizzesPage({ state, updateState }) {
                 ...currentQuestion,
                 id: questionId,
                 number: nextNumber,
-                text: `${currentQuestion.text} copy`,
               },
             ],
           };
@@ -826,7 +931,7 @@ export function QuizzesPage({ state, updateState }) {
                         .filter(Boolean),
                       points: Number(row.Points || 1),
                       type: row["Round Type"] || "Text",
-                      category: row.Category || "Uncategorised",
+                      category: row.Category || "",
                       difficulty: row.Difficulty || "Medium",
                       image: row["Image Filename"] ? `${import.meta.env.BASE_URL}assets/${row["Image Filename"]}` : "",
                       audio: row["Audio Filename"],
@@ -848,64 +953,97 @@ export function QuizzesPage({ state, updateState }) {
       <div className="page-title-row">
         <div>
           <h1>Quizzes</h1>
-          <p>Build permanent quiz plans months ahead without disturbing the live event.</p>
+          <p>Create the quiz, rounds, and questions from a clean workspace.</p>
         </div>
         <div className="button-row-inline">
-          <button className="ghost-button" onClick={duplicateQuiz}><Copy size={16} /> Duplicate quiz</button>
-          <button className="danger-soft-button" onClick={archiveQuiz}><Archive size={16} /> Archive</button>
+          <button className="ghost-button" onClick={duplicateQuiz} disabled={!quiz}><Copy size={16} /> Duplicate quiz</button>
+          <button className="danger-soft-button" onClick={deleteQuiz} disabled={!quiz}><Archive size={16} /> Delete quiz</button>
           <button className="primary-button" onClick={addQuiz}><Plus size={16} /> New quiz</button>
         </div>
       </div>
       <section className="builder-grid">
         <Panel title="Quiz library">
-          <div className="stack-list">
-            {state.quizzes.filter((item) => !item.archived).map((item) => (
+          {state.quizzes.filter((item) => !item.archived).length ? (
+            <div className="stack-list">
+              {state.quizzes.filter((item) => !item.archived).map((item) => (
               <button
-                className={item.id === quiz.id ? "list-row button-row selected" : "list-row button-row"}
+                className={item.id === quiz?.id ? "list-row button-row selected" : "list-row button-row"}
                 key={item.id}
                 onClick={() => selectQuiz(item.id)}
               >
                 <div>
-                  <strong>{item.title}</strong>
-                  <span>{item.date} - {item.time}</span>
-                  <small>{item.venue}</small>
+                  <strong>{quizDisplayName(item)}</strong>
+                  <span>{[item.date, item.time].filter(Boolean).join(" - ") || "No date set"}</span>
+                  <small>{item.venue || "No venue set"}</small>
                 </div>
                 <StatusPill tone={item.status === "Draft" ? "warn" : item.status === "Live" ? "live" : "good"}>
                   {item.status}
                 </StatusPill>
               </button>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState icon={Plus} title="No quizzes yet" detail="Create a quiz to start building." />
+          )}
         </Panel>
         <Panel title="Quiz details">
-          <div className="form-grid">
-            <label>Title<input value={quiz.title} onChange={(event) => updateSelectedQuiz("title", event.target.value)} /></label>
-            <label>Date<input type="date" value={quiz.date} onChange={(event) => updateSelectedQuiz("date", event.target.value)} /></label>
-            <label>Time<input type="time" value={quiz.time} onChange={(event) => updateSelectedQuiz("time", event.target.value)} /></label>
-            <label>Status<select value={quiz.status} onChange={(event) => updateSelectedQuiz("status", event.target.value)}>
-              {["Draft", "Ready", "Scheduled", "Live", "Completed"].map((status) => <option key={status}>{status}</option>)}
-            </select></label>
-            <label className="span-2">Venue<input value={quiz.venue} onChange={(event) => updateSelectedQuiz("venue", event.target.value)} /></label>
-            <label className="span-2">Quizmaster notes<textarea value={quiz.notes} onChange={(event) => updateSelectedQuiz("notes", event.target.value)} /></label>
-          </div>
+          {quiz ? (
+            <div className="form-grid">
+              <label>Title<input value={quiz.title} onChange={(event) => updateSelectedQuiz("title", event.target.value)} /></label>
+              <label>Date<input type="date" value={quiz.date} onChange={(event) => updateSelectedQuiz("date", event.target.value)} /></label>
+              <label>Time<input type="time" value={quiz.time} onChange={(event) => updateSelectedQuiz("time", event.target.value)} /></label>
+              <label>Status<select value={quiz.status} onChange={(event) => updateSelectedQuiz("status", event.target.value)}>
+                {["Draft", "Ready", "Scheduled", "Live", "Completed"].map((status) => <option key={status}>{status}</option>)}
+              </select></label>
+              <label className="span-2">Venue<input value={quiz.venue} onChange={(event) => updateSelectedQuiz("venue", event.target.value)} /></label>
+              <label className="span-2">Notes<textarea value={quiz.notes} onChange={(event) => updateSelectedQuiz("notes", event.target.value)} /></label>
+            </div>
+          ) : (
+            <EmptyState icon={CalendarDays} title="No quiz selected" detail="Create a quiz to edit its details." />
+          )}
         </Panel>
         <Panel
           title="Rounds"
-          action={<button className="ghost-button compact" onClick={() => addRound()}><Plus size={15} /> Add round</button>}
+          action={quiz ? <button className="ghost-button compact" onClick={() => addRound()}><Plus size={15} /> Add round</button> : null}
         >
           <div className="round-tabs">
-            {quiz.rounds.map((round) => (
+            {(quiz?.rounds ?? []).map((round, index) => (
               <button
                 key={round.id}
                 className={round.id === selectedRound?.id ? "active" : ""}
                 onClick={() => setSelectedRoundId(round.id)}
               >
-                {round.title}
+                {roundDisplayName(round, index)}
                 <small>{round.type}</small>
               </button>
             ))}
-            {!quiz.rounds.length ? <EmptyState icon={ClipboardList} title="No rounds yet" detail="Add a text, picture, music, multiple-choice, numerical, multi-part, or nearest-wins round." /> : null}
+            {quiz && !quiz.rounds.length ? <EmptyState icon={ClipboardList} title="No rounds yet" detail="Add a round, choose its type, then add questions." /> : null}
+            {!quiz ? <EmptyState icon={ClipboardList} title="Create a quiz first" detail="Rounds belong to a quiz." /> : null}
           </div>
+        </Panel>
+        <Panel
+          title="Round details"
+          action={
+            selectedRound ? (
+              <div className="button-row-inline">
+                <button className="ghost-button compact" onClick={duplicateRound}><Copy size={15} /> Duplicate</button>
+                <button className="danger-soft-button compact" onClick={deleteRound}><X size={15} /> Delete</button>
+              </div>
+            ) : null
+          }
+        >
+          {selectedRound ? (
+            <div className="form-grid">
+              <label>Round title<input value={selectedRound.title} onChange={(event) => updateSelectedRound("title", event.target.value)} /></label>
+              <label>Round type<select value={selectedRound.type} onChange={(event) => updateSelectedRound("type", event.target.value)}>
+                {ROUND_TYPES.map((type) => <option key={type}>{type}</option>)}
+              </select></label>
+              <label className="span-2">Instructions<textarea value={selectedRound.instructions} onChange={(event) => updateSelectedRound("instructions", event.target.value)} /></label>
+              <label className="span-2">Scoring rules<textarea value={selectedRound.scoringRules} onChange={(event) => updateSelectedRound("scoringRules", event.target.value)} /></label>
+            </div>
+          ) : (
+            <EmptyState icon={ClipboardList} title="No round selected" detail="Add or select a round to edit its details." />
+          )}
         </Panel>
         <Panel
           title="Fast question editor"
@@ -932,7 +1070,7 @@ export function QuizzesPage({ state, updateState }) {
               onDeleteQuestion={deleteQuestion}
             />
           ) : (
-            <EmptyState icon={Plus} title="Create a round first" detail="Questions live inside permanent quiz rounds." />
+            <EmptyState icon={Plus} title="Create a round first" detail="Questions belong to rounds." />
           )}
         </Panel>
         <Panel title="CSV question upload" className="wide-panel">
@@ -958,22 +1096,26 @@ export function QuizzesPage({ state, updateState }) {
             </div>
             <div className="import-preview">
               <div className="table-wrap">
-                <table>
-                  <thead>
-                    <tr><th>Row</th><th>Question</th><th>Answer</th><th>Warnings</th><th>Media</th></tr>
-                  </thead>
-                  <tbody>
-                    {importRows.map((row) => (
-                      <tr key={row.__row} className={row.__warnings.length ? "warning-table-row" : ""}>
-                        <td>{row.__row}</td>
-                        <td>{row.Question}</td>
-                        <td>{row.Answer || "-"}</td>
-                        <td>{row.__warnings.length ? row.__warnings.join(", ") : "Ready"}</td>
-                        <td>{row.__matchedMedia.length ? row.__matchedMedia.join(", ") : "-"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {importRows.length ? (
+                  <table>
+                    <thead>
+                      <tr><th>Row</th><th>Question</th><th>Answer</th><th>Warnings</th><th>Media</th></tr>
+                    </thead>
+                    <tbody>
+                      {importRows.map((row) => (
+                        <tr key={row.__row} className={row.__warnings.length ? "warning-table-row" : ""}>
+                          <td>{row.__row}</td>
+                          <td>{row.Question}</td>
+                          <td>{row.Answer || "-"}</td>
+                          <td>{row.__warnings.length ? row.__warnings.join(", ") : "Ready"}</td>
+                          <td>{row.__matchedMedia.length ? row.__matchedMedia.join(", ") : "-"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <EmptyState icon={FileUp} title="No CSV loaded" detail="Paste CSV text or upload a CSV file to preview rows." />
+                )}
               </div>
             </div>
           </div>
@@ -1033,7 +1175,7 @@ function QuestionEditor({
           <select value={selectedQuestionId} onChange={(event) => setSelectedQuestionId(event.target.value)}>
             {questions.map((item) => (
               <option key={item.id} value={item.id}>
-                Q{item.number}: {item.text || "Untitled question"}
+                Question {item.number}{item.text ? `: ${item.text}` : ""}
               </option>
             ))}
           </select>
@@ -1110,34 +1252,38 @@ export function QuestionLibraryPage({ state, updateState }) {
         </div>
         <div className="search-box">
           <Search size={17} />
-          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search questions" />
+          <input aria-label="Search questions" value={query} onChange={(event) => setQuery(event.target.value)} />
         </div>
       </div>
       <Panel>
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr><th>Question</th><th>Answer</th><th>Category</th><th>Difficulty</th><th>Last used</th><th>Approved</th><th>Source</th></tr>
-            </thead>
-            <tbody>
-              {filtered.map((question) => (
-                <tr key={question.id}>
-                  <td>{question.text}</td>
-                  <td>{question.answer}</td>
-                  <td>{question.category}</td>
-                  <td>{question.difficulty}</td>
-                  <td>{question.lastUsed || "Never"}</td>
-                  <td>
-                    <button className={question.approved ? "score-button good text" : "score-button text"} onClick={() => approveQuestion(question.id)}>
-                      {question.approved ? "Approved" : "Needs review"}
-                    </button>
-                  </td>
-                  <td>{question.source}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {filtered.length ? (
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Question</th><th>Answer</th><th>Category</th><th>Difficulty</th><th>Last used</th><th>Approved</th><th>Source</th></tr>
+              </thead>
+              <tbody>
+                {filtered.map((question) => (
+                  <tr key={question.id}>
+                    <td>{question.text}</td>
+                    <td>{question.answer}</td>
+                    <td>{question.category}</td>
+                    <td>{question.difficulty}</td>
+                    <td>{question.lastUsed || "Never"}</td>
+                    <td>
+                      <button className={question.approved ? "score-button good text" : "score-button text"} onClick={() => approveQuestion(question.id)}>
+                        {question.approved ? "Approved" : "Needs review"}
+                      </button>
+                    </td>
+                    <td>{question.source}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <EmptyState icon={Library} title="No library questions" detail="Questions you save for reuse will appear here." />
+        )}
       </Panel>
     </main>
   );
@@ -1169,14 +1315,20 @@ export function MediaLibraryPage({ state, updateState }) {
         </label>
       </div>
       <section className="media-grid">
-        {state.media.map((item) => (
-          <Panel key={item.id} className="media-card">
-            <div className="media-icon">{item.type === "Audio" ? <Volume2 size={28} /> : <ImageIcon size={28} />}</div>
-            <strong>{item.name}</strong>
-            <span>{item.usage}</span>
-            <StatusPill tone={item.status === "Matched" || item.status === "Ready" ? "good" : "warn"}>{item.status}</StatusPill>
+        {state.media.length ? (
+          state.media.map((item) => (
+            <Panel key={item.id} className="media-card">
+              <div className="media-icon">{item.type === "Audio" ? <Volume2 size={28} /> : <ImageIcon size={28} />}</div>
+              <strong>{item.name}</strong>
+              <span>{item.usage}</span>
+              <StatusPill tone={item.status === "Matched" || item.status === "Ready" ? "good" : "warn"}>{item.status}</StatusPill>
+            </Panel>
+          ))
+        ) : (
+          <Panel className="wide-panel">
+            <EmptyState icon={Upload} title="No media uploaded" detail="Upload images or audio files when a round needs them." />
           </Panel>
-        ))}
+        )}
       </section>
     </main>
   );
@@ -1232,36 +1384,40 @@ export function TeamsPage({ state, updateState }) {
       </div>
       <Panel title="Add a team">
         <div className="inline-form">
-          <input value={teamName} onChange={(event) => setTeamName(event.target.value)} placeholder="Team name" />
+          <input aria-label="Team name" value={teamName} onChange={(event) => setTeamName(event.target.value)} />
           <button className="primary-button compact" onClick={addTeam}><Plus size={15} /> Add team</button>
         </div>
       </Panel>
       <Panel>
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr><th>Rank</th><th>Team</th><th>Table</th><th>Players</th><th>Registered</th><th>Score</th><th>Adjust</th></tr>
-            </thead>
-            <tbody>
-              {leaderboard.map((team, index) => (
-                <tr key={team.id}>
-                  <td>{index + 1}</td>
-                  <td>{team.name}</td>
-                  <td>{team.table || "-"}</td>
-                  <td>{team.players}</td>
-                  <td>{team.registeredAt}</td>
-                  <td><strong>{team.score}</strong></td>
-                  <td>
-                    <div className="button-row-inline">
-                      <button className="score-button text" onClick={() => adjustScore(team.id, -1)}>-1</button>
-                      <button className="score-button text" onClick={() => adjustScore(team.id, 1)}>+1</button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {leaderboard.length ? (
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Rank</th><th>Team</th><th>Table</th><th>Players</th><th>Registered</th><th>Score</th><th>Adjust</th></tr>
+              </thead>
+              <tbody>
+                {leaderboard.map((team, index) => (
+                  <tr key={team.id}>
+                    <td>{index + 1}</td>
+                    <td>{team.name}</td>
+                    <td>{team.table || "-"}</td>
+                    <td>{team.players}</td>
+                    <td>{team.registeredAt}</td>
+                    <td><strong>{team.score}</strong></td>
+                    <td>
+                      <div className="button-row-inline">
+                        <button className="score-button text" onClick={() => adjustScore(team.id, -1)}>-1</button>
+                        <button className="score-button text" onClick={() => adjustScore(team.id, 1)}>+1</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <EmptyState icon={Users} title="No teams registered" detail="Teams can join from the team link, or you can add them here." />
+        )}
       </Panel>
     </main>
   );
@@ -1275,6 +1431,7 @@ export function MarkingPage({ state, updateState }) {
   const answers = getQuestionAnswers(state, question?.id);
 
   function mark(teamId, score) {
+    if (!question) return;
     updateState((current) => ({
       ...current,
       answers: {
@@ -1298,9 +1455,11 @@ export function MarkingPage({ state, updateState }) {
           <h1>Marking</h1>
           <p>Auto suggestions are useful, but the quizmaster has final control.</p>
         </div>
-        <select className="question-select" value={question?.id} onChange={(event) => setQuestionId(event.target.value)}>
-          {questions.map((item) => <option key={item.id} value={item.id}>{item.roundTitle} - Q{item.number}</option>)}
-        </select>
+        {questions.length ? (
+          <select className="question-select" value={question?.id ?? ""} onChange={(event) => setQuestionId(event.target.value)}>
+            {questions.map((item) => <option key={item.id} value={item.id}>{item.roundTitle || "Round"} - Q{item.number}</option>)}
+          </select>
+        ) : null}
       </div>
       <Panel title={question ? `Question: ${question.text}` : "No question selected"}>
         {question ? (
@@ -1329,7 +1488,7 @@ export function MarkingPage({ state, updateState }) {
                         type="number"
                         min="0"
                         step="0.5"
-                        placeholder="Custom"
+                        aria-label={`Custom score for ${team.name}`}
                         onBlur={(event) => event.target.value && mark(team.id, Number(event.target.value))}
                       />
                     </div>
@@ -1339,7 +1498,7 @@ export function MarkingPage({ state, updateState }) {
             </div>
           </div>
         ) : (
-          <EmptyState icon={ClipboardList} title="No answers yet" detail="Start a live session to collect submissions." />
+          <EmptyState icon={ClipboardList} title="No questions to mark" detail="Build a quiz and collect answers before marking." />
         )}
       </Panel>
     </main>
@@ -1351,6 +1510,7 @@ export function ResultsPage({ state, updateState }) {
   const quiz = getSelectedQuiz(state);
 
   function completeQuiz() {
+    if (!quiz) return;
     updateState((current) =>
       updateQuiz(current, current.selectedQuizId, (item) => ({
         ...item,
@@ -1367,25 +1527,33 @@ export function ResultsPage({ state, updateState }) {
           <h1>Results</h1>
           <p>Reveal scores during the quiz, publish final results, and keep completed quizzes for review.</p>
         </div>
-        <button className="primary-button" onClick={completeQuiz}><Save size={16} /> Save completed quiz</button>
+        <button className="primary-button" onClick={completeQuiz} disabled={!quiz}><Save size={16} /> Save completed quiz</button>
       </div>
       <section className="results-grid">
         <Panel title="Final leaderboard">
-          <LeaderboardList leaderboard={leaderboard} />
+          {leaderboard.length ? (
+            <LeaderboardList leaderboard={leaderboard} />
+          ) : (
+            <EmptyState icon={BarChart3} title="No leaderboard yet" detail="Teams and marked answers will appear here." />
+          )}
         </Panel>
         <Panel title="Completed archive">
-          <div className="stack-list">
-            {state.quizzes.filter((item) => item.status === "Completed").map((item) => (
-              <div className="list-row" key={item.id}>
-                <div>
-                  <strong>{item.title}</strong>
-                  <span>{item.date} - {item.venue}</span>
-                  <small>{item.finalLeaderboard?.[0]?.[0] ? `Winner: ${item.finalLeaderboard[0][0]}` : "No final leaderboard saved"}</small>
+          {state.quizzes.some((item) => item.status === "Completed") ? (
+            <div className="stack-list">
+              {state.quizzes.filter((item) => item.status === "Completed").map((item) => (
+                <div className="list-row" key={item.id}>
+                  <div>
+                    <strong>{quizDisplayName(item)}</strong>
+                    <span>{[item.date, item.venue].filter(Boolean).join(" - ") || "No date or venue set"}</span>
+                    <small>{item.finalLeaderboard?.[0]?.[0] ? `Winner: ${item.finalLeaderboard[0][0]}` : "No final leaderboard saved"}</small>
+                  </div>
+                  <StatusPill>Completed</StatusPill>
                 </div>
-                <StatusPill>Completed</StatusPill>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState icon={Archive} title="No completed quizzes" detail="Completed quizzes will be listed here." />
+          )}
         </Panel>
         <Panel title="Projection controls">
           <div className="screen-controls">
@@ -1400,8 +1568,8 @@ export function ResultsPage({ state, updateState }) {
             ))}
           </div>
           <div className="answer-key">
-            <span>Saved result set</span>
-            <strong>{quiz.status}</strong>
+            <span>Current quiz</span>
+            <strong>{quiz ? quizDisplayName(quiz) : "No quiz selected"}</strong>
             <small>{leaderboard.length} teams included</small>
           </div>
         </Panel>
@@ -1411,34 +1579,46 @@ export function ResultsPage({ state, updateState }) {
 }
 
 export function SettingsPage({ state, updateState, resetState }) {
+  const quiz = getSelectedQuiz(state);
+
   return (
     <main className="page">
       <div className="page-title-row">
         <div>
           <h1>Settings</h1>
-          <p>Host account, venue defaults, submission safety, and privacy controls.</p>
+          <p>Workspace and live-room controls for this browser session.</p>
         </div>
       </div>
       <section className="settings-grid">
-        <Panel title="Host account">
+        <Panel title="Live room">
           <div className="form-grid">
-            <label>Host name<input value="John" readOnly /></label>
-            <label>Login policy<input value="Quizmaster account required" readOnly /></label>
-            <label className="checkbox-line span-2"><input type="checkbox" defaultChecked /> Keep quizmaster view private from team links</label>
-            <label className="checkbox-line span-2"><input type="checkbox" defaultChecked /> Persist submissions locally before syncing</label>
+            <label>Join code<input value={state.joinCode} readOnly /></label>
+            <label>Status<select value={state.live.status} onChange={(event) => updateState((current) => ({ ...current, live: { ...current.live, status: event.target.value } }))}>
+              {["Setup", "Ready", "Live", "Paused", "Completed"].map((status) => <option key={status}>{status}</option>)}
+            </select></label>
+            <label className="checkbox-line span-2">
+              <input
+                type="checkbox"
+                checked={state.live.registrationOpen}
+                onChange={(event) => updateState((current) => ({ ...current, live: { ...current.live, registrationOpen: event.target.checked } }))}
+              />
+              Team registration open
+            </label>
           </div>
         </Panel>
-        <Panel title="Venue defaults">
-          <div className="form-grid">
-            <label>Default venue<input value={getSelectedQuiz(state).venue} onChange={(event) => updateState((current) => updateQuiz(current, current.selectedQuizId, (quiz) => ({ ...quiz, venue: event.target.value })))} /></label>
-            <label>Team limit<input value="24" readOnly /></label>
-            <label>Audio playback<select defaultValue="host-only"><option value="host-only">Quizmaster device only</option><option value="team-optional">Optional on team devices</option></select></label>
-            <label>Submission rule<select defaultValue="editable"><option value="editable">One answer, editable until locked</option><option value="final">First submission is final</option></select></label>
-          </div>
+        <Panel title="Selected quiz">
+          {quiz ? (
+            <div className="form-grid">
+              <label>Venue<input value={quiz.venue} onChange={(event) => updateState((current) => updateQuiz(current, current.selectedQuizId, (item) => ({ ...item, venue: event.target.value })))} /></label>
+              <label>Time<input type="time" value={quiz.time} onChange={(event) => updateState((current) => updateQuiz(current, current.selectedQuizId, (item) => ({ ...item, time: event.target.value })))} /></label>
+            </div>
+          ) : (
+            <EmptyState icon={Settings} title="No quiz selected" detail="Create a quiz before editing quiz-specific settings." />
+          )}
         </Panel>
-        <Panel title="Demo data">
-          <p className="panel-copy">Reset returns the app to the seeded MVP state and clears the registered team for this browser.</p>
-          <button className="danger-soft-button" onClick={resetState}><RefreshCcw size={16} /> Reset local demo</button>
+        <Panel title="Workspace">
+          <p className="panel-copy">Clearing the workspace removes quizzes, teams, answers, media, and local team registration from this browser.</p>
+          <button className="danger-soft-button" onClick={resetState}><RefreshCcw size={16} /> Clear workspace</button>
         </Panel>
       </section>
     </main>

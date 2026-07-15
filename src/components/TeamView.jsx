@@ -26,6 +26,8 @@ function getStoredTeamId() {
 }
 
 function TeamChrome({ children }) {
+  const joinUrl = `${window.location.host}${window.location.pathname}#/join`;
+
   return (
     <main className="team-page">
       <div className="phone-shell">
@@ -40,7 +42,7 @@ function TeamChrome({ children }) {
             <Menu size={20} />
           </button>
         </header>
-        <div className="phone-url">join.quizmaster.pro</div>
+        <div className="phone-url">{joinUrl}</div>
         {children}
       </div>
     </main>
@@ -88,8 +90,8 @@ function JoinForm({ state, updateState, onRegistered }) {
           </div>
         ) : null}
         <form onSubmit={submit} className="team-form">
-          <label>Team name<input value={teamName} onChange={(event) => setTeamName(event.target.value)} placeholder="The Brain Trust" /></label>
-          <label>Table or PIN<input value={pin} onChange={(event) => setPin(event.target.value)} placeholder="Optional" /></label>
+          <label>Team name<input value={teamName} onChange={(event) => setTeamName(event.target.value)} /></label>
+          <label>Table or PIN<input value={pin} onChange={(event) => setPin(event.target.value)} /></label>
           <label>Number of players<input type="number" min="1" value={players} onChange={(event) => setPlayers(event.target.value)} /></label>
           <button className="primary-button" disabled={!state.live.registrationOpen}>
             <UserPlus size={16} />
@@ -183,21 +185,21 @@ export default function TeamView({ state, updateState }) {
         </div>
         <div className="team-question-meta">
           <div>
-            <strong>{round.title}</strong>
+            <strong>{round.title || "Round"}</strong>
             <span>Question {question.number} of {round.questions.length}</span>
           </div>
           <span className="status-pill good">{pointsLabel(question.points)}</span>
         </div>
         {question.image ? (
           <div className="team-media-frame">
-            <img src={question.image} alt="Current picture round sheet" />
+            <img src={question.image} alt="Question media" />
           </div>
-        ) : (
+        ) : question.audio ? (
           <div className="team-audio-frame">
             <Volume2 size={25} />
-            <span>Audio plays from the quizmaster device</span>
+            <span>{question.audio}</span>
           </div>
-        )}
+        ) : null}
         <h1>{question.text}</h1>
         <form onSubmit={submitAnswer} className="team-answer-form">
           <div className="answer-label-row">
@@ -213,7 +215,6 @@ export default function TeamView({ state, updateState }) {
             onChange={(event) => setAnswerText(event.target.value)}
             disabled={state.live.locked}
             maxLength={100}
-            placeholder="Type your answer"
           />
           <div className="char-count">{answerText.length} / 100</div>
           <button className="primary-button full-width" disabled={state.live.locked || !answerText.trim()}>
