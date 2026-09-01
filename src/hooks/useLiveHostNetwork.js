@@ -58,6 +58,7 @@ export function useLiveHostNetwork(state, updateState) {
     }
 
     let cancelled = false;
+    let reconnectTimer;
     setStatus("connecting");
 
     loadPeerJs()
@@ -67,7 +68,17 @@ export function useLiveHostNetwork(state, updateState) {
         peerRef.current = peer;
 
         peer.on("open", () => setStatus("online"));
-        peer.on("disconnected", () => setStatus("reconnecting"));
+        peer.on("disconnected", () => {
+          if (cancelled) return;
+          setStatus("reconnecting");
+          reconnectTimer = window.setTimeout(() => {
+            try {
+              if (!peer.destroyed && peer.disconnected) peer.reconnect();
+            } catch {
+              setStatus("error");
+            }
+          }, 1200);
+        });
         peer.on("error", (error) => {
           setStatus(error?.type === "unavailable-id" ? "code-conflict" : "error");
         });
@@ -113,6 +124,7 @@ export function useLiveHostNetwork(state, updateState) {
 
     return () => {
       cancelled = true;
+      window.clearTimeout(reconnectTimer);
       connectionsRef.current.forEach((conn) => conn.close());
       connectionsRef.current.clear();
       refreshConnectedTokens();
