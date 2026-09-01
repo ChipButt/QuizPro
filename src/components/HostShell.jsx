@@ -17,6 +17,7 @@ import {
 import { useMemo, useState } from "react";
 import { navItems } from "../data/seed.js";
 import { getSelectedQuiz } from "../utils/quiz.js";
+import DocxQuizImport from "./DocxQuizImport.jsx";
 import {
   DashboardPage,
   LiveQuizPage,
@@ -121,7 +122,12 @@ export default function HostShell({ state, updateState, resetState }) {
       case "Dashboard":
         return <DashboardPage {...props} />;
       case "Quizzes":
-        return <QuizzesPage {...props} />;
+        return (
+          <>
+            <DocxQuizImport updateState={updateState} />
+            <QuizzesPage {...props} />
+          </>
+        );
       case "Media Library":
         return <MediaLibraryPage {...props} />;
       case "Teams":
