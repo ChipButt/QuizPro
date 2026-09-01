@@ -1,5 +1,5 @@
 import { createId } from "./src/utils/quiz.js";
-import { importQuizDocx } from "./src/utils/docxImport.js";
+import { importQuizDocx } from "./src/utils/docxImport.js?v=20260901-2";
 
 const STORAGE_KEY = "quizmaster-pro-state-v2";
 const ADDON_ID = "quizpro-docx-import-addon";
@@ -21,7 +21,7 @@ function buildImportedQuiz(parsed) {
       id: createId("round"),
       title: round.title,
       type: round.type,
-      instructions: "",
+      instructions: round.instructions || "",
       scoringRules: "",
       order: roundIndex + 1,
       questions: round.questions.map((question, questionIndex) => ({
@@ -130,8 +130,11 @@ function buildUi() {
       const parsed = await importQuizDocx(file);
       const quiz = buildImportedQuiz(parsed);
       saveImportedQuiz(quiz);
-      status.textContent = `Imported ${parsed.rounds.length} rounds and ${parsed.questionCount} questions. Reloading...`;
-      setTimeout(() => window.location.reload(), 350);
+      const warningText = parsed.warnings.length
+        ? ` ${parsed.warnings.length} item${parsed.warnings.length === 1 ? "" : "s"} will be listed in the quiz Notes for checking.`
+        : "";
+      status.textContent = `Imported ${parsed.rounds.length} rounds and ${parsed.questionCount} questions.${warningText} Reloading...`;
+      setTimeout(() => window.location.reload(), 500);
     } catch (error) {
       status.textContent = error?.message || "The Word document could not be imported.";
       button.disabled = false;
@@ -146,14 +149,10 @@ function buildUi() {
 
 function installAddon() {
   if (document.getElementById(ADDON_ID)) return;
-
-  // If a future compiled build already contains the native importer, do not add a duplicate.
   const nativeButton = [...document.querySelectorAll("button")].find((button) => button.textContent?.trim() === "Upload .docx");
   if (nativeButton) return;
-
   const page = document.querySelector("main.quizzes-page");
   if (!page) return;
-
   const titleRow = page.querySelector(".page-title-row");
   if (titleRow) titleRow.insertAdjacentElement("afterend", buildUi());
   else page.prepend(buildUi());
