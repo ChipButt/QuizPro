@@ -167,6 +167,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   const hostQuestionIndex = Math.max(0, Number(snapshot?.live?.questionIndex ?? 0));
   const question = questions[viewIndex] ?? questions[questions.length - 1] ?? null;
   const roundLocked = Boolean(snapshot?.round?.forceLocked || snapshot?.round?.teamLocked || (snapshot?.live?.timerActive && countdown <= 0));
+  const questionLocked = roundLocked || Boolean(question?.revealed);
   const screen = snapshot?.live?.teamScreen ?? "lobby";
 
   useEffect(() => {
@@ -193,13 +194,13 @@ export default function TeamView({ sessionCode, teamToken }) {
   );
 
   function setDraft(value) {
-    if (!question) return;
+    if (!question || questionLocked) return;
     setDrafts((current) => ({ ...current, [question.id]: value }));
   }
 
   function saveAnswer(event) {
     event?.preventDefault?.();
-    if (!question || roundLocked || !draft.trim()) return;
+    if (!question || questionLocked || !draft.trim()) return;
     send({ type: "save-answer", questionId: question.id, text: draft.trim() });
   }
 
@@ -214,7 +215,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   if (!snapshot.team.nameLocked) return <TeamNameScreen snapshot={snapshot} send={send} status={status} />;
   if (screen === "leaderboard") return <LeaderboardScreen snapshot={snapshot} status={status} />;
   if (screen === "final") return <FinalScreen snapshot={snapshot} status={status} />;
-  if (!question || ["lobby", "round_locked"].includes(screen) && !questions.length) return <WaitingScreen snapshot={snapshot} status={status} />;
+  if (!question || (["lobby", "round_locked"].includes(screen) && !questions.length)) return <WaitingScreen snapshot={snapshot} status={status} />;
 
   return (
     <TeamChrome status={status}>
@@ -236,6 +237,8 @@ export default function TeamView({ sessionCode, teamToken }) {
 
         {screen === "round_locked" || roundLocked ? (
           <div className="round-locked-banner"><Lock size={17} /> Round answers locked</div>
+        ) : question?.revealed ? (
+          <div className="round-locked-banner"><Lock size={17} /> This question is locked because its answer has been revealed</div>
         ) : null}
 
         <div className="team-question-nav">
@@ -252,7 +255,7 @@ export default function TeamView({ sessionCode, teamToken }) {
         {question.type === "Multiple choice" && question.options?.length ? (
           <div className="team-choice-list live-choice-list">
             {question.options.filter(Boolean).map((option, index) => (
-              <button type="button" key={index} disabled={roundLocked} className={draft === option ? "selected" : ""} onClick={() => setDraft(option)}>
+              <button type="button" key={index} disabled={questionLocked} className={draft === option ? "selected" : ""} onClick={() => setDraft(option)}>
                 <span>{String.fromCharCode(65 + index)}</span>{option}
               </button>
             ))}
@@ -261,8 +264,8 @@ export default function TeamView({ sessionCode, teamToken }) {
 
         <form onSubmit={saveAnswer} className="team-answer-form live-answer-form">
           <div className="answer-label-row"><label>Your answer</label><span>{savedAnswer ? "Saved" : "Not saved"}</span></div>
-          <textarea value={draft} onChange={(event) => setDraft(event.target.value)} disabled={roundLocked} maxLength={500} placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"} />
-          <button className="primary-button full-width" disabled={roundLocked || !draft.trim()}><Send size={16} /> {savedAnswer ? "Save amended answer" : "Save answer"}</button>
+          <textarea value={draft} onChange={(event) => setDraft(event.target.value)} disabled={questionLocked} maxLength={500} placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"} />
+          <button className="primary-button full-width" disabled={questionLocked || !draft.trim()}><Send size={16} /> {savedAnswer ? "Save amended answer" : "Save answer"}</button>
         </form>
 
         {question.revealed ? (
@@ -274,7 +277,7 @@ export default function TeamView({ sessionCode, teamToken }) {
           <button className="team-lock-round-button" disabled={roundLocked || !questions.length} onClick={lockRound}><Lock size={16} /> {snapshot.round?.teamLocked ? "Round locked in" : "Lock in round"}</button>
         </div>
 
-        {!roundLocked ? <div className="team-edit-reminder"><Users size={15} /> You can move back through any question already sent and change your answers until this round is locked.</div> : null}
+        {!roundLocked ? <div className="team-edit-reminder"><Users size={15} /> You can move back through any unrevealed question already sent and change your answers until this round is locked.</div> : null}
       </section>
     </TeamChrome>
   );
