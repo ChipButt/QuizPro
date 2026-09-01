@@ -14,17 +14,30 @@ function createJoinCode() {
 }
 
 export function createInitialState() {
+  const sessionCode = createJoinCode();
   return {
-    joinCode: createJoinCode(),
+    joinCode: sessionCode,
     selectedQuizId: "",
     live: {
+      quizId: "",
+      sessionCode,
+      sessionActive: false,
       status: "Setup",
       screen: "setup",
+      teamScreen: "lobby",
       registrationOpen: false,
       roundIndex: 0,
-      questionIndex: 0,
+      questionIndex: -1,
       locked: false,
       answerRevealed: false,
+      revealMode: "round",
+      revealedQuestions: {},
+      revealedRounds: {},
+      forceLockedRounds: {},
+      timerActive: false,
+      timerEndsAt: 0,
+      timerRoundId: "",
+      finalRevealCount: 0,
       elapsedSeconds: 0,
       questionSecondsRemaining: 0,
       audio: {
@@ -37,6 +50,7 @@ export function createInitialState() {
     media: [],
     quizzes: [],
     teams: [],
+    teamRoundLocks: {},
     answers: {},
   };
 }
