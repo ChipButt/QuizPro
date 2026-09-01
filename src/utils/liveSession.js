@@ -175,6 +175,7 @@ export function applyTeamMessage(state, teamToken, message) {
     const maxQuestionIndex = Math.max(-1, Number(state.live?.questionIndex ?? -1));
     const questionIndex = round.questions.findIndex((item) => item.id === message.questionId);
     if (!question || questionIndex < 0 || questionIndex > maxQuestionIndex) return state;
+    if (questionIsRevealed(state, round.id, question.id)) return state;
 
     const text = String(message.text ?? "").trim().slice(0, 500);
     if (!text) return state;
