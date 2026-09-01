@@ -1,262 +1,280 @@
 import {
+  ArrowLeft,
+  ArrowRight,
   CheckCircle2,
-  ChevronRight,
   Crown,
   Lock,
-  Menu,
   Send,
   Timer,
-  UserPlus,
-  Volume2,
+  Trophy,
+  Users,
+  Wifi,
+  WifiOff,
 } from "lucide-react";
-import { useMemo, useState } from "react";
-import {
-  autoScoreAnswer,
-  computeLeaderboard,
-  createId,
-  formatClock,
-  getCurrentQuestion,
-  getCurrentRound,
-  getQuestionAnswers,
-  pointsLabel,
-} from "../utils/quiz.js";
+import { useEffect, useMemo, useState } from "react";
+import { useLiveTeamNetwork } from "../hooks/useLiveTeamNetwork.js";
 
-function getStoredTeamId() {
-  return window.localStorage.getItem("quizmaster-pro-team-id") ?? "";
-}
-
-function TeamChrome({ children }) {
-  const joinUrl = `${window.location.host}${window.location.pathname}#/join`;
-
+function TeamChrome({ children, status }) {
   return (
-    <main className="team-page">
-      <div className="phone-shell">
-        <header className="phone-topbar">
+    <main className="team-page live-team-page">
+      <div className="phone-shell live-phone-shell">
+        <header className="phone-topbar live-phone-topbar">
           <div className="brand-lockup">
-            <span className="brand-mark">
-              <Crown size={19} />
-            </span>
+            <span className="brand-mark"><Crown size={19} /></span>
             <strong>Quizmaster<span>Pro</span></strong>
           </div>
-          <button className="phone-menu" aria-label="Team menu">
-            <Menu size={20} />
-          </button>
+          <span className={`team-live-status ${status === "online" ? "online" : "offline"}`}>
+            {status === "online" ? <Wifi size={15} /> : <WifiOff size={15} />}
+            {status === "online" ? "Live" : status}
+          </span>
         </header>
-        <div className="phone-url">{joinUrl}</div>
         {children}
       </div>
     </main>
   );
 }
 
-function JoinForm({ state, updateState, onRegistered }) {
-  const [teamName, setTeamName] = useState("");
-  const [pin, setPin] = useState("");
-  const [players, setPlayers] = useState(4);
+function useCountdown(endsAt, active) {
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    if (!active || !endsAt) {
+      setSeconds(0);
+      return undefined;
+    }
+    const tick = () => setSeconds(Math.max(0, Math.ceil((Number(endsAt) - Date.now()) / 1000)));
+    tick();
+    const timer = window.setInterval(tick, 250);
+    return () => window.clearInterval(timer);
+  }, [active, endsAt]);
+  return seconds;
+}
+
+function ConnectionScreen({ status, error }) {
+  return (
+    <TeamChrome status={status}>
+      <section className="team-card live-team-card connection-card">
+        {status === "error" ? <WifiOff size={36} /> : <Wifi size={36} />}
+        <h1>{status === "error" ? "Team link unavailable" : "Connecting to the quizmaster…"}</h1>
+        <p>{error || "Keep this page open. Your team page will appear as soon as the quizmaster connection is ready."}</p>
+      </section>
+    </TeamChrome>
+  );
+}
+
+function TeamNameScreen({ snapshot, send, status }) {
+  const [name, setName] = useState("");
 
   function submit(event) {
     event.preventDefault();
-    if (!teamName.trim()) return;
-    const id = createId("team");
-    updateState((current) => ({
-      ...current,
-      teams: [
-        ...current.teams,
-        {
-          id,
-          name: teamName.trim(),
-          table: pin,
-          players: Number(players),
-          registeredAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          approved: true,
-          scoreAdjustment: 0,
-        },
-      ],
-    }));
-    window.localStorage.setItem("quizmaster-pro-team-id", id);
-    onRegistered(id);
+    const clean = name.trim();
+    if (!clean) return;
+    send({ type: "set-team-name", name: clean });
   }
 
   return (
-    <TeamChrome>
-      <section className="team-card">
-        <span className="status-pill live">Join code {state.joinCode}</span>
-        <h1>Register your team</h1>
-        <p>One device per team. You can edit each answer until the host locks submissions.</p>
-        {!state.live.registrationOpen ? (
-          <div className="team-alert">
-            <Lock size={17} />
-            Registration is currently closed.
-          </div>
-        ) : null}
-        <form onSubmit={submit} className="team-form">
-          <label>Team name<input value={teamName} onChange={(event) => setTeamName(event.target.value)} /></label>
-          <label>Table or PIN<input value={pin} onChange={(event) => setPin(event.target.value)} /></label>
-          <label>Number of players<input type="number" min="1" value={players} onChange={(event) => setPlayers(event.target.value)} /></label>
-          <button className="primary-button" disabled={!state.live.registrationOpen}>
-            <UserPlus size={16} />
-            Register team
-          </button>
+    <TeamChrome status={status}>
+      <section className="team-card live-team-card team-name-card">
+        <div className="team-ticket">
+          <span>YOUR TEAM</span>
+          <strong>Table {snapshot.team?.table || "—"}</strong>
+          <small>{snapshot.team?.players || 1} player{Number(snapshot.team?.players || 1) === 1 ? "" : "s"}</small>
+        </div>
+        <div className="team-name-burst">🎉</div>
+        <h1>Give your team a name</h1>
+        <p>This is what everyone will see on the leaderboard. Choose wisely.</p>
+        <form className="team-name-form" onSubmit={submit}>
+          <label htmlFor="team-name">TEAM NAME</label>
+          <input id="team-name" autoFocus maxLength={60} value={name} onChange={(event) => setName(event.target.value)} placeholder="The Quizzy Rascals" />
+          <button className="primary-button full-width" disabled={!name.trim()}><Lock size={16} /> Lock in team name</button>
         </form>
       </section>
     </TeamChrome>
   );
 }
 
-function WaitingRoom({ team, state }) {
+function WaitingScreen({ snapshot, status }) {
   return (
-    <TeamChrome>
-      <section className="team-card">
+    <TeamChrome status={status}>
+      <section className="team-card live-team-card waiting-team-card">
         <div className="registered-box">
-          <CheckCircle2 size={18} />
-          <div>
-            <span>Registered</span>
-            <strong>{team.name}</strong>
-          </div>
+          <CheckCircle2 size={19} />
+          <div><span>READY TO PLAY</span><strong>{snapshot.team.name}</strong></div>
         </div>
-        <h1>Waiting for the host</h1>
-        <p>The quizmaster controls what appears here. Keep this page open.</p>
-        <div className="score-strip">
-          <span>Current screen</span>
-          <strong>{state.live.screen}</strong>
+        <div className="team-ticket small">
+          <span>TABLE</span><strong>{snapshot.team.table || "—"}</strong><small>{snapshot.team.players} player{Number(snapshot.team.players) === 1 ? "" : "s"}</small>
         </div>
+        <h1>Waiting for the next question</h1>
+        <p>The quizmaster controls what appears here. You do not need a room code or another login.</p>
+        <div className="team-wait-pulse"><span /><span /><span /></div>
       </section>
     </TeamChrome>
   );
 }
 
-export default function TeamView({ state, updateState }) {
-  const [teamId, setTeamId] = useState(getStoredTeamId);
-  const team = state.teams.find((item) => item.id === teamId);
-  const round = getCurrentRound(state);
-  const question = getCurrentQuestion(state);
-  const answers = getQuestionAnswers(state, question?.id);
-  const existingAnswer = team ? answers[team.id] : null;
-  const [answerText, setAnswerText] = useState(existingAnswer?.text ?? "");
-  const leaderboard = useMemo(() => computeLeaderboard(state), [state]);
-  const teamRank = leaderboard.findIndex((item) => item.id === team?.id) + 1;
-  const teamScore = leaderboard.find((item) => item.id === team?.id)?.score ?? 0;
-  const audioLabel = question?.audioName || (question?.audio?.startsWith("data:") ? "Attached audio" : question?.audio);
+function LeaderboardScreen({ snapshot, status }) {
+  const ownId = snapshot.team?.id;
+  return (
+    <TeamChrome status={status}>
+      <section className="team-card live-team-card team-leaderboard-card">
+        <Trophy size={36} />
+        <h1>Leaderboard</h1>
+        <p>Current standings after marking so far.</p>
+        <ol className="team-live-leaderboard">
+          {snapshot.leaderboard.map((team, index) => (
+            <li key={team.id} className={team.id === ownId ? "ours" : ""}>
+              <span>{index + 1}</span><strong>{team.name}</strong><b>{team.score}</b>
+            </li>
+          ))}
+        </ol>
+      </section>
+    </TeamChrome>
+  );
+}
 
-  if (!team) {
-    return <JoinForm state={state} updateState={updateState} onRegistered={setTeamId} />;
-  }
+function FinalScreen({ snapshot, status }) {
+  const count = Number(snapshot.live?.finalRevealCount ?? 0);
+  const full = snapshot.leaderboard ?? [];
+  const revealed = full.slice().reverse().slice(0, count);
+  return (
+    <TeamChrome status={status}>
+      <section className="team-card live-team-card team-final-card">
+        <Trophy size={42} />
+        <h1>Final results</h1>
+        <p>Places are being revealed from last to first.</p>
+        <div className="team-final-list">
+          {revealed.map((team) => {
+            const place = full.findIndex((item) => item.id === team.id) + 1;
+            return (
+              <div key={team.id} className={place === 1 ? "winner" : ""}>
+                <span>{place}</span><strong>{team.name}</strong><b>{team.score} pts</b>
+              </div>
+            );
+          })}
+        </div>
+        {!count ? <div className="waiting-note"><Timer size={16} /> Waiting for the first place to be revealed…</div> : null}
+      </section>
+    </TeamChrome>
+  );
+}
 
-  if (!question || ["welcome", "team registration", "break"].includes(state.live.screen)) {
-    return <WaitingRoom team={team} state={state} />;
-  }
+export default function TeamView({ sessionCode, teamToken }) {
+  const { snapshot, status, error, send } = useLiveTeamNetwork(sessionCode, teamToken);
+  const [viewIndex, setViewIndex] = useState(0);
+  const [drafts, setDrafts] = useState({});
+  const countdown = useCountdown(snapshot?.live?.timerEndsAt, snapshot?.live?.timerActive);
 
-  function submitAnswer(event) {
-    event.preventDefault();
-    if (!answerText.trim() || state.live.locked) return;
-    updateState((current) => {
-      const currentQuestion = getCurrentQuestion(current);
-      const suggestion = currentQuestion.autoMark
-        ? autoScoreAnswer(currentQuestion, answerText)
-        : { score: null, status: "pending", reason: "Manual marking" };
-      return {
-        ...current,
-        answers: {
-          ...current.answers,
-          [currentQuestion.id]: {
-            ...getQuestionAnswers(current, currentQuestion.id),
-            [team.id]: {
-              text: answerText.trim(),
-              submittedAt: formatClock(current.live.elapsedSeconds),
-              status: suggestion.status,
-              score: suggestion.status === "correct" ? suggestion.score : null,
-              reason: suggestion.reason,
-            },
-          },
-        },
-      };
+  const questions = snapshot?.round?.questions ?? [];
+  const hostQuestionIndex = Math.max(0, Number(snapshot?.live?.questionIndex ?? 0));
+  const question = questions[viewIndex] ?? questions[questions.length - 1] ?? null;
+  const roundLocked = Boolean(snapshot?.round?.forceLocked || snapshot?.round?.teamLocked || (snapshot?.live?.timerActive && countdown <= 0));
+  const screen = snapshot?.live?.teamScreen ?? "lobby";
+
+  useEffect(() => {
+    if (!snapshot) return;
+    setDrafts((current) => {
+      const next = { ...current };
+      for (const [questionId, answer] of Object.entries(snapshot.teamAnswers ?? {})) {
+        if (!(questionId in next)) next[questionId] = answer.text ?? "";
+      }
+      return next;
     });
+  }, [snapshot]);
+
+  useEffect(() => {
+    if (!questions.length) return;
+    setViewIndex(Math.min(hostQuestionIndex, questions.length - 1));
+  }, [hostQuestionIndex, questions.length, snapshot?.round?.id]);
+
+  const savedAnswer = question ? snapshot?.teamAnswers?.[question.id] : null;
+  const draft = question ? drafts[question.id] ?? savedAnswer?.text ?? "" : "";
+  const answeredCount = useMemo(
+    () => questions.filter((item) => String(drafts[item.id] ?? snapshot?.teamAnswers?.[item.id]?.text ?? "").trim()).length,
+    [drafts, questions, snapshot?.teamAnswers],
+  );
+
+  function setDraft(value) {
+    if (!question) return;
+    setDrafts((current) => ({ ...current, [question.id]: value }));
   }
+
+  function saveAnswer(event) {
+    event?.preventDefault?.();
+    if (!question || roundLocked || !draft.trim()) return;
+    send({ type: "save-answer", questionId: question.id, text: draft.trim() });
+  }
+
+  function lockRound() {
+    if (roundLocked) return;
+    const okay = window.confirm("Lock in this round? You will not be able to change any answers unless the quizmaster re-opens the round.");
+    if (okay) send({ type: "lock-round" });
+  }
+
+  if (!snapshot) return <ConnectionScreen status={status} error={error} />;
+  if (!snapshot.team) return <ConnectionScreen status="error" error="This team QR code is no longer valid. Ask the quizmaster to generate a new one." />;
+  if (!snapshot.team.nameLocked) return <TeamNameScreen snapshot={snapshot} send={send} status={status} />;
+  if (screen === "leaderboard") return <LeaderboardScreen snapshot={snapshot} status={status} />;
+  if (screen === "final") return <FinalScreen snapshot={snapshot} status={status} />;
+  if (!question || ["lobby", "round_locked"].includes(screen) && !questions.length) return <WaitingScreen snapshot={snapshot} status={status} />;
 
   return (
-    <TeamChrome>
-      <section className="team-card compact">
-        <div className="registered-box">
-          <CheckCircle2 size={18} />
-          <div>
-            <span>Registered</span>
-            <strong>{team.name}</strong>
-          </div>
-          <button onClick={() => window.localStorage.removeItem("quizmaster-pro-team-id")}>Edit team</button>
+    <TeamChrome status={status}>
+      <section className="team-card live-team-card question-team-card">
+        <div className="team-question-topline">
+          <div><span>{snapshot.round?.title || "Round"}</span><strong>{snapshot.team.name}</strong></div>
+          <div className="team-question-progress">{answeredCount}/{questions.length} answered</div>
         </div>
-        <div className="team-question-meta">
-          <div>
-            <strong>{round.title || "Round"}</strong>
-            <span>Question {question.number} of {round.questions.length}</span>
-          </div>
-          <span className="status-pill good">{pointsLabel(question.points)}</span>
-        </div>
-        {question.image ? (
-          <div className="team-media-frame">
-            <img src={question.image} alt={question.imageName || "Question media"} />
-          </div>
-        ) : question.audio ? (
-          <div className="team-audio-frame">
-            <Volume2 size={25} />
-            <span>{audioLabel}</span>
-            {question.audio.startsWith("data:") || question.audio.startsWith("http") ? (
-              <audio controls src={question.audio} />
-            ) : null}
+
+        {snapshot.live?.timerActive ? (
+          <div className={`team-lock-countdown ${countdown <= 10 ? "urgent" : ""}`}>
+            <Timer size={18} /><span>Answers lock in</span><strong>{countdown}s</strong>
           </div>
         ) : null}
-        <h1>{question.text}</h1>
-        {question.type === "Multiple choice" && question.options?.some((option) => option.trim()) ? (
-          <div className="team-choice-list">
-            {question.options.map((option, index) => (
-              option.trim() ? <button type="button" key={index} onClick={() => setAnswerText(option)}>{option}</button> : null
+
+        {screen === "round_review" ? (
+          <div className="round-review-banner"><CheckCircle2 size={18} /><div><strong>Review your round</strong><span>Go back through any question and amend your answer, then lock in the whole round.</span></div></div>
+        ) : null}
+
+        {screen === "round_locked" || roundLocked ? (
+          <div className="round-locked-banner"><Lock size={17} /> Round answers locked</div>
+        ) : null}
+
+        <div className="team-question-nav">
+          <button disabled={viewIndex <= 0} onClick={() => setViewIndex((index) => Math.max(0, index - 1))}><ArrowLeft size={17} /></button>
+          <div><span>QUESTION</span><strong>{question.number ?? viewIndex + 1}</strong><small>of {snapshot.round?.totalQuestions ?? questions.length}</small></div>
+          <button disabled={viewIndex >= questions.length - 1} onClick={() => setViewIndex((index) => Math.min(questions.length - 1, index + 1))}><ArrowRight size={17} /></button>
+        </div>
+
+        {question.image ? <div className="team-media-frame live-team-image"><img src={question.image} alt={question.imageName || "Question"} /></div> : null}
+        {question.audio ? <div className="team-audio-frame"><span>{question.audioName || "Audio question"}</span><audio controls src={question.audio} /></div> : null}
+
+        <h1 className="team-question-text">{question.text}</h1>
+
+        {question.type === "Multiple choice" && question.options?.length ? (
+          <div className="team-choice-list live-choice-list">
+            {question.options.filter(Boolean).map((option, index) => (
+              <button type="button" key={index} disabled={roundLocked} className={draft === option ? "selected" : ""} onClick={() => setDraft(option)}>
+                <span>{String.fromCharCode(65 + index)}</span>{option}
+              </button>
             ))}
           </div>
         ) : null}
-        <form onSubmit={submitAnswer} className="team-answer-form">
-          <div className="answer-label-row">
-            <label>Your answer</label>
-            {state.live.locked ? (
-              <span><Lock size={13} /> Locked</span>
-            ) : (
-              <span>{state.live.questionSecondsRemaining}s remaining</span>
-            )}
-          </div>
-          <textarea
-            value={answerText}
-            onChange={(event) => setAnswerText(event.target.value)}
-            disabled={state.live.locked}
-            maxLength={100}
-          />
-          <div className="char-count">{answerText.length} / 100</div>
-          <button className="primary-button full-width" disabled={state.live.locked || !answerText.trim()}>
-            <Send size={16} />
-            {existingAnswer ? "Update Answer" : "Submit Answer"}
-          </button>
+
+        <form onSubmit={saveAnswer} className="team-answer-form live-answer-form">
+          <div className="answer-label-row"><label>Your answer</label><span>{savedAnswer ? "Saved" : "Not saved"}</span></div>
+          <textarea value={draft} onChange={(event) => setDraft(event.target.value)} disabled={roundLocked} maxLength={500} placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"} />
+          <button className="primary-button full-width" disabled={roundLocked || !draft.trim()}><Send size={16} /> {savedAnswer ? "Save amended answer" : "Save answer"}</button>
         </form>
-        {existingAnswer ? (
-          <div className="submitted-row">
-            <CheckCircle2 size={17} />
-            <span>Answer submitted</span>
-            <time>{existingAnswer.submittedAt}</time>
-          </div>
+
+        {question.revealed ? (
+          <div className="answer-reveal phone-reveal"><span>Correct answer</span><strong>{question.answer}</strong><small>Your answer: {savedAnswer?.text || draft || "No answer"}{savedAnswer?.score !== undefined ? ` · ${savedAnswer.score ?? 0} point(s)` : ""}</small></div>
         ) : null}
-        {state.live.answerRevealed ? (
-          <div className="answer-reveal phone-reveal">
-            <span>Correct answer</span>
-            <strong>{question.answer}</strong>
-            <small>Your mark: {existingAnswer?.score ?? "waiting for host"}</small>
-          </div>
-        ) : null}
-        <div className="team-score-card">
-          <span>Score so far</span>
-          <strong>{pointsLabel(teamScore)}</strong>
-          <small>{teamRank ? `Rank ${teamRank}` : "Waiting for first score"}</small>
-          <a href="#scores">View team scores <ChevronRight size={14} /></a>
+
+        <div className="team-round-footer">
+          <div><span>Round progress</span><strong>{answeredCount} of {questions.length} answered</strong></div>
+          <button className="team-lock-round-button" disabled={roundLocked || !questions.length} onClick={lockRound}><Lock size={16} /> {snapshot.round?.teamLocked ? "Round locked in" : "Lock in round"}</button>
         </div>
-        <div className="waiting-note">
-          <Timer size={16} />
-          {state.live.answerRevealed ? "Waiting for host to move on..." : "Waiting for host to reveal..."}
-        </div>
+
+        {!roundLocked ? <div className="team-edit-reminder"><Users size={15} /> You can move back through any question already sent and change your answers until this round is locked.</div> : null}
       </section>
     </TeamChrome>
   );
