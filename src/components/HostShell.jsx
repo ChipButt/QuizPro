@@ -8,7 +8,6 @@ import {
   Gauge,
   Home,
   Image,
-  Monitor,
   Radio,
   Settings,
   SlidersHorizontal,
@@ -16,18 +15,18 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { navItems } from "../data/seed.js";
+import { useLiveHostNetwork } from "../hooks/useLiveHostNetwork.js";
 import { getSelectedQuiz } from "../utils/quiz.js";
 import DocxQuizImport from "./DocxQuizImport.jsx";
 import {
   DashboardPage,
-  LiveQuizPage,
   MarkingPage,
   MediaLibraryPage,
   QuizzesPage,
   ResultsPage,
   SettingsPage,
-  TeamsPage,
 } from "./HostPages.jsx";
+import { LiveRunnerPage, TeamManagerPage } from "./LiveHostPages.jsx";
 
 const iconMap = {
   Dashboard: Home,
@@ -44,31 +43,21 @@ function Sidebar({ activePage, setActivePage, collapsed, setCollapsed }) {
   return (
     <aside className={collapsed ? "sidebar collapsed" : "sidebar"}>
       <div className="brand-lockup sidebar-brand">
-        <span className="brand-mark">
-          <Crown size={23} />
-        </span>
+        <span className="brand-mark"><Crown size={23} /></span>
         <strong>Quizmaster<span>Pro</span></strong>
       </div>
       <nav className="side-nav" aria-label="Host navigation">
         {navItems.map((item) => {
           const Icon = iconMap[item];
           return (
-            <button
-              key={item}
-              className={item === activePage ? "nav-item active" : "nav-item"}
-              onClick={() => setActivePage(item)}
-            >
-              <Icon size={18} />
-              <span>{item}</span>
+            <button key={item} className={item === activePage ? "nav-item active" : "nav-item"} onClick={() => setActivePage(item)}>
+              <Icon size={18} /><span>{item}</span>
             </button>
           );
         })}
       </nav>
       <div className="sidebar-footer">
-        <button className="nav-item" onClick={() => setCollapsed(!collapsed)}>
-          <ChevronsLeft size={18} />
-          <span>Collapse</span>
-        </button>
+        <button className="nav-item" onClick={() => setCollapsed(!collapsed)}><ChevronsLeft size={18} /><span>Collapse</span></button>
       </div>
     </aside>
   );
@@ -76,14 +65,9 @@ function Sidebar({ activePage, setActivePage, collapsed, setCollapsed }) {
 
 function TopBar({ state, resetState, setActivePage }) {
   const quiz = getSelectedQuiz(state);
-  const teamUrl = `${window.location.origin}${window.location.pathname}#/join/${state.joinCode}`;
   const quizTitle = quiz?.title?.trim() || "Quiz builder";
   const dateLabel = quiz?.date
-    ? new Date(`${quiz.date}T12:00:00`).toLocaleDateString(undefined, {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      })
+    ? new Date(`${quiz.date}T12:00:00`).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })
     : "";
 
   return (
@@ -96,17 +80,9 @@ function TopBar({ state, resetState, setActivePage }) {
         {quiz?.time ? <span>{quiz.time}</span> : null}
       </div>
       <div className="topbar-actions">
-        <a className="ghost-button" href={teamUrl} target="_blank" rel="noreferrer">
-          <Monitor size={16} />
-          Team link
-        </a>
-        <button className="icon-button" aria-label="Display settings" onClick={() => setActivePage("Settings")}>
-          <SlidersHorizontal size={17} />
-        </button>
-        <button className="ghost-button" onClick={resetState}>
-          <Gauge size={16} />
-          Clear workspace
-        </button>
+        <button className="ghost-button" onClick={() => setActivePage("Live Quiz")}><Radio size={16} /> Live control</button>
+        <button className="icon-button" aria-label="Display settings" onClick={() => setActivePage("Settings")}><SlidersHorizontal size={17} /></button>
+        <button className="ghost-button" onClick={resetState}><Gauge size={16} /> Clear workspace</button>
       </div>
     </header>
   );
@@ -115,9 +91,10 @@ function TopBar({ state, resetState, setActivePage }) {
 export default function HostShell({ state, updateState, resetState }) {
   const [activePage, setActivePage] = useState("Quizzes");
   const [collapsed, setCollapsed] = useState(false);
+  const network = useLiveHostNetwork(state, updateState);
 
   const page = useMemo(() => {
-    const props = { state, updateState, setActivePage };
+    const props = { state, updateState, setActivePage, network };
     switch (activePage) {
       case "Dashboard":
         return <DashboardPage {...props} />;
@@ -131,7 +108,7 @@ export default function HostShell({ state, updateState, resetState }) {
       case "Media Library":
         return <MediaLibraryPage {...props} />;
       case "Teams":
-        return <TeamsPage {...props} />;
+        return <TeamManagerPage {...props} />;
       case "Marking":
         return <MarkingPage {...props} />;
       case "Results":
@@ -140,18 +117,13 @@ export default function HostShell({ state, updateState, resetState }) {
         return <SettingsPage {...props} resetState={resetState} />;
       case "Live Quiz":
       default:
-        return <LiveQuizPage {...props} />;
+        return <LiveRunnerPage {...props} />;
     }
-  }, [activePage, resetState, state, updateState]);
+  }, [activePage, network, resetState, state, updateState]);
 
   return (
     <div className={collapsed ? "host-app sidebar-collapsed" : "host-app"}>
-      <Sidebar
-        activePage={activePage}
-        collapsed={collapsed}
-        setActivePage={setActivePage}
-        setCollapsed={setCollapsed}
-      />
+      <Sidebar activePage={activePage} collapsed={collapsed} setActivePage={setActivePage} setCollapsed={setCollapsed} />
       <div className="host-main">
         <TopBar state={state} resetState={resetState} setActivePage={setActivePage} />
         {page}
