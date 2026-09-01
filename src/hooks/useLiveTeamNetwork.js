@@ -38,12 +38,28 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
     let cancelled = false;
     let retryTimer;
 
+    function closeTransport() {
+      try { connectionRef.current?.close(); } catch { /* ignore */ }
+      try { peerRef.current?.destroy(); } catch { /* ignore */ }
+      connectionRef.current = null;
+      peerRef.current = null;
+    }
+
+    function retry() {
+      if (cancelled) return;
+      window.clearTimeout(retryTimer);
+      closeTransport();
+      retryTimer = window.setTimeout(connect, 1600);
+    }
+
     async function connect() {
+      if (cancelled) return;
       setStatus("connecting");
       setError("");
       try {
         const Peer = await loadPeerJs();
         if (cancelled) return;
+        closeTransport();
         const peer = new Peer();
         peerRef.current = peer;
 
@@ -54,6 +70,7 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
 
           conn.on("open", () => {
             setStatus("online");
+            setError("");
             conn.send({ type: "hello", teamToken });
           });
           conn.on("data", (message) => {
@@ -70,20 +87,22 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
           conn.on("close", () => {
             if (cancelled) return;
             setStatus("reconnecting");
-            retryTimer = window.setTimeout(connect, 1800);
+            setError("Connection lost. Rejoining the quizmaster…");
+            retry();
           });
           conn.on("error", () => {
             if (cancelled) return;
             setStatus("reconnecting");
+            retry();
           });
         });
 
         peer.on("error", (peerError) => {
           if (cancelled) return;
-          if (["peer-unavailable", "network", "server-error", "socket-error"].includes(peerError?.type)) {
+          if (["peer-unavailable", "network", "server-error", "socket-error", "disconnected"].includes(peerError?.type)) {
             setStatus("reconnecting");
-            setError("Trying to reconnect to the quizmaster...");
-            retryTimer = window.setTimeout(connect, 1800);
+            setError("Trying to reconnect to the quizmaster…");
+            retry();
           } else {
             setStatus("error");
             setError(peerError?.message || "Could not connect to the quizmaster.");
@@ -91,8 +110,9 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
         });
       } catch (connectError) {
         if (cancelled) return;
-        setStatus("error");
-        setError(connectError?.message || "Could not start the live connection.");
+        setStatus("reconnecting");
+        setError(connectError?.message || "Could not start the live connection. Retrying…");
+        retry();
       }
     }
 
@@ -101,10 +121,7 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
     return () => {
       cancelled = true;
       window.clearTimeout(retryTimer);
-      connectionRef.current?.close();
-      peerRef.current?.destroy();
-      connectionRef.current = null;
-      peerRef.current = null;
+      closeTransport();
     };
   }, [sessionCode, teamToken]);
 
