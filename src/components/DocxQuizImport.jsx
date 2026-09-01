@@ -20,7 +20,7 @@ function buildImportedQuiz(parsed) {
       id: createId("round"),
       title: round.title,
       type: round.type,
-      instructions: "",
+      instructions: round.instructions || "",
       scoringRules: "",
       order: roundIndex + 1,
       questions: round.questions.map((question, questionIndex) => ({
@@ -93,11 +93,9 @@ export default function DocxQuizImport({ updateState }) {
       <div style={{ minWidth: 240, flex: "1 1 420px" }}>
         <strong style={{ display: "block", marginBottom: 4 }}>Import an existing Word quiz</strong>
         <span style={{ opacity: 0.72, fontSize: 14 }}>
-          Upload a .docx containing Round headings, questions and labelled answers. It will create an editable draft quiz automatically.
+          Upload a .docx containing round headings, questions and answers. It will create an editable draft quiz automatically.
         </span>
-        {status ? (
-          <div style={{ marginTop: 8, fontSize: 13, fontWeight: 600 }}>{status}</div>
-        ) : null}
+        {status ? <div style={{ marginTop: 8, fontSize: 13, fontWeight: 600 }}>{status}</div> : null}
       </div>
 
       <input
