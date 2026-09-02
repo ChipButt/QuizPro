@@ -7,6 +7,7 @@ import "./team-answer-state.css";
 import "./github-library.css";
 import "./simplified-ui.css";
 import "./quiz-taker-v2.css";
+import "./planuf-soft-ui.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
