@@ -8,10 +8,11 @@ import {
   Timer,
   Trophy,
   Users,
+  Volume2,
   Wifi,
   WifiOff,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLiveTeamNetwork } from "../hooks/useLiveTeamNetwork.js";
 
 function TeamChrome({ children, status }) {
@@ -161,6 +162,8 @@ export default function TeamView({ sessionCode, teamToken }) {
   const { snapshot, status, error, send } = useLiveTeamNetwork(sessionCode, teamToken);
   const [viewIndex, setViewIndex] = useState(0);
   const [drafts, setDrafts] = useState({});
+  const [audioBlocked, setAudioBlocked] = useState(false);
+  const teamAudioRef = useRef(null);
   const countdown = useCountdown(snapshot?.live?.timerEndsAt, snapshot?.live?.timerActive);
 
   const questions = snapshot?.round?.questions ?? [];
@@ -185,6 +188,31 @@ export default function TeamView({ sessionCode, teamToken }) {
     if (!questions.length) return;
     setViewIndex(Math.min(hostQuestionIndex, questions.length - 1));
   }, [hostQuestionIndex, questions.length, snapshot?.round?.id]);
+
+  useEffect(() => {
+    const audio = teamAudioRef.current;
+    if (!audio || !question?.audio) return;
+    const control = snapshot?.live?.audio ?? {};
+    if (control.questionId !== question.id) {
+      audio.pause();
+      try { audio.currentTime = 0; } catch { /* ignored */ }
+      return;
+    }
+
+    const elapsed = control.playing && control.startedAt ? Math.max(0, (Date.now() - Number(control.startedAt)) / 1000) : 0;
+    const target = Math.max(0, Number(control.offset || 0) + elapsed);
+    if (Number.isFinite(target) && Math.abs((audio.currentTime || 0) - target) > 0.8) {
+      try { audio.currentTime = target; } catch { /* media may not be ready yet */ }
+    }
+    audio.volume = Math.max(0, Math.min(1, Number(control.volume ?? 1)));
+
+    if (control.playing) {
+      audio.play().then(() => setAudioBlocked(false)).catch(() => setAudioBlocked(true));
+    } else {
+      audio.pause();
+      setAudioBlocked(false);
+    }
+  }, [question?.id, question?.audio, snapshot?.live?.audio?.playing, snapshot?.live?.audio?.questionId, snapshot?.live?.audio?.startedAt, snapshot?.live?.audio?.offset, snapshot?.live?.audio?.volume]);
 
   const savedAnswer = question ? snapshot?.teamAnswers?.[question.id] : null;
   const draft = question ? drafts[question.id] ?? savedAnswer?.text ?? "" : "";
@@ -214,6 +242,12 @@ export default function TeamView({ sessionCode, teamToken }) {
     if (!canLockRound) return;
     const okay = window.confirm("Lock in this round? You will not be able to change any answers unless the quizmaster re-opens the round.");
     if (okay) send({ type: "lock-round" });
+  }
+
+  function enableAudio() {
+    const audio = teamAudioRef.current;
+    if (!audio) return;
+    audio.play().then(() => setAudioBlocked(false)).catch(() => setAudioBlocked(true));
   }
 
   if (!snapshot) return <ConnectionScreen status={status} error={error} />;
@@ -254,7 +288,14 @@ export default function TeamView({ sessionCode, teamToken }) {
         </div>
 
         {question.image ? <div className="team-media-frame live-team-image"><img src={question.image} alt={question.imageName || "Question"} /></div> : null}
-        {question.audio ? <div className="team-audio-frame"><span>{question.audioName || "Audio question"}</span><audio controls src={question.audio} /></div> : null}
+        {question.audio ? (
+          <div className="team-audio-frame host-controlled-audio">
+            <Volume2 size={18} />
+            <div><strong>{question.audioName || "Music question"}</strong><span>Audio is controlled by the quizmaster.</span></div>
+            <audio ref={teamAudioRef} preload="auto" src={question.audio} />
+            {audioBlocked ? <button type="button" className="ghost-button compact" onClick={enableAudio}>Tap once to enable quiz audio</button> : null}
+          </div>
+        ) : null}
 
         <h1 className="team-question-text">{question.text}</h1>
 
