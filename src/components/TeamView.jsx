@@ -3,11 +3,11 @@ import {
   ArrowRight,
   CheckCircle2,
   Crown,
+  KeyRound,
   Lock,
-  Send,
+  RotateCcw,
   Timer,
   Trophy,
-  Users,
   Volume2,
   Wifi,
   WifiOff,
@@ -25,7 +25,7 @@ function TeamChrome({ children, status }) {
             <strong>Quizmaster<span>Pro</span></strong>
           </div>
           <span className={`team-live-status ${status === "online" ? "online" : "offline"}`}>
-            {status === "online" ? <Wifi size={15} /> : <WifiOff size={15} />}
+            {status === "online" ? <Wifi size={14} /> : <WifiOff size={14} />}
             {status === "online" ? "Live" : status}
           </span>
         </header>
@@ -55,8 +55,8 @@ function ConnectionScreen({ status, error }) {
     <TeamChrome status={status}>
       <section className="team-card live-team-card connection-card">
         {status === "error" ? <WifiOff size={36} /> : <Wifi size={36} />}
-        <h1>{status === "error" ? "Team link unavailable" : "Connecting to the quizmaster…"}</h1>
-        <p>{error || "Keep this page open. Your team page will appear as soon as the quizmaster connection is ready."}</p>
+        <h1>{status === "error" ? "Team link unavailable" : "Connecting…"}</h1>
+        {error ? <p>{error}</p> : null}
       </section>
     </TeamChrome>
   );
@@ -82,11 +82,19 @@ function TeamNameScreen({ snapshot, send, status }) {
         </div>
         <div className="team-name-burst">🎉</div>
         <h1>Give your team a name</h1>
-        <p>This is what everyone will see on the leaderboard. Choose wisely.</p>
         <form className="team-name-form" onSubmit={submit}>
           <label htmlFor="team-name">TEAM NAME</label>
-          <input id="team-name" autoFocus maxLength={60} value={name} onChange={(event) => setName(event.target.value)} placeholder="The Quizzy Rascals" />
-          <button className="primary-button full-width" disabled={!name.trim()}><Lock size={16} /> Lock in team name</button>
+          <input
+            id="team-name"
+            autoFocus
+            maxLength={60}
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder="The Quizzy Rascals"
+          />
+          <button className="primary-button full-width" disabled={!name.trim()}>
+            <Lock size={16} /> Lock in team name
+          </button>
         </form>
       </section>
     </TeamChrome>
@@ -99,13 +107,12 @@ function WaitingScreen({ snapshot, status }) {
       <section className="team-card live-team-card waiting-team-card">
         <div className="registered-box">
           <CheckCircle2 size={19} />
-          <div><span>READY TO PLAY</span><strong>{snapshot.team.name}</strong></div>
+          <div><span>READY</span><strong>{snapshot.team.name}</strong></div>
         </div>
         <div className="team-ticket small">
           <span>TABLE</span><strong>{snapshot.team.table || "—"}</strong><small>{snapshot.team.players} player{Number(snapshot.team.players) === 1 ? "" : "s"}</small>
         </div>
         <h1>Waiting for the next question</h1>
-        <p>The quizmaster controls what appears here. You do not need a room code or another login.</p>
         <div className="team-wait-pulse"><span /><span /><span /></div>
       </section>
     </TeamChrome>
@@ -117,9 +124,8 @@ function LeaderboardScreen({ snapshot, status }) {
   return (
     <TeamChrome status={status}>
       <section className="team-card live-team-card team-leaderboard-card">
-        <Trophy size={36} />
+        <Trophy size={34} />
         <h1>Leaderboard</h1>
-        <p>Current standings after marking so far.</p>
         <ol className="team-live-leaderboard">
           {snapshot.leaderboard.map((team, index) => (
             <li key={team.id} className={team.id === ownId ? "ours" : ""}>
@@ -139,9 +145,8 @@ function FinalScreen({ snapshot, status }) {
   return (
     <TeamChrome status={status}>
       <section className="team-card live-team-card team-final-card">
-        <Trophy size={42} />
+        <Trophy size={40} />
         <h1>Final results</h1>
-        <p>Places are being revealed from last to first.</p>
         <div className="team-final-list">
           {revealed.map((team) => {
             const place = full.findIndex((item) => item.id === team.id) + 1;
@@ -152,7 +157,6 @@ function FinalScreen({ snapshot, status }) {
             );
           })}
         </div>
-        {!count ? <div className="waiting-note"><Timer size={16} /> Waiting for the first place to be revealed…</div> : null}
       </section>
     </TeamChrome>
   );
@@ -164,12 +168,17 @@ export default function TeamView({ sessionCode, teamToken }) {
   const [drafts, setDrafts] = useState({});
   const [audioBlocked, setAudioBlocked] = useState(false);
   const teamAudioRef = useRef(null);
+  const lastPlayNonceRef = useRef(0);
   const countdown = useCountdown(snapshot?.live?.timerEndsAt, snapshot?.live?.timerActive);
 
   const questions = snapshot?.round?.questions ?? [];
   const hostQuestionIndex = Math.max(0, Number(snapshot?.live?.questionIndex ?? 0));
   const question = questions[viewIndex] ?? questions[questions.length - 1] ?? null;
-  const roundLocked = Boolean(snapshot?.round?.forceLocked || snapshot?.round?.teamLocked || (snapshot?.live?.timerActive && countdown <= 0));
+  const roundLocked = Boolean(
+    snapshot?.round?.forceLocked ||
+    snapshot?.round?.teamLocked ||
+    (snapshot?.live?.timerActive && countdown <= 0)
+  );
   const questionLocked = roundLocked || Boolean(question?.revealed);
   const screen = snapshot?.live?.teamScreen ?? "lobby";
 
@@ -191,32 +200,19 @@ export default function TeamView({ sessionCode, teamToken }) {
 
   useEffect(() => {
     const audio = teamAudioRef.current;
-    if (!audio || !question?.audio) return;
     const control = snapshot?.live?.audio ?? {};
-    if (control.questionId !== question.id) {
-      audio.pause();
-      try { audio.currentTime = 0; } catch { /* ignored */ }
-      return;
-    }
+    const nonce = Number(control.playNonce ?? 0);
+    if (!audio || !question?.audio || control.questionId !== question.id || !nonce) return;
+    if (nonce <= lastPlayNonceRef.current) return;
+    lastPlayNonceRef.current = nonce;
 
-    const elapsed = control.playing && control.startedAt ? Math.max(0, (Date.now() - Number(control.startedAt)) / 1000) : 0;
-    const target = Math.max(0, Number(control.offset || 0) + elapsed);
-    if (Number.isFinite(target) && Math.abs((audio.currentTime || 0) - target) > 0.8) {
-      try { audio.currentTime = target; } catch { /* media may not be ready yet */ }
-    }
-    audio.volume = Math.max(0, Math.min(1, Number(control.volume ?? 1)));
-
-    if (control.playing) {
-      audio.play().then(() => setAudioBlocked(false)).catch(() => setAudioBlocked(true));
-    } else {
-      audio.pause();
-      setAudioBlocked(false);
-    }
-  }, [question?.id, question?.audio, snapshot?.live?.audio?.playing, snapshot?.live?.audio?.questionId, snapshot?.live?.audio?.startedAt, snapshot?.live?.audio?.offset, snapshot?.live?.audio?.volume]);
+    audio.pause();
+    try { audio.currentTime = 0; } catch { /* media may still be loading */ }
+    audio.play().then(() => setAudioBlocked(false)).catch(() => setAudioBlocked(true));
+  }, [question?.id, question?.audio, snapshot?.live?.audio?.questionId, snapshot?.live?.audio?.playNonce]);
 
   const savedAnswer = question ? snapshot?.teamAnswers?.[question.id] : null;
   const draft = question ? drafts[question.id] ?? savedAnswer?.text ?? "" : "";
-  const answerIsSaved = Boolean(savedAnswer) && draft.trim() === String(savedAnswer?.text ?? "").trim();
   const answeredCount = useMemo(
     () => questions.filter((item) => String(drafts[item.id] ?? snapshot?.teamAnswers?.[item.id]?.text ?? "").trim()).length,
     [drafts, questions, snapshot?.teamAnswers],
@@ -224,111 +220,160 @@ export default function TeamView({ sessionCode, teamToken }) {
   const totalRoundQuestions = Number(snapshot?.round?.totalQuestions ?? 0);
   const finalQuestion = questions[questions.length - 1] ?? null;
   const finalQuestionReleased = totalRoundQuestions > 0 && questions.length >= totalRoundQuestions;
-  const finalQuestionAnswered = Boolean(finalQuestion && String(snapshot?.teamAnswers?.[finalQuestion.id]?.text ?? "").trim());
+  const finalQuestionAnswered = Boolean(
+    finalQuestion && String(drafts[finalQuestion.id] ?? snapshot?.teamAnswers?.[finalQuestion.id]?.text ?? "").trim()
+  );
   const canLockRound = !roundLocked && finalQuestionReleased && finalQuestionAnswered;
+
+  useEffect(() => {
+    if (!question || questionLocked || status !== "online") return undefined;
+    const currentText = String(savedAnswer?.text ?? "").trim();
+    const nextText = String(draft ?? "").trim();
+    if (currentText === nextText) return undefined;
+
+    const timer = window.setTimeout(() => {
+      send({ type: "save-answer", questionId: question.id, text: nextText });
+    }, 450);
+    return () => window.clearTimeout(timer);
+  }, [draft, question?.id, questionLocked, savedAnswer?.text, send, status]);
 
   function setDraft(value) {
     if (!question || questionLocked) return;
     setDrafts((current) => ({ ...current, [question.id]: value }));
   }
 
-  function saveAnswer(event) {
-    event?.preventDefault?.();
-    if (!question || questionLocked || !draft.trim()) return;
-    send({ type: "save-answer", questionId: question.id, text: draft.trim() });
+  function chooseAnswer(option) {
+    if (!question || questionLocked) return;
+    setDrafts((current) => ({ ...current, [question.id]: option }));
+    send({ type: "save-answer", questionId: question.id, text: option });
   }
 
   function lockRound() {
     if (!canLockRound) return;
-    const okay = window.confirm("Lock in this round? You will not be able to change any answers unless the quizmaster re-opens the round.");
+    const okay = window.confirm("Lock in this round? Answers cannot be changed after this.");
     if (okay) send({ type: "lock-round" });
   }
 
-  function enableAudio() {
+  function replayAudio() {
     const audio = teamAudioRef.current;
     if (!audio) return;
+    audio.pause();
+    try { audio.currentTime = 0; } catch { /* ignored */ }
     audio.play().then(() => setAudioBlocked(false)).catch(() => setAudioBlocked(true));
   }
 
   if (!snapshot) return <ConnectionScreen status={status} error={error} />;
-  if (!snapshot.team) return <ConnectionScreen status="error" error="This team QR code is no longer valid. Ask the quizmaster to generate a new one." />;
+  if (!snapshot.team) return <ConnectionScreen status="error" error="This team QR code is no longer valid." />;
   if (!snapshot.team.nameLocked) return <TeamNameScreen snapshot={snapshot} send={send} status={status} />;
   if (screen === "leaderboard") return <LeaderboardScreen snapshot={snapshot} status={status} />;
   if (screen === "final") return <FinalScreen snapshot={snapshot} status={status} />;
-  if (!question || (["lobby", "round_locked"].includes(screen) && !questions.length)) return <WaitingScreen snapshot={snapshot} status={status} />;
+  if (!question || (["lobby", "round_locked"].includes(screen) && !questions.length)) {
+    return <WaitingScreen snapshot={snapshot} status={status} />;
+  }
+
+  const isMultipleChoice = question.type === "Multiple choice" && question.options?.length;
+  const isTextEntry = !isMultipleChoice;
+  const correctAnswer = String(question.answer ?? "").trim();
 
   return (
     <TeamChrome status={status}>
       <section className="team-card live-team-card question-team-card">
         <div className="team-question-topline">
           <div><span>{snapshot.round?.title || "Round"}</span><strong>{snapshot.team.name}</strong></div>
-          <div className="team-question-progress">{answeredCount}/{questions.length} answered</div>
+          <div className="team-question-progress">{answeredCount}/{totalRoundQuestions || questions.length}</div>
         </div>
 
         {snapshot.live?.timerActive ? (
           <div className={`team-lock-countdown ${countdown <= 10 ? "urgent" : ""}`}>
-            <Timer size={18} /><span>Answers lock in</span><strong>{countdown}s</strong>
+            <Timer size={17} /><span>Locks in</span><strong>{countdown}s</strong>
           </div>
-        ) : null}
-
-        {screen === "round_review" ? (
-          <div className="round-review-banner"><CheckCircle2 size={18} /><div><strong>Review your round</strong><span>Go back through any question and amend your answer, then lock in the whole round.</span></div></div>
-        ) : null}
-
-        {screen === "round_locked" || roundLocked ? (
-          <div className="round-locked-banner"><Lock size={17} /> Round answers locked</div>
-        ) : question?.revealed ? (
-          <div className="round-locked-banner"><Lock size={17} /> This question is locked because its answer has been revealed</div>
         ) : null}
 
         <div className="team-question-nav">
-          <button disabled={viewIndex <= 0} onClick={() => setViewIndex((index) => Math.max(0, index - 1))}><ArrowLeft size={17} /></button>
-          <div><span>QUESTION</span><strong>{question.number ?? viewIndex + 1}</strong><small>of {snapshot.round?.totalQuestions ?? questions.length}</small></div>
-          <button disabled={viewIndex >= questions.length - 1} onClick={() => setViewIndex((index) => Math.min(questions.length - 1, index + 1))}><ArrowRight size={17} /></button>
+          <button disabled={viewIndex <= 0} onClick={() => setViewIndex((index) => Math.max(0, index - 1))}>
+            <ArrowLeft size={17} />
+          </button>
+          <div><span>QUESTION</span><strong>{question.number ?? viewIndex + 1}</strong><small>of {totalRoundQuestions || questions.length}</small></div>
+          <button disabled={viewIndex >= questions.length - 1} onClick={() => setViewIndex((index) => Math.min(questions.length - 1, index + 1))}>
+            <ArrowRight size={17} />
+          </button>
         </div>
 
-        {question.image ? <div className="team-media-frame live-team-image"><img src={question.image} alt={question.imageName || "Question"} /></div> : null}
-        {question.audio ? (
-          <div className="team-audio-frame host-controlled-audio">
-            <Volume2 size={18} />
-            <div><strong>{question.audioName || "Music question"}</strong><span>Audio is controlled by the quizmaster.</span></div>
-            <audio ref={teamAudioRef} preload="auto" src={question.audio} />
-            {audioBlocked ? <button type="button" className="ghost-button compact" onClick={enableAudio}>Tap once to enable quiz audio</button> : null}
+        <div className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${question.revealed ? "is-revealed" : ""}`}>
+          {questionLocked ? <span className="question-lock-key" aria-label="Question locked"><KeyRound size={18} /></span> : null}
+
+          <div className="team-question-core lockable-zone">
+            {question.image ? (
+              <div className="team-media-frame live-team-image">
+                <img src={question.image} alt={question.imageName || "Question"} />
+              </div>
+            ) : null}
+
+            {question.audio ? (
+              <div className="team-audio-frame compact-team-audio">
+                <Volume2 size={17} />
+                <strong>{question.audioName || "Audio question"}</strong>
+                <audio ref={teamAudioRef} preload="auto" src={question.audio} />
+                <button type="button" className="audio-replay-button" onClick={replayAudio}>
+                  <RotateCcw size={15} /> {audioBlocked ? "Play audio" : "Replay"}
+                </button>
+              </div>
+            ) : null}
+
+            <h1 className="team-question-text">{question.text}</h1>
           </div>
-        ) : null}
 
-        <h1 className="team-question-text">{question.text}</h1>
+          <div className="team-answer-zone lockable-zone">
+            {isMultipleChoice ? (
+              <div className="team-choice-list live-choice-list">
+                {question.options.filter(Boolean).map((option, index) => {
+                  const selected = draft === option;
+                  const correct = question.revealed && correctAnswer === String(option).trim();
+                  return (
+                    <button
+                      type="button"
+                      key={index}
+                      disabled={questionLocked}
+                      className={`${selected ? "selected" : ""} ${correct ? "correct-reveal" : ""}`}
+                      onClick={() => chooseAnswer(option)}
+                    >
+                      <span>{String.fromCharCode(65 + index)}</span>{option}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
 
-        {question.type === "Multiple choice" && question.options?.length ? (
-          <div className="team-choice-list live-choice-list">
-            {question.options.filter(Boolean).map((option, index) => (
-              <button type="button" key={index} disabled={questionLocked} className={draft === option ? "selected" : ""} onClick={() => setDraft(option)}>
-                <span>{String.fromCharCode(65 + index)}</span>{option}
-              </button>
-            ))}
+            {isTextEntry ? (
+              <div className="answer-input-shell">
+                <textarea
+                  className={draft.trim() ? "has-answer" : ""}
+                  value={draft}
+                  onChange={(event) => setDraft(event.target.value)}
+                  disabled={questionLocked}
+                  maxLength={500}
+                  placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"}
+                />
+                {question.revealed ? (
+                  <div className="revealed-answer-pill">
+                    <CheckCircle2 size={18} />
+                    <span>ANSWER</span>
+                    <strong>{question.answer}</strong>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
           </div>
-        ) : null}
+        </div>
 
-        <form onSubmit={saveAnswer} className="team-answer-form live-answer-form">
-          <div className="answer-label-row"><label>Your answer</label><span>{answerIsSaved ? "Saved" : savedAnswer ? "Unsaved changes" : "Not saved"}</span></div>
-          <textarea className={answerIsSaved ? "saved-answer" : ""} value={draft} onChange={(event) => setDraft(event.target.value)} disabled={questionLocked} maxLength={500} placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"} />
-          <button className="primary-button full-width" disabled={questionLocked || !draft.trim()}><Send size={16} /> {savedAnswer ? "Save amended answer" : "Save answer"}</button>
-        </form>
-
-        {question.revealed ? (
-          <div className="answer-reveal phone-reveal"><span>Correct answer</span><strong>{question.answer}</strong><small>Your answer: {savedAnswer?.text || draft || "No answer"}{savedAnswer?.score !== undefined ? ` · ${savedAnswer.score ?? 0} point(s)` : ""}</small></div>
-        ) : null}
-
-        <div className="team-round-footer">
-          <div><span>Round progress</span><strong>{answeredCount} of {questions.length} answered</strong></div>
-          {snapshot.round?.teamLocked ? (
-            <button className="team-lock-round-button" disabled><Lock size={16} /> Round locked in</button>
+        <div className="team-round-footer compact-round-footer">
+          <div><span>Round</span><strong>{answeredCount}/{totalRoundQuestions || questions.length} answered</strong></div>
+          {snapshot.round?.teamLocked || roundLocked ? (
+            <button className="team-lock-round-button" disabled><KeyRound size={15} /> Locked</button>
           ) : canLockRound ? (
-            <button className="team-lock-round-button" onClick={lockRound}><Lock size={16} /> Lock in round</button>
+            <button className="team-lock-round-button" onClick={lockRound}><Lock size={15} /> Lock round</button>
           ) : null}
         </div>
-
-        {!roundLocked ? <div className="team-edit-reminder"><Users size={15} /> You can move back through any unrevealed question already sent and change your answers until this round is locked.</div> : null}
       </section>
     </TeamChrome>
   );
