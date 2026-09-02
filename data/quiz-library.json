@@ -1,6 +1,19 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-02T21:20:22.741Z",
-  "quizzes": [],
+  "updatedAt": "2026-09-02T21:41:00.264Z",
+  "quizzes": [
+    {
+      "id": "quiz-22bi72f",
+      "title": "Untitled quiz",
+      "date": "",
+      "time": "",
+      "venue": "",
+      "status": "Draft",
+      "notes": "",
+      "archived": false,
+      "rounds": [],
+      "finalLeaderboard": []
+    }
+  ],
   "media": []
 }
