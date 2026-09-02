@@ -106,6 +106,7 @@ export function useGitHubQuizLibrary(state, updateState) {
   const [lastSyncedAt, setLastSyncedAt] = useState("");
   const [baselineFingerprint, setBaselineFingerprintState] = useState("");
   const baselineRef = useRef("");
+  const latestUpdatedAtRef = useRef("");
   const saveTimerRef = useRef(null);
   const savingRef = useRef(false);
 
@@ -119,6 +120,12 @@ export function useGitHubQuizLibrary(state, updateState) {
   function setBaseline(next) {
     baselineRef.current = next;
     setBaselineFingerprintState(next);
+  }
+
+  function rememberUpdatedAt(value) {
+    if (!value) return;
+    if (!latestUpdatedAtRef.current || value > latestUpdatedAtRef.current) latestUpdatedAtRef.current = value;
+    setLastSyncedAt(latestUpdatedAtRef.current);
   }
 
   function applyRemoteLibrary(library, remoteFingerprint) {
@@ -135,7 +142,7 @@ export function useGitHubQuizLibrary(state, updateState) {
     });
     setBaseline(remoteFingerprint);
     setRemoteQuizCount(quizzes.length);
-    setLastSyncedAt(library.updatedAt || "");
+    rememberUpdatedAt(library.updatedAt || "");
   }
 
   async function loadRemote({ force = false, quiet = false } = {}) {
@@ -155,10 +162,24 @@ export function useGitHubQuizLibrary(state, updateState) {
       const localSnapshot = snapshotFromState(stateRef.current);
       const localFingerprint = fingerprint(localSnapshot);
       const baseline = baselineRef.current;
+      const knownUpdatedAt = latestUpdatedAtRef.current;
 
       setRemoteLoaded(true);
+
+      if (
+        knownUpdatedAt
+        && library.updatedAt
+        && library.updatedAt < knownUpdatedAt
+        && remoteFingerprint !== baseline
+      ) {
+        return library;
+      }
+      if (knownUpdatedAt && !library.updatedAt && remoteFingerprint !== baseline) {
+        return library;
+      }
+
       setRemoteQuizCount(library.quizzes.length);
-      setLastSyncedAt(library.updatedAt || "");
+      rememberUpdatedAt(library.updatedAt || "");
 
       if (!baseline) {
         setBaseline(remoteFingerprint);
@@ -259,6 +280,7 @@ export function useGitHubQuizLibrary(state, updateState) {
       if (localFingerprint === remoteFingerprint) {
         setBaseline(localFingerprint);
         setRemoteQuizCount(localSnapshot.quizzes.length);
+        rememberUpdatedAt(remoteLibrary.updatedAt || "");
         setStatus("saved");
         setMessage("All quiz changes are already saved to GitHub.");
         return true;
@@ -299,6 +321,7 @@ export function useGitHubQuizLibrary(state, updateState) {
 
       setBaseline(localFingerprint);
       setRemoteQuizCount(localSnapshot.quizzes.length);
+      latestUpdatedAtRef.current = updatedAt;
       setLastSyncedAt(updatedAt);
       setStatus("saved");
       setMessage(`Saved automatically · ${localSnapshot.quizzes.length} quiz${localSnapshot.quizzes.length === 1 ? "" : "zes"} available to other devices.`);
