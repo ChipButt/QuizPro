@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import HostShell from "./components/HostShell.jsx";
-import { LibrarySyncReceiver } from "./components/LibrarySync.jsx";
 import TeamView from "./components/TeamView.jsx";
+import { useGitHubQuizLibrary } from "./hooks/useGitHubQuizLibrary.js";
 import { useQuizState } from "./hooks/useQuizState.js";
 
 function getRoute() {
@@ -17,21 +17,13 @@ function getRoute() {
   if (hash === "#/join" || hash === "#/join/") {
     return { kind: "join", sessionCode: "", teamToken: "" };
   }
-  if (hash.startsWith("#/sync/")) {
-    const parts = hash.replace(/^#\//, "").split("/");
-    return { kind: "sync", code: decodeURIComponent(parts[1] ?? "").trim().toUpperCase() };
-  }
   return { kind: "host" };
 }
 
 function HostApp() {
   const { state, updateState, resetState } = useQuizState();
-  return <HostShell state={state} updateState={updateState} resetState={resetState} />;
-}
-
-function SyncApp({ code }) {
-  const { updateState } = useQuizState();
-  return <LibrarySyncReceiver code={code} updateState={updateState} />;
+  const sharedLibrary = useGitHubQuizLibrary(state, updateState);
+  return <HostShell state={state} updateState={updateState} resetState={resetState} sharedLibrary={sharedLibrary} />;
 }
 
 export default function App() {
@@ -45,10 +37,6 @@ export default function App() {
 
   if (route.kind === "join") {
     return <TeamView sessionCode={route.sessionCode} teamToken={route.teamToken} />;
-  }
-
-  if (route.kind === "sync") {
-    return <SyncApp code={route.code} />;
   }
 
   return <HostApp />;
