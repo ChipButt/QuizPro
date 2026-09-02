@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-02T21:41:25.896Z",
+  "updatedAt": "2026-09-02T21:41:38.261Z",
   "quizzes": [
     {
       "id": "quiz-22bi72f",
@@ -832,17 +832,6 @@
               "autoMark": true
             }
           ]
-        },
-        {
-          "id": "round-o9dv5xs",
-          "title": "2000s Pop Stars",
-          "type": "Picture round",
-          "answerMode": "text",
-          "choiceCount": 4,
-          "instructions": "",
-          "scoringRules": "",
-          "order": 5,
-          "questions": []
         },
         {
           "id": "round-plnhk1y",
