@@ -1,0 +1,10 @@
+.live-answer-form textarea.saved-answer {
+  background: #e8f7ef;
+  border-color: #73c69f;
+  box-shadow: inset 0 0 0 1px rgba(38, 151, 102, 0.12);
+}
+
+.live-answer-form textarea.saved-answer:focus {
+  border-color: #54ad84;
+  box-shadow: 0 0 0 3px rgba(84, 173, 132, 0.14);
+}
