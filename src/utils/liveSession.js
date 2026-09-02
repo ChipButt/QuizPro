@@ -103,6 +103,8 @@ export function buildTeamSnapshot(state, teamToken) {
     ? computeLeaderboard(state).map((item) => ({ id: item.id, name: item.name || "Unnamed team", score: item.score }))
     : [];
 
+  const liveAudio = state.live?.audio ?? {};
+
   return {
     type: "snapshot",
     sessionCode: state.live?.sessionCode ?? "",
@@ -128,6 +130,13 @@ export function buildTeamSnapshot(state, teamToken) {
       timerEndsAt: Number(state.live?.timerEndsAt ?? 0),
       timerRoundId: state.live?.timerRoundId ?? "",
       finalRevealCount: Number(state.live?.finalRevealCount ?? 0),
+      audio: {
+        playing: Boolean(liveAudio.playing),
+        questionId: liveAudio.questionId ?? "",
+        startedAt: Number(liveAudio.startedAt ?? 0),
+        offset: Number(liveAudio.offset ?? 0),
+        volume: Number.isFinite(Number(liveAudio.volume)) ? Number(liveAudio.volume) : 1,
+      },
     },
     round: round
       ? {
