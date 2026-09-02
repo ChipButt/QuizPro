@@ -18,7 +18,7 @@ import { navItems } from "../data/seed.js";
 import { useLiveHostNetwork } from "../hooks/useLiveHostNetwork.js";
 import { getSelectedQuiz } from "../utils/quiz.js";
 import DocxQuizImport from "./DocxQuizImport.jsx";
-import { LibrarySyncHost } from "./LibrarySync.jsx";
+import GitHubLibraryStatus from "./GitHubLibraryStatus.jsx";
 import {
   DashboardPage,
   MarkingPage,
@@ -89,7 +89,7 @@ function TopBar({ state, resetState, setActivePage }) {
   );
 }
 
-export default function HostShell({ state, updateState, resetState }) {
+export default function HostShell({ state, updateState, resetState, sharedLibrary }) {
   const [activePage, setActivePage] = useState("Quizzes");
   const [collapsed, setCollapsed] = useState(false);
   const network = useLiveHostNetwork(state, updateState);
@@ -102,9 +102,15 @@ export default function HostShell({ state, updateState, resetState }) {
       case "Quizzes":
         return (
           <>
-            <DocxQuizImport updateState={updateState} />
-            <LibrarySyncHost state={state} />
-            <QuizzesPage {...props} />
+            <GitHubLibraryStatus library={sharedLibrary} />
+            {sharedLibrary.remoteLoaded ? (
+              <>
+                <DocxQuizImport updateState={updateState} />
+                <QuizzesPage {...props} />
+              </>
+            ) : (
+              <div className="shared-library-loading">Loading your shared quizzes from GitHub…</div>
+            )}
           </>
         );
       case "Media Library":
@@ -121,7 +127,7 @@ export default function HostShell({ state, updateState, resetState }) {
       default:
         return <LiveRunnerPage {...props} />;
     }
-  }, [activePage, network, resetState, state, updateState]);
+  }, [activePage, network, resetState, sharedLibrary, state, updateState]);
 
   return (
     <div className={collapsed ? "host-app sidebar-collapsed" : "host-app"}>
