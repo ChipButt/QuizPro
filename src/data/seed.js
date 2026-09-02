@@ -1,12 +1,7 @@
 export const navItems = [
   "Dashboard",
   "Quizzes",
-  "Media Library",
   "Live Quiz",
-  "Teams",
-  "Marking",
-  "Results",
-  "Settings",
 ];
 
 function createJoinCode() {
@@ -42,9 +37,10 @@ export function createInitialState() {
       questionSecondsRemaining: 0,
       audio: {
         playing: false,
-        progress: 0,
-        volume: 50,
-        maxDuration: 0,
+        questionId: "",
+        startedAt: 0,
+        offset: 0,
+        volume: 1,
       },
     },
     media: [],
