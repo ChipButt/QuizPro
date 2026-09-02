@@ -188,10 +188,16 @@ export default function TeamView({ sessionCode, teamToken }) {
 
   const savedAnswer = question ? snapshot?.teamAnswers?.[question.id] : null;
   const draft = question ? drafts[question.id] ?? savedAnswer?.text ?? "" : "";
+  const answerIsSaved = Boolean(savedAnswer) && draft.trim() === String(savedAnswer?.text ?? "").trim();
   const answeredCount = useMemo(
     () => questions.filter((item) => String(drafts[item.id] ?? snapshot?.teamAnswers?.[item.id]?.text ?? "").trim()).length,
     [drafts, questions, snapshot?.teamAnswers],
   );
+  const totalRoundQuestions = Number(snapshot?.round?.totalQuestions ?? 0);
+  const finalQuestion = questions[questions.length - 1] ?? null;
+  const finalQuestionReleased = totalRoundQuestions > 0 && questions.length >= totalRoundQuestions;
+  const finalQuestionAnswered = Boolean(finalQuestion && String(snapshot?.teamAnswers?.[finalQuestion.id]?.text ?? "").trim());
+  const canLockRound = !roundLocked && finalQuestionReleased && finalQuestionAnswered;
 
   function setDraft(value) {
     if (!question || questionLocked) return;
@@ -205,7 +211,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   }
 
   function lockRound() {
-    if (roundLocked) return;
+    if (!canLockRound) return;
     const okay = window.confirm("Lock in this round? You will not be able to change any answers unless the quizmaster re-opens the round.");
     if (okay) send({ type: "lock-round" });
   }
@@ -263,8 +269,8 @@ export default function TeamView({ sessionCode, teamToken }) {
         ) : null}
 
         <form onSubmit={saveAnswer} className="team-answer-form live-answer-form">
-          <div className="answer-label-row"><label>Your answer</label><span>{savedAnswer ? "Saved" : "Not saved"}</span></div>
-          <textarea value={draft} onChange={(event) => setDraft(event.target.value)} disabled={questionLocked} maxLength={500} placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"} />
+          <div className="answer-label-row"><label>Your answer</label><span>{answerIsSaved ? "Saved" : savedAnswer ? "Unsaved changes" : "Not saved"}</span></div>
+          <textarea className={answerIsSaved ? "saved-answer" : ""} value={draft} onChange={(event) => setDraft(event.target.value)} disabled={questionLocked} maxLength={500} placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"} />
           <button className="primary-button full-width" disabled={questionLocked || !draft.trim()}><Send size={16} /> {savedAnswer ? "Save amended answer" : "Save answer"}</button>
         </form>
 
@@ -274,7 +280,11 @@ export default function TeamView({ sessionCode, teamToken }) {
 
         <div className="team-round-footer">
           <div><span>Round progress</span><strong>{answeredCount} of {questions.length} answered</strong></div>
-          <button className="team-lock-round-button" disabled={roundLocked || !questions.length} onClick={lockRound}><Lock size={16} /> {snapshot.round?.teamLocked ? "Round locked in" : "Lock in round"}</button>
+          {snapshot.round?.teamLocked ? (
+            <button className="team-lock-round-button" disabled><Lock size={16} /> Round locked in</button>
+          ) : canLockRound ? (
+            <button className="team-lock-round-button" onClick={lockRound}><Lock size={16} /> Lock in round</button>
+          ) : null}
         </div>
 
         {!roundLocked ? <div className="team-edit-reminder"><Users size={15} /> You can move back through any unrevealed question already sent and change your answers until this round is locked.</div> : null}
