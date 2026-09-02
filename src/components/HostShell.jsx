@@ -18,6 +18,7 @@ import { navItems } from "../data/seed.js";
 import { useLiveHostNetwork } from "../hooks/useLiveHostNetwork.js";
 import { getSelectedQuiz } from "../utils/quiz.js";
 import DocxQuizImport from "./DocxQuizImport.jsx";
+import { LibrarySyncHost } from "./LibrarySync.jsx";
 import {
   DashboardPage,
   MarkingPage,
@@ -102,6 +103,7 @@ export default function HostShell({ state, updateState, resetState }) {
         return (
           <>
             <DocxQuizImport updateState={updateState} />
+            <LibrarySyncHost state={state} />
             <QuizzesPage {...props} />
           </>
         );
