@@ -100,7 +100,11 @@ export function buildTeamSnapshot(state, teamToken) {
 
   const shouldShowLeaderboard = ["leaderboard", "final"].includes(state.live?.teamScreen);
   const leaderboard = shouldShowLeaderboard
-    ? computeLeaderboard(state).map((item) => ({ id: item.id, name: item.name || "Unnamed team", score: item.score }))
+    ? computeLeaderboard(state).map((item) => ({
+        id: item.id,
+        name: item.name || "Unnamed team",
+        score: item.score,
+      }))
     : [];
 
   const liveAudio = state.live?.audio ?? {};
@@ -131,11 +135,8 @@ export function buildTeamSnapshot(state, teamToken) {
       timerRoundId: state.live?.timerRoundId ?? "",
       finalRevealCount: Number(state.live?.finalRevealCount ?? 0),
       audio: {
-        playing: Boolean(liveAudio.playing),
         questionId: liveAudio.questionId ?? "",
-        startedAt: Number(liveAudio.startedAt ?? 0),
-        offset: Number(liveAudio.offset ?? 0),
-        volume: Number.isFinite(Number(liveAudio.volume)) ? Number(liveAudio.volume) : 1,
+        playNonce: Number(liveAudio.playNonce ?? 0),
       },
     },
     round: round
@@ -170,7 +171,10 @@ export function applyTeamMessage(state, teamToken, message) {
               ...item,
               name,
               nameLocked: true,
-              registeredAt: item.registeredAt || new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+              registeredAt: item.registeredAt || new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
             }
           : item,
       ),
@@ -180,6 +184,7 @@ export function applyTeamMessage(state, teamToken, message) {
   if (message.type === "save-answer") {
     const round = getLiveRound(state);
     if (!round || isTeamRoundLocked(state, round.id, team.id)) return state;
+
     const question = round.questions.find((item) => item.id === message.questionId);
     const maxQuestionIndex = Math.max(-1, Number(state.live?.questionIndex ?? -1));
     const questionIndex = round.questions.findIndex((item) => item.id === message.questionId);
@@ -187,7 +192,19 @@ export function applyTeamMessage(state, teamToken, message) {
     if (questionIsRevealed(state, round.id, question.id)) return state;
 
     const text = String(message.text ?? "").trim().slice(0, 500);
-    if (!text) return state;
+
+    if (!text) {
+      const currentQuestionAnswers = { ...(state.answers?.[question.id] ?? {}) };
+      delete currentQuestionAnswers[team.id];
+      return {
+        ...state,
+        answers: {
+          ...state.answers,
+          [question.id]: currentQuestionAnswers,
+        },
+      };
+    }
+
     const suggestion = question.autoMark
       ? autoScoreAnswer(question, text)
       : { score: null, status: "pending", reason: "Manual marking" };
@@ -200,7 +217,10 @@ export function applyTeamMessage(state, teamToken, message) {
           ...(state.answers?.[question.id] ?? {}),
           [team.id]: {
             text,
-            submittedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            submittedAt: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
             status: suggestion.status,
             score: suggestion.status === "correct" ? suggestion.score : null,
             reason: suggestion.reason,
