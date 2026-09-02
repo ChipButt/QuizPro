@@ -3,6 +3,7 @@ import {
   ArrowRight,
   CheckCircle2,
   Crown,
+  Edit3,
   KeyRound,
   Lock,
   RotateCcw,
@@ -166,6 +167,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   const { snapshot, status, error, send } = useLiveTeamNetwork(sessionCode, teamToken);
   const [viewIndex, setViewIndex] = useState(0);
   const [drafts, setDrafts] = useState({});
+  const [editingQuestions, setEditingQuestions] = useState({});
   const [audioBlocked, setAudioBlocked] = useState(false);
   const teamAudioRef = useRef(null);
   const lastPlayNonceRef = useRef(0);
@@ -212,46 +214,60 @@ export default function TeamView({ sessionCode, teamToken }) {
   }, [question?.id, question?.audio, snapshot?.live?.audio?.questionId, snapshot?.live?.audio?.playNonce]);
 
   const savedAnswer = question ? snapshot?.teamAnswers?.[question.id] : null;
-  const draft = question ? drafts[question.id] ?? savedAnswer?.text ?? "" : "";
-  const answeredCount = useMemo(
-    () => questions.filter((item) => String(drafts[item.id] ?? snapshot?.teamAnswers?.[item.id]?.text ?? "").trim()).length,
-    [drafts, questions, snapshot?.teamAnswers],
+  const savedText = String(savedAnswer?.text ?? "");
+  const draft = question ? drafts[question.id] ?? savedText : "";
+  const draftMatchesSaved = Boolean(savedAnswer) && draft.trim() === savedText.trim();
+  const isEditing = question ? (editingQuestions[question.id] ?? !savedAnswer) : false;
+  const submitted = Boolean(savedAnswer && draftMatchesSaved && !isEditing);
+  const submitting = Boolean(!isEditing && draft.trim() && !draftMatchesSaved);
+
+  const submittedCount = useMemo(
+    () => questions.filter((item) => String(snapshot?.teamAnswers?.[item.id]?.text ?? "").trim()).length,
+    [questions, snapshot?.teamAnswers],
   );
   const totalRoundQuestions = Number(snapshot?.round?.totalQuestions ?? 0);
-  const finalQuestion = questions[questions.length - 1] ?? null;
   const finalQuestionReleased = totalRoundQuestions > 0 && questions.length >= totalRoundQuestions;
-  const finalQuestionAnswered = Boolean(
-    finalQuestion && String(drafts[finalQuestion.id] ?? snapshot?.teamAnswers?.[finalQuestion.id]?.text ?? "").trim()
-  );
-  const canLockRound = !roundLocked && finalQuestionReleased && finalQuestionAnswered;
-
-  useEffect(() => {
-    if (!question || questionLocked || status !== "online") return undefined;
-    const currentText = String(savedAnswer?.text ?? "").trim();
-    const nextText = String(draft ?? "").trim();
-    if (currentText === nextText) return undefined;
-
-    const timer = window.setTimeout(() => {
-      send({ type: "save-answer", questionId: question.id, text: nextText });
-    }, 450);
-    return () => window.clearTimeout(timer);
-  }, [draft, question?.id, questionLocked, savedAnswer?.text, send, status]);
+  const canLockRound = !roundLocked && finalQuestionReleased;
 
   function setDraft(value) {
-    if (!question || questionLocked) return;
+    if (!question || questionLocked || !isEditing) return;
     setDrafts((current) => ({ ...current, [question.id]: value }));
   }
 
   function chooseAnswer(option) {
-    if (!question || questionLocked) return;
+    if (!question || questionLocked || !isEditing) return;
     setDrafts((current) => ({ ...current, [question.id]: option }));
-    send({ type: "save-answer", questionId: question.id, text: option });
+  }
+
+  function lockInAnswer() {
+    if (!question || questionLocked || !isEditing || !draft.trim()) return;
+    setEditingQuestions((current) => ({ ...current, [question.id]: false }));
+    const sent = send({ type: "save-answer", questionId: question.id, text: draft.trim() });
+    if (!sent) setEditingQuestions((current) => ({ ...current, [question.id]: true }));
+  }
+
+  function changeAnswer() {
+    if (!question || questionLocked) return;
+    setEditingQuestions((current) => ({ ...current, [question.id]: true }));
   }
 
   function lockRound() {
     if (!canLockRound) return;
-    const okay = window.confirm("Lock in this round? Answers cannot be changed after this.");
-    if (okay) send({ type: "lock-round" });
+    const unsaved = questions.filter((item) => {
+      const local = String(drafts[item.id] ?? "").trim();
+      const remote = String(snapshot?.teamAnswers?.[item.id]?.text ?? "").trim();
+      return local && local !== remote;
+    });
+    const missing = Math.max(0, totalRoundQuestions - questions.filter((item) => String(drafts[item.id] ?? snapshot?.teamAnswers?.[item.id]?.text ?? "").trim()).length);
+    const message = missing
+      ? `Lock in ALL round answers? ${missing} question${missing === 1 ? " is" : "s are"} still blank.`
+      : "Lock in ALL round answers? You will not be able to change them after this.";
+    if (!window.confirm(message)) return;
+
+    for (const item of unsaved) {
+      send({ type: "save-answer", questionId: item.id, text: String(drafts[item.id]).trim() });
+    }
+    send({ type: "lock-round" });
   }
 
   function replayAudio() {
@@ -277,17 +293,19 @@ export default function TeamView({ sessionCode, teamToken }) {
 
   return (
     <TeamChrome status={status}>
-      <section className="team-card live-team-card question-team-card">
+      {snapshot.live?.timerActive ? (
+        <div className={`team-timer-overlay ${countdown <= 10 ? "urgent" : ""}`}>
+          <Timer size={20} />
+          <span>ANSWERS LOCK IN</span>
+          <strong>{countdown}s</strong>
+        </div>
+      ) : null}
+
+      <section className={`team-card live-team-card question-team-card ${snapshot.live?.timerActive ? "timer-running" : ""}`}>
         <div className="team-question-topline">
           <div><span>{snapshot.round?.title || "Round"}</span><strong>{snapshot.team.name}</strong></div>
-          <div className="team-question-progress">{answeredCount}/{totalRoundQuestions || questions.length}</div>
+          <div className="team-question-progress">{submittedCount}/{totalRoundQuestions || questions.length} locked in</div>
         </div>
-
-        {snapshot.live?.timerActive ? (
-          <div className={`team-lock-countdown ${countdown <= 10 ? "urgent" : ""}`}>
-            <Timer size={17} /><span>Locks in</span><strong>{countdown}s</strong>
-          </div>
-        ) : null}
 
         <div className="team-question-nav">
           <button disabled={viewIndex <= 0} onClick={() => setViewIndex((index) => Math.max(0, index - 1))}>
@@ -299,7 +317,7 @@ export default function TeamView({ sessionCode, teamToken }) {
           </button>
         </div>
 
-        <div className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${question.revealed ? "is-revealed" : ""}`}>
+        <div className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""}`}>
           {questionLocked ? <span className="question-lock-key" aria-label="Question locked"><KeyRound size={18} /></span> : null}
 
           <div className="team-question-core lockable-zone">
@@ -333,8 +351,8 @@ export default function TeamView({ sessionCode, teamToken }) {
                     <button
                       type="button"
                       key={index}
-                      disabled={questionLocked}
-                      className={`${selected ? "selected" : ""} ${correct ? "correct-reveal" : ""}`}
+                      disabled={questionLocked || !isEditing}
+                      className={`${selected ? "selected" : ""} ${submitted && selected ? "submitted-choice" : ""} ${correct ? "correct-reveal" : ""}`}
                       onClick={() => chooseAnswer(option)}
                     >
                       <span>{String.fromCharCode(65 + index)}</span>{option}
@@ -347,10 +365,10 @@ export default function TeamView({ sessionCode, teamToken }) {
             {isTextEntry ? (
               <div className="answer-input-shell">
                 <textarea
-                  className={draft.trim() ? "has-answer" : ""}
+                  className={`${draft.trim() ? "has-answer" : ""} ${submitted ? "submitted-answer" : ""}`}
                   value={draft}
                   onChange={(event) => setDraft(event.target.value)}
-                  disabled={questionLocked}
+                  disabled={questionLocked || !isEditing}
                   maxLength={500}
                   placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"}
                 />
@@ -363,15 +381,30 @@ export default function TeamView({ sessionCode, teamToken }) {
                 ) : null}
               </div>
             ) : null}
+
+            {!questionLocked ? (
+              <div className="question-submit-row">
+                {submitted ? (
+                  <>
+                    <div className="question-submitted-state"><Lock size={15} /><strong>Answer locked in</strong><span>You can still change it until the round closes.</span></div>
+                    <button type="button" className="change-answer-button" onClick={changeAnswer}><Edit3 size={15} /> Change answer</button>
+                  </>
+                ) : submitting ? (
+                  <button type="button" className="lock-answer-button pending" disabled><Lock size={15} /> Locking in…</button>
+                ) : (
+                  <button type="button" className="lock-answer-button" disabled={!draft.trim()} onClick={lockInAnswer}><Lock size={15} /> Lock In Answer</button>
+                )}
+              </div>
+            ) : null}
           </div>
         </div>
 
         <div className="team-round-footer compact-round-footer">
-          <div><span>Round</span><strong>{answeredCount}/{totalRoundQuestions || questions.length} answered</strong></div>
+          <div><span>Round</span><strong>{submittedCount}/{totalRoundQuestions || questions.length} locked in</strong></div>
           {snapshot.round?.teamLocked || roundLocked ? (
-            <button className="team-lock-round-button" disabled><KeyRound size={15} /> Locked</button>
+            <button className="team-lock-round-button" disabled><KeyRound size={15} /> Round locked</button>
           ) : canLockRound ? (
-            <button className="team-lock-round-button" onClick={lockRound}><Lock size={15} /> Lock round</button>
+            <button className="team-lock-round-button all-answers-lock" onClick={lockRound}><Lock size={15} /> Lock In ALL Answers</button>
           ) : null}
         </div>
       </section>
