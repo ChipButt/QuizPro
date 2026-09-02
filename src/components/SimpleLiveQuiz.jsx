@@ -12,11 +12,14 @@ import {
   RefreshCcw,
   RotateCcw,
   Send,
+  Settings2,
   Trash2,
   Trophy,
   Unlock,
+  Users,
   Wifi,
   WifiOff,
+  X,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -73,6 +76,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
 
   const [reviewRoundIndex, setReviewRoundIndex] = useState(liveRoundIndex);
   const [reviewQuestionIndex, setReviewQuestionIndex] = useState(Math.max(0, liveQuestionIndex));
+  const [openPanel, setOpenPanel] = useState(null);
   const reviewRound = quiz?.rounds?.[reviewRoundIndex] ?? null;
   const reviewQuestion = reviewRound?.questions?.[reviewQuestionIndex] ?? null;
   const reviewingLiveQuestion = Boolean(
@@ -88,8 +92,17 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   const timerSeconds = useCountdown(state.live?.timerEndsAt, state.live?.timerActive);
   const hostAudioRef = useRef(null);
 
+  useEffect(() => {
+    if (!quiz) return;
+    setReviewRoundIndex((current) => Math.min(current, Math.max(0, quiz.rounds.length - 1)));
+  }, [quiz?.id, quiz?.rounds?.length]);
+
   function updateLive(patch) {
     updateState((current) => ({ ...current, live: { ...current.live, ...patch } }));
+  }
+
+  function togglePanel(panel) {
+    setOpenPanel((current) => current === panel ? null : panel);
   }
 
   function loadQuiz(quizId) {
@@ -127,6 +140,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
     }));
     setReviewRoundIndex(0);
     setReviewQuestionIndex(0);
+    setOpenPanel(null);
   }
 
   function stopSession() {
@@ -215,33 +229,32 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
     });
   }
 
-  function revealLiveAnswer() {
+  function toggleLiveAnswer() {
     if (!liveQuestion) return;
-    updateState((current) => ({
-      ...current,
-      live: {
-        ...current.live,
-        revealedQuestions: {
-          ...(current.live.revealedQuestions ?? {}),
-          [liveQuestion.id]: true,
-        },
-      },
-    }));
+    updateState((current) => {
+      const next = { ...(current.live?.revealedQuestions ?? {}) };
+      if (next[liveQuestion.id]) delete next[liveQuestion.id];
+      else next[liveQuestion.id] = true;
+      return { ...current, live: { ...current.live, revealedQuestions: next } };
+    });
   }
 
-  function revealLiveRoundAnswers() {
+  function toggleLiveRoundAnswers() {
     if (!liveRound) return;
-    updateState((current) => ({
-      ...current,
-      live: {
-        ...current.live,
-        revealedRounds: {
-          ...(current.live.revealedRounds ?? {}),
-          [liveRound.id]: true,
+    updateState((current) => {
+      const next = { ...(current.live?.revealedRounds ?? {}) };
+      const wasRevealed = Boolean(next[liveRound.id]);
+      if (wasRevealed) delete next[liveRound.id];
+      else next[liveRound.id] = true;
+      return {
+        ...current,
+        live: {
+          ...current.live,
+          revealedRounds: next,
+          teamScreen: wasRevealed ? (current.live?.questionIndex >= 0 ? "question" : "lobby") : "round_review",
         },
-        teamScreen: "round_review",
-      },
-    }));
+      };
+    });
   }
 
   function startLockTimer() {
@@ -253,6 +266,10 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
       timerEndsAt: Date.now() + duration * 1000,
       timerRoundId: liveRound.id,
     });
+  }
+
+  function cancelTimer() {
+    updateLive({ timerActive: false, timerEndsAt: 0, timerRoundId: "" });
   }
 
   function lockLiveRoundNow() {
@@ -290,18 +307,18 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   }
 
   function markAnswer(questionId, teamId, score) {
-    const question = quiz?.rounds?.flatMap((round) => round.questions ?? []).find((item) => item.id === questionId);
-    if (!question) return;
-    const max = Number(question.points ?? 1);
+    const markedQuestion = quiz?.rounds?.flatMap((round) => round.questions ?? []).find((item) => item.id === questionId);
+    if (!markedQuestion) return;
+    const max = Number(markedQuestion.points ?? 1);
     const nextScore = Math.max(0, Math.min(max, Number(score) || 0));
     updateState((current) => ({
       ...current,
       answers: {
         ...current.answers,
-        [question.id]: {
-          ...(current.answers?.[question.id] ?? {}),
+        [markedQuestion.id]: {
+          ...(current.answers?.[markedQuestion.id] ?? {}),
           [teamId]: {
-            ...(current.answers?.[question.id]?.[teamId] ?? {}),
+            ...(current.answers?.[markedQuestion.id]?.[teamId] ?? {}),
             score: nextScore,
             status: nextScore >= max ? "correct" : nextScore > 0 ? "half" : "incorrect",
           },
@@ -351,28 +368,22 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
 
   if (!state.live?.sessionActive || !quiz) {
     return (
-      <main className="simple-page simple-live-page">
+      <main className="simple-page simple-live-page planuf-live-page">
         <div className="simple-page-heading">
           <div><h1>Run a Quiz</h1><p>Select one of your saved quizzes when you are ready to run it.</p></div>
         </div>
-        <section className="simple-card">
+        <section className="simple-card planuf-soft-card">
           <h2>Saved quizzes</h2>
           <div className="simple-live-quiz-list">
             {state.quizzes.filter((item) => !item.archived).map((item) => (
               <div key={item.id}>
                 <div><strong>{item.title || "Untitled quiz"}</strong><span>{quizMeta(item)}</span></div>
-                <button
-                  className="primary-button"
-                  disabled={!item.rounds?.some((roundItem) => roundItem.questions?.length)}
-                  onClick={() => loadQuiz(item.id)}
-                >
+                <button className="primary-button" disabled={!item.rounds?.some((roundItem) => roundItem.questions?.length)} onClick={() => loadQuiz(item.id)}>
                   <Play size={15} /> Load quiz
                 </button>
               </div>
             ))}
-            {!state.quizzes.filter((item) => !item.archived).length ? (
-              <p className="simple-empty-copy">No quizzes are saved yet.</p>
-            ) : null}
+            {!state.quizzes.filter((item) => !item.archived).length ? <p className="simple-empty-copy">No quizzes are saved yet.</p> : null}
           </div>
         </section>
       </main>
@@ -380,296 +391,224 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   }
 
   const liveLocked = liveRound ? isRoundForceLocked(state, liveRound.id) : false;
-  const teamLocks = liveRound
-    ? Object.values(state.teamRoundLocks?.[liveRound.id] ?? {}).filter(Boolean).length
-    : 0;
+  const teamLocks = liveRound ? Object.values(state.teamRoundLocks?.[liveRound.id] ?? {}).filter(Boolean).length : 0;
   const reviewAnswers = reviewQuestion ? state.answers?.[reviewQuestion.id] ?? {} : {};
+  const questionExplicitlyRevealed = Boolean(liveQuestion && state.live?.revealedQuestions?.[liveQuestion.id]);
+  const liveRoundRevealed = Boolean(liveRound && state.live?.revealedRounds?.[liveRound.id]);
+  const liveQuestionRevealed = Boolean(liveQuestion && (questionExplicitlyRevealed || liveRoundRevealed));
+  const leaderboardVisible = state.live?.teamScreen === "leaderboard";
   const finalRevealCount = Number(state.live.finalRevealCount ?? 0);
   const finalRevealOrder = leaderboard.slice().reverse().slice(0, finalRevealCount);
 
   return (
-    <main className="simple-page simple-live-page">
-      <div className="simple-page-heading">
-        <div><h1>Live Quiz</h1><p>{quiz.title || "Untitled quiz"}</p></div>
+    <main className="simple-page simple-live-page planuf-live-page">
+      <div className="planuf-bubble planuf-bubble-a" />
+      <div className="planuf-bubble planuf-bubble-b" />
+      <div className="simple-page-heading planuf-live-heading">
+        <div><span className="planuf-mini-pill">QUIZMASTER</span><h1>Live Quiz</h1><p>{quiz.title || "Untitled quiz"}</p></div>
         <div className="simple-live-heading-actions">
           <NetworkBadge network={network} />
           <button className="ghost-button" onClick={stopSession}>Finish session</button>
         </div>
       </div>
 
-      {network?.status === "code-conflict" ? (
-        <div className="simple-warning"><WifiOff size={16} /> This live session code is already in use.</div>
-      ) : null}
+      {network?.status === "code-conflict" ? <div className="simple-warning"><WifiOff size={16} /> This live session code is already in use.</div> : null}
 
-      <section className="simple-card simple-team-section">
-        <div className="simple-section-heading">
-          <div><h2>Teams</h2><p>Add each paid team, then let them scan their QR.</p></div>
-          <span>{state.teams.length} team{state.teams.length === 1 ? "" : "s"}</span>
-        </div>
-        <div className="simple-add-team-row">
-          <label>Table number<input value={table} onChange={(event) => setTable(event.target.value)} placeholder="e.g. 7" /></label>
-          <label>Players<input type="number" min="1" max="30" value={players} onChange={(event) => setPlayers(Number(event.target.value) || 1)} /></label>
-          <button className="primary-button" onClick={addTeam}><Plus size={16} /> Add team</button>
+      <section className="host-control-deck">
+        <div className="host-live-status-strip">
+          <div><span>Teams see</span><strong>R{liveRoundIndex + 1}{liveQuestion ? ` · Q${liveQuestionIndex + 1}` : " · waiting"}</strong></div>
+          <div><span>Session</span><strong>{state.live.sessionCode}</strong></div>
+          {state.live.timerActive ? <div className="host-timer-chip"><Clock3 size={16} /><strong>{timerSeconds}s</strong></div> : null}
         </div>
 
-        {state.teams.length ? (
-          <div className="simple-team-grid">
-            {state.teams.map((team, index) => {
-              const url = joinUrl(state.live.sessionCode, team.token);
-              const connected = network?.connectedTokens?.includes(team.token);
-              return (
-                <article key={team.id} className="simple-team-card">
-                  <div className="simple-team-card-title">
-                    <div>
-                      <span>Team {index + 1}</span>
-                      <strong>{team.name || `Table ${team.table || "?"}`}</strong>
-                      <small>{connected ? "Connected" : team.nameLocked ? "Named · waiting" : "Waiting for scan/name"}</small>
-                    </div>
-                    <button className="icon-button" aria-label="Remove team" onClick={() => removeTeam(team.id)}>
-                      <Trash2 size={15} />
-                    </button>
-                  </div>
-                  <QRCodeSVG value={url} size={132} marginSize={1} />
-                  <div className="simple-team-fields">
-                    <label>Table<input value={team.table ?? ""} onChange={(event) => updateTeam(team.id, { table: event.target.value })} /></label>
-                    <label>Players<input type="number" min="1" value={team.players ?? 1} onChange={(event) => updateTeam(team.id, { players: Math.max(1, Number(event.target.value) || 1) })} /></label>
-                  </div>
-                  <div className="simple-team-actions">
-                    <button className="ghost-button compact" onClick={() => navigator.clipboard?.writeText(url)}>
-                      <Copy size={13} /> Copy link
-                    </button>
-                    <button className="ghost-button compact" onClick={() => regenerateTeamQr(team.id)}>
-                      <RefreshCcw size={13} /> New QR
-                    </button>
-                  </div>
-                </article>
-              );
-            })}
+        <div className="host-tool-row">
+          <button className={openPanel === "teams" ? "active" : ""} onClick={() => togglePanel("teams")}><Users size={16} /> Teams <b>{state.teams.length}</b></button>
+          <button className={openPanel === "answers" ? "active" : ""} onClick={() => togglePanel("answers")}><Check size={16} /> Answers <b>{Object.keys(reviewAnswers).length}</b></button>
+          <button className={`${openPanel === "round" ? "active" : ""} ${liveLocked ? "locked" : ""}`} onClick={() => togglePanel("round")}><Settings2 size={16} /> Round</button>
+          <button className={`${openPanel === "timer" ? "active" : ""} ${state.live.timerActive ? "timer-active" : ""}`} onClick={() => togglePanel("timer")}><Clock3 size={16} /> Timer</button>
+          <button className={`${openPanel === "leaderboard" ? "active" : ""} ${leaderboardVisible ? "shown" : ""}`} onClick={() => togglePanel("leaderboard")}><Trophy size={16} /> Leaderboard</button>
+        </div>
+
+        <div className="host-reveal-mode-row">
+          <span>Reveal answers</span>
+          <button className={state.live.revealMode === "question" ? "selected" : ""} onClick={() => updateLive({ revealMode: "question" })}>After each question</button>
+          <button className={state.live.revealMode === "round" ? "selected" : ""} onClick={() => updateLive({ revealMode: "round" })}>End of round</button>
+        </div>
+
+        {openPanel ? (
+          <div className={`host-tool-drawer ${openPanel}`}>
+            <button className="host-drawer-close" aria-label="Close" onClick={() => setOpenPanel(null)}><X size={16} /></button>
+
+            {openPanel === "teams" ? (
+              <>
+                <div className="host-drawer-title"><div><h3>Teams & QR codes</h3><p>Add a team, then let them scan their unique code.</p></div></div>
+                <div className="simple-add-team-row compact-add-team">
+                  <label>Table<input value={table} onChange={(event) => setTable(event.target.value)} placeholder="7" /></label>
+                  <label>Players<input type="number" min="1" max="30" value={players} onChange={(event) => setPlayers(Number(event.target.value) || 1)} /></label>
+                  <button className="primary-button" onClick={addTeam}><Plus size={15} /> Add team</button>
+                </div>
+                <div className="host-team-strip">
+                  {state.teams.map((team, index) => {
+                    const url = joinUrl(state.live.sessionCode, team.token);
+                    const connected = network?.connectedTokens?.includes(team.token);
+                    return (
+                      <article key={team.id} className="host-team-chip-card">
+                        <div><span>Team {index + 1}</span><strong>{team.name || `Table ${team.table || "?"}`}</strong><small>{connected ? "Connected" : "Waiting"}</small></div>
+                        <QRCodeSVG value={url} size={92} marginSize={1} />
+                        <label>Table<input value={team.table ?? ""} onChange={(event) => updateTeam(team.id, { table: event.target.value })} /></label>
+                        <label>Players<input type="number" min="1" value={team.players ?? 1} onChange={(event) => updateTeam(team.id, { players: Math.max(1, Number(event.target.value) || 1) })} /></label>
+                        <div className="host-team-chip-actions">
+                          <button onClick={() => navigator.clipboard?.writeText(url)} title="Copy team link"><Copy size={13} /></button>
+                          <button onClick={() => regenerateTeamQr(team.id)} title="New QR"><RefreshCcw size={13} /></button>
+                          <button onClick={() => removeTeam(team.id)} title="Remove team"><Trash2 size={13} /></button>
+                        </div>
+                      </article>
+                    );
+                  })}
+                  {!state.teams.length ? <p className="simple-empty-copy">No teams added yet.</p> : null}
+                </div>
+              </>
+            ) : null}
+
+            {openPanel === "answers" ? (
+              <>
+                <div className="host-drawer-title"><div><h3>Answers for this question</h3><p>{reviewingLiveQuestion ? "Live question" : "Private review"}</p></div><span>{Object.keys(reviewAnswers).length}/{state.teams.length}</span></div>
+                <div className="simple-answer-list compact-answer-list">
+                  {state.teams.map((team) => {
+                    const answer = reviewAnswers[team.id];
+                    return (
+                      <div key={team.id} className="simple-answer-row">
+                        <strong>{team.name || `Table ${team.table || "?"}`}</strong>
+                        <span>{answer?.text || "No answer"}</span>
+                        {answer ? (
+                          <div className="simple-mark-buttons">
+                            <button className={answer.status === "incorrect" ? "selected" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, 0)}>0</button>
+                            <button className={answer.status === "half" ? "selected" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, Number(reviewQuestion.points ?? 1) / 2)}>½</button>
+                            <button className={answer.status === "correct" ? "selected" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, Number(reviewQuestion.points ?? 1))}><Check size={13} /> Correct</button>
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            ) : null}
+
+            {openPanel === "round" ? (
+              <>
+                <div className="host-drawer-title"><div><h3>{liveRound?.title || "Live round"}</h3><p>{teamLocks}/{state.teams.length} teams have locked all answers.</p></div><span className={liveLocked ? "drawer-state locked" : "drawer-state"}>{liveLocked ? "LOCKED" : "EDITABLE"}</span></div>
+                <div className="host-drawer-actions">
+                  {!liveLocked ? <button className="danger-soft-button" onClick={lockLiveRoundNow}><Lock size={15} /> Lock round</button> : <button className="ghost-button" onClick={unlockLiveRound}><Unlock size={15} /> Re-open round</button>}
+                  <button className={`reveal-toggle ${liveRoundRevealed ? "active" : ""}`} onClick={toggleLiveRoundAnswers}>
+                    {liveRoundRevealed ? <EyeOff size={15} /> : <Eye size={15} />}
+                    {liveRoundRevealed ? "Hide round answers" : "Reveal round answers"}
+                  </button>
+                </div>
+              </>
+            ) : null}
+
+            {openPanel === "timer" ? (
+              <>
+                <div className="host-drawer-title"><div><h3>Round lock timer</h3><p>Teams get a large countdown overlay while they are typing.</p></div>{state.live.timerActive ? <strong className="drawer-countdown">{timerSeconds}s</strong> : null}</div>
+                <div className="host-timer-controls">
+                  <select value={timerChoice} onChange={(event) => setTimerChoice(Number(event.target.value))}>
+                    <option value={30}>30 seconds</option><option value={60}>1 minute</option><option value={120}>2 minutes</option><option value={180}>3 minutes</option><option value={300}>5 minutes</option>
+                  </select>
+                  {!state.live.timerActive ? <button className="primary-button" disabled={liveLocked || !liveRound} onClick={startLockTimer}><Clock3 size={15} /> Start timer</button> : <button className="ghost-button" onClick={cancelTimer}><X size={15} /> Cancel timer</button>}
+                </div>
+              </>
+            ) : null}
+
+            {openPanel === "leaderboard" ? (
+              <>
+                <div className="host-drawer-title"><div><h3>Leaderboard</h3><p>Keep it private or put it on every team screen.</p></div></div>
+                <div className="host-drawer-actions">
+                  <button className={`reveal-toggle ${leaderboardVisible ? "active" : ""}`} onClick={() => updateLive({ teamScreen: leaderboardVisible ? (liveQuestion ? "question" : "lobby") : "leaderboard" })}>
+                    {leaderboardVisible ? <EyeOff size={15} /> : <Eye size={15} />}
+                    {leaderboardVisible ? "Hide from teams" : "Show to teams"}
+                  </button>
+                  {liveRoundIndex >= quiz.rounds.length - 1 ? <button className="primary-button" onClick={beginFinalReveal}><Trophy size={15} /> Final results</button> : null}
+                </div>
+                {leaderboard.length ? <ol className="simple-leaderboard compact-leaderboard">{leaderboard.map((team, index) => <li key={team.id}><span>{index + 1}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score}</b></li>)}</ol> : <p className="simple-empty-copy">Scores will appear here as answers are marked.</p>}
+              </>
+            ) : null}
           </div>
-        ) : <p className="simple-empty-copy">No teams added yet.</p>}
+        ) : null}
       </section>
 
-      <section className="simple-card host-review-card">
-        <div className="simple-section-heading">
-          <div>
-            <h2>Host review & question control</h2>
-            <p>Browse anything privately. Teams only change when you press a button labelled “Push”.</p>
-          </div>
-          <span className="teams-currently-badge">
-            Teams: R{liveRoundIndex + 1}{liveQuestion ? ` · Q${liveQuestionIndex + 1}` : " · waiting"}
-          </span>
-        </div>
-
-        <div className="simple-round-run-tabs host-review-round-tabs">
+      <section className="host-question-workspace">
+        <div className="host-round-carousel">
           {quiz.rounds.map((item, index) => (
-            <button
-              key={item.id}
-              className={`${index === reviewRoundIndex ? "selected" : ""} ${index === liveRoundIndex ? "live-on-teams" : ""}`}
-              onClick={() => reviewRoundAt(index)}
-            >
-              <span>Round {index + 1}</span>
-              <strong>{item.title || `Round ${index + 1}`}</strong>
-              {index === liveRoundIndex ? <small>LIVE ROUND</small> : null}
+            <button key={item.id} className={`${index === reviewRoundIndex ? "selected" : ""} ${index === liveRoundIndex ? "live-on-teams" : ""}`} onClick={() => reviewRoundAt(index)}>
+              <span>R{index + 1}</span><strong>{item.title || `Round ${index + 1}`}</strong>{index === liveRoundIndex ? <small>LIVE</small> : null}
             </button>
           ))}
         </div>
 
-        <div className="simple-live-settings-row">
-          <div className="simple-reveal-choice">
-            <span>Reveal answers</span>
-            <button className={state.live.revealMode === "question" ? "selected" : ""} onClick={() => updateLive({ revealMode: "question" })}>
-              <Eye size={14} /> After each question
-            </button>
-            <button className={state.live.revealMode === "round" ? "selected" : ""} onClick={() => updateLive({ revealMode: "round" })}>
-              <EyeOff size={14} /> End of round
-            </button>
-          </div>
-          {reviewRoundIndex !== liveRoundIndex ? (
-            <button className="ghost-button" onClick={() => activateRound(reviewRoundIndex)}>
-              <Send size={15} /> Push this round to teams
-            </button>
-          ) : null}
-        </div>
+        {reviewRoundIndex !== liveRoundIndex ? (
+          <button className="push-round-button" onClick={() => activateRound(reviewRoundIndex)}><Send size={15} /> Push this round to teams</button>
+        ) : null}
 
         {reviewRound?.questions?.length ? (
-          <div className="simple-question-runner">
-            <div className="simple-question-number-strip host-review-question-strip">
+          <>
+            <div className="host-question-dot-row">
               {reviewRound.questions.map((item, index) => (
-                <button
-                  key={item.id}
-                  className={`${index === reviewQuestionIndex ? "current" : ""} ${reviewRoundIndex === liveRoundIndex && index === liveQuestionIndex ? "pushed" : ""}`}
-                  onClick={() => setReviewQuestionIndex(index)}
-                >
-                  Q{index + 1}
-                </button>
+                <button key={item.id} className={`${index === reviewQuestionIndex ? "current" : ""} ${reviewRoundIndex === liveRoundIndex && index === liveQuestionIndex ? "pushed" : ""}`} onClick={() => setReviewQuestionIndex(index)}>Q{index + 1}</button>
               ))}
             </div>
 
             {reviewQuestion ? (
-              <div className="simple-live-question-card host-private-question-card">
+              <div className="host-focus-question-card">
                 <div className="host-review-kicker">
                   <span>HOST REVIEW</span>
                   {reviewingLiveQuestion ? <b>ON TEAM SCREENS</b> : <em>Private preview</em>}
                 </div>
-
                 {reviewQuestion.image ? <img src={reviewQuestion.image} alt={reviewQuestion.imageName || "Question"} /> : null}
                 <h2>{reviewQuestion.text || "Untitled question"}</h2>
 
                 {reviewQuestion.type === "Multiple choice" && reviewQuestion.options?.length ? (
-                  <div className="simple-live-options">
+                  <div className="simple-live-options host-soft-options">
                     {reviewQuestion.options.filter(Boolean).map((option, index) => (
-                      <span key={index} className={String(option).trim() === String(reviewQuestion.answer ?? "").trim() ? "host-correct-option" : ""}>
-                        <b>{String.fromCharCode(65 + index)}</b>{option}
-                      </span>
+                      <span key={index} className={String(option).trim() === String(reviewQuestion.answer ?? "").trim() ? "host-correct-option" : ""}><b>{String.fromCharCode(65 + index)}</b>{option}</span>
                     ))}
                   </div>
                 ) : null}
 
-                <div className="host-answer-key">
-                  <span>CORRECT ANSWER</span>
-                  <strong>{reviewQuestion.answer || "No answer set"}</strong>
-                </div>
+                <div className="host-answer-key"><span>CORRECT ANSWER</span><strong>{reviewQuestion.answer || "No answer set"}</strong></div>
 
                 {reviewQuestion.audio ? (
                   <div className="simple-host-audio host-replay-audio">
                     <audio ref={hostAudioRef} src={reviewQuestion.audio} preload="auto" />
-                    <button className="ghost-button" onClick={replayHostOnly}>
-                      <RotateCcw size={15} /> Preview audio
-                    </button>
-                    <button className="primary-button" disabled={!reviewingLiveQuestion} onClick={replayOnAllDevices}>
-                      <RotateCcw size={15} /> Play / replay to teams
-                    </button>
+                    <button className="ghost-button" onClick={replayHostOnly}><RotateCcw size={15} /> Preview audio</button>
+                    <button className="primary-button" disabled={!reviewingLiveQuestion} onClick={replayOnAllDevices}><RotateCcw size={15} /> Play / replay to teams</button>
                   </div>
                 ) : null}
 
-                <div className="simple-question-controls">
-                  <button className="ghost-button" disabled={reviewQuestionIndex <= 0} onClick={() => setReviewQuestionIndex((index) => Math.max(0, index - 1))}>
-                    <ArrowLeft size={15} /> Previous
-                  </button>
-                  <button className="primary-button" onClick={pushReviewedQuestion}>
-                    <Send size={15} /> Push this question
-                  </button>
+                <div className="host-question-action-row">
+                  <button className="icon-step-button" disabled={reviewQuestionIndex <= 0} onClick={() => setReviewQuestionIndex((index) => Math.max(0, index - 1))}><ArrowLeft size={16} /></button>
+                  <button className="primary-button host-push-question" onClick={pushReviewedQuestion}><Send size={16} /> {reviewingLiveQuestion ? "Re-push question" : "Push question"}</button>
+                  <button className="icon-step-button" disabled={reviewQuestionIndex >= reviewRound.questions.length - 1} onClick={() => setReviewQuestionIndex((index) => Math.min(reviewRound.questions.length - 1, index + 1))}><ArrowRight size={16} /></button>
                   <button
-                    className="ghost-button"
-                    disabled={reviewQuestionIndex >= reviewRound.questions.length - 1}
-                    onClick={() => setReviewQuestionIndex((index) => Math.min(reviewRound.questions.length - 1, index + 1))}
+                    className={`reveal-toggle host-question-reveal ${reviewingLiveQuestion && liveQuestionRevealed ? "active" : ""}`}
+                    disabled={!reviewingLiveQuestion || liveRoundRevealed}
+                    onClick={toggleLiveAnswer}
+                    title={liveRoundRevealed ? "The whole round is currently revealed" : ""}
                   >
-                    Next <ArrowRight size={15} />
-                  </button>
-                  <button className="ghost-button" disabled={!reviewingLiveQuestion} onClick={revealLiveAnswer}>
-                    <Eye size={15} /> Reveal to teams
+                    {reviewingLiveQuestion && liveQuestionRevealed ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {liveRoundRevealed && reviewingLiveQuestion ? "Round revealed" : reviewingLiveQuestion && liveQuestionRevealed ? "Hide answer" : "Reveal to teams"}
                   </button>
                 </div>
               </div>
             ) : null}
-          </div>
+          </>
         ) : <p className="simple-empty-copy">This round has no questions.</p>}
       </section>
 
-      {reviewQuestion ? (
-        <section className="simple-card">
-          <div className="simple-section-heading">
-            <div><h2>Answers</h2><p>{reviewingLiveQuestion ? "Live answers" : "Reviewing saved answers privately"}</p></div>
-            <span>{Object.keys(reviewAnswers).length}/{state.teams.length} received</span>
-          </div>
-          <div className="simple-answer-list">
-            {state.teams.map((team) => {
-              const answer = reviewAnswers[team.id];
-              return (
-                <div key={team.id} className="simple-answer-row">
-                  <strong>{team.name || `Table ${team.table || "?"}`}</strong>
-                  <span>{answer?.text || "No answer"}</span>
-                  {answer ? (
-                    <div className="simple-mark-buttons">
-                      <button className={answer.status === "incorrect" ? "selected" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, 0)}>0</button>
-                      <button className={answer.status === "half" ? "selected" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, Number(reviewQuestion.points ?? 1) / 2)}>½</button>
-                      <button className={answer.status === "correct" ? "selected" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, Number(reviewQuestion.points ?? 1))}>
-                        <Check size={13} /> Correct
-                      </button>
-                    </div>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      ) : null}
-
-      <section className="simple-card simple-end-round-section">
-        <div className="simple-section-heading">
-          <div><h2>Live round lock</h2><p>{liveRound?.title || "No live round"}</p></div>
-          <strong>{liveLocked ? "LOCKED" : "EDITABLE"}</strong>
-        </div>
-        <div className="simple-end-round-controls">
-          <select value={timerChoice} onChange={(event) => setTimerChoice(Number(event.target.value))}>
-            <option value={30}>30 seconds</option>
-            <option value={60}>1 minute</option>
-            <option value={120}>2 minutes</option>
-            <option value={180}>3 minutes</option>
-            <option value={300}>5 minutes</option>
-          </select>
-          <button className="ghost-button" disabled={liveLocked || !liveRound} onClick={startLockTimer}>
-            <Clock3 size={15} /> Start lock timer
-          </button>
-          {state.live.timerActive ? <strong className="simple-countdown">{timerSeconds}s</strong> : null}
-          {!liveLocked ? (
-            <button className="danger-soft-button" disabled={!liveRound} onClick={lockLiveRoundNow}>
-              <Lock size={15} /> Lock round now
-            </button>
-          ) : (
-            <button className="ghost-button" onClick={unlockLiveRound}><Unlock size={15} /> Re-open round</button>
-          )}
-          <button className="ghost-button" disabled={!liveRound} onClick={revealLiveRoundAnswers}>
-            <Eye size={15} /> Reveal round answers
-          </button>
-          <span className="team-lock-count">{teamLocks}/{state.teams.length} teams locked</span>
-        </div>
-      </section>
-
-      <section className="simple-card">
-        <div className="simple-section-heading">
-          <div><h2>Leaderboard</h2><p>Show it to teams only when you want to.</p></div>
-          <button className="ghost-button" onClick={() => updateLive({ teamScreen: "leaderboard" })}>
-            <Trophy size={15} /> Show to teams
-          </button>
-        </div>
-        {leaderboard.length ? (
-          <ol className="simple-leaderboard">
-            {leaderboard.map((team, index) => (
-              <li key={team.id}><span>{index + 1}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score}</b></li>
-            ))}
-          </ol>
-        ) : <p className="simple-empty-copy">Scores will appear here as answers are marked.</p>}
-        <div className="simple-between-round-buttons">
-          <button className="ghost-button" onClick={() => updateLive({ teamScreen: liveQuestion ? "question" : "lobby" })}>Hide leaderboard</button>
-          {liveRoundIndex < quiz.rounds.length - 1 ? (
-            <button className="primary-button" onClick={() => activateRound(liveRoundIndex + 1)}>
-              Next live round <ArrowRight size={15} />
-            </button>
-          ) : (
-            <button className="primary-button" onClick={beginFinalReveal}><Trophy size={15} /> Final results</button>
-          )}
-        </div>
-      </section>
-
       {state.live.teamScreen === "final" ? (
-        <section className="simple-card">
-          <div className="simple-section-heading">
-            <div><h2>Final results</h2><p>Reveal teams from last place to first.</p></div>
-            <button className="primary-button" disabled={finalRevealCount >= state.teams.length} onClick={revealNextFinalTeam}>
-              <Trophy size={15} /> Reveal next place
-            </button>
-          </div>
-          <div className="simple-final-list">
-            {finalRevealOrder.map((team) => {
-              const place = leaderboard.findIndex((item) => item.id === team.id) + 1;
-              return (
-                <div className={place === 1 ? "winner" : ""} key={team.id}>
-                  <span>{place}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score} pts</b>
-                </div>
-              );
-            })}
-          </div>
+        <section className="host-final-float">
+          <div><strong>Final results</strong><span>{finalRevealCount}/{state.teams.length} revealed</span></div>
+          <button className="primary-button" disabled={finalRevealCount >= state.teams.length} onClick={revealNextFinalTeam}><Trophy size={15} /> Reveal next place</button>
+          <div className="simple-final-list">{finalRevealOrder.map((team) => { const place = leaderboard.findIndex((item) => item.id === team.id) + 1; return <div className={place === 1 ? "winner" : ""} key={team.id}><span>{place}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score} pts</b></div>; })}</div>
         </section>
       ) : null}
     </main>
