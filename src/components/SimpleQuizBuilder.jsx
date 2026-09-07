@@ -1,6 +1,7 @@
 import { Copy, FileAudio, FileImage, Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { createId, getSelectedQuiz } from "../utils/quiz.js";
+import { prepareQuizImage, readMediaAsDataUrl } from "../utils/media.js";
 
 const ROUND_CHOICES = [
   { key: "text", label: "Enter the Answer", detail: "Teams type an answer into a text box.", type: "Standard question round" },
@@ -95,15 +96,6 @@ function createQuiz() {
   };
 }
 
-function readAsDataUrl(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result || ""));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
-}
-
 function roundLabel(round) {
   return ROUND_CHOICES.find((item) => item.key === roundKind(round))?.label ?? "Enter the Answer";
 }
@@ -112,6 +104,7 @@ export default function SimpleQuizBuilder({ state, updateState }) {
   const quiz = getSelectedQuiz(state);
   const [selectedRoundId, setSelectedRoundId] = useState(quiz?.rounds?.[0]?.id || "");
   const [choosingRound, setChoosingRound] = useState(false);
+  const [mediaStatus, setMediaStatus] = useState({});
 
   useEffect(() => {
     if (!quiz) {
@@ -261,10 +254,23 @@ export default function SimpleQuizBuilder({ state, updateState }) {
 
   async function attachMedia(questionId, field, file) {
     if (!file) return;
-    const src = await readAsDataUrl(file);
-    updateQuestion(questionId, field === "image"
-      ? { image: src, imageName: file.name }
-      : { audio: src, audioName: file.name });
+    const key = `${questionId}:${field}`;
+    setMediaStatus((current) => ({ ...current, [key]: { busy: true, error: "" } }));
+
+    try {
+      const src = field === "image"
+        ? await prepareQuizImage(file)
+        : await readMediaAsDataUrl(file);
+
+      updateQuestion(questionId, field === "image"
+        ? { image: src, imageName: file.name }
+        : { audio: src, audioName: file.name });
+
+      setMediaStatus((current) => ({ ...current, [key]: { busy: false, error: "" } }));
+    } catch (error) {
+      const message = error?.message || `QuizPro could not load that ${field} file.`;
+      setMediaStatus((current) => ({ ...current, [key]: { busy: false, error: message } }));
+    }
   }
 
   function updateOption(question, index, value) {
@@ -354,11 +360,11 @@ export default function SimpleQuizBuilder({ state, updateState }) {
                           <label>Question<textarea value={question.text ?? ""} onChange={(event) => updateQuestion(question.id, { text: event.target.value })} placeholder="Type the question…" /></label>
 
                           {kind === "picture" ? (
-                            <div className="simple-media-field"><label className="file-button"><FileImage size={16} /> {question.image ? "Replace image" : "Upload image"}<input type="file" accept="image/*" onChange={(event) => attachMedia(question.id, "image", event.target.files?.[0])} /></label>{question.image ? <img src={question.image} alt={question.imageName || "Question"} /> : null}</div>
+                            <div className="simple-media-field"><label className="file-button"><FileImage size={16} /> {mediaStatus[`${question.id}:image`]?.busy ? "Optimising…" : question.image ? "Replace image" : "Upload image"}<input type="file" accept="image/*" disabled={mediaStatus[`${question.id}:image`]?.busy} onChange={(event) => attachMedia(question.id, "image", event.target.files?.[0])} /></label>{mediaStatus[`${question.id}:image`]?.error ? <span className="media-upload-error">{mediaStatus[`${question.id}:image`].error}</span> : null}{question.image ? <img src={question.image} alt={question.imageName || "Question"} /> : null}</div>
                           ) : null}
 
                           {kind === "music" ? (
-                            <div className="simple-media-field"><label className="file-button"><FileAudio size={16} /> {question.audio ? "Replace audio" : "Upload audio"}<input type="file" accept="audio/*" onChange={(event) => attachMedia(question.id, "audio", event.target.files?.[0])} /></label>{question.audio ? <audio controls src={question.audio} /> : null}</div>
+                            <div className="simple-media-field"><label className="file-button"><FileAudio size={16} /> {mediaStatus[`${question.id}:audio`]?.busy ? "Loading…" : question.audio ? "Replace audio" : "Upload audio"}<input type="file" accept="audio/*" disabled={mediaStatus[`${question.id}:audio`]?.busy} onChange={(event) => attachMedia(question.id, "audio", event.target.files?.[0])} /></label>{mediaStatus[`${question.id}:audio`]?.error ? <span className="media-upload-error">{mediaStatus[`${question.id}:audio`].error}</span> : null}{question.audio ? <audio controls src={question.audio} /> : null}</div>
                           ) : null}
 
                           {multiple ? (
