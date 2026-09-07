@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-02T21:42:06.795Z",
+  "updatedAt": "2026-09-07T20:13:13.455Z",
   "quizzes": [
     {
       "id": "quiz-22bi72f",
@@ -1243,6 +1243,37 @@
               "alternatives": [],
               "points": 1,
               "type": "Text",
+              "options": [],
+              "category": "",
+              "difficulty": "Medium",
+              "image": "",
+              "imageName": "",
+              "audio": "",
+              "audioName": "",
+              "notes": "",
+              "timeLimit": 60,
+              "autoMark": true
+            }
+          ]
+        },
+        {
+          "id": "round-gbms0a2",
+          "title": "Round 7",
+          "type": "Picture round",
+          "answerMode": "text",
+          "choiceCount": 4,
+          "instructions": "",
+          "scoringRules": "",
+          "order": 7,
+          "questions": [
+            {
+              "id": "question-nzfsvp1",
+              "number": 1,
+              "text": "",
+              "answer": "",
+              "alternatives": [],
+              "points": 1,
+              "type": "Picture",
               "options": [],
               "category": "",
               "difficulty": "Medium",
