@@ -21,9 +21,9 @@ function getRoute() {
 }
 
 function HostApp() {
-  const { state, updateState, resetState } = useQuizState();
+  const { state, updateState, resetState, storageError } = useQuizState();
   const sharedLibrary = useGitHubQuizLibrary(state, updateState);
-  return <HostShell state={state} updateState={updateState} resetState={resetState} sharedLibrary={sharedLibrary} />;
+  return <HostShell state={state} updateState={updateState} resetState={resetState} sharedLibrary={sharedLibrary} storageError={storageError} />;
 }
 
 export default function App() {
