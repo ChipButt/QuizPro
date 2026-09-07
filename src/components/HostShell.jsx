@@ -48,7 +48,7 @@ function TopBar({ state }) {
   );
 }
 
-export default function HostShell({ state, updateState, sharedLibrary }) {
+export default function HostShell({ state, updateState, sharedLibrary, storageError }) {
   const [activePage, setActivePage] = useState("Quizzes");
   const network = useLiveHostNetwork(state, updateState);
 
@@ -76,6 +76,7 @@ export default function HostShell({ state, updateState, sharedLibrary }) {
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
       <div className="host-main">
         <TopBar state={state} />
+        {storageError ? <div className="storage-warning">{storageError}</div> : null}
         {page}
       </div>
     </div>
