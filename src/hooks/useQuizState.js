@@ -26,6 +26,23 @@ function normalizeStoredState(stored) {
   };
 }
 
+function stateForLocalStorage(state) {
+  return {
+    ...state,
+    quizzes: (state.quizzes ?? []).map((quiz) => ({
+      ...quiz,
+      rounds: (quiz.rounds ?? []).map((round) => ({
+        ...round,
+        questions: (round.questions ?? []).map((question) => ({
+          ...question,
+          image: String(question.image || "").startsWith("data:") ? "" : question.image,
+          audio: String(question.audio || "").startsWith("data:") ? "" : question.audio,
+        })),
+      })),
+    })),
+  };
+}
+
 function readStoredState() {
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
@@ -37,9 +54,19 @@ function readStoredState() {
 
 export function useQuizState() {
   const [state, setState] = useState(readStoredState);
+  const [storageError, setStorageError] = useState("");
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    try {
+      // Embedded image/audio data can easily exceed the browser's localStorage quota.
+      // The shared GitHub library remains the source of truth for quiz media, so the
+      // local cache deliberately stores only lightweight quiz data.
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(stateForLocalStorage(state)));
+      setStorageError("");
+    } catch (error) {
+      console.error("QuizPro local backup failed", error);
+      setStorageError("The local browser backup is full. QuizPro is still running, but make sure the Shared library shows Saved before closing this page.");
+    }
   }, [state]);
 
   useEffect(() => {
@@ -63,7 +90,8 @@ export function useQuizState() {
     window.localStorage.removeItem(STORAGE_KEY);
     LEGACY_STORAGE_KEYS.forEach((key) => window.localStorage.removeItem(key));
     window.localStorage.removeItem("quizmaster-pro-team-id");
+    setStorageError("");
   }, []);
 
-  return useMemo(() => ({ state, updateState, resetState }), [state, updateState, resetState]);
+  return useMemo(() => ({ state, updateState, resetState, storageError }), [state, updateState, resetState, storageError]);
 }
