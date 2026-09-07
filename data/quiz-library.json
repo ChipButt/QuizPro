@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-07T20:48:13.166Z",
+  "updatedAt": "2026-09-07T20:48:18.824Z",
   "quizzes": [
     {
       "id": "quiz-22bi72f",
@@ -1269,7 +1269,7 @@
             {
               "id": "question-nzfsvp1",
               "number": 1,
-              "text": "Name ",
+              "text": "Name this ",
               "answer": "",
               "alternatives": [],
               "points": 1,
