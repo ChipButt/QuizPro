@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-07T20:48:55.636Z",
+  "updatedAt": "2026-09-07T20:49:03.333Z",
   "quizzes": [
     {
       "id": "quiz-22bi72f",
@@ -1288,7 +1288,7 @@
             {
               "id": "question-4ur2s5c",
               "number": 2,
-              "text": "",
+              "text": "Name this show",
               "answer": "",
               "alternatives": [],
               "points": 1,
