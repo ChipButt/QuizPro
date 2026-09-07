@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { computeLeaderboard } from "../utils/quiz.js";
+import { autoScoreAnswer, computeLeaderboard } from "../utils/quiz.js";
 import {
   createSessionCode,
   createTeamSlot,
@@ -321,10 +321,70 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
             ...(current.answers?.[markedQuestion.id]?.[teamId] ?? {}),
             score: nextScore,
             status: nextScore >= max ? "correct" : nextScore > 0 ? "half" : "incorrect",
+            markSource: "manual",
+            reason: "Quizmaster override",
           },
         },
       },
     }));
+  }
+
+  function autoMarkQuestion(question) {
+    if (!question) return;
+    updateState((current) => {
+      const existing = current.answers?.[question.id] ?? {};
+      const nextAnswers = { ...existing };
+
+      for (const [teamId, answer] of Object.entries(existing)) {
+        const text = String(answer?.text ?? "").trim();
+        if (!text) continue;
+        const result = autoScoreAnswer(question, text);
+        nextAnswers[teamId] = {
+          ...answer,
+          score: ["correct", "incorrect"].includes(result.status) ? result.score : null,
+          status: result.status,
+          reason: result.reason,
+          markSource: "auto",
+        };
+      }
+
+      return {
+        ...current,
+        answers: {
+          ...current.answers,
+          [question.id]: nextAnswers,
+        },
+      };
+    });
+  }
+
+  function autoMarkRound(round) {
+    if (!round) return;
+    updateState((current) => {
+      const answers = { ...current.answers };
+
+      for (const question of round.questions ?? []) {
+        const existing = current.answers?.[question.id] ?? {};
+        const nextQuestionAnswers = { ...existing };
+
+        for (const [teamId, answer] of Object.entries(existing)) {
+          const text = String(answer?.text ?? "").trim();
+          if (!text) continue;
+          const result = autoScoreAnswer(question, text);
+          nextQuestionAnswers[teamId] = {
+            ...answer,
+            score: ["correct", "incorrect"].includes(result.status) ? result.score : null,
+            status: result.status,
+            reason: result.reason,
+            markSource: "auto",
+          };
+        }
+
+        answers[question.id] = nextQuestionAnswers;
+      }
+
+      return { ...current, answers };
+    });
   }
 
   function replayHostOnly() {
@@ -472,21 +532,44 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
 
             {openPanel === "answers" ? (
               <>
-                <div className="host-drawer-title"><div><h3>Answers for this question</h3><p>{reviewingLiveQuestion ? "Live question" : "Private review"}</p></div><span>{Object.keys(reviewAnswers).length}/{state.teams.length}</span></div>
-                <div className="simple-answer-list compact-answer-list">
+                <div className="host-drawer-title">
+                  <div><h3>Mark answers</h3><p>Automatic marks can always be changed by the Quizmaster.</p></div>
+                  <div className="answer-drawer-actions">
+                    <span>{Object.keys(reviewAnswers).length}/{state.teams.length}</span>
+                    <button className="ghost-button compact" disabled={!reviewQuestion || !Object.keys(reviewAnswers).length} onClick={() => autoMarkQuestion(reviewQuestion)}>
+                      <RefreshCcw size={13} /> Auto mark question
+                    </button>
+                  </div>
+                </div>
+                {reviewQuestion ? (
+                  <div className="answer-comparison-heading">
+                    <span>Team</span><span>Answer given</span><span>Correct answer</span><span>Mark</span>
+                  </div>
+                ) : null}
+                <div className="simple-answer-list compact-answer-list auto-mark-answer-list">
                   {state.teams.map((team) => {
                     const answer = reviewAnswers[team.id];
                     return (
-                      <div key={team.id} className="simple-answer-row">
+                      <div key={team.id} className={`simple-answer-row auto-mark-answer-row ${answer?.status || "unanswered"}`}>
                         <strong>{team.name || `Table ${team.table || "?"}`}</strong>
-                        <span>{answer?.text || "No answer"}</span>
+                        <div className="answer-given-cell">
+                          <small>ANSWER GIVEN</small>
+                          <span>{answer?.text || "No answer"}</span>
+                        </div>
+                        <div className="answer-correct-cell">
+                          <small>CORRECT ANSWER</small>
+                          <span>{reviewQuestion?.answer || "No correct answer set"}</span>
+                        </div>
                         {answer ? (
-                          <div className="simple-mark-buttons">
-                            <button className={answer.status === "incorrect" ? "selected" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, 0)}>0</button>
-                            <button className={answer.status === "half" ? "selected" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, Number(reviewQuestion.points ?? 1) / 2)}>½</button>
-                            <button className={answer.status === "correct" ? "selected" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, Number(reviewQuestion.points ?? 1))}><Check size={13} /> Correct</button>
+                          <div className="simple-mark-buttons answer-mark-controls">
+                            <em className={`mark-source ${answer.markSource === "manual" ? "manual" : "auto"}`}>
+                              {answer.markSource === "manual" ? "Manual" : "Auto"}
+                            </em>
+                            <button title="Mark incorrect" className={answer.status === "incorrect" ? "selected incorrect" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, 0)}>0</button>
+                            <button title="Award half points" className={answer.status === "half" ? "selected half" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, Number(reviewQuestion.points ?? 1) / 2)}>½</button>
+                            <button title="Mark correct" className={answer.status === "correct" ? "selected correct" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, Number(reviewQuestion.points ?? 1))}><Check size={13} /> Correct</button>
                           </div>
-                        ) : null}
+                        ) : <span className="no-answer-mark">—</span>}
                       </div>
                     );
                   })}
@@ -499,6 +582,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                 <div className="host-drawer-title"><div><h3>{liveRound?.title || "Live round"}</h3><p>{teamLocks}/{state.teams.length} teams have locked all answers.</p></div><span className={liveLocked ? "drawer-state locked" : "drawer-state"}>{liveLocked ? "LOCKED" : "EDITABLE"}</span></div>
                 <div className="host-drawer-actions">
                   {!liveLocked ? <button className="danger-soft-button" onClick={lockLiveRoundNow}><Lock size={15} /> Lock round</button> : <button className="ghost-button" onClick={unlockLiveRound}><Unlock size={15} /> Re-open round</button>}
+                  <button className="ghost-button" disabled={!liveRound} onClick={() => autoMarkRound(liveRound)}><RefreshCcw size={15} /> Auto mark round</button>
                   <button className={`reveal-toggle ${liveRoundRevealed ? "active" : ""}`} onClick={toggleLiveRoundAnswers}>
                     {liveRoundRevealed ? <EyeOff size={15} /> : <Eye size={15} />}
                     {liveRoundRevealed ? "Hide round answers" : "Reveal round answers"}
