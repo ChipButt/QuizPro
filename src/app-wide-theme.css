@@ -549,3 +549,27 @@ input:focus,textarea:focus,select:focus{
   .simple-quiz-title-input{flex-basis:100%}
   .simple-sync-bar,.simple-import-bar{margin:10px 10px 0;border-radius:20px !important}
 }
+
+
+/* Media/storage feedback */
+.media-upload-error{
+  display:block;
+  margin-top:7px;
+  padding:8px 10px;
+  border-radius:12px;
+  background:#ffe8ee;
+  color:#8a1740;
+  font-size:12px;
+  font-weight:800;
+}
+.storage-warning{
+  width:min(1320px,calc(100% - 48px));
+  margin:12px auto 0;
+  padding:10px 14px;
+  border:2px solid #d6a322;
+  border-radius:16px;
+  background:#fff2bf;
+  color:#684900;
+  font-weight:800;
+  box-shadow:0 6px 0 rgba(214,163,34,.18);
+}
