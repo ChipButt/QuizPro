@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-07T20:48:32.478Z",
+  "updatedAt": "2026-09-07T20:48:42.704Z",
   "quizzes": [
     {
       "id": "quiz-22bi72f",
@@ -1270,7 +1270,7 @@
               "id": "question-nzfsvp1",
               "number": 1,
               "text": "Name this show",
-              "answer": "",
+              "answer": "Literally Delicious",
               "alternatives": [],
               "points": 1,
               "type": "Picture",
