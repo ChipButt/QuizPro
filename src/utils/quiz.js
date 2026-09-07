@@ -69,13 +69,24 @@ export function autoScoreAnswer(question, answerText) {
     };
   }
 
-  const accepted = [question.answer, ...(question.alternatives ?? [])].map(normalizeAnswer);
+  const accepted = [question.answer, ...(question.alternatives ?? [])]
+    .map(normalizeAnswer)
+    .filter(Boolean);
   const candidate = normalizeAnswer(answerText);
   const correct = accepted.includes(candidate);
+
+  if (question.type === "Multiple choice") {
+    return {
+      score: correct ? Number(question.points ?? 1) : 0,
+      status: correct ? "correct" : "incorrect",
+      reason: correct ? "Matched the selected correct choice" : "Selected a different choice",
+    };
+  }
+
   return {
-    score: correct ? question.points : null,
-    status: correct ? "correct" : "pending",
-    reason: correct ? "Matched accepted answer" : "Needs host review",
+    score: correct ? Number(question.points ?? 1) : 0,
+    status: correct ? "correct" : "incorrect",
+    reason: correct ? "Matched accepted answer" : "Did not match the accepted answer",
   };
 }
 
