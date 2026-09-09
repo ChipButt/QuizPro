@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-09T13:21:24.455Z",
+  "updatedAt": "2026-09-09T13:21:51.836Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -2277,17 +2277,6 @@
               "autoMark": true
             }
           ]
-        },
-        {
-          "id": "round-9xfcg7l",
-          "title": "Name the Film",
-          "type": "Picture round",
-          "answerMode": "text",
-          "choiceCount": 4,
-          "instructions": "",
-          "scoringRules": "",
-          "order": 5,
-          "questions": []
         },
         {
           "id": "round-uugynjz",
