@@ -1,19 +1,7 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-07T20:49:24.110Z",
+  "updatedAt": "2026-09-09T12:55:14.102Z",
   "quizzes": [
-    {
-      "id": "quiz-22bi72f",
-      "title": "Untitled quiz",
-      "date": "",
-      "time": "",
-      "venue": "",
-      "status": "Draft",
-      "notes": "",
-      "archived": false,
-      "rounds": [],
-      "finalLeaderboard": []
-    },
     {
       "id": "quiz-a528at6",
       "title": "TPC - Pub Quiz - August 2026",
