@@ -192,6 +192,51 @@ export default function SimpleQuizBuilder({ state, updateState }) {
     }));
   }
 
+  function setRoundKind(nextKind) {
+    if (!selectedRound) return;
+    const choice = ROUND_CHOICES.find((item) => item.key === nextKind) ?? ROUND_CHOICES[0];
+    const currentMode = answerMode(selectedRound);
+    const nextMode = nextKind === "multiple"
+      ? "multiple"
+      : nextKind === "text"
+        ? "text"
+        : currentMode;
+    const count = choiceCount(selectedRound);
+
+    updateRound({
+      type: choice.type,
+      answerMode: nextMode,
+      questions: selectedRound.questions.map((question) => {
+        const nextQuestionType = nextKind === "multiple" || nextMode === "multiple"
+          ? "Multiple choice"
+          : nextKind === "picture"
+            ? "Picture"
+            : nextKind === "music"
+              ? "Music"
+              : "Text";
+
+        let options = question.options ?? [];
+        if (nextQuestionType === "Multiple choice") {
+          options = Array.from({ length: count }, (_, index) => options[index] ?? "");
+
+          // Preserve an existing correct text answer when converting into
+          // multiple choice by placing it in the first available empty option.
+          const existingAnswer = String(question.answer ?? "").trim();
+          if (existingAnswer && !options.some((option) => String(option).trim() === existingAnswer)) {
+            const emptyIndex = options.findIndex((option) => !String(option).trim());
+            if (emptyIndex >= 0) options[emptyIndex] = question.answer;
+          }
+        }
+
+        return {
+          ...question,
+          type: nextQuestionType,
+          options,
+        };
+      }),
+    });
+  }
+
   function setRoundAnswerMode(mode) {
     if (!selectedRound) return;
     const kind = roundKind(selectedRound);
@@ -341,6 +386,11 @@ export default function SimpleQuizBuilder({ state, updateState }) {
                 <>
                   <div className="simple-round-settings">
                     <label>Round name<input value={selectedRound.title} onChange={(event) => updateRound({ title: event.target.value })} /></label>
+                    <label>Round type
+                      <select value={kind} onChange={(event) => setRoundKind(event.target.value)}>
+                        {ROUND_CHOICES.map((choice) => <option key={choice.key} value={choice.key}>{choice.label}</option>)}
+                      </select>
+                    </label>
                     {(kind === "multiple" || ((kind === "picture" || kind === "music") && mode === "multiple")) ? (
                       <label>Answers per question<select value={choices} onChange={(event) => setRoundChoiceCount(event.target.value)}>{[2,3,4,5,6].map((count) => <option key={count} value={count}>{count}</option>)}</select></label>
                     ) : null}
