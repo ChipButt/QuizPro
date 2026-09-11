@@ -2,6 +2,39 @@ import { autoScoreAnswer, computeLeaderboard, createId } from "./quiz.js";
 
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
+const WAITING_FACT_POOL = [
+  { text: "Octopuses have three hearts.", terms: ["octopus", "octopuses", "three hearts", "3 hearts"] },
+  { text: "A group of flamingos is called a flamboyance.", terms: ["flamingo", "flamingos", "flamboyance"] },
+  { text: "Wombat droppings are cube-shaped.", terms: ["wombat", "wombats", "cube-shaped", "cube shaped"] },
+  { text: "Venus takes longer to rotate once than it takes to orbit the Sun.", terms: ["venus", "rotate once", "orbit the sun"] },
+  { text: "Hummingbirds are the only birds that can fly backwards.", terms: ["hummingbird", "hummingbirds", "fly backwards"] },
+  { text: "The national animal of Scotland is the unicorn.", terms: ["national animal of scotland", "scotland", "unicorn"] },
+  { text: "Butterflies taste with receptors on their feet.", terms: ["butterfly", "butterflies", "taste with", "feet"] },
+  { text: "Polar bears have black skin beneath their fur.", terms: ["polar bear", "polar bears", "black skin"] },
+  { text: "Penguins have knees; much of their upper leg is hidden inside their bodies.", terms: ["penguin", "penguins", "knees"] },
+  { text: "The dot above a lowercase i or j is called a tittle.", terms: ["tittle"] },
+  { text: "The Eiffel Tower can grow by around 15 cm in hot weather as its metal expands.", terms: ["eiffel tower", "15 cm", "metal expands"] },
+  { text: "Sea otters sometimes hold hands while resting so they do not drift apart.", terms: ["sea otter", "sea otters", "hold hands"] },
+  { text: "Crows can recognise individual human faces.", terms: ["crow", "crows", "human faces"] },
+  { text: "Ravens can imitate human speech.", terms: ["raven", "ravens", "human speech"] },
+  { text: "The Moon experiences moonquakes.", terms: ["moonquake", "moonquakes"] },
+  { text: "Some bamboo species can grow more than 90 cm in a single day.", terms: ["bamboo", "90 cm"] },
+  { text: "A bolt of lightning can heat the surrounding air to roughly five times the temperature of the Sun's surface.", terms: ["lightning", "five times", "sun's surface", "sun surface"] },
+  { text: "An ostrich's eye is larger than its brain.", terms: ["ostrich", "ostrich's eye", "larger than its brain"] },
+  { text: "A snail can have thousands of tiny teeth on a ribbon-like structure called a radula.", terms: ["snail", "snails", "radula"] },
+  { text: "The smell that often follows rain has a name: petrichor.", terms: ["petrichor"] },
+  { text: "A narwhal's tusk is actually a long tooth.", terms: ["narwhal", "narwhals", "tusk", "long tooth"] },
+  { text: "Cashews grow attached to the bottom of a fruit called a cashew apple.", terms: ["cashew", "cashews", "cashew apple"] },
+  { text: "The tiny pocket on jeans was originally designed to hold a pocket watch.", terms: ["jeans", "pocket watch", "watch pocket"] },
+  { text: "There are more possible orders for a shuffled 52-card deck than there are atoms on Earth.", terms: ["52-card", "52 card", "shuffle", "shuffled", "atoms on earth"] },
+  { text: "The inventor of the Pringles can had some of his ashes buried in one.", terms: ["pringles", "ashes", "inventor of the pringles can"] },
+  { text: "A pineapple is formed from many individual flowers whose fruits fuse together.", terms: ["pineapple", "many individual flowers"] },
+  { text: "A group of porcupines is called a prickle.", terms: ["porcupine", "porcupines", "prickle"] },
+  { text: "A group of giraffes standing still is sometimes called a tower.", terms: ["giraffe", "giraffes", "tower of giraffes"] },
+  { text: "The fingerprints of koalas are remarkably similar to human fingerprints.", terms: ["koala", "koalas", "fingerprints"] },
+  { text: "Some turtles can absorb oxygen through specialised tissue near their cloaca while underwater.", terms: ["turtle", "turtles", "cloaca", "absorb oxygen"] },
+];
+
 export function createSessionCode(length = 6) {
   const bytes = new Uint8Array(length);
   crypto.getRandomValues(bytes);
@@ -75,6 +108,73 @@ function safeQuestion(state, roundId, question) {
   };
 }
 
+function quizSearchText(quiz) {
+  if (!quiz) return "";
+  const values = [quiz.title];
+  for (const round of quiz.rounds ?? []) {
+    values.push(round.title);
+    for (const question of round.questions ?? []) {
+      values.push(
+        question.text,
+        question.answer,
+        ...(question.alternatives ?? []),
+        ...(question.options ?? []),
+      );
+    }
+  }
+  return values.filter(Boolean).join(" ").toLowerCase();
+}
+
+function waitingFactsForQuiz(quiz) {
+  const quizText = quizSearchText(quiz);
+  const safe = WAITING_FACT_POOL
+    .filter((fact) => !fact.terms.some((term) => quizText.includes(String(term).toLowerCase())))
+    .map((fact) => fact.text);
+  return safe.slice(0, 16);
+}
+
+function roundScoreForTeam(state, round, teamId) {
+  let score = 0;
+  let max = 0;
+  let answered = 0;
+  let marked = 0;
+
+  for (const question of round.questions ?? []) {
+    const points = Math.max(0, Number(question.points ?? 1) || 0);
+    max += points;
+    const answer = state.answers?.[question.id]?.[teamId];
+    if (!answer) continue;
+    answered += 1;
+    const numericScore = Number(answer.score);
+    if (Number.isFinite(numericScore)) {
+      score += numericScore;
+      marked += 1;
+    }
+  }
+
+  return { score, max, answered, marked };
+}
+
+function completedRoundScores(state, quiz, team) {
+  if (!quiz || !team) return [];
+  const liveRoundIndex = Math.max(0, Number(state.live?.roundIndex ?? 0));
+  const questionIndex = Number(state.live?.questionIndex ?? -1);
+  const teamScreen = state.live?.teamScreen ?? "lobby";
+
+  let completedThrough = liveRoundIndex - 1;
+  if (teamScreen === "round_locked") completedThrough = liveRoundIndex;
+  if (questionIndex < 0 && liveRoundIndex === 0 && teamScreen === "lobby") completedThrough = -1;
+
+  return (quiz.rounds ?? [])
+    .slice(0, Math.max(0, completedThrough + 1))
+    .map((round, index) => ({
+      id: round.id,
+      number: index + 1,
+      title: round.title || `Round ${index + 1}`,
+      ...roundScoreForTeam(state, round, team.id),
+    }));
+}
+
 export function buildTeamSnapshot(state, teamToken) {
   const team = state.teams.find((item) => item.token === teamToken) ?? null;
   const quiz = getLiveQuiz(state);
@@ -113,7 +213,7 @@ export function buildTeamSnapshot(state, teamToken) {
     type: "snapshot",
     sessionCode: state.live?.sessionCode ?? "",
     sessionActive: Boolean(state.live?.sessionActive),
-    quiz: quiz ? { id: quiz.id, title: quiz.title } : null,
+    quiz: quiz ? { id: quiz.id, title: quiz.title, totalRounds: quiz.rounds?.length ?? 0 } : null,
     team: team
       ? {
           id: team.id,
@@ -153,6 +253,8 @@ export function buildTeamSnapshot(state, teamToken) {
       : null,
     teamAnswers,
     leaderboard,
+    roundScores: completedRoundScores(state, quiz, team),
+    waitingFacts: waitingFactsForQuiz(quiz),
   };
 }
 
