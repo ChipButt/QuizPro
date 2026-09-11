@@ -1,174 +1,200 @@
-/* QuizTaker v7: lava-lamp style fun-fact blobs. */
+/* QuizTaker v7: lava-lamp style fun-fact blobs based on the supplied motion reference. */
 
 .waiting-fun-fact{
   position:relative !important;
   overflow:visible !important;
   isolation:isolate;
   border:0 !important;
-  border-radius:52% 48% 56% 44% / 46% 55% 45% 54% !important;
+  border-radius:48% 52% 50% 50% / 53% 46% 54% 47% !important;
   background:
-    radial-gradient(circle at 31% 23%,rgba(255,255,255,.72) 0 8%,rgba(255,255,255,.20) 18%,transparent 32%),
-    radial-gradient(circle at 72% 72%,rgba(255,125,168,.34) 0 18%,transparent 48%),
-    linear-gradient(155deg,rgba(140,124,243,.95) 0%,rgba(174,148,255,.92) 35%,rgba(255,125,168,.86) 72%,rgba(114,216,194,.82) 100%) !important;
+    radial-gradient(circle at 26% 20%,rgba(255,255,255,.82) 0 7%,rgba(255,255,255,.18) 17%,transparent 30%),
+    radial-gradient(circle at 22% 72%,rgba(114,216,194,.78) 0 13%,transparent 37%),
+    radial-gradient(circle at 78% 66%,rgba(255,125,168,.88) 0 18%,transparent 45%),
+    linear-gradient(145deg,#65dddf 0%,#8c7cf3 38%,#c759ed 61%,#ff7da8 100%) !important;
   color:#2f2851;
   box-shadow:
-    inset 12px 13px 28px rgba(255,255,255,.26),
-    inset -14px -16px 30px rgba(69,44,145,.16),
-    0 22px 40px rgba(92,79,197,.20) !important;
-  transform-origin:50% 70%;
-  will-change:transform,opacity,border-radius,filter;
+    inset 13px 14px 26px rgba(255,255,255,.23),
+    inset -15px -14px 28px rgba(66,35,145,.18),
+    0 18px 34px rgba(92,79,197,.18) !important;
+  transform-origin:50% 50%;
+  will-change:transform,opacity,border-radius;
   animation:
-    quizFactLavaTravel 7s cubic-bezier(.32,.04,.22,1) both,
-    quizFactLavaMorph 2.35s ease-in-out infinite alternate !important;
+    quizFactLavaTravel 7s cubic-bezier(.33,.02,.22,1) both,
+    quizFactLavaBody 2.6s ease-in-out infinite alternate !important;
 }
 
-/* Glossy lava-lamp highlight. */
+/* Large secondary globule: overlaps, stretches away, then melts back into the main mass. */
 .waiting-fun-fact::before{
   content:"";
   position:absolute;
-  width:30%;
-  height:20%;
-  top:10%;
-  left:17%;
-  border-radius:62% 38% 56% 44% / 58% 46% 54% 42%;
-  background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(255,255,255,.08));
-  filter:blur(1px);
-  transform:rotate(-18deg);
+  width:43%;
+  aspect-ratio:1.05;
+  right:-18%;
+  top:8%;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 20%,rgba(255,255,255,.72) 0 8%,transparent 26%),
+    linear-gradient(145deg,#a36cf2 0%,#f45bdb 42%,#ff8b84 100%);
+  box-shadow:
+    inset -9px -10px 18px rgba(91,38,131,.14),
+    0 10px 22px rgba(154,88,206,.12);
   pointer-events:none;
-  z-index:2;
-  animation:quizFactLavaHighlight 2.8s ease-in-out infinite alternate;
+  z-index:0;
+  transform-origin:14% 58%;
+  animation:quizFactLavaCompanion 3.25s ease-in-out infinite alternate;
 }
 
-/* A smaller trailing lobe makes the main blob look like it is stretching and pinching. */
+/* Small satellite globules make it feel like real lava repeatedly pinching off and rejoining. */
 .waiting-fun-fact::after{
   content:"";
   position:absolute;
-  width:32%;
+  width:17%;
   aspect-ratio:1;
-  left:34%;
-  bottom:-19%;
-  border-radius:54% 46% 61% 39% / 45% 57% 43% 55%;
+  left:7%;
+  bottom:-12%;
+  border-radius:50%;
   background:
-    radial-gradient(circle at 34% 24%,rgba(255,255,255,.34) 0 10%,transparent 28%),
-    linear-gradient(155deg,rgba(151,129,247,.94),rgba(241,127,179,.86) 70%,rgba(114,216,194,.78));
-  box-shadow:inset -7px -9px 14px rgba(69,44,145,.12);
-  filter:blur(.15px);
+    radial-gradient(circle at 31% 22%,rgba(255,255,255,.76) 0 10%,transparent 30%),
+    linear-gradient(145deg,#64dfe1,#7cbff3 45%,#8c7cf3);
+  box-shadow:
+    54px 22px 0 -7px rgba(255,125,168,.96),
+    104px -16px 0 -10px rgba(140,124,243,.92),
+    inset -5px -7px 12px rgba(53,69,150,.12);
   pointer-events:none;
-  z-index:-1;
-  animation:quizFactLavaLobe 2.35s ease-in-out infinite alternate;
+  z-index:0;
+  animation:quizFactLavaDroplets 3.8s ease-in-out infinite alternate;
+}
+
+.waiting-fun-fact span,
+.waiting-fun-fact strong{
+  position:relative;
+  z-index:2;
 }
 
 .waiting-fun-fact span{
-  color:#4f438e !important;
-  text-shadow:0 1px 0 rgba(255,255,255,.28);
+  color:#51438f !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.32);
 }
 
 .waiting-fun-fact strong{
   color:#2f2851 !important;
-  text-shadow:0 1px 0 rgba(255,255,255,.24);
+  text-shadow:0 1px 0 rgba(255,255,255,.25);
 }
 
 @keyframes quizFactLavaTravel{
-  /* Form low in the lamp, then float gently upward. */
+  /* Rise slowly, just like a lava-lamp globule. */
   0%{
     opacity:0;
-    transform:translate(-7%,38px) scale(.72,.52) rotate(-2deg);
-    filter:saturate(.92) blur(1.2px);
+    transform:translate(-8%,34px) scale(.72,.76) rotate(-2deg);
   }
-  7%{
-    opacity:.72;
-    transform:translate(-8%,25px) scale(.88,.78) rotate(-1.4deg);
+  8%{
+    opacity:.82;
+    transform:translate(-7%,23px) scale(.90,.92) rotate(-1.2deg);
   }
-  14%{
+  15%{
     opacity:1;
-    transform:translate(-7%,13px) scale(1.02,.96) rotate(-.6deg);
-    filter:saturate(1.02) blur(0);
+    transform:translate(-5%,12px) scale(1,.98) rotate(-.5deg);
   }
-  27%{
-    transform:translate(-1%,1px) scale(.98,1.06) rotate(.7deg);
+  29%{
+    transform:translate(2%,1px) scale(1.02,.99) rotate(.5deg);
   }
-  43%{
-    transform:translate(8%,-13px) scale(1.04,.98) rotate(1.1deg);
-  }
-  58%{
-    transform:translate(13%,-27px) scale(.96,1.08) rotate(.2deg);
-  }
-  73%{
-    transform:translate(7%,-38px) scale(1.03,.97) rotate(-.8deg);
-  }
-  86%{
-    opacity:1;
-    transform:translate(-1%,-47px) scale(.98,1.04) rotate(-1deg);
-  }
-  94%{
-    opacity:.92;
-    transform:translate(-5%,-54px) scale(.92,1.10) rotate(-.5deg);
-    filter:saturate(.98) blur(0);
-  }
-  100%{
-    opacity:0;
-    transform:translate(-7%,-64px) scale(.78,1.18) rotate(0deg);
-    filter:saturate(.9) blur(1.6px);
-  }
-}
-
-@keyframes quizFactLavaMorph{
-  0%{
-    border-radius:51% 49% 58% 42% / 43% 57% 46% 54%;
-  }
-  20%{
-    border-radius:58% 42% 49% 51% / 54% 43% 57% 46%;
-  }
-  40%{
-    border-radius:45% 55% 61% 39% / 48% 58% 42% 52%;
+  45%{
+    transform:translate(10%,-12px) scale(.98,1.04) rotate(1deg);
   }
   60%{
-    border-radius:61% 39% 44% 56% / 57% 45% 55% 43%;
+    transform:translate(13%,-25px) scale(1.02,.98) rotate(.3deg);
   }
-  80%{
-    border-radius:47% 53% 55% 45% / 42% 61% 39% 58%;
+  74%{
+    transform:translate(7%,-37px) scale(.99,1.04) rotate(-.6deg);
+  }
+  87%{
+    opacity:1;
+    transform:translate(-2%,-47px) scale(1.01,.99) rotate(-.9deg);
+  }
+  95%{
+    opacity:.88;
+    transform:translate(-6%,-55px) scale(.94,1.05) rotate(-.4deg);
   }
   100%{
-    border-radius:56% 44% 48% 52% / 59% 41% 56% 44%;
+    opacity:0;
+    transform:translate(-8%,-64px) scale(.82,1.10) rotate(0deg);
   }
 }
 
-@keyframes quizFactLavaLobe{
+/* Smooth, rounded shape changes rather than jagged wobbling. */
+@keyframes quizFactLavaBody{
+  0%{border-radius:48% 52% 50% 50% / 53% 46% 54% 47%}
+  25%{border-radius:54% 46% 48% 52% / 48% 54% 46% 52%}
+  50%{border-radius:46% 54% 54% 46% / 52% 47% 53% 48%}
+  75%{border-radius:52% 48% 46% 54% / 47% 55% 45% 53%}
+  100%{border-radius:49% 51% 55% 45% / 55% 45% 51% 49%}
+}
+
+@keyframes quizFactLavaCompanion{
   0%{
-    transform:translate(-9px,2px) scale(.88,1.12) rotate(-7deg);
-    border-radius:55% 45% 62% 38% / 44% 58% 42% 56%;
+    transform:translate(-26px,26px) scale(.80,1.04) rotate(-8deg);
+    border-radius:52% 48% 55% 45% / 48% 54% 46% 52%;
   }
-  35%{
-    transform:translate(4px,-5px) scale(1.04,.94) rotate(3deg);
-    border-radius:44% 56% 49% 51% / 58% 42% 57% 43%;
+  26%{
+    transform:translate(-12px,12px) scale(1.02,.92) rotate(-2deg);
+    border-radius:47% 53% 50% 50% / 54% 46% 53% 47%;
   }
-  70%{
-    transform:translate(11px,-10px) scale(.92,1.04) rotate(7deg);
-    border-radius:61% 39% 55% 45% / 47% 60% 40% 53%;
+  52%{
+    transform:translate(8px,-10px) scale(.94,1.12) rotate(5deg);
+    border-radius:54% 46% 47% 53% / 46% 55% 45% 54%;
+  }
+  76%{
+    transform:translate(18px,-20px) scale(.84,1.18) rotate(8deg);
+    border-radius:49% 51% 55% 45% / 55% 45% 50% 50%;
   }
   100%{
-    transform:translate(-2px,-3px) scale(1.08,.90) rotate(-2deg);
-    border-radius:48% 52% 63% 37% / 59% 43% 57% 41%;
+    transform:translate(-7px,4px) scale(1.08,.90) rotate(1deg);
+    border-radius:53% 47% 49% 51% / 48% 52% 46% 54%;
   }
 }
 
-@keyframes quizFactLavaHighlight{
-  0%{transform:translate(-2px,2px) rotate(-20deg) scale(.94);opacity:.48}
-  100%{transform:translate(7px,7px) rotate(-13deg) scale(1.08);opacity:.74}
+@keyframes quizFactLavaDroplets{
+  0%{
+    transform:translate(3px,1px) scale(.78) rotate(-4deg);
+    opacity:.68;
+  }
+  28%{
+    transform:translate(-7px,-14px) scale(.96) rotate(2deg);
+    opacity:.96;
+  }
+  55%{
+    transform:translate(11px,-30px) scale(1.10) rotate(7deg);
+    opacity:1;
+  }
+  78%{
+    transform:translate(25px,-18px) scale(.90) rotate(3deg);
+    opacity:.88;
+  }
+  100%{
+    transform:translate(9px,-3px) scale(.72) rotate(-3deg);
+    opacity:.62;
+  }
 }
 
 @media(max-width:480px){
+  .waiting-fun-fact::after{
+    box-shadow:
+      39px 17px 0 -6px rgba(255,125,168,.96),
+      76px -12px 0 -9px rgba(140,124,243,.92),
+      inset -5px -7px 12px rgba(53,69,150,.12);
+  }
+
   @keyframes quizFactLavaTravel{
-    0%{opacity:0;transform:translate(-5%,30px) scale(.72,.52) rotate(-2deg);filter:blur(1.2px)}
-    7%{opacity:.72;transform:translate(-6%,20px) scale(.88,.78) rotate(-1.3deg)}
-    14%{opacity:1;transform:translate(-5%,10px) scale(1.02,.96) rotate(-.5deg);filter:blur(0)}
-    27%{transform:translate(-1%,1px) scale(.98,1.06) rotate(.6deg)}
-    43%{transform:translate(6%,-10px) scale(1.04,.98) rotate(.9deg)}
-    58%{transform:translate(9%,-20px) scale(.96,1.08) rotate(.2deg)}
-    73%{transform:translate(5%,-29px) scale(1.03,.97) rotate(-.7deg)}
-    86%{opacity:1;transform:translate(-1%,-36px) scale(.98,1.04) rotate(-.8deg)}
-    94%{opacity:.92;transform:translate(-4%,-42px) scale(.92,1.10) rotate(-.4deg)}
-    100%{opacity:0;transform:translate(-5%,-50px) scale(.78,1.18);filter:blur(1.5px)}
+    0%{opacity:0;transform:translate(-6%,27px) scale(.72,.76) rotate(-2deg)}
+    8%{opacity:.82;transform:translate(-5%,18px) scale(.90,.92) rotate(-1deg)}
+    15%{opacity:1;transform:translate(-4%,10px) scale(1,.98) rotate(-.4deg)}
+    29%{transform:translate(1%,1px) scale(1.02,.99) rotate(.4deg)}
+    45%{transform:translate(7%,-9px) scale(.98,1.04) rotate(.8deg)}
+    60%{transform:translate(9%,-19px) scale(1.02,.98) rotate(.2deg)}
+    74%{transform:translate(5%,-28px) scale(.99,1.04) rotate(-.5deg)}
+    87%{opacity:1;transform:translate(-1%,-36px) scale(1.01,.99) rotate(-.7deg)}
+    95%{opacity:.88;transform:translate(-4%,-42px) scale(.94,1.05) rotate(-.3deg)}
+    100%{opacity:0;transform:translate(-6%,-49px) scale(.82,1.10)}
   }
 }
 
@@ -183,8 +209,8 @@
 }
 
 @keyframes quizFactLavaReduced{
-  0%{opacity:0;transform:translateY(16px) scale(.9)}
+  0%{opacity:0;transform:translateY(14px) scale(.92)}
   12%{opacity:1;transform:translateY(0) scale(1)}
-  88%{opacity:1;transform:translateY(-16px) scale(1)}
-  100%{opacity:0;transform:translateY(-28px) scale(.92)}
+  88%{opacity:1;transform:translateY(-14px) scale(1)}
+  100%{opacity:0;transform:translateY(-24px) scale(.94)}
 }
