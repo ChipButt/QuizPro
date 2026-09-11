@@ -1,0 +1,173 @@
+/* QuizTaker v7: fun-fact bubbles inflate, wander, wobble and pop on a 7-second cycle. */
+
+.waiting-fun-fact{
+  position:relative !important;
+  overflow:visible !important;
+  isolation:isolate;
+  border:2px solid rgba(140,124,243,.34) !important;
+  background:
+    radial-gradient(circle at 28% 22%,rgba(255,255,255,.92) 0 8%,transparent 22%),
+    radial-gradient(circle at 72% 76%,rgba(114,216,194,.18) 0 16%,transparent 42%),
+    linear-gradient(145deg,#f0ecff 0%,#fff6e5 54%,#edf9f6 100%) !important;
+  box-shadow:
+    inset 0 0 22px rgba(255,255,255,.42),
+    0 12px 26px rgba(92,79,197,.12) !important;
+  transform-origin:center;
+  will-change:transform,opacity,border-radius;
+  animation:
+    quizFactBubbleLife 7s linear both,
+    quizFactBubbleWobble 1.05s ease-in-out infinite alternate !important;
+}
+
+.waiting-fun-fact::before{
+  content:"";
+  position:absolute;
+  inset:9% 13% auto auto;
+  width:24%;
+  aspect-ratio:1.8;
+  border-radius:50%;
+  background:rgba(255,255,255,.62);
+  filter:blur(1px);
+  transform:rotate(-24deg);
+  pointer-events:none;
+  z-index:-1;
+}
+
+.waiting-fun-fact::after{
+  content:"";
+  position:absolute;
+  inset:-13px;
+  border:3px solid rgba(255,125,168,.55);
+  border-radius:50%;
+  opacity:0;
+  transform:scale(.72);
+  pointer-events:none;
+  z-index:-2;
+  animation:quizFactPopRing 7s linear both;
+}
+
+@keyframes quizFactBubbleLife{
+  /* Inflate from nothing with a soft overshoot. */
+  0%{
+    opacity:0;
+    transform:translate(0,18px) scale(.03) rotate(-3deg);
+  }
+  4%{
+    opacity:1;
+    transform:translate(-3%,4px) scale(.72) rotate(-1deg);
+  }
+  8%{
+    opacity:1;
+    transform:translate(-7%,-5px) scale(1.08) rotate(1deg);
+  }
+  12%{
+    transform:translate(-10%,-8px) scale(1) rotate(-1.4deg);
+  }
+
+  /* Wander around the free area while it is alive. */
+  26%{
+    transform:translate(16%,10px) scale(1.015) rotate(1.7deg);
+  }
+  42%{
+    transform:translate(22%,-18px) scale(.99) rotate(-1deg);
+  }
+  58%{
+    transform:translate(-4%,20px) scale(1.02) rotate(1.4deg);
+  }
+  74%{
+    transform:translate(-20%,-5px) scale(1) rotate(-1.7deg);
+  }
+  86%{
+    opacity:1;
+    transform:translate(8%,11px) scale(1.02) rotate(.8deg);
+  }
+
+  /* Tense up, then pop. */
+  92%{
+    opacity:1;
+    transform:translate(10%,8px) scale(1.08) rotate(-.5deg);
+  }
+  96%{
+    opacity:1;
+    transform:translate(10%,8px) scale(1.16) rotate(.4deg);
+  }
+  98%{
+    opacity:.75;
+    transform:translate(10%,8px) scale(1.28) rotate(0deg);
+  }
+  100%{
+    opacity:0;
+    transform:translate(10%,8px) scale(.08) rotate(0deg);
+  }
+}
+
+@keyframes quizFactBubbleWobble{
+  0%{
+    border-radius:47% 53% 58% 42% / 44% 52% 48% 56%;
+  }
+  25%{
+    border-radius:55% 45% 48% 52% / 52% 43% 57% 48%;
+  }
+  50%{
+    border-radius:43% 57% 54% 46% / 58% 48% 52% 42%;
+  }
+  75%{
+    border-radius:52% 48% 43% 57% / 47% 58% 42% 53%;
+  }
+  100%{
+    border-radius:46% 54% 61% 39% / 55% 45% 54% 46%;
+  }
+}
+
+@keyframes quizFactPopRing{
+  0%,91%{
+    opacity:0;
+    transform:scale(.72);
+  }
+  94%{
+    opacity:0;
+    transform:scale(.8);
+  }
+  97%{
+    opacity:.72;
+    transform:scale(1.04);
+  }
+  100%{
+    opacity:0;
+    transform:scale(1.48);
+  }
+}
+
+@media(max-width:480px){
+  @keyframes quizFactBubbleLife{
+    0%{opacity:0;transform:translate(0,14px) scale(.03) rotate(-2deg)}
+    4%{opacity:1;transform:translate(-2%,3px) scale(.72) rotate(-1deg)}
+    8%{opacity:1;transform:translate(-5%,-4px) scale(1.08) rotate(1deg)}
+    12%{transform:translate(-7%,-6px) scale(1) rotate(-1.2deg)}
+    26%{transform:translate(11%,8px) scale(1.015) rotate(1.4deg)}
+    42%{transform:translate(15%,-13px) scale(.99) rotate(-.8deg)}
+    58%{transform:translate(-3%,15px) scale(1.02) rotate(1.1deg)}
+    74%{transform:translate(-14%,-4px) scale(1) rotate(-1.3deg)}
+    86%{opacity:1;transform:translate(6%,8px) scale(1.02) rotate(.7deg)}
+    92%{opacity:1;transform:translate(7%,6px) scale(1.08) rotate(-.4deg)}
+    96%{opacity:1;transform:translate(7%,6px) scale(1.16) rotate(.3deg)}
+    98%{opacity:.75;transform:translate(7%,6px) scale(1.28)}
+    100%{opacity:0;transform:translate(7%,6px) scale(.08)}
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .waiting-fun-fact{
+    animation:quizFactBubbleLifeReduced 7s linear both !important;
+  }
+  .waiting-fun-fact::after{
+    animation:none !important;
+  }
+}
+
+@keyframes quizFactBubbleLifeReduced{
+  0%{opacity:0;transform:scale(.65)}
+  8%{opacity:1;transform:scale(1)}
+  92%{opacity:1;transform:scale(1)}
+  100%{opacity:0;transform:scale(.75)}
+}
