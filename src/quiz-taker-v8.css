@@ -1,0 +1,60 @@
+/* QuizTaker v8: make the active question number unmistakable and keep long text-entry questions usable above mobile keyboards. */
+
+.question-number-display{
+  min-width:86px !important;
+}
+
+.question-number-display>span{
+  font-size:10px !important;
+  letter-spacing:.14em !important;
+}
+
+.question-number-display>strong{
+  font-size:42px !important;
+  line-height:.88 !important;
+  margin:3px 0 2px !important;
+  font-weight:950 !important;
+}
+
+.question-number-display>small{
+  font-size:11px !important;
+}
+
+/* When the keyboard is open, the question stage is allowed to scroll just enough
+   for unusually tall questions while retaining a comfortable margin above the keyboard. */
+.question-team-card.keyboard-active .team-question-stage{
+  scroll-padding-top:8px;
+  scroll-padding-bottom:82px;
+}
+
+.question-team-card.keyboard-active .answer-input-shell textarea{
+  scroll-margin-top:10px;
+  scroll-margin-bottom:14px;
+}
+
+.question-team-card.keyboard-active .question-number-display{
+  min-width:76px !important;
+}
+
+.question-team-card.keyboard-active .question-number-display>strong{
+  font-size:34px !important;
+  line-height:.88 !important;
+}
+
+@media(max-width:380px){
+  .team-question-nav{
+    grid-template-columns:minmax(78px,1fr) 72px minmax(78px,1fr) !important;
+  }
+
+  .question-number-display{
+    min-width:72px !important;
+  }
+
+  .question-number-display>strong{
+    font-size:36px !important;
+  }
+
+  .question-team-card.keyboard-active .question-number-display>strong{
+    font-size:31px !important;
+  }
+}
