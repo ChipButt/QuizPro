@@ -11,6 +11,7 @@ import "./planuf-soft-ui.css";
 import "./app-wide-theme.css";
 import "./quiz-taker-v4.css";
 import "./quiz-taker-v5.css";
+import "./quiz-taker-v6.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
