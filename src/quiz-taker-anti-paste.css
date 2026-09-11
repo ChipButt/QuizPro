@@ -1,0 +1,26 @@
+.quizpro-paste-blocked{
+  position:fixed;
+  left:50%;
+  bottom:max(22px,env(safe-area-inset-bottom));
+  z-index:9999;
+  width:max-content;
+  max-width:calc(100vw - 30px);
+  padding:11px 16px;
+  border:2px solid #ff7da8;
+  border-radius:999px;
+  background:#fff4f8;
+  color:#7d2144;
+  font-size:13px;
+  font-weight:900;
+  text-align:center;
+  box-shadow:0 7px 0 rgba(255,125,168,.18),0 14px 34px rgba(55,38,88,.16);
+  opacity:0;
+  pointer-events:none;
+  transform:translate(-50%,18px) scale(.96);
+  transition:opacity .16s ease,transform .16s ease;
+}
+
+.quizpro-paste-blocked.show{
+  opacity:1;
+  transform:translate(-50%,0) scale(1);
+}
