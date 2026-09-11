@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-11T19:14:48.336Z",
+  "updatedAt": "2026-09-11T19:40:02.546Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -2653,6 +2653,18 @@
           ]
         }
       ]
+    },
+    {
+      "id": "quiz-odb5mi6",
+      "title": "Untitled quiz",
+      "date": "",
+      "time": "",
+      "venue": "",
+      "status": "Draft",
+      "notes": "",
+      "archived": false,
+      "rounds": [],
+      "finalLeaderboard": []
     }
   ],
   "media": []
