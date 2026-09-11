@@ -3,7 +3,6 @@ import {
   ArrowRight,
   CheckCircle2,
   Crown,
-  Edit3,
   KeyRound,
   Lock,
   RotateCcw,
@@ -16,10 +15,21 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLiveTeamNetwork } from "../hooks/useLiveTeamNetwork.js";
 
-function TeamChrome({ children, status }) {
+const WAITING_FUN_FACTS = [
+  "You can change an answer as many times as you like until the round is locked.",
+  "A flashing NEXT button means a newer question is waiting for you.",
+  "Going back to an earlier question never erases the answer your team has saved.",
+  "You do not need to refresh this page — new questions arrive automatically.",
+  "The Quizmaster decides when correct answers and leaderboards appear on your screen.",
+  "You can review any question that has already been released until the round is locked.",
+  "If you are reviewing an older question, a newly released question will wait for you rather than dragging you away.",
+  "Your answer stays attached to its question even while you browse backwards and forwards.",
+];
+
+function TeamChrome({ children, status, keyboardActive = false }) {
   return (
-    <main className="team-page live-team-page">
-      <div className="phone-shell live-phone-shell">
+    <main className={`team-page live-team-page ${keyboardActive ? "keyboard-active-page" : ""}`}>
+      <div className={`phone-shell live-phone-shell ${keyboardActive ? "keyboard-active" : ""}`}>
         <header className="phone-topbar live-phone-topbar">
           <div className="brand-lockup">
             <span className="brand-mark"><Crown size={19} /></span>
@@ -49,6 +59,27 @@ function useCountdown(endsAt, active) {
     return () => window.clearInterval(timer);
   }, [active, endsAt]);
   return seconds;
+}
+
+function useVisibleViewportHeight() {
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    const update = () => {
+      const height = Math.max(320, Math.round(viewport?.height ?? window.innerHeight));
+      document.documentElement.style.setProperty("--team-visible-height", `${height}px`);
+    };
+
+    update();
+    viewport?.addEventListener("resize", update);
+    viewport?.addEventListener("scroll", update);
+    window.addEventListener("resize", update);
+    return () => {
+      viewport?.removeEventListener("resize", update);
+      viewport?.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      document.documentElement.style.removeProperty("--team-visible-height");
+    };
+  }, []);
 }
 
 function ConnectionScreen({ status, error }) {
@@ -103,6 +134,16 @@ function TeamNameScreen({ snapshot, send, status }) {
 }
 
 function WaitingScreen({ snapshot, status }) {
+  const seed = String(snapshot.team?.id || snapshot.team?.name || "quiz").split("").reduce((total, char) => total + char.charCodeAt(0), 0);
+  const [factIndex, setFactIndex] = useState(seed % WAITING_FUN_FACTS.length);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setFactIndex((index) => (index + 1) % WAITING_FUN_FACTS.length);
+    }, 7000);
+    return () => window.clearInterval(timer);
+  }, []);
+
   return (
     <TeamChrome status={status}>
       <section className="team-card live-team-card waiting-team-card">
@@ -114,7 +155,10 @@ function WaitingScreen({ snapshot, status }) {
           <span>TABLE</span><strong>{snapshot.team.table || "—"}</strong><small>{snapshot.team.players} player{Number(snapshot.team.players) === 1 ? "" : "s"}</small>
         </div>
         <h1>Waiting for the next question</h1>
-        <div className="team-wait-pulse"><span /><span /><span /></div>
+        <div className="waiting-fun-fact" key={factIndex}>
+          <span>FUN FACT</span>
+          <strong>{WAITING_FUN_FACTS[factIndex]}</strong>
+        </div>
       </section>
     </TeamChrome>
   );
@@ -153,7 +197,7 @@ function FinalScreen({ snapshot, status }) {
             const place = full.findIndex((item) => item.id === team.id) + 1;
             return (
               <div key={team.id} className={place === 1 ? "winner" : ""}>
-                <span>{place}</span><strong>{team.name}</strong><b>{team.score} pts</b>
+                <span>{place}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score} pts</b>
               </div>
             );
           })}
@@ -164,13 +208,18 @@ function FinalScreen({ snapshot, status }) {
 }
 
 export default function TeamView({ sessionCode, teamToken }) {
+  useVisibleViewportHeight();
   const { snapshot, status, error, send } = useLiveTeamNetwork(sessionCode, teamToken);
   const [viewIndex, setViewIndex] = useState(0);
   const [drafts, setDrafts] = useState({});
-  const [editingQuestions, setEditingQuestions] = useState({});
   const [audioBlocked, setAudioBlocked] = useState(false);
+  const [answerFocused, setAnswerFocused] = useState(false);
+  const [newQuestionWaiting, setNewQuestionWaiting] = useState(false);
   const teamAudioRef = useRef(null);
   const lastPlayNonceRef = useRef(0);
+  const viewIndexRef = useRef(0);
+  const previousRoundIdRef = useRef("");
+  const previousHostQuestionRef = useRef(-1);
   const countdown = useCountdown(snapshot?.live?.timerEndsAt, snapshot?.live?.timerActive);
 
   const questions = snapshot?.round?.questions ?? [];
@@ -183,6 +232,13 @@ export default function TeamView({ sessionCode, teamToken }) {
   );
   const questionLocked = roundLocked || Boolean(question?.revealed);
   const screen = snapshot?.live?.teamScreen ?? "lobby";
+  const isMultipleChoice = Boolean(question?.type === "Multiple choice" && question.options?.length);
+  const isTextEntry = Boolean(question && !isMultipleChoice);
+
+  useEffect(() => {
+    viewIndexRef.current = viewIndex;
+    if (viewIndex >= hostQuestionIndex) setNewQuestionWaiting(false);
+  }, [viewIndex, hostQuestionIndex]);
 
   useEffect(() => {
     if (!snapshot) return;
@@ -197,7 +253,33 @@ export default function TeamView({ sessionCode, teamToken }) {
 
   useEffect(() => {
     if (!questions.length) return;
-    setViewIndex(Math.min(hostQuestionIndex, questions.length - 1));
+    const roundId = snapshot?.round?.id ?? "";
+    const previousRoundId = previousRoundIdRef.current;
+    const previousHostQuestion = previousHostQuestionRef.current;
+    const latestAvailable = Math.min(hostQuestionIndex, questions.length - 1);
+
+    if (roundId !== previousRoundId) {
+      setViewIndex(latestAvailable);
+      setNewQuestionWaiting(false);
+      previousRoundIdRef.current = roundId;
+      previousHostQuestionRef.current = hostQuestionIndex;
+      return;
+    }
+
+    if (hostQuestionIndex > previousHostQuestion) {
+      const wasReviewingOlderQuestion = previousHostQuestion >= 0 && viewIndexRef.current < previousHostQuestion;
+      if (wasReviewingOlderQuestion) {
+        setNewQuestionWaiting(true);
+      } else {
+        setViewIndex(latestAvailable);
+        setNewQuestionWaiting(false);
+      }
+    } else if (hostQuestionIndex < previousHostQuestion) {
+      setViewIndex(latestAvailable);
+      setNewQuestionWaiting(false);
+    }
+
+    previousHostQuestionRef.current = hostQuestionIndex;
   }, [hostQuestionIndex, questions.length, snapshot?.round?.id]);
 
   useEffect(() => {
@@ -216,47 +298,47 @@ export default function TeamView({ sessionCode, teamToken }) {
   const savedAnswer = question ? snapshot?.teamAnswers?.[question.id] : null;
   const savedText = String(savedAnswer?.text ?? "");
   const draft = question ? drafts[question.id] ?? savedText : "";
-  const draftMatchesSaved = Boolean(savedAnswer) && draft.trim() === savedText.trim();
-  const isEditing = question ? (editingQuestions[question.id] ?? !savedAnswer) : false;
-  const submitted = Boolean(savedAnswer && draftMatchesSaved && !isEditing);
-  const submitting = Boolean(!isEditing && draft.trim() && !draftMatchesSaved);
+  const draftMatchesSaved = draft.trim() === savedText.trim() && (Boolean(savedAnswer) || !draft.trim());
+  const answerSaving = Boolean(question && !questionLocked && draft.trim() !== savedText.trim());
+  const submitted = Boolean(savedAnswer && draftMatchesSaved);
 
-  const submittedCount = useMemo(
-    () => questions.filter((item) => String(snapshot?.teamAnswers?.[item.id]?.text ?? "").trim()).length,
-    [questions, snapshot?.teamAnswers],
+  useEffect(() => {
+    if (!question || questionLocked || isMultipleChoice) return undefined;
+    const nextText = String(draft ?? "").trim();
+    const currentText = String(savedText ?? "").trim();
+    if (nextText === currentText) return undefined;
+
+    const timer = window.setTimeout(() => {
+      send({ type: "save-answer", questionId: question.id, text: nextText });
+    }, 450);
+    return () => window.clearTimeout(timer);
+  }, [draft, savedText, question?.id, questionLocked, isMultipleChoice, send]);
+
+  const answeredCount = useMemo(
+    () => questions.filter((item) => String(drafts[item.id] ?? snapshot?.teamAnswers?.[item.id]?.text ?? "").trim()).length,
+    [questions, drafts, snapshot?.teamAnswers],
   );
   const totalRoundQuestions = Number(snapshot?.round?.totalQuestions ?? 0);
   const finalQuestionReleased = totalRoundQuestions > 0 && questions.length >= totalRoundQuestions;
   const canLockRound = !roundLocked && finalQuestionReleased;
 
   function setDraft(value) {
-    if (!question || questionLocked || !isEditing) return;
+    if (!question || questionLocked) return;
     setDrafts((current) => ({ ...current, [question.id]: value }));
   }
 
   function chooseAnswer(option) {
-    if (!question || questionLocked || !isEditing) return;
-    setDrafts((current) => ({ ...current, [question.id]: option }));
-  }
-
-  function lockInAnswer() {
-    if (!question || questionLocked || !isEditing || !draft.trim()) return;
-    setEditingQuestions((current) => ({ ...current, [question.id]: false }));
-    const sent = send({ type: "save-answer", questionId: question.id, text: draft.trim() });
-    if (!sent) setEditingQuestions((current) => ({ ...current, [question.id]: true }));
-  }
-
-  function changeAnswer() {
     if (!question || questionLocked) return;
-    setEditingQuestions((current) => ({ ...current, [question.id]: true }));
+    setDrafts((current) => ({ ...current, [question.id]: option }));
+    send({ type: "save-answer", questionId: question.id, text: option });
   }
 
   function lockRound() {
     if (!canLockRound) return;
     const unsaved = questions.filter((item) => {
-      const local = String(drafts[item.id] ?? "").trim();
       const remote = String(snapshot?.teamAnswers?.[item.id]?.text ?? "").trim();
-      return local && local !== remote;
+      const local = String(drafts[item.id] ?? remote).trim();
+      return local !== remote;
     });
     const missing = Math.max(0, totalRoundQuestions - questions.filter((item) => String(drafts[item.id] ?? snapshot?.teamAnswers?.[item.id]?.text ?? "").trim()).length);
     const message = missing
@@ -265,7 +347,8 @@ export default function TeamView({ sessionCode, teamToken }) {
     if (!window.confirm(message)) return;
 
     for (const item of unsaved) {
-      send({ type: "save-answer", questionId: item.id, text: String(drafts[item.id]).trim() });
+      const remote = String(snapshot?.teamAnswers?.[item.id]?.text ?? "").trim();
+      send({ type: "save-answer", questionId: item.id, text: String(drafts[item.id] ?? remote).trim() });
     }
     send({ type: "lock-round" });
   }
@@ -287,12 +370,13 @@ export default function TeamView({ sessionCode, teamToken }) {
     return <WaitingScreen snapshot={snapshot} status={status} />;
   }
 
-  const isMultipleChoice = question.type === "Multiple choice" && question.options?.length;
-  const isTextEntry = !isMultipleChoice;
   const correctAnswer = String(question.answer ?? "").trim();
+  const canGoBack = viewIndex > 0;
+  const canGoForward = viewIndex < questions.length - 1;
+  const showNewQuestionAlert = Boolean(newQuestionWaiting && viewIndex < hostQuestionIndex && canGoForward);
 
   return (
-    <TeamChrome status={status}>
+    <TeamChrome status={status} keyboardActive={answerFocused}>
       {snapshot.live?.timerActive ? (
         <div className={`team-timer-overlay ${countdown <= 10 ? "urgent" : ""}`}>
           <Timer size={20} />
@@ -301,19 +385,22 @@ export default function TeamView({ sessionCode, teamToken }) {
         </div>
       ) : null}
 
-      <section className={`team-card live-team-card question-team-card ${snapshot.live?.timerActive ? "timer-running" : ""}`}>
+      <section className={`team-card live-team-card question-team-card ${snapshot.live?.timerActive ? "timer-running" : ""} ${answerFocused ? "keyboard-active" : ""}`}>
         <div className="team-question-topline">
           <div><span>{snapshot.round?.title || "Round"}</span><strong>{snapshot.team.name}</strong></div>
-          <div className="team-question-progress">{submittedCount}/{totalRoundQuestions || questions.length} locked in</div>
+          <div className="team-question-progress">{answeredCount}/{totalRoundQuestions || questions.length} answered</div>
         </div>
 
         <div className="team-question-nav">
-          <button disabled={viewIndex <= 0} onClick={() => setViewIndex((index) => Math.max(0, index - 1))}>
-            <ArrowLeft size={17} />
+          <button className="question-nav-button previous" disabled={!canGoBack} onClick={() => setViewIndex((index) => Math.max(0, index - 1))}>
+            <ArrowLeft size={24} />
+            <span>Previous</span>
           </button>
-          <div><span>QUESTION</span><strong>{question.number ?? viewIndex + 1}</strong><small>of {totalRoundQuestions || questions.length}</small></div>
-          <button disabled={viewIndex >= questions.length - 1} onClick={() => setViewIndex((index) => Math.min(questions.length - 1, index + 1))}>
-            <ArrowRight size={17} />
+          <div className="question-number-display"><span>QUESTION</span><strong>{question.number ?? viewIndex + 1}</strong><small>of {totalRoundQuestions || questions.length}</small></div>
+          <button className={`question-nav-button next ${showNewQuestionAlert ? "new-question-waiting" : ""}`} disabled={!canGoForward} onClick={() => setViewIndex((index) => Math.min(questions.length - 1, index + 1))}>
+            <span>Next</span>
+            <ArrowRight size={24} />
+            {showNewQuestionAlert ? <b>NEW</b> : null}
           </button>
         </div>
 
@@ -351,7 +438,7 @@ export default function TeamView({ sessionCode, teamToken }) {
                     <button
                       type="button"
                       key={index}
-                      disabled={questionLocked || !isEditing}
+                      disabled={questionLocked}
                       className={`${selected ? "selected" : ""} ${submitted && selected ? "submitted-choice" : ""} ${correct ? "correct-reveal" : ""}`}
                       onClick={() => chooseAnswer(option)}
                     >
@@ -368,7 +455,9 @@ export default function TeamView({ sessionCode, teamToken }) {
                   className={`${draft.trim() ? "has-answer" : ""} ${submitted ? "submitted-answer" : ""}`}
                   value={draft}
                   onChange={(event) => setDraft(event.target.value)}
-                  disabled={questionLocked || !isEditing}
+                  onFocus={() => setAnswerFocused(true)}
+                  onBlur={() => setAnswerFocused(false)}
+                  disabled={questionLocked}
                   maxLength={500}
                   placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"}
                 />
@@ -382,25 +471,18 @@ export default function TeamView({ sessionCode, teamToken }) {
               </div>
             ) : null}
 
-            {!questionLocked ? (
-              <div className="question-submit-row">
-                {submitted ? (
-                  <>
-                    <div className="question-submitted-state"><Lock size={15} /><strong>Answer locked in</strong><span>You can still change it until the round closes.</span></div>
-                    <button type="button" className="change-answer-button" onClick={changeAnswer}><Edit3 size={15} /> Change answer</button>
-                  </>
-                ) : submitting ? (
-                  <button type="button" className="lock-answer-button pending" disabled><Lock size={15} /> Locking in…</button>
-                ) : (
-                  <button type="button" className="lock-answer-button" disabled={!draft.trim()} onClick={lockInAnswer}><Lock size={15} /> Lock In Answer</button>
-                )}
+            {!questionLocked && draft.trim() ? (
+              <div className={`answer-save-status ${answerSaving ? "saving" : "saved"}`}>
+                <CheckCircle2 size={15} />
+                <strong>{answerSaving ? "Saving answer…" : "Answer saved"}</strong>
+                <span>You can still change it until the round is locked.</span>
               </div>
             ) : null}
           </div>
         </div>
 
         <div className="team-round-footer compact-round-footer">
-          <div><span>Round</span><strong>{submittedCount}/{totalRoundQuestions || questions.length} locked in</strong></div>
+          <div><span>Round</span><strong>{answeredCount}/{totalRoundQuestions || questions.length} answered</strong></div>
           {snapshot.round?.teamLocked || roundLocked ? (
             <button className="team-lock-round-button" disabled><KeyRound size={15} /> Round locked</button>
           ) : canLockRound ? (
