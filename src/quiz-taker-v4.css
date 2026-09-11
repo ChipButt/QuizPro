@@ -1,0 +1,237 @@
+/* QuizTaker v4: autosave answers, keyboard-safe layout, clearer navigation and waiting facts. */
+
+.team-page.live-team-page,
+.live-phone-shell{
+  height:var(--team-visible-height,100dvh) !important;
+  min-height:var(--team-visible-height,100dvh) !important;
+  max-height:var(--team-visible-height,100dvh);
+}
+
+/* Previous / next navigation should read like navigation, not tiny icon controls. */
+.team-question-nav{
+  grid-template-columns:minmax(94px,1fr) auto minmax(94px,1fr) !important;
+  gap:10px !important;
+  align-items:center;
+}
+
+.team-question-nav .question-nav-button{
+  position:relative;
+  height:54px !important;
+  min-width:0;
+  padding:0 13px;
+  border:2px solid #cfc6f4 !important;
+  border-radius:17px !important;
+  background:#fff !important;
+  color:var(--qt-purple-dark) !important;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  font-weight:950;
+  box-shadow:0 5px 0 rgba(140,124,243,.14);
+  transition:transform .14s ease,box-shadow .14s ease,border-color .14s ease,background .14s ease;
+}
+
+.team-question-nav .question-nav-button.previous{justify-content:flex-start}
+.team-question-nav .question-nav-button.next{justify-content:flex-end}
+.team-question-nav .question-nav-button:active:not(:disabled){transform:translateY(2px);box-shadow:0 2px 0 rgba(140,124,243,.14)}
+.team-question-nav .question-nav-button:disabled{opacity:.24 !important;box-shadow:none}
+.team-question-nav .question-nav-button svg{flex:0 0 auto;stroke-width:3}
+
+.question-number-display{
+  min-width:62px;
+  display:grid;
+  place-items:center;
+  line-height:1;
+}
+
+.question-number-display>span{font-size:9px;letter-spacing:.12em;font-weight:950;color:var(--qt-muted)}
+.question-number-display>strong{font-size:23px !important;margin:2px 0;color:var(--qt-ink)}
+.question-number-display>small{font-size:10px;color:var(--qt-muted)}
+
+.team-question-nav .question-nav-button.new-question-waiting{
+  border-color:#ff7da8 !important;
+  background:#fff1f6 !important;
+  color:#8a1740 !important;
+  animation:newQuestionPulse .58s ease-in-out infinite alternate;
+}
+
+.team-question-nav .question-nav-button.new-question-waiting b{
+  position:absolute;
+  top:-9px;
+  right:-5px;
+  min-width:35px;
+  padding:3px 6px;
+  border-radius:999px;
+  background:#ff5f95;
+  color:#fff;
+  font-size:8px;
+  line-height:1;
+  letter-spacing:.08em;
+  box-shadow:0 3px 10px rgba(190,42,96,.28);
+}
+
+@keyframes newQuestionPulse{
+  from{transform:scale(1);box-shadow:0 4px 0 rgba(255,95,149,.15),0 0 0 rgba(255,95,149,0)}
+  to{transform:scale(1.035);box-shadow:0 5px 0 rgba(255,95,149,.2),0 0 20px rgba(255,95,149,.42)}
+}
+
+/* Per-question answers now autosave. Green remains reserved for revealed correctness. */
+.answer-save-status{
+  min-height:31px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 9px;
+  border-radius:12px;
+  background:#f1eeff;
+  border:1px solid #d7cff8;
+  color:#5c4fc5;
+  font-size:11px;
+}
+
+.answer-save-status strong{font-size:11px;white-space:nowrap}
+.answer-save-status span{min-width:0;color:#756d8d;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.answer-save-status.saving{background:#f7f4ff;color:#8176b7}
+.answer-save-status.saving svg{opacity:.55}
+
+/* Waiting screen: use useful, non-quiz-information facts instead of an ellipsis animation. */
+.waiting-fun-fact{
+  width:min(430px,100%);
+  margin:8px auto 0;
+  padding:18px 20px;
+  display:grid;
+  gap:7px;
+  text-align:center;
+  border:2px solid #d8cff8;
+  border-radius:24px;
+  background:linear-gradient(145deg,#f4f0ff,#fff8e9);
+  box-shadow:0 7px 0 rgba(140,124,243,.12),0 14px 30px rgba(75,57,137,.08);
+  animation:waitingFactIn .28s ease-out;
+}
+
+.waiting-fun-fact span{
+  font-size:10px;
+  letter-spacing:.15em;
+  font-weight:950;
+  color:#8c7cf3;
+}
+
+.waiting-fun-fact strong{
+  font-size:clamp(15px,4vw,19px);
+  line-height:1.3;
+  color:#2f2851;
+}
+
+@keyframes waitingFactIn{
+  from{opacity:0;transform:translateY(5px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/*
+  Mobile keyboards use the visual viewport, which can be much shorter than the
+  CSS layout viewport. The React view updates --team-visible-height from
+  window.visualViewport so the whole question area stays above the keyboard.
+*/
+.live-phone-shell.keyboard-active{
+  grid-template-rows:minmax(0,1fr) !important;
+}
+
+.live-phone-shell.keyboard-active .live-phone-topbar{display:none !important}
+
+.question-team-card.keyboard-active{
+  height:100% !important;
+  min-height:0;
+  padding:5px 9px 7px !important;
+  gap:4px !important;
+  overflow:hidden !important;
+  grid-template-rows:auto minmax(0,1fr) !important;
+}
+
+.question-team-card.keyboard-active .team-question-topline,
+.question-team-card.keyboard-active .compact-round-footer{display:none !important}
+
+.question-team-card.keyboard-active .team-question-nav{
+  min-height:44px;
+  grid-row:1;
+}
+
+.question-team-card.keyboard-active .question-nav-button{
+  height:42px !important;
+  border-radius:13px !important;
+}
+
+.question-team-card.keyboard-active .question-number-display>strong{font-size:19px !important}
+
+.question-team-card.keyboard-active .team-question-stage{
+  grid-row:2;
+  min-height:0;
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  justify-content:flex-start;
+  gap:5px;
+  padding:7px;
+}
+
+.question-team-card.keyboard-active .team-question-core{
+  flex:0 0 auto;
+  min-height:0;
+  gap:4px;
+}
+
+.question-team-card.keyboard-active .team-question-text{
+  flex:0 0 auto;
+  margin:0 2px 3px;
+  font-size:clamp(16px,4.25vw,20px);
+  line-height:1.16;
+}
+
+.question-team-card.keyboard-active .live-team-image,
+.question-team-card.keyboard-active .live-team-image img{
+  max-height:calc(var(--team-visible-height,100dvh) * .18) !important;
+}
+
+.question-team-card.keyboard-active .compact-team-audio{
+  min-height:36px;
+  padding:4px 7px !important;
+}
+
+.question-team-card.keyboard-active .team-answer-zone{
+  flex:0 0 auto;
+  gap:5px;
+}
+
+.question-team-card.keyboard-active .answer-input-shell textarea{
+  height:58px !important;
+  min-height:58px !important;
+  padding:8px 10px;
+}
+
+.question-team-card.keyboard-active .answer-save-status{
+  min-height:26px;
+  padding:3px 7px;
+}
+
+.keyboard-active-page .team-timer-overlay{
+  top:6px !important;
+}
+
+.question-team-card.keyboard-active.timer-running{
+  padding-top:51px !important;
+}
+
+@media(max-width:380px){
+  .team-question-nav{
+    grid-template-columns:minmax(82px,1fr) 56px minmax(82px,1fr) !important;
+    gap:6px !important;
+  }
+  .team-question-nav .question-nav-button{padding:0 9px;font-size:12px}
+  .team-question-nav .question-nav-button svg{width:21px;height:21px}
+  .answer-save-status span{display:none}
+}
+
+@media(max-height:700px){
+  .team-question-nav .question-nav-button{height:45px !important}
+  .question-number-display>strong{font-size:20px !important}
+}
