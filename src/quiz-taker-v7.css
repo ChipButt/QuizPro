@@ -28,7 +28,7 @@
   transform-origin:50% 52%;
   will-change:transform,opacity,border-radius;
   animation:
-    quizFactFarRightPinkTravel 9.5s linear both,
+    quizFactFarRightPinkTravel 7s linear both,
     quizFactFarRightPinkFlow 14s cubic-bezier(.45,0,.55,1) infinite alternate !important;
 }
 
@@ -55,7 +55,7 @@
   pointer-events:none;
   z-index:4;
   filter:drop-shadow(0 6px 7px rgba(177,64,145,.12));
-  animation:quizFactCartoonPop 9.5s linear both !important;
+  animation:quizFactCartoonPop 7s linear both !important;
 }
 
 .waiting-fun-fact::after{
@@ -80,8 +80,8 @@
   line-height:1.25 !important;
 }
 
-/* The blob fades in, floats gently, then snaps inward for the pop.
-   It stays completely gone for the final ~2.4 seconds of the cycle. */
+/* The blob fades in, floats gently, then pops at about 4.4 seconds.
+   It stays completely gone for roughly 2.5 seconds before the next fact mounts. */
 @keyframes quizFactFarRightPinkTravel{
   0%{
     opacity:0;
@@ -95,34 +95,34 @@
     opacity:1;
     transform:translate(7%,9px) scale(.99) rotate(-1deg);
   }
-  26%{
-    transform:translate(5%,0) scale(1.01) rotate(-.4deg);
+  25%{
+    transform:translate(5%,1px) scale(1.01) rotate(-.4deg);
   }
-  40%{
-    transform:translate(7%,-9px) scale(1.015) rotate(.25deg);
+  38%{
+    transform:translate(7%,-7px) scale(1.015) rotate(.25deg);
   }
-  54%{
-    transform:translate(8%,-18px) scale(1.005) rotate(.55deg);
+  51%{
+    transform:translate(8%,-15px) scale(1.005) rotate(.5deg);
   }
-  64%{
+  58%{
     opacity:1;
-    transform:translate(6%,-25px) scale(1.01) rotate(.15deg);
+    transform:translate(6%,-20px) scale(1.01) rotate(.15deg);
   }
-  68%{
+  61%{
     opacity:1;
-    transform:translate(5%,-28px) scale(1.055) rotate(-.15deg);
+    transform:translate(5%,-22px) scale(1.055) rotate(-.15deg);
   }
-  70%{
+  63%{
     opacity:1;
-    transform:translate(5%,-28px) scale(.96) rotate(-.2deg);
+    transform:translate(5%,-22px) scale(.94) rotate(-.2deg);
   }
-  72%{
+  65%{
     opacity:0;
-    transform:translate(5%,-28px) scale(.10) rotate(-.2deg);
+    transform:translate(5%,-22px) scale(.08) rotate(-.2deg);
   }
   100%{
     opacity:0;
-    transform:translate(5%,-28px) scale(.10) rotate(-.2deg);
+    transform:translate(5%,-22px) scale(.08) rotate(-.2deg);
   }
 }
 
@@ -141,29 +141,29 @@
 
 /* The star appears for only the instant of the pop, giving a cartoon * burst. */
 @keyframes quizFactCartoonPop{
-  0%,67.5%{
+  0%,59%{
     opacity:0;
     transform:translate(-50%,-50%) scale(.12) rotate(-5deg);
   }
-  69%{
-    opacity:.12;
-    transform:translate(-50%,-50%) scale(.28) rotate(-3deg);
+  60.5%{
+    opacity:.15;
+    transform:translate(-50%,-50%) scale(.26) rotate(-3deg);
   }
-  70.5%{
+  62%{
     opacity:1;
-    transform:translate(-50%,-50%) scale(.86) rotate(1deg);
+    transform:translate(-50%,-50%) scale(.82) rotate(1deg);
   }
-  72%{
-    opacity:.88;
+  64%{
+    opacity:.9;
     transform:translate(-50%,-50%) scale(1.18) rotate(3deg);
   }
-  74%{
+  66%{
     opacity:0;
-    transform:translate(-50%,-50%) scale(1.42) rotate(5deg);
+    transform:translate(-50%,-50%) scale(1.44) rotate(5deg);
   }
   100%{
     opacity:0;
-    transform:translate(-50%,-50%) scale(1.42) rotate(5deg);
+    transform:translate(-50%,-50%) scale(1.44) rotate(5deg);
   }
 }
 
@@ -178,20 +178,20 @@
     0%{opacity:0;transform:translate(6%,16px) scale(.92) rotate(-2deg)}
     7%{opacity:.62;transform:translate(6%,11px) scale(.96) rotate(-1.5deg)}
     13%{opacity:1;transform:translate(5%,7px) scale(.99) rotate(-1deg)}
-    26%{transform:translate(4%,0) scale(1.01) rotate(-.4deg)}
-    40%{transform:translate(5%,-7px) scale(1.015) rotate(.25deg)}
-    54%{transform:translate(6%,-14px) scale(1.005) rotate(.55deg)}
-    64%{opacity:1;transform:translate(4%,-20px) scale(1.01) rotate(.15deg)}
-    68%{opacity:1;transform:translate(4%,-22px) scale(1.055) rotate(-.15deg)}
-    70%{opacity:1;transform:translate(4%,-22px) scale(.96) rotate(-.2deg)}
-    72%{opacity:0;transform:translate(4%,-22px) scale(.10) rotate(-.2deg)}
-    100%{opacity:0;transform:translate(4%,-22px) scale(.10) rotate(-.2deg)}
+    25%{transform:translate(4%,1px) scale(1.01) rotate(-.4deg)}
+    38%{transform:translate(5%,-6px) scale(1.015) rotate(.25deg)}
+    51%{transform:translate(6%,-12px) scale(1.005) rotate(.5deg)}
+    58%{opacity:1;transform:translate(4%,-16px) scale(1.01) rotate(.15deg)}
+    61%{opacity:1;transform:translate(4%,-18px) scale(1.055) rotate(-.15deg)}
+    63%{opacity:1;transform:translate(4%,-18px) scale(.94) rotate(-.2deg)}
+    65%{opacity:0;transform:translate(4%,-18px) scale(.08) rotate(-.2deg)}
+    100%{opacity:0;transform:translate(4%,-18px) scale(.08) rotate(-.2deg)}
   }
 }
 
 @media(prefers-reduced-motion:reduce){
   .waiting-fun-fact{
-    animation:quizFactFarRightPinkReduced 9.5s linear both !important;
+    animation:quizFactFarRightPinkReduced 7s linear both !important;
   }
   .waiting-fun-fact::before{
     animation:none !important;
@@ -201,7 +201,7 @@
 @keyframes quizFactFarRightPinkReduced{
   0%{opacity:0;transform:translateY(10px) scale(.96)}
   12%{opacity:1;transform:translateY(0) scale(1)}
-  68%{opacity:1;transform:translateY(-10px) scale(1)}
-  72%{opacity:0;transform:translateY(-10px) scale(.9)}
-  100%{opacity:0;transform:translateY(-10px) scale(.9)}
+  60%{opacity:1;transform:translateY(-9px) scale(1)}
+  65%{opacity:0;transform:translateY(-9px) scale(.9)}
+  100%{opacity:0;transform:translateY(-9px) scale(.9)}
 }
