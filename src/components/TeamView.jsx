@@ -15,17 +15,6 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLiveTeamNetwork } from "../hooks/useLiveTeamNetwork.js";
 
-const WAITING_FUN_FACTS = [
-  "You can change an answer as many times as you like until the round is locked.",
-  "A flashing NEXT button means a newer question is waiting for you.",
-  "Going back to an earlier question never erases the answer your team has saved.",
-  "You do not need to refresh this page — new questions arrive automatically.",
-  "The Quizmaster decides when correct answers and leaderboards appear on your screen.",
-  "You can review any question that has already been released until the round is locked.",
-  "If you are reviewing an older question, a newly released question will wait for you rather than dragging you away.",
-  "Your answer stays attached to its question even while you browse backwards and forwards.",
-];
-
 function TeamChrome({ children, status, keyboardActive = false }) {
   return (
     <main className={`team-page live-team-page ${keyboardActive ? "keyboard-active-page" : ""}`}>
@@ -82,6 +71,11 @@ function useVisibleViewportHeight() {
   }, []);
 }
 
+function formatScore(value) {
+  const number = Number(value ?? 0);
+  return Number.isInteger(number) ? String(number) : number.toFixed(1).replace(/\.0$/, "");
+}
+
 function ConnectionScreen({ status, error }) {
   return (
     <TeamChrome status={status}>
@@ -134,31 +128,79 @@ function TeamNameScreen({ snapshot, send, status }) {
 }
 
 function WaitingScreen({ snapshot, status }) {
-  const seed = String(snapshot.team?.id || snapshot.team?.name || "quiz").split("").reduce((total, char) => total + char.charCodeAt(0), 0);
-  const [factIndex, setFactIndex] = useState(seed % WAITING_FUN_FACTS.length);
+  const facts = snapshot.waitingFacts ?? [];
+  const seed = String(snapshot.team?.id || snapshot.team?.name || "quiz")
+    .split("")
+    .reduce((total, char) => total + char.charCodeAt(0), 0);
+  const [factIndex, setFactIndex] = useState(facts.length ? seed % facts.length : 0);
 
   useEffect(() => {
+    if (facts.length < 2) return undefined;
     const timer = window.setInterval(() => {
-      setFactIndex((index) => (index + 1) % WAITING_FUN_FACTS.length);
+      setFactIndex((index) => (index + 1) % facts.length);
     }, 7000);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [facts.length]);
+
+  useEffect(() => {
+    if (facts.length && factIndex >= facts.length) setFactIndex(0);
+  }, [facts.length, factIndex]);
+
+  const scores = snapshot.roundScores ?? [];
+  const liveRoundIndex = Number(snapshot.live?.roundIndex ?? 0);
+  const totalRounds = Number(snapshot.quiz?.totalRounds ?? 0);
+  const screen = snapshot.live?.teamScreen ?? "lobby";
+  const beforeFirstRound = liveRoundIndex === 0 && Number(snapshot.live?.questionIndex ?? -1) < 0 && scores.length === 0;
+  const afterFinalRound = screen === "round_locked" && totalRounds > 0 && liveRoundIndex >= totalRounds - 1;
+  const heading = afterFinalRound
+    ? "The Results Will Be Announced Soon"
+    : beforeFirstRound
+      ? "The Quiz Will Begin Soon"
+      : "The Next Round Will Start Soon";
+  const fact = facts.length ? facts[factIndex % facts.length] : "";
 
   return (
     <TeamChrome status={status}>
       <section className="team-card live-team-card waiting-team-card">
-        <div className="registered-box">
-          <CheckCircle2 size={19} />
-          <div><span>READY</span><strong>{snapshot.team.name}</strong></div>
+        <div className="waiting-team-banner">
+          <div className="waiting-team-name">
+            <span>TEAM</span>
+            <strong>{snapshot.team.name}</strong>
+          </div>
+          <div className="waiting-team-meta">
+            <div><span>TABLE</span><strong>{snapshot.team.table || "—"}</strong></div>
+            <div><span>PLAYERS</span><strong>{snapshot.team.players || 1}</strong></div>
+          </div>
         </div>
-        <div className="team-ticket small">
-          <span>TABLE</span><strong>{snapshot.team.table || "—"}</strong><small>{snapshot.team.players} player{Number(snapshot.team.players) === 1 ? "" : "s"}</small>
+
+        <div className="waiting-headline">
+          <span>{afterFinalRound ? "QUIZ COMPLETE" : beforeFirstRound ? "GET READY" : "BETWEEN ROUNDS"}</span>
+          <h1>{heading}</h1>
         </div>
-        <h1>Waiting for the next question</h1>
-        <div className="waiting-fun-fact" key={factIndex}>
-          <span>FUN FACT</span>
-          <strong>{WAITING_FUN_FACTS[factIndex]}</strong>
-        </div>
+
+        {scores.length ? (
+          <div className="waiting-score-panel">
+            <div className="waiting-score-heading">
+              <div><span>UNREVIEWED SCORES</span><strong>Your score so far</strong></div>
+              <small>The Quizmaster can still adjust marks.</small>
+            </div>
+            <div className="waiting-round-scores">
+              {scores.map((round) => (
+                <div className="waiting-round-score" key={round.id}>
+                  <div><span>ROUND {round.number}</span><strong>{round.title}</strong></div>
+                  <b>{formatScore(round.score)} <small>/ {formatScore(round.max)}</small></b>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {fact ? (
+          <div className="waiting-fun-fact" key={`${factIndex}-${fact}`}>
+            <span>FUN FACT</span>
+            <strong>{fact}</strong>
+          </div>
+        ) : null}
       </section>
     </TeamChrome>
   );
@@ -366,7 +408,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   if (!snapshot.team.nameLocked) return <TeamNameScreen snapshot={snapshot} send={send} status={status} />;
   if (screen === "leaderboard") return <LeaderboardScreen snapshot={snapshot} status={status} />;
   if (screen === "final") return <FinalScreen snapshot={snapshot} status={status} />;
-  if (!question || (["lobby", "round_locked"].includes(screen) && !questions.length)) {
+  if (screen === "round_locked" || !question || (screen === "lobby" && !questions.length)) {
     return <WaitingScreen snapshot={snapshot} status={status} />;
   }
 
