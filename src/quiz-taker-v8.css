@@ -21,13 +21,52 @@
 }
 
 /*
+  When a text field has focus, anchor the entire QuizTaker to the browser's
+  actual visual viewport rather than the larger layout viewport. Mobile browsers
+  are otherwise free to pan the page to the focused textarea, which is what was
+  making the question disappear on some questions but not others.
+*/
+.keyboard-active-page{
+  position:fixed !important;
+  top:var(--team-visible-top,0px) !important;
+  left:var(--team-visible-left,0px) !important;
+  width:var(--team-visible-width,100vw) !important;
+  height:var(--team-visible-height,100dvh) !important;
+  min-height:0 !important;
+  max-height:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  z-index:2147483000;
+}
+
+.keyboard-active-page .live-phone-shell.keyboard-active{
+  width:100% !important;
+  max-width:none !important;
+  height:100% !important;
+  min-height:0 !important;
+  max-height:100% !important;
+  margin:0 !important;
+  border-radius:0 !important;
+  overflow:hidden !important;
+}
+
+.keyboard-active-page .question-team-card.keyboard-active{
+  width:100% !important;
+  height:100% !important;
+  min-height:0 !important;
+  max-height:100% !important;
+}
+
+/*
   Keyboard mode uses two distinct panes: the question gets the flexible upper
-  area and the answer field stays fixed underneath it. This prevents the browser
-  or our own focus handling from scrolling the question completely off-screen.
+  area and the answer field stays fixed underneath it. A real minimum height is
+  reserved for the question pane so it cannot collapse to zero on a short
+  visual viewport.
 */
 .question-team-card.keyboard-active .team-question-stage{
   display:grid !important;
-  grid-template-rows:minmax(0,1fr) auto !important;
+  grid-template-rows:minmax(76px,1fr) auto !important;
   align-items:stretch !important;
   overflow:hidden !important;
   gap:6px !important;
@@ -35,8 +74,8 @@
 }
 
 .question-team-card.keyboard-active .team-question-core{
-  min-height:0 !important;
-  height:100% !important;
+  min-height:76px !important;
+  height:auto !important;
   overflow-y:auto !important;
   overflow-x:hidden !important;
   -webkit-overflow-scrolling:touch;
@@ -45,24 +84,34 @@
   gap:5px !important;
 }
 
-/* Put the wording first while typing, even for picture/audio questions. Media can
-   still be scrolled underneath it, but the actual question never vanishes. */
+/*
+  Keep the actual wording pinned to the top of the question pane. Even if a
+  browser tries to scroll the inner pane because the textarea gained focus, the
+  wording itself remains on screen. Picture/audio media scrolls underneath it.
+*/
 .question-team-card.keyboard-active .team-question-text{
   order:-1;
+  position:sticky !important;
+  top:0 !important;
+  z-index:6;
   flex:0 0 auto !important;
   margin:0 2px 4px !important;
-  padding:3px 2px !important;
+  padding:5px 4px 7px !important;
   font-size:clamp(15px,4vw,19px) !important;
   line-height:1.14 !important;
+  background:rgba(255,255,255,.98);
+  box-shadow:0 5px 10px rgba(255,255,255,.96);
 }
 
 .question-team-card.keyboard-active .team-answer-zone{
   min-height:0 !important;
   flex:0 0 auto !important;
   overflow:visible !important;
+  position:relative;
+  z-index:7;
   padding-top:3px;
   gap:4px !important;
-  background:rgba(255,255,255,.97);
+  background:rgba(255,255,255,.98);
 }
 
 .question-team-card.keyboard-active .answer-input-shell textarea{
@@ -72,9 +121,10 @@
   scroll-margin:0 !important;
 }
 
+/* The confirmation returns when the keyboard closes; while typing, reserve all
+   possible vertical space for the question and answer field. */
 .question-team-card.keyboard-active .answer-save-status{
-  min-height:24px !important;
-  padding:3px 7px !important;
+  display:none !important;
 }
 
 .question-team-card.keyboard-active .question-number-display{
@@ -111,12 +161,19 @@
 
 @media(max-height:560px){
   .question-team-card.keyboard-active .team-question-stage{
+    grid-template-rows:minmax(62px,1fr) auto !important;
     gap:4px !important;
+  }
+
+  .question-team-card.keyboard-active .team-question-core{
+    min-height:62px !important;
   }
 
   .question-team-card.keyboard-active .team-question-text{
     font-size:14px !important;
     line-height:1.1 !important;
+    padding-top:3px !important;
+    padding-bottom:5px !important;
   }
 
   .question-team-card.keyboard-active .answer-input-shell textarea{
