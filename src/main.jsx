@@ -2,6 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./utils/preventAnswerPaste.js";
+import "./utils/keyboardAnswerFocus.js";
 import "./styles.css";
 import "./live.css";
 import "./team-answer-state.css";
