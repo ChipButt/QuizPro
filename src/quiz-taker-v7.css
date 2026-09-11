@@ -22,7 +22,9 @@
     0 10px 22px rgba(154,88,206,.12) !important;
   transform-origin:14% 58%;
   will-change:transform,opacity,border-radius;
-  animation:quizFactFarRightPinkLife 7s ease-in-out both !important;
+  animation:
+    quizFactFarRightPinkTravel 7s linear both,
+    quizFactFarRightPinkFlow 5.4s ease-in-out infinite alternate !important;
 }
 
 /* No central body extras, no satellites, no secondary blobs. */
@@ -49,54 +51,70 @@
   line-height:1.25 !important;
 }
 
-/* Reuses the character of the old far-right pink companion: rounded,
-   slightly stretched, pinching and reforming rather than the central blob's wobble. */
-@keyframes quizFactFarRightPinkLife{
+/* Slow continuous travel. The movement is deliberately small and progressive so
+   the blob does not change direction or scale abruptly at individual keyframes. */
+@keyframes quizFactFarRightPinkTravel{
   0%{
     opacity:0;
-    transform:translate(20%,28px) scale(.58,.76) rotate(-8deg);
-    border-radius:52% 48% 55% 45% / 48% 54% 46% 52%;
+    transform:translate(15%,24px) scale(.90,.94) rotate(-3deg);
   }
   8%{
-    opacity:.8;
-    transform:translate(17%,19px) scale(.76,.94) rotate(-8deg);
-    border-radius:52% 48% 55% 45% / 48% 54% 46% 52%;
+    opacity:.72;
+    transform:translate(14%,17px) scale(.94,.97) rotate(-2.4deg);
   }
   16%{
     opacity:1;
-    transform:translate(13%,10px) scale(.88,1.04) rotate(-6deg);
-    border-radius:52% 48% 55% 45% / 48% 54% 46% 52%;
+    transform:translate(12%,10px) scale(.98,1) rotate(-1.7deg);
   }
   28%{
-    transform:translate(8%,0) scale(1.02,.92) rotate(-2deg);
-    border-radius:47% 53% 50% 50% / 54% 46% 53% 47%;
+    transform:translate(9%,1px) scale(1.01,.99) rotate(-.8deg);
   }
-  44%{
-    transform:translate(13%,-13px) scale(.94,1.12) rotate(5deg);
-    border-radius:54% 46% 47% 53% / 46% 55% 45% 54%;
+  40%{
+    transform:translate(10%,-8px) scale(1.02,1) rotate(.2deg);
   }
-  60%{
-    transform:translate(18%,-24px) scale(.84,1.18) rotate(8deg);
-    border-radius:49% 51% 55% 45% / 55% 45% 50% 50%;
+  52%{
+    transform:translate(12%,-17px) scale(1,1.02) rotate(.8deg);
+  }
+  64%{
+    transform:translate(11%,-26px) scale(.99,1.03) rotate(.4deg);
   }
   76%{
-    transform:translate(7%,-34px) scale(1.08,.90) rotate(1deg);
-    border-radius:53% 47% 49% 51% / 48% 52% 46% 54%;
+    transform:translate(8%,-35px) scale(1.01,1.01) rotate(-.4deg);
   }
   88%{
     opacity:1;
-    transform:translate(1%,-42px) scale(.96,1.06) rotate(-4deg);
-    border-radius:50% 50% 56% 44% / 45% 55% 48% 52%;
+    transform:translate(4%,-44px) scale(.99,1.02) rotate(-1.2deg);
   }
   96%{
-    opacity:.85;
-    transform:translate(-4%,-50px) scale(.86,1.13) rotate(-7deg);
-    border-radius:55% 45% 51% 49% / 52% 48% 55% 45%;
+    opacity:.72;
+    transform:translate(1%,-50px) scale(.96,1.04) rotate(-1.8deg);
   }
   100%{
     opacity:0;
-    transform:translate(-8%,-59px) scale(.68,1.20) rotate(-8deg);
-    border-radius:56% 44% 50% 50% / 54% 46% 56% 44%;
+    transform:translate(0%,-54px) scale(.94,1.05) rotate(-2deg);
+  }
+}
+
+/* Separate, slow surface flow. Keeping the shape motion separate from the travel
+   avoids the stop/start feel produced when both changed sharply at the same points. */
+@keyframes quizFactFarRightPinkFlow{
+  0%{
+    border-radius:52% 48% 55% 45% / 48% 54% 46% 52%;
+  }
+  20%{
+    border-radius:54% 46% 53% 47% / 50% 52% 48% 50%;
+  }
+  40%{
+    border-radius:52% 48% 51% 49% / 52% 50% 50% 48%;
+  }
+  60%{
+    border-radius:50% 50% 53% 47% / 53% 48% 52% 47%;
+  }
+  80%{
+    border-radius:51% 49% 55% 45% / 51% 50% 50% 49%;
+  }
+  100%{
+    border-radius:53% 47% 54% 46% / 49% 53% 47% 51%;
   }
 }
 
@@ -107,17 +125,18 @@
     padding:21px 22px !important;
   }
 
-  @keyframes quizFactFarRightPinkLife{
-    0%{opacity:0;transform:translate(14%,22px) scale(.58,.76) rotate(-8deg)}
-    8%{opacity:.8;transform:translate(12%,15px) scale(.76,.94) rotate(-8deg)}
-    16%{opacity:1;transform:translate(9%,8px) scale(.88,1.04) rotate(-6deg)}
-    28%{transform:translate(6%,0) scale(1.02,.92) rotate(-2deg)}
-    44%{transform:translate(9%,-10px) scale(.94,1.12) rotate(5deg)}
-    60%{transform:translate(12%,-18px) scale(.84,1.18) rotate(8deg)}
-    76%{transform:translate(5%,-26px) scale(1.08,.90) rotate(1deg)}
-    88%{opacity:1;transform:translate(1%,-32px) scale(.96,1.06) rotate(-4deg)}
-    96%{opacity:.85;transform:translate(-3%,-38px) scale(.86,1.13) rotate(-7deg)}
-    100%{opacity:0;transform:translate(-6%,-45px) scale(.68,1.20) rotate(-8deg)}
+  @keyframes quizFactFarRightPinkTravel{
+    0%{opacity:0;transform:translate(10%,19px) scale(.90,.94) rotate(-3deg)}
+    8%{opacity:.72;transform:translate(9%,14px) scale(.94,.97) rotate(-2.4deg)}
+    16%{opacity:1;transform:translate(8%,8px) scale(.98,1) rotate(-1.7deg)}
+    28%{transform:translate(6%,1px) scale(1.01,.99) rotate(-.8deg)}
+    40%{transform:translate(7%,-6px) scale(1.02,1) rotate(.2deg)}
+    52%{transform:translate(8%,-13px) scale(1,1.02) rotate(.8deg)}
+    64%{transform:translate(7%,-20px) scale(.99,1.03) rotate(.4deg)}
+    76%{transform:translate(5%,-27px) scale(1.01,1.01) rotate(-.4deg)}
+    88%{opacity:1;transform:translate(3%,-34px) scale(.99,1.02) rotate(-1.2deg)}
+    96%{opacity:.72;transform:translate(1%,-39px) scale(.96,1.04) rotate(-1.8deg)}
+    100%{opacity:0;transform:translate(0,-43px) scale(.94,1.05) rotate(-2deg)}
   }
 }
 
@@ -128,8 +147,8 @@
 }
 
 @keyframes quizFactFarRightPinkReduced{
-  0%{opacity:0;transform:translateY(12px) scale(.9)}
+  0%{opacity:0;transform:translateY(12px) scale(.96)}
   12%{opacity:1;transform:translateY(0) scale(1)}
   88%{opacity:1;transform:translateY(-12px) scale(1)}
-  100%{opacity:0;transform:translateY(-22px) scale(.92)}
+  100%{opacity:0;transform:translateY(-22px) scale(.97)}
 }
