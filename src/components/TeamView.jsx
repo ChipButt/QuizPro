@@ -513,11 +513,10 @@ export default function TeamView({ sessionCode, teamToken }) {
               </div>
             ) : null}
 
-            {!questionLocked && draft.trim() ? (
-              <div className={`answer-save-status ${answerSaving ? "saving" : "saved"}`}>
+            {!questionLocked && draft.trim() && !answerSaving ? (
+              <div className="answer-save-status saved">
                 <CheckCircle2 size={15} />
-                <strong>{answerSaving ? "Saving answer…" : "Answer saved"}</strong>
-                <span>You can still change it until the round is locked.</span>
+                <strong>Answer Updated</strong>
               </div>
             ) : null}
           </div>
