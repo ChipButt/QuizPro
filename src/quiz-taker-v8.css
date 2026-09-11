@@ -1,4 +1,4 @@
-/* QuizTaker v8: make the active question number unmistakable and keep long text-entry questions usable above mobile keyboards. */
+/* QuizTaker v8: make the active question number unmistakable and keep text-entry questions visible above mobile keyboards. */
 
 .question-number-display{
   min-width:86px !important;
@@ -20,16 +20,61 @@
   font-size:11px !important;
 }
 
-/* When the keyboard is open, the question stage is allowed to scroll just enough
-   for unusually tall questions while retaining a comfortable margin above the keyboard. */
+/*
+  Keyboard mode uses two distinct panes: the question gets the flexible upper
+  area and the answer field stays fixed underneath it. This prevents the browser
+  or our own focus handling from scrolling the question completely off-screen.
+*/
 .question-team-card.keyboard-active .team-question-stage{
-  scroll-padding-top:8px;
-  scroll-padding-bottom:82px;
+  display:grid !important;
+  grid-template-rows:minmax(0,1fr) auto !important;
+  align-items:stretch !important;
+  overflow:hidden !important;
+  gap:6px !important;
+  scroll-padding:0 !important;
+}
+
+.question-team-card.keyboard-active .team-question-core{
+  min-height:0 !important;
+  height:100% !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding:2px 3px 5px !important;
+  gap:5px !important;
+}
+
+/* Put the wording first while typing, even for picture/audio questions. Media can
+   still be scrolled underneath it, but the actual question never vanishes. */
+.question-team-card.keyboard-active .team-question-text{
+  order:-1;
+  flex:0 0 auto !important;
+  margin:0 2px 4px !important;
+  padding:3px 2px !important;
+  font-size:clamp(15px,4vw,19px) !important;
+  line-height:1.14 !important;
+}
+
+.question-team-card.keyboard-active .team-answer-zone{
+  min-height:0 !important;
+  flex:0 0 auto !important;
+  overflow:visible !important;
+  padding-top:3px;
+  gap:4px !important;
+  background:rgba(255,255,255,.97);
 }
 
 .question-team-card.keyboard-active .answer-input-shell textarea{
-  scroll-margin-top:10px;
-  scroll-margin-bottom:14px;
+  height:56px !important;
+  min-height:56px !important;
+  max-height:56px !important;
+  scroll-margin:0 !important;
+}
+
+.question-team-card.keyboard-active .answer-save-status{
+  min-height:24px !important;
+  padding:3px 7px !important;
 }
 
 .question-team-card.keyboard-active .question-number-display{
@@ -56,5 +101,27 @@
 
   .question-team-card.keyboard-active .question-number-display>strong{
     font-size:31px !important;
+  }
+
+  .question-team-card.keyboard-active .team-question-text{
+    font-size:15px !important;
+    line-height:1.12 !important;
+  }
+}
+
+@media(max-height:560px){
+  .question-team-card.keyboard-active .team-question-stage{
+    gap:4px !important;
+  }
+
+  .question-team-card.keyboard-active .team-question-text{
+    font-size:14px !important;
+    line-height:1.1 !important;
+  }
+
+  .question-team-card.keyboard-active .answer-input-shell textarea{
+    height:52px !important;
+    min-height:52px !important;
+    max-height:52px !important;
   }
 }
