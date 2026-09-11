@@ -1,0 +1,195 @@
+/* QuizTaker v6: one-line team banner and animated fun-fact bubble. */
+
+/* Keep team name, table and player count on one line. */
+.waiting-team-banner{
+  min-height:74px !important;
+  padding:13px 16px !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:18px !important;
+  flex-wrap:nowrap !important;
+  overflow:hidden;
+}
+
+.waiting-team-name{
+  min-width:0;
+  flex:1 1 auto;
+  display:flex !important;
+  align-items:baseline;
+  gap:8px !important;
+  white-space:nowrap;
+}
+
+.waiting-team-name>span{
+  flex:0 0 auto;
+  font-size:0 !important;
+}
+
+.waiting-team-name>span::after{
+  content:"TEAM NAME";
+  font-size:9px;
+  line-height:1;
+  font-weight:950;
+  letter-spacing:.14em;
+  color:#ddd6ff;
+}
+
+.waiting-team-name>strong{
+  min-width:0;
+  flex:1 1 auto;
+  font-size:clamp(18px,4.8vw,27px) !important;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.waiting-team-meta{
+  flex:0 0 auto;
+  display:flex !important;
+  align-items:baseline !important;
+  gap:16px !important;
+  white-space:nowrap;
+}
+
+.waiting-team-meta>div{
+  min-width:0 !important;
+  display:flex !important;
+  align-items:baseline;
+  gap:6px !important;
+  text-align:left !important;
+}
+
+.waiting-team-meta strong{
+  font-size:18px !important;
+}
+
+/* The provisional score/leaderboard section is still rendered only once a round exists. */
+.waiting-team-card{
+  display:grid !important;
+  grid-template-rows:auto auto auto minmax(180px,1fr);
+  min-height:0;
+  overflow:hidden !important;
+}
+
+.waiting-score-panel{
+  grid-row:3;
+}
+
+/* Give the fun fact its own open area beneath the scores/leaderboard. */
+.waiting-fun-fact{
+  grid-row:4;
+  align-self:center;
+  justify-self:center;
+  position:relative;
+  width:min(340px,66%) !important;
+  min-height:112px;
+  margin:0 !important;
+  padding:20px 24px !important;
+  display:grid;
+  place-content:center;
+  gap:7px;
+  text-align:center;
+  border:2px solid rgba(140,124,243,.34) !important;
+  border-radius:46% 54% 57% 43% / 48% 43% 57% 52% !important;
+  background:linear-gradient(145deg,#f0ecff 0%,#fff5df 52%,#e9faf5 100%) !important;
+  color:#2f2851;
+  box-shadow:0 9px 0 rgba(140,124,243,.10),0 18px 34px rgba(75,57,137,.10) !important;
+  transform-origin:center;
+  animation:
+    waitingBubbleDrift 11s ease-in-out infinite alternate,
+    waitingBubbleMorph 6.8s ease-in-out infinite alternate;
+  will-change:transform,border-radius;
+}
+
+.waiting-fun-fact span{
+  color:#786be0 !important;
+}
+
+.waiting-fun-fact strong{
+  color:#332d54 !important;
+  font-size:clamp(14px,3.8vw,18px) !important;
+  line-height:1.28;
+}
+
+@keyframes waitingBubbleDrift{
+  0%{transform:translate(-18%, -22px) rotate(-1.5deg)}
+  22%{transform:translate(10%, 16px) rotate(1deg)}
+  48%{transform:translate(19%, -8px) rotate(1.8deg)}
+  73%{transform:translate(-6%, 25px) rotate(-.8deg)}
+  100%{transform:translate(-16%, 4px) rotate(1.2deg)}
+}
+
+@keyframes waitingBubbleMorph{
+  0%{border-radius:46% 54% 57% 43% / 48% 43% 57% 52%}
+  28%{border-radius:57% 43% 46% 54% / 42% 58% 44% 56%}
+  54%{border-radius:41% 59% 53% 47% / 56% 46% 54% 44%}
+  78%{border-radius:54% 46% 42% 58% / 45% 55% 59% 41%}
+  100%{border-radius:48% 52% 60% 40% / 58% 44% 56% 42%}
+}
+
+@media(max-width:480px){
+  .waiting-team-banner{
+    gap:10px !important;
+    padding:11px 10px !important;
+  }
+
+  .waiting-team-name{
+    gap:5px !important;
+  }
+
+  .waiting-team-name>span::after,
+  .waiting-team-meta span{
+    font-size:7px !important;
+    letter-spacing:.08em !important;
+  }
+
+  .waiting-team-name>strong{
+    font-size:17px !important;
+  }
+
+  .waiting-team-meta{
+    gap:9px !important;
+  }
+
+  .waiting-team-meta>div{
+    gap:3px !important;
+  }
+
+  .waiting-team-meta strong{
+    font-size:15px !important;
+  }
+
+  .waiting-team-card{
+    grid-template-rows:auto auto auto minmax(150px,1fr);
+  }
+
+  .waiting-fun-fact{
+    width:min(310px,72%) !important;
+    min-height:100px;
+    padding:16px 18px !important;
+  }
+
+  @keyframes waitingBubbleDrift{
+    0%{transform:translate(-13%, -16px) rotate(-1.2deg)}
+    25%{transform:translate(8%, 12px) rotate(.8deg)}
+    50%{transform:translate(13%, -6px) rotate(1.4deg)}
+    75%{transform:translate(-5%, 17px) rotate(-.7deg)}
+    100%{transform:translate(-11%, 2px) rotate(1deg)}
+  }
+}
+
+@media(max-height:700px){
+  .waiting-team-card{
+    grid-template-rows:auto auto auto minmax(120px,1fr);
+  }
+  .waiting-fun-fact{
+    min-height:88px;
+    padding:13px 17px !important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .waiting-fun-fact{
+    animation:waitingBubbleMorph 9s ease-in-out infinite alternate;
+  }
+}
