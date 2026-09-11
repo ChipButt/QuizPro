@@ -1,28 +1,31 @@
-/* QuizTaker v7: single pink lava-lamp fun-fact blob. */
+/* QuizTaker v7: use ONLY the original far-right pink lava-lamp globule. */
 
 .waiting-fun-fact{
   position:relative !important;
   overflow:hidden !important;
   isolation:isolate;
+  width:min(300px,62%) !important;
+  min-height:148px !important;
+  padding:25px 27px !important;
   border:0 !important;
+
+  /* This is deliberately based on the OLD far-right companion globule,
+     not the old central multicolour body. */
   border-radius:52% 48% 55% 45% / 48% 54% 46% 52% !important;
   background:
-    radial-gradient(circle at 30% 21%,rgba(255,255,255,.74) 0 8%,rgba(255,255,255,.18) 18%,transparent 31%),
-    radial-gradient(circle at 73% 72%,rgba(255,189,209,.34) 0 18%,transparent 46%),
-    linear-gradient(145deg,#e85bd4 0%,#f45bcb 34%,#ff72b3 68%,#ff8b9d 100%) !important;
+    radial-gradient(circle at 30% 20%,rgba(255,255,255,.72) 0 8%,transparent 26%),
+    linear-gradient(145deg,#a36cf2 0%,#f45bdb 42%,#ff8b84 100%) !important;
   color:#39274a;
   box-shadow:
-    inset 12px 13px 25px rgba(255,255,255,.22),
-    inset -14px -15px 28px rgba(120,34,111,.17),
-    0 18px 34px rgba(187,72,153,.18) !important;
-  transform-origin:50% 55%;
+    inset -9px -10px 18px rgba(91,38,131,.14),
+    inset 8px 9px 18px rgba(255,255,255,.16),
+    0 10px 22px rgba(154,88,206,.12) !important;
+  transform-origin:14% 58%;
   will-change:transform,opacity,border-radius;
-  animation:
-    quizFactPinkLavaTravel 7s cubic-bezier(.33,.02,.22,1) both,
-    quizFactPinkLavaMorph 2.8s ease-in-out infinite alternate !important;
+  animation:quizFactFarRightPinkLife 7s ease-in-out both !important;
 }
 
-/* Remove all of the extra companion/satellite blobs. */
+/* No central body extras, no satellites, no secondary blobs. */
 .waiting-fun-fact::before,
 .waiting-fun-fact::after{
   content:none !important;
@@ -36,86 +39,97 @@
 }
 
 .waiting-fun-fact span{
-  color:#7b376f !important;
-  text-shadow:0 1px 0 rgba(255,255,255,.28);
+  color:#7d3b84 !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.26);
 }
 
 .waiting-fun-fact strong{
   color:#39274a !important;
-  text-shadow:0 1px 0 rgba(255,255,255,.22);
+  text-shadow:0 1px 0 rgba(255,255,255,.20);
+  line-height:1.25 !important;
 }
 
-@keyframes quizFactPinkLavaTravel{
+/* Reuses the character of the old far-right pink companion: rounded,
+   slightly stretched, pinching and reforming rather than the central blob's wobble. */
+@keyframes quizFactFarRightPinkLife{
   0%{
     opacity:0;
-    transform:translate(12%,34px) scale(.74,.78) rotate(2deg);
+    transform:translate(20%,28px) scale(.58,.76) rotate(-8deg);
+    border-radius:52% 48% 55% 45% / 48% 54% 46% 52%;
   }
-  9%{
-    opacity:.84;
-    transform:translate(11%,23px) scale(.91,.92) rotate(1.2deg);
+  8%{
+    opacity:.8;
+    transform:translate(17%,19px) scale(.76,.94) rotate(-8deg);
+    border-radius:52% 48% 55% 45% / 48% 54% 46% 52%;
   }
   16%{
     opacity:1;
-    transform:translate(10%,12px) scale(1,.98) rotate(.5deg);
+    transform:translate(13%,10px) scale(.88,1.04) rotate(-6deg);
+    border-radius:52% 48% 55% 45% / 48% 54% 46% 52%;
   }
-  31%{
-    transform:translate(7%,1px) scale(1.02,.99) rotate(-.4deg);
+  28%{
+    transform:translate(8%,0) scale(1.02,.92) rotate(-2deg);
+    border-radius:47% 53% 50% 50% / 54% 46% 53% 47%;
   }
-  47%{
-    transform:translate(11%,-12px) scale(.98,1.04) rotate(.7deg);
+  44%{
+    transform:translate(13%,-13px) scale(.94,1.12) rotate(5deg);
+    border-radius:54% 46% 47% 53% / 46% 55% 45% 54%;
   }
-  63%{
-    transform:translate(8%,-25px) scale(1.02,.98) rotate(.2deg);
+  60%{
+    transform:translate(18%,-24px) scale(.84,1.18) rotate(8deg);
+    border-radius:49% 51% 55% 45% / 55% 45% 50% 50%;
   }
-  77%{
-    transform:translate(12%,-37px) scale(.99,1.04) rotate(-.5deg);
+  76%{
+    transform:translate(7%,-34px) scale(1.08,.90) rotate(1deg);
+    border-radius:53% 47% 49% 51% / 48% 52% 46% 54%;
   }
-  89%{
+  88%{
     opacity:1;
-    transform:translate(9%,-47px) scale(1.01,.99) rotate(-.7deg);
+    transform:translate(1%,-42px) scale(.96,1.06) rotate(-4deg);
+    border-radius:50% 50% 56% 44% / 45% 55% 48% 52%;
   }
   96%{
-    opacity:.86;
-    transform:translate(10%,-55px) scale(.94,1.05) rotate(-.3deg);
+    opacity:.85;
+    transform:translate(-4%,-50px) scale(.86,1.13) rotate(-7deg);
+    border-radius:55% 45% 51% 49% / 52% 48% 55% 45%;
   }
   100%{
     opacity:0;
-    transform:translate(12%,-64px) scale(.82,1.10) rotate(0deg);
+    transform:translate(-8%,-59px) scale(.68,1.20) rotate(-8deg);
+    border-radius:56% 44% 50% 50% / 54% 46% 56% 44%;
   }
 }
 
-@keyframes quizFactPinkLavaMorph{
-  0%{border-radius:52% 48% 55% 45% / 48% 54% 46% 52%}
-  25%{border-radius:57% 43% 49% 51% / 54% 46% 56% 44%}
-  50%{border-radius:45% 55% 58% 42% / 50% 57% 43% 50%}
-  75%{border-radius:55% 45% 46% 54% / 56% 44% 52% 48%}
-  100%{border-radius:49% 51% 57% 43% / 45% 55% 47% 53%}
-}
-
 @media(max-width:480px){
-  @keyframes quizFactPinkLavaTravel{
-    0%{opacity:0;transform:translate(8%,27px) scale(.74,.78) rotate(2deg)}
-    9%{opacity:.84;transform:translate(8%,18px) scale(.91,.92) rotate(1deg)}
-    16%{opacity:1;transform:translate(7%,10px) scale(1,.98) rotate(.4deg)}
-    31%{transform:translate(5%,1px) scale(1.02,.99) rotate(-.3deg)}
-    47%{transform:translate(8%,-9px) scale(.98,1.04) rotate(.6deg)}
-    63%{transform:translate(6%,-19px) scale(1.02,.98) rotate(.2deg)}
-    77%{transform:translate(8%,-28px) scale(.99,1.04) rotate(-.4deg)}
-    89%{opacity:1;transform:translate(7%,-36px) scale(1.01,.99) rotate(-.6deg)}
-    96%{opacity:.86;transform:translate(7%,-42px) scale(.94,1.05) rotate(-.2deg)}
-    100%{opacity:0;transform:translate(8%,-49px) scale(.82,1.10)}
+  .waiting-fun-fact{
+    width:min(274px,68%) !important;
+    min-height:132px !important;
+    padding:21px 22px !important;
+  }
+
+  @keyframes quizFactFarRightPinkLife{
+    0%{opacity:0;transform:translate(14%,22px) scale(.58,.76) rotate(-8deg)}
+    8%{opacity:.8;transform:translate(12%,15px) scale(.76,.94) rotate(-8deg)}
+    16%{opacity:1;transform:translate(9%,8px) scale(.88,1.04) rotate(-6deg)}
+    28%{transform:translate(6%,0) scale(1.02,.92) rotate(-2deg)}
+    44%{transform:translate(9%,-10px) scale(.94,1.12) rotate(5deg)}
+    60%{transform:translate(12%,-18px) scale(.84,1.18) rotate(8deg)}
+    76%{transform:translate(5%,-26px) scale(1.08,.90) rotate(1deg)}
+    88%{opacity:1;transform:translate(1%,-32px) scale(.96,1.06) rotate(-4deg)}
+    96%{opacity:.85;transform:translate(-3%,-38px) scale(.86,1.13) rotate(-7deg)}
+    100%{opacity:0;transform:translate(-6%,-45px) scale(.68,1.20) rotate(-8deg)}
   }
 }
 
 @media(prefers-reduced-motion:reduce){
   .waiting-fun-fact{
-    animation:quizFactPinkLavaReduced 7s linear both !important;
+    animation:quizFactFarRightPinkReduced 7s linear both !important;
   }
 }
 
-@keyframes quizFactPinkLavaReduced{
-  0%{opacity:0;transform:translateY(14px) scale(.92)}
+@keyframes quizFactFarRightPinkReduced{
+  0%{opacity:0;transform:translateY(12px) scale(.9)}
   12%{opacity:1;transform:translateY(0) scale(1)}
-  88%{opacity:1;transform:translateY(-14px) scale(1)}
-  100%{opacity:0;transform:translateY(-24px) scale(.94)}
+  88%{opacity:1;transform:translateY(-12px) scale(1)}
+  100%{opacity:0;transform:translateY(-22px) scale(.92)}
 }
