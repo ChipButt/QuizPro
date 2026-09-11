@@ -1,11 +1,11 @@
-/* QuizTaker v7: single spherical pink lava-lamp fun-fact globule with a cartoon pop. */
+/* QuizTaker v7: translucent spherical pink fun-fact globule with a cartoon line pop. */
 
 .waiting-fun-fact{
   position:relative !important;
   overflow:visible !important;
   isolation:isolate;
-  width:min(280px,72%) !important;
-  min-height:210px !important;
+  width:min(276px,72%) !important;
+  min-height:216px !important;
   padding:34px 30px !important;
   box-sizing:border-box !important;
   display:flex !important;
@@ -14,47 +14,42 @@
   justify-content:center !important;
   text-align:center !important;
   border:0 !important;
-
-  /* Keep the original far-right pink globule character, but make it rounder. */
   border-radius:50% 50% 51% 49% / 50% 51% 49% 50% !important;
   background:
-    radial-gradient(circle at 30% 20%,rgba(255,255,255,.72) 0 8%,transparent 26%),
-    linear-gradient(145deg,#a36cf2 0%,#f45bdb 42%,#ff8b84 100%) !important;
+    radial-gradient(circle at 30% 20%,rgba(255,255,255,.58) 0 8%,transparent 26%),
+    linear-gradient(145deg,rgba(163,108,242,.48) 0%,rgba(244,91,219,.52) 42%,rgba(255,139,132,.48) 100%) !important;
   color:#39274a;
   box-shadow:
-    inset -9px -10px 18px rgba(91,38,131,.14),
-    inset 8px 9px 18px rgba(255,255,255,.16),
-    0 10px 22px rgba(154,88,206,.12) !important;
+    inset -8px -9px 17px rgba(91,38,131,.09),
+    inset 8px 9px 18px rgba(255,255,255,.17),
+    0 10px 22px rgba(154,88,206,.09) !important;
   transform-origin:50% 52%;
   will-change:transform,opacity,border-radius;
   animation:
     quizFactFarRightPinkTravel 7s linear both,
-    quizFactFarRightPinkFlow 14s cubic-bezier(.45,0,.55,1) infinite alternate !important;
+    quizFactFarRightPinkFlow 16s cubic-bezier(.45,0,.55,1) infinite alternate !important;
 }
 
-/* Cartoon asterisk/starburst that flashes exactly as the blob pops. */
+/* Thin black cartoon * burst. The radial mask leaves only the outer ray segments. */
 .waiting-fun-fact::before{
   content:"" !important;
   display:block !important;
   position:absolute;
   left:50%;
   top:50%;
-  width:118%;
+  width:126%;
   aspect-ratio:1;
-  background:linear-gradient(145deg,#ff7db8,#f45bdb 58%,#ff9a8d);
-  clip-path:polygon(
-    50% 0%, 57% 34%, 72% 8%, 70% 40%,
-    96% 22%, 75% 46%, 100% 50%, 75% 54%,
-    96% 78%, 70% 60%, 72% 92%, 57% 66%,
-    50% 100%, 43% 66%, 28% 92%, 30% 60%,
-    4% 78%, 25% 54%, 0% 50%, 25% 46%,
-    4% 22%, 30% 40%, 28% 8%, 43% 34%
-  );
+  background:
+    linear-gradient(0deg,transparent 49.35%,rgba(20,18,22,.96) 49.35% 50.65%,transparent 50.65%),
+    linear-gradient(45deg,transparent 49.35%,rgba(20,18,22,.96) 49.35% 50.65%,transparent 50.65%),
+    linear-gradient(90deg,transparent 49.35%,rgba(20,18,22,.96) 49.35% 50.65%,transparent 50.65%),
+    linear-gradient(135deg,transparent 49.35%,rgba(20,18,22,.96) 49.35% 50.65%,transparent 50.65%);
+  -webkit-mask:radial-gradient(circle,transparent 0 24%,#000 25% 46%,transparent 47% 100%);
+  mask:radial-gradient(circle,transparent 0 24%,#000 25% 46%,transparent 47% 100%);
   opacity:0;
-  transform:translate(-50%,-50%) scale(.12) rotate(-5deg);
+  transform:translate(-50%,-50%) scale(.28) rotate(-4deg);
   pointer-events:none;
   z-index:4;
-  filter:drop-shadow(0 6px 7px rgba(177,64,145,.12));
   animation:quizFactCartoonPop 7s linear both !important;
 }
 
@@ -70,122 +65,72 @@
 }
 
 .waiting-fun-fact span{
-  color:#7d3b84 !important;
-  text-shadow:0 1px 0 rgba(255,255,255,.26);
+  color:#6f326f !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.34);
 }
 
 .waiting-fun-fact strong{
   color:#39274a !important;
-  text-shadow:0 1px 0 rgba(255,255,255,.20);
+  text-shadow:0 1px 0 rgba(255,255,255,.28);
   line-height:1.25 !important;
 }
 
-/* The blob fades in, floats gently, then pops at about 4.4 seconds.
-   It stays completely gone for roughly 2.5 seconds before the next fact mounts. */
+/* Spend most of the seven-second fact cycle visible, then pop and leave about two seconds empty. */
 @keyframes quizFactFarRightPinkTravel{
-  0%{
-    opacity:0;
-    transform:translate(9%,20px) scale(.92) rotate(-2deg);
-  }
-  7%{
-    opacity:.62;
-    transform:translate(8%,14px) scale(.96) rotate(-1.5deg);
-  }
-  13%{
-    opacity:1;
-    transform:translate(7%,9px) scale(.99) rotate(-1deg);
-  }
-  25%{
-    transform:translate(5%,1px) scale(1.01) rotate(-.4deg);
-  }
-  38%{
-    transform:translate(7%,-7px) scale(1.015) rotate(.25deg);
-  }
-  51%{
-    transform:translate(8%,-15px) scale(1.005) rotate(.5deg);
-  }
-  58%{
-    opacity:1;
-    transform:translate(6%,-20px) scale(1.01) rotate(.15deg);
-  }
-  61%{
-    opacity:1;
-    transform:translate(5%,-22px) scale(1.055) rotate(-.15deg);
-  }
-  63%{
-    opacity:1;
-    transform:translate(5%,-22px) scale(.94) rotate(-.2deg);
-  }
-  65%{
-    opacity:0;
-    transform:translate(5%,-22px) scale(.08) rotate(-.2deg);
-  }
-  100%{
-    opacity:0;
-    transform:translate(5%,-22px) scale(.08) rotate(-.2deg);
-  }
+  0%{opacity:0;transform:translate(7%,16px) scale(.94) rotate(-1.4deg)}
+  5%{opacity:.48;transform:translate(7%,12px) scale(.97) rotate(-1deg)}
+  9%{opacity:1;transform:translate(6%,9px) scale(.995) rotate(-.7deg)}
+  23%{transform:translate(5%,2px) scale(1.005) rotate(-.25deg)}
+  38%{transform:translate(6%,-6px) scale(1.012) rotate(.2deg)}
+  53%{transform:translate(7%,-13px) scale(1.006) rotate(.35deg)}
+  66%{opacity:1;transform:translate(6%,-19px) scale(1.01) rotate(.1deg)}
+  69%{opacity:1;transform:translate(5%,-20px) scale(1.045) rotate(-.05deg)}
+  71%{opacity:1;transform:translate(5%,-20px) scale(.92) rotate(-.1deg)}
+  73%{opacity:0;transform:translate(5%,-20px) scale(.10) rotate(-.1deg)}
+  100%{opacity:0;transform:translate(5%,-20px) scale(.10) rotate(-.1deg)}
 }
 
-/* Very slow, almost spherical surface flow. */
+/* Tiny, slow changes keep the blob spherical rather than visibly reshaping. */
 @keyframes quizFactFarRightPinkFlow{
-  0%{
-    border-radius:50% 50% 51% 49% / 50% 51% 49% 50%;
-  }
-  50%{
-    border-radius:51% 49% 50% 50% / 49% 51% 50% 50%;
-  }
-  100%{
-    border-radius:49% 51% 51% 49% / 51% 49% 50% 50%;
-  }
+  0%{border-radius:50% 50% 51% 49% / 50% 51% 49% 50%}
+  50%{border-radius:50.6% 49.4% 50.2% 49.8% / 49.5% 50.5% 50.2% 49.8%}
+  100%{border-radius:49.5% 50.5% 50.7% 49.3% / 50.6% 49.4% 49.8% 50.2%}
 }
 
-/* The star appears for only the instant of the pop, giving a cartoon * burst. */
 @keyframes quizFactCartoonPop{
-  0%,59%{
-    opacity:0;
-    transform:translate(-50%,-50%) scale(.12) rotate(-5deg);
-  }
-  60.5%{
-    opacity:.15;
-    transform:translate(-50%,-50%) scale(.26) rotate(-3deg);
-  }
-  62%{
-    opacity:1;
-    transform:translate(-50%,-50%) scale(.82) rotate(1deg);
-  }
-  64%{
-    opacity:.9;
-    transform:translate(-50%,-50%) scale(1.18) rotate(3deg);
-  }
-  66%{
-    opacity:0;
-    transform:translate(-50%,-50%) scale(1.44) rotate(5deg);
-  }
-  100%{
-    opacity:0;
-    transform:translate(-50%,-50%) scale(1.44) rotate(5deg);
-  }
+  0%,68%{opacity:0;transform:translate(-50%,-50%) scale(.28) rotate(-4deg)}
+  69.5%{opacity:.35;transform:translate(-50%,-50%) scale(.52) rotate(-2deg)}
+  71%{opacity:1;transform:translate(-50%,-50%) scale(.88) rotate(0deg)}
+  73%{opacity:.9;transform:translate(-50%,-50%) scale(1.12) rotate(2deg)}
+  75%{opacity:0;transform:translate(-50%,-50%) scale(1.28) rotate(3deg)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.28) rotate(3deg)}
+}
+
+/* When iOS opens the keyboard, the JS helper pins the document to the compact layout's top. */
+.keyboard-active-page,
+.live-phone-shell.keyboard-active{
+  overscroll-behavior:none !important;
 }
 
 @media(max-width:480px){
   .waiting-fun-fact{
-    width:min(250px,76%) !important;
-    min-height:188px !important;
+    width:min(248px,76%) !important;
+    min-height:194px !important;
     padding:28px 25px !important;
   }
 
   @keyframes quizFactFarRightPinkTravel{
-    0%{opacity:0;transform:translate(6%,16px) scale(.92) rotate(-2deg)}
-    7%{opacity:.62;transform:translate(6%,11px) scale(.96) rotate(-1.5deg)}
-    13%{opacity:1;transform:translate(5%,7px) scale(.99) rotate(-1deg)}
-    25%{transform:translate(4%,1px) scale(1.01) rotate(-.4deg)}
-    38%{transform:translate(5%,-6px) scale(1.015) rotate(.25deg)}
-    51%{transform:translate(6%,-12px) scale(1.005) rotate(.5deg)}
-    58%{opacity:1;transform:translate(4%,-16px) scale(1.01) rotate(.15deg)}
-    61%{opacity:1;transform:translate(4%,-18px) scale(1.055) rotate(-.15deg)}
-    63%{opacity:1;transform:translate(4%,-18px) scale(.94) rotate(-.2deg)}
-    65%{opacity:0;transform:translate(4%,-18px) scale(.08) rotate(-.2deg)}
-    100%{opacity:0;transform:translate(4%,-18px) scale(.08) rotate(-.2deg)}
+    0%{opacity:0;transform:translate(5%,13px) scale(.94) rotate(-1.4deg)}
+    5%{opacity:.48;transform:translate(5%,10px) scale(.97) rotate(-1deg)}
+    9%{opacity:1;transform:translate(5%,7px) scale(.995) rotate(-.7deg)}
+    23%{transform:translate(4%,2px) scale(1.005) rotate(-.25deg)}
+    38%{transform:translate(5%,-5px) scale(1.012) rotate(.2deg)}
+    53%{transform:translate(5%,-10px) scale(1.006) rotate(.35deg)}
+    66%{opacity:1;transform:translate(4%,-15px) scale(1.01) rotate(.1deg)}
+    69%{opacity:1;transform:translate(4%,-16px) scale(1.045) rotate(-.05deg)}
+    71%{opacity:1;transform:translate(4%,-16px) scale(.92) rotate(-.1deg)}
+    73%{opacity:0;transform:translate(4%,-16px) scale(.10) rotate(-.1deg)}
+    100%{opacity:0;transform:translate(4%,-16px) scale(.10) rotate(-.1deg)}
   }
 }
 
@@ -199,9 +144,9 @@
 }
 
 @keyframes quizFactFarRightPinkReduced{
-  0%{opacity:0;transform:translateY(10px) scale(.96)}
-  12%{opacity:1;transform:translateY(0) scale(1)}
-  60%{opacity:1;transform:translateY(-9px) scale(1)}
-  65%{opacity:0;transform:translateY(-9px) scale(.9)}
-  100%{opacity:0;transform:translateY(-9px) scale(.9)}
+  0%{opacity:0;transform:translateY(8px) scale(.97)}
+  8%{opacity:1;transform:translateY(0) scale(1)}
+  69%{opacity:1;transform:translateY(-8px) scale(1)}
+  73%{opacity:0;transform:translateY(-8px) scale(.92)}
+  100%{opacity:0;transform:translateY(-8px) scale(.92)}
 }
