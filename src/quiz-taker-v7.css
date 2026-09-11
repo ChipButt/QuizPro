@@ -1,181 +1,180 @@
-/* QuizTaker v7: fun facts appear inside soft liquid blobs that ooze, drift and dissolve. */
+/* QuizTaker v7: lava-lamp style fun-fact blobs. */
 
 .waiting-fun-fact{
   position:relative !important;
-  overflow:hidden !important;
+  overflow:visible !important;
   isolation:isolate;
   border:0 !important;
-  border-radius:44% 56% 63% 37% / 48% 39% 61% 52% !important;
+  border-radius:52% 48% 56% 44% / 46% 55% 45% 54% !important;
   background:
-    radial-gradient(circle at 28% 20%,rgba(255,255,255,.84) 0 7%,rgba(255,255,255,.26) 18%,transparent 34%),
-    radial-gradient(circle at 76% 74%,rgba(114,216,194,.42) 0 18%,transparent 48%),
-    radial-gradient(circle at 26% 78%,rgba(255,125,168,.24) 0 16%,transparent 46%),
-    linear-gradient(145deg,rgba(140,124,243,.92) 0%,rgba(192,174,255,.88) 34%,rgba(255,173,202,.82) 67%,rgba(114,216,194,.86) 100%) !important;
+    radial-gradient(circle at 31% 23%,rgba(255,255,255,.72) 0 8%,rgba(255,255,255,.20) 18%,transparent 32%),
+    radial-gradient(circle at 72% 72%,rgba(255,125,168,.34) 0 18%,transparent 48%),
+    linear-gradient(155deg,rgba(140,124,243,.95) 0%,rgba(174,148,255,.92) 35%,rgba(255,125,168,.86) 72%,rgba(114,216,194,.82) 100%) !important;
   color:#2f2851;
   box-shadow:
-    inset 14px 12px 30px rgba(255,255,255,.28),
-    inset -12px -14px 28px rgba(76,54,154,.12),
-    0 18px 34px rgba(92,79,197,.18),
-    0 7px 0 rgba(92,79,197,.08) !important;
-  transform-origin:center;
+    inset 12px 13px 28px rgba(255,255,255,.26),
+    inset -14px -16px 30px rgba(69,44,145,.16),
+    0 22px 40px rgba(92,79,197,.20) !important;
+  transform-origin:50% 70%;
   will-change:transform,opacity,border-radius,filter;
   animation:
-    quizFactBlobLife 7s cubic-bezier(.36,.05,.19,.97) both,
-    quizFactBlobFlow 1.7s ease-in-out infinite alternate !important;
+    quizFactLavaTravel 7s cubic-bezier(.32,.04,.22,1) both,
+    quizFactLavaMorph 2.35s ease-in-out infinite alternate !important;
 }
 
+/* Glossy lava-lamp highlight. */
 .waiting-fun-fact::before{
   content:"";
   position:absolute;
-  inset:8% 12% auto auto;
-  width:29%;
-  height:18%;
-  border-radius:58% 42% 53% 47% / 61% 52% 48% 39%;
-  background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(255,255,255,.10));
+  width:30%;
+  height:20%;
+  top:10%;
+  left:17%;
+  border-radius:62% 38% 56% 44% / 58% 46% 54% 42%;
+  background:linear-gradient(135deg,rgba(255,255,255,.68),rgba(255,255,255,.08));
   filter:blur(1px);
-  transform:rotate(-19deg);
+  transform:rotate(-18deg);
   pointer-events:none;
-  z-index:-1;
-  animation:quizFactBlobHighlight 2.4s ease-in-out infinite alternate;
+  z-index:2;
+  animation:quizFactLavaHighlight 2.8s ease-in-out infinite alternate;
 }
 
+/* A smaller trailing lobe makes the main blob look like it is stretching and pinching. */
 .waiting-fun-fact::after{
   content:"";
   position:absolute;
-  width:36%;
-  height:30%;
-  left:-8%;
-  bottom:-10%;
-  border-radius:50%;
-  background:rgba(92,79,197,.14);
-  filter:blur(9px);
+  width:32%;
+  aspect-ratio:1;
+  left:34%;
+  bottom:-19%;
+  border-radius:54% 46% 61% 39% / 45% 57% 43% 55%;
+  background:
+    radial-gradient(circle at 34% 24%,rgba(255,255,255,.34) 0 10%,transparent 28%),
+    linear-gradient(155deg,rgba(151,129,247,.94),rgba(241,127,179,.86) 70%,rgba(114,216,194,.78));
+  box-shadow:inset -7px -9px 14px rgba(69,44,145,.12);
+  filter:blur(.15px);
   pointer-events:none;
-  z-index:-2;
-  animation:quizFactBlobInternalFlow 2.8s ease-in-out infinite alternate;
+  z-index:-1;
+  animation:quizFactLavaLobe 2.35s ease-in-out infinite alternate;
 }
 
 .waiting-fun-fact span{
   color:#4f438e !important;
-  text-shadow:0 1px 0 rgba(255,255,255,.34);
+  text-shadow:0 1px 0 rgba(255,255,255,.28);
 }
 
 .waiting-fun-fact strong{
   color:#2f2851 !important;
-  text-shadow:0 1px 0 rgba(255,255,255,.28);
+  text-shadow:0 1px 0 rgba(255,255,255,.24);
 }
 
-@keyframes quizFactBlobLife{
-  /* Ooze up from a small puddle into the full liquid shape. */
+@keyframes quizFactLavaTravel{
+  /* Form low in the lamp, then float gently upward. */
   0%{
     opacity:0;
-    transform:translate(-2%,38px) scale(.20,.08) rotate(-4deg);
-    filter:saturate(.92) blur(1.5px);
+    transform:translate(-7%,38px) scale(.72,.52) rotate(-2deg);
+    filter:saturate(.92) blur(1.2px);
   }
-  4%{
-    opacity:.55;
-    transform:translate(-5%,23px) scale(.52,.28) rotate(-2.8deg);
-  }
-  9%{
-    opacity:1;
-    transform:translate(-9%,3px) scale(.90,1.08) rotate(1.1deg);
-    filter:saturate(1.03) blur(0);
+  7%{
+    opacity:.72;
+    transform:translate(-8%,25px) scale(.88,.78) rotate(-1.4deg);
   }
   14%{
-    transform:translate(-12%,-7px) scale(1.05,.97) rotate(-1deg);
-  }
-  19%{
-    transform:translate(-9%,-4px) scale(1,1) rotate(.4deg);
-  }
-
-  /* Heavy, viscous drifting rather than a floating bubble. */
-  34%{
-    transform:translate(13%,10px) scale(1.035,.96) rotate(1.5deg);
-  }
-  49%{
-    transform:translate(20%,-11px) scale(.97,1.035) rotate(-1.1deg);
-  }
-  64%{
-    transform:translate(-2%,17px) scale(1.025,.975) rotate(1deg);
-  }
-  78%{
     opacity:1;
-    transform:translate(-18%,-2px) scale(.985,1.02) rotate(-1.5deg);
-  }
-  88%{
-    opacity:1;
-    transform:translate(7%,8px) scale(1.03,.98) rotate(.7deg);
-  }
-
-  /* Collapse back into a spreading puddle, then disappear. */
-  94%{
-    opacity:1;
-    transform:translate(10%,17px) scale(1.07,.82) rotate(.2deg);
+    transform:translate(-7%,13px) scale(1.02,.96) rotate(-.6deg);
     filter:saturate(1.02) blur(0);
   }
-  97%{
-    opacity:.72;
-    transform:translate(11%,29px) scale(1.22,.46) rotate(0deg);
-    filter:saturate(.98) blur(.5px);
+  27%{
+    transform:translate(-1%,1px) scale(.98,1.06) rotate(.7deg);
+  }
+  43%{
+    transform:translate(8%,-13px) scale(1.04,.98) rotate(1.1deg);
+  }
+  58%{
+    transform:translate(13%,-27px) scale(.96,1.08) rotate(.2deg);
+  }
+  73%{
+    transform:translate(7%,-38px) scale(1.03,.97) rotate(-.8deg);
+  }
+  86%{
+    opacity:1;
+    transform:translate(-1%,-47px) scale(.98,1.04) rotate(-1deg);
+  }
+  94%{
+    opacity:.92;
+    transform:translate(-5%,-54px) scale(.92,1.10) rotate(-.5deg);
+    filter:saturate(.98) blur(0);
   }
   100%{
     opacity:0;
-    transform:translate(11%,43px) scale(1.38,.10) rotate(0deg);
-    filter:saturate(.9) blur(2px);
+    transform:translate(-7%,-64px) scale(.78,1.18) rotate(0deg);
+    filter:saturate(.9) blur(1.6px);
   }
 }
 
-@keyframes quizFactBlobFlow{
+@keyframes quizFactLavaMorph{
   0%{
-    border-radius:43% 57% 64% 36% / 46% 38% 62% 54%;
+    border-radius:51% 49% 58% 42% / 43% 57% 46% 54%;
   }
   20%{
-    border-radius:58% 42% 47% 53% / 39% 57% 43% 61%;
+    border-radius:58% 42% 49% 51% / 54% 43% 57% 46%;
   }
   40%{
-    border-radius:36% 64% 55% 45% / 63% 47% 53% 37%;
+    border-radius:45% 55% 61% 39% / 48% 58% 42% 52%;
   }
   60%{
-    border-radius:62% 38% 40% 60% / 48% 64% 36% 52%;
+    border-radius:61% 39% 44% 56% / 57% 45% 55% 43%;
   }
   80%{
-    border-radius:48% 52% 67% 33% / 57% 36% 64% 43%;
+    border-radius:47% 53% 55% 45% / 42% 61% 39% 58%;
   }
   100%{
-    border-radius:55% 45% 38% 62% / 41% 59% 46% 54%;
+    border-radius:56% 44% 48% 52% / 59% 41% 56% 44%;
   }
 }
 
-@keyframes quizFactBlobHighlight{
-  0%{transform:translate(-3px,1px) rotate(-22deg) scale(.94);opacity:.58}
-  100%{transform:translate(8px,6px) rotate(-13deg) scale(1.08);opacity:.82}
+@keyframes quizFactLavaLobe{
+  0%{
+    transform:translate(-9px,2px) scale(.88,1.12) rotate(-7deg);
+    border-radius:55% 45% 62% 38% / 44% 58% 42% 56%;
+  }
+  35%{
+    transform:translate(4px,-5px) scale(1.04,.94) rotate(3deg);
+    border-radius:44% 56% 49% 51% / 58% 42% 57% 43%;
+  }
+  70%{
+    transform:translate(11px,-10px) scale(.92,1.04) rotate(7deg);
+    border-radius:61% 39% 55% 45% / 47% 60% 40% 53%;
+  }
+  100%{
+    transform:translate(-2px,-3px) scale(1.08,.90) rotate(-2deg);
+    border-radius:48% 52% 63% 37% / 59% 43% 57% 41%;
+  }
 }
 
-@keyframes quizFactBlobInternalFlow{
-  0%{transform:translate(-2%,1%) scale(.92);opacity:.44}
-  100%{transform:translate(38%,-28%) scale(1.32);opacity:.18}
+@keyframes quizFactLavaHighlight{
+  0%{transform:translate(-2px,2px) rotate(-20deg) scale(.94);opacity:.48}
+  100%{transform:translate(7px,7px) rotate(-13deg) scale(1.08);opacity:.74}
 }
 
 @media(max-width:480px){
-  @keyframes quizFactBlobLife{
-    0%{opacity:0;transform:translate(-1%,31px) scale(.20,.08) rotate(-3deg);filter:blur(1.5px)}
-    4%{opacity:.55;transform:translate(-3%,19px) scale(.52,.28) rotate(-2deg)}
-    9%{opacity:1;transform:translate(-6%,2px) scale(.90,1.08) rotate(1deg);filter:blur(0)}
-    14%{transform:translate(-8%,-5px) scale(1.05,.97) rotate(-.8deg)}
-    19%{transform:translate(-6%,-3px) scale(1) rotate(.3deg)}
-    34%{transform:translate(9%,8px) scale(1.035,.96) rotate(1.2deg)}
-    49%{transform:translate(13%,-8px) scale(.97,1.035) rotate(-.8deg)}
-    64%{transform:translate(-2%,12px) scale(1.025,.975) rotate(.8deg)}
-    78%{opacity:1;transform:translate(-12%,-2px) scale(.985,1.02) rotate(-1.1deg)}
-    88%{opacity:1;transform:translate(5%,6px) scale(1.03,.98) rotate(.5deg)}
-    94%{opacity:1;transform:translate(7%,13px) scale(1.07,.82) rotate(.2deg)}
-    97%{opacity:.72;transform:translate(8%,22px) scale(1.22,.46);filter:blur(.5px)}
-    100%{opacity:0;transform:translate(8%,34px) scale(1.38,.10);filter:blur(2px)}
+  @keyframes quizFactLavaTravel{
+    0%{opacity:0;transform:translate(-5%,30px) scale(.72,.52) rotate(-2deg);filter:blur(1.2px)}
+    7%{opacity:.72;transform:translate(-6%,20px) scale(.88,.78) rotate(-1.3deg)}
+    14%{opacity:1;transform:translate(-5%,10px) scale(1.02,.96) rotate(-.5deg);filter:blur(0)}
+    27%{transform:translate(-1%,1px) scale(.98,1.06) rotate(.6deg)}
+    43%{transform:translate(6%,-10px) scale(1.04,.98) rotate(.9deg)}
+    58%{transform:translate(9%,-20px) scale(.96,1.08) rotate(.2deg)}
+    73%{transform:translate(5%,-29px) scale(1.03,.97) rotate(-.7deg)}
+    86%{opacity:1;transform:translate(-1%,-36px) scale(.98,1.04) rotate(-.8deg)}
+    94%{opacity:.92;transform:translate(-4%,-42px) scale(.92,1.10) rotate(-.4deg)}
+    100%{opacity:0;transform:translate(-5%,-50px) scale(.78,1.18);filter:blur(1.5px)}
   }
 }
 
 @media(prefers-reduced-motion:reduce){
   .waiting-fun-fact{
-    animation:quizFactBlobLifeReduced 7s linear both !important;
+    animation:quizFactLavaReduced 7s linear both !important;
   }
   .waiting-fun-fact::before,
   .waiting-fun-fact::after{
@@ -183,9 +182,9 @@
   }
 }
 
-@keyframes quizFactBlobLifeReduced{
-  0%{opacity:0;transform:scale(.74,.55)}
-  10%{opacity:1;transform:scale(1)}
-  90%{opacity:1;transform:scale(1)}
-  100%{opacity:0;transform:scale(1.16,.25)}
+@keyframes quizFactLavaReduced{
+  0%{opacity:0;transform:translateY(16px) scale(.9)}
+  12%{opacity:1;transform:translateY(0) scale(1)}
+  88%{opacity:1;transform:translateY(-16px) scale(1)}
+  100%{opacity:0;transform:translateY(-28px) scale(.92)}
 }
