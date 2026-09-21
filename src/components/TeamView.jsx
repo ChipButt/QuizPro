@@ -178,6 +178,14 @@ function WaitingScreen({ snapshot, status }) {
           <h1>{heading}</h1>
         </div>
 
+        {!afterFinalRound && snapshot.nextRound ? (
+          <div className="waiting-next-round">
+            <span>NEXT UP · ROUND {snapshot.nextRound.number}</span>
+            <strong>{snapshot.nextRound.title}</strong>
+            <small>Get ready. The Quizmaster will start the round shortly.</small>
+          </div>
+        ) : null}
+
         {scores.length ? (
           <div className="waiting-score-panel">
             <div className="waiting-score-heading">

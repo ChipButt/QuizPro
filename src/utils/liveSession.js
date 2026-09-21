@@ -208,6 +208,13 @@ export function buildTeamSnapshot(state, teamToken) {
     : [];
 
   const liveAudio = state.live?.audio ?? {};
+  const liveRoundIndex = Number(state.live?.roundIndex ?? 0);
+  const upcomingRoundIndex = state.live?.teamScreen === "round_locked"
+    ? liveRoundIndex + 1
+    : maxQuestionIndex < 0
+      ? liveRoundIndex
+      : liveRoundIndex + 1;
+  const upcomingRound = quiz?.rounds?.[upcomingRoundIndex] ?? null;
 
   return {
     type: "snapshot",
@@ -249,6 +256,12 @@ export function buildTeamSnapshot(state, teamToken) {
           forceLocked: isRoundForceLocked(state, round.id),
           teamLocked: team ? isTeamRoundLocked(state, round.id, team.id) : false,
           revealed: Boolean(state.live?.revealedRounds?.[round.id]),
+        }
+      : null,
+    nextRound: upcomingRound
+      ? {
+          number: upcomingRoundIndex + 1,
+          title: upcomingRound.title || `Round ${upcomingRoundIndex + 1}`,
         }
       : null,
     teamAnswers,

@@ -483,7 +483,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
 
         <div className="host-tool-row">
           <button className={openPanel === "teams" ? "active" : ""} onClick={() => togglePanel("teams")}><Users size={16} /> Teams <b>{state.teams.length}</b></button>
-          <button className={openPanel === "answers" ? "active" : ""} onClick={() => togglePanel("answers")}><Check size={16} /> Answers <b>{Object.keys(reviewAnswers).length}</b></button>
+          <button className={openPanel === "answers" ? "active" : ""} onClick={() => togglePanel("answers")}><Check size={16} /> Round answers <b>{reviewRound?.questions?.reduce((count, item) => count + Object.keys(state.answers?.[item.id] ?? {}).length, 0) ?? 0}</b></button>
           <button className={`${openPanel === "round" ? "active" : ""} ${liveLocked ? "locked" : ""}`} onClick={() => togglePanel("round")}><Settings2 size={16} /> Round</button>
           <button className={`${openPanel === "timer" ? "active" : ""} ${state.live.timerActive ? "timer-active" : ""}`} onClick={() => togglePanel("timer")}><Clock3 size={16} /> Timer</button>
           <button className={`${openPanel === "leaderboard" ? "active" : ""} ${leaderboardVisible ? "shown" : ""}`} onClick={() => togglePanel("leaderboard")}><Trophy size={16} /> Leaderboard</button>
@@ -533,44 +533,41 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
             {openPanel === "answers" ? (
               <>
                 <div className="host-drawer-title">
-                  <div><h3>Mark answers</h3><p>Automatic marks can always be changed by the Quizmaster.</p></div>
+                  <div><h3>{reviewRound?.title || "Round answers"}</h3><p>Every answer in this round, live as teams submit.</p></div>
                   <div className="answer-drawer-actions">
-                    <span>{Object.keys(reviewAnswers).length}/{state.teams.length}</span>
-                    <button className="ghost-button compact" disabled={!reviewQuestion || !Object.keys(reviewAnswers).length} onClick={() => autoMarkQuestion(reviewQuestion)}>
-                      <RefreshCcw size={13} /> Auto mark question
+                    <button className="ghost-button compact" disabled={!reviewRound} onClick={() => autoMarkRound(reviewRound)}>
+                      <RefreshCcw size={13} /> Auto mark round
                     </button>
                   </div>
                 </div>
-                {reviewQuestion ? (
-                  <div className="answer-comparison-heading">
-                    <span>Team</span><span>Answer given</span><span>Correct answer</span><span>Mark</span>
-                  </div>
-                ) : null}
-                <div className="simple-answer-list compact-answer-list auto-mark-answer-list">
-                  {state.teams.map((team) => {
-                    const answer = reviewAnswers[team.id];
+                <div className="round-answer-matrix">
+                  {(reviewRound?.questions ?? []).map((item, questionIndex) => {
+                    const questionAnswers = state.answers?.[item.id] ?? {};
                     return (
-                      <div key={team.id} className={`simple-answer-row auto-mark-answer-row ${answer?.status || "unanswered"}`}>
-                        <strong>{team.name || `Table ${team.table || "?"}`}</strong>
-                        <div className="answer-given-cell">
-                          <small>ANSWER GIVEN</small>
-                          <span>{answer?.text || "No answer"}</span>
+                      <section className={`round-answer-question ${reviewRoundIndex === liveRoundIndex && questionIndex === liveQuestionIndex ? "is-live" : ""}`} key={item.id}>
+                        <button className="round-answer-question-head" onClick={() => setReviewQuestionIndex(questionIndex)}>
+                          <span>Q{questionIndex + 1}</span>
+                          <div><strong>{item.text || "Untitled question"}</strong><small>Correct answer: <b>{item.answer || "Not set"}</b></small></div>
+                          <em>{Object.keys(questionAnswers).length}/{state.teams.length}</em>
+                        </button>
+                        <div className="round-answer-team-list">
+                          {state.teams.map((team) => {
+                            const answer = questionAnswers[team.id];
+                            return (
+                              <div className={`round-answer-team ${answer?.status || "unanswered"}`} key={team.id}>
+                                <strong>{team.name || `Table ${team.table || "?"}`}</strong>
+                                <span>{answer?.text || "No answer yet"}</span>
+                                {answer ? <div className="round-answer-marks">
+                                  <button aria-label={`Mark ${team.name || "team"} incorrect`} className={answer.status === "incorrect" ? "selected incorrect" : ""} onClick={() => markAnswer(item.id, team.id, 0)}>0</button>
+                                  <button aria-label={`Award ${team.name || "team"} half points`} className={answer.status === "half" ? "selected half" : ""} onClick={() => markAnswer(item.id, team.id, Number(item.points ?? 1) / 2)}>½</button>
+                                  <button aria-label={`Mark ${team.name || "team"} correct`} className={answer.status === "correct" ? "selected correct" : ""} onClick={() => markAnswer(item.id, team.id, Number(item.points ?? 1))}><Check size={14} /></button>
+                                </div> : <small>WAITING</small>}
+                              </div>
+                            );
+                          })}
+                          {!state.teams.length ? <p className="simple-empty-copy">Add teams to see their answers here.</p> : null}
                         </div>
-                        <div className="answer-correct-cell">
-                          <small>CORRECT ANSWER</small>
-                          <span>{reviewQuestion?.answer || "No correct answer set"}</span>
-                        </div>
-                        {answer ? (
-                          <div className="simple-mark-buttons answer-mark-controls">
-                            <em className={`mark-source ${answer.markSource === "manual" ? "manual" : "auto"}`}>
-                              {answer.markSource === "manual" ? "Manual" : "Auto"}
-                            </em>
-                            <button title="Mark incorrect" className={answer.status === "incorrect" ? "selected incorrect" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, 0)}>0</button>
-                            <button title="Award half points" className={answer.status === "half" ? "selected half" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, Number(reviewQuestion.points ?? 1) / 2)}>½</button>
-                            <button title="Mark correct" className={answer.status === "correct" ? "selected correct" : ""} onClick={() => markAnswer(reviewQuestion.id, team.id, Number(reviewQuestion.points ?? 1))}><Check size={13} /> Correct</button>
-                          </div>
-                        ) : <span className="no-answer-mark">—</span>}
-                      </div>
+                      </section>
                     );
                   })}
                 </div>
