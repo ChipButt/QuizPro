@@ -44,29 +44,72 @@ function HostApp() {
 }
 
 function TeamPreview({ stage }) {
+  const previewWidth = 390;
+  const previewHeight = 844;
+
   return (
-    <>
-      <div style={{
-        position: "fixed", zIndex: 99999, left: 10, right: 10, bottom: 10,
-        display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center",
-        padding: 8, borderRadius: 12, background: "rgba(8,12,24,.94)",
-        boxShadow: "0 6px 30px rgba(0,0,0,.35)"
+    <div style={{
+      minHeight: "100vh",
+      background: "#111827",
+      display: "grid",
+      gridTemplateColumns: "220px auto",
+      gap: 28,
+      alignItems: "start",
+      justifyContent: "center",
+      padding: "28px",
+      boxSizing: "border-box",
+      overflow: "auto"
+    }}>
+      <aside style={{
+        position: "sticky",
+        top: 28,
+        width: 220,
+        padding: 14,
+        borderRadius: 14,
+        background: "#0b1220",
+        boxShadow: "0 8px 30px rgba(0,0,0,.35)",
+        boxSizing: "border-box"
       }}>
-        {PREVIEW_STAGES.map(([id, label]) => (
-          <a key={id} href={`#/preview/${id}`} style={{
-            color: id === stage ? "#111" : "#fff",
-            background: id === stage ? "#f3c94b" : "#26324a",
-            textDecoration: "none", padding: "7px 10px", borderRadius: 8,
-            font: "600 12px system-ui"
-          }}>{label}</a>
-        ))}
-        <a href="#/host" style={{
-          color: "#fff", background: "#7b2d36", textDecoration: "none",
-          padding: "7px 10px", borderRadius: 8, font: "600 12px system-ui"
-        }}>Exit preview</a>
+        <div style={{ color: "#fff", font: "700 14px system-ui", margin: "2px 4px 12px" }}>Quiz-taker testing</div>
+        <div style={{ display: "grid", gap: 6 }}>
+          {PREVIEW_STAGES.map(([id, label]) => (
+            <a key={id} href={`#/preview/${id}`} style={{
+              color: id === stage ? "#111" : "#fff",
+              background: id === stage ? "#f3c94b" : "#26324a",
+              textDecoration: "none", padding: "9px 10px", borderRadius: 8,
+              font: "600 12px system-ui"
+            }}>{label}</a>
+          ))}
+          <a href="#/host" style={{
+            color: "#fff", background: "#7b2d36", textDecoration: "none",
+            padding: "9px 10px", borderRadius: 8, font: "600 12px system-ui",
+            marginTop: 6
+          }}>Exit preview</a>
+        </div>
+      </aside>
+
+      <div style={{
+        width: previewWidth,
+        height: previewHeight,
+        flex: "0 0 auto",
+        overflow: "hidden",
+        borderRadius: 28,
+        background: "#fff",
+        boxShadow: "0 14px 50px rgba(0,0,0,.5)",
+        border: "8px solid #05070b",
+        boxSizing: "content-box",
+        position: "relative"
+      }}>
+        <div style={{
+          width: previewWidth,
+          height: previewHeight,
+          overflow: "auto",
+          position: "relative"
+        }}>
+          <TeamView sessionCode="__PREVIEW__" teamToken={stage} />
+        </div>
       </div>
-      <TeamView sessionCode="__PREVIEW__" teamToken={stage} />
-    </>
+    </div>
   );
 }
 
