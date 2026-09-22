@@ -3,17 +3,17 @@
    Styling only: no quiz logic, data model or network behaviour is changed. */
 
 .simple-host-app{
-  --gs-violet:#4c1d95;
-  --gs-violet-deep:#24134f;
-  --gs-violet-mid:#6d28d9;
-  --gs-magenta:#c026d3;
-  --gs-pink:#f472b6;
-  --gs-yellow:#fde047;
-  --gs-yellow-deep:#c7a91b;
-  --gs-chip:#f5eaff;
-  --gs-line:#ead8fa;
-  --gs-text:#24134f;
-  --gs-muted:#78669b;
+  --gs-violet:#031b3c;
+  --gs-violet-deep:#02162f;
+  --gs-violet-mid:#0a56d8;
+  --gs-magenta:#14c7ff;
+  --gs-pink:#168cff;
+  --gs-yellow:#ffd429;
+  --gs-yellow-deep:#d49f00;
+  --gs-chip:#eaf3ff;
+  --gs-line:#c7d7ff;
+  --gs-text:#02162f;
+  --gs-muted:#7898ca;
   --gs-green:#0f9d5f;
   min-height:100vh;
   color:var(--gs-text);
@@ -21,7 +21,7 @@
     radial-gradient(circle at 12% 8%,rgba(244,114,182,.22) 0 105px,transparent 106px),
     radial-gradient(circle at 93% 12%,rgba(253,224,71,.20) 0 150px,transparent 151px),
     radial-gradient(circle at 78% 86%,rgba(192,38,211,.20) 0 125px,transparent 126px),
-    linear-gradient(160deg,#34106f 0%,#4c1d95 46%,#261052 100%);
+    linear-gradient(160deg,#062654 0%,#031b3c 46%,#02162f 100%);
   position:relative;
   isolation:isolate;
 }
@@ -109,7 +109,7 @@
   border:2px solid transparent !important;
   border-radius:16px !important;
   padding:0 14px;
-  color:#eee7ff !important;
+  color:#d6e7ff !important;
   background:rgba(255,255,255,.07) !important;
   font-weight:900 !important;
   box-shadow:none !important;
@@ -151,7 +151,7 @@
   border-radius:999px !important;
   background:var(--gs-pink) !important;
   color:#fff !important;
-  box-shadow:0 4px 0 #b83f78 !important;
+  box-shadow:0 4px 0 #0a56d8 !important;
   font-weight:1000 !important;
   letter-spacing:.08em;
 }
@@ -184,7 +184,7 @@
 
 .simple-host-app .simple-page-heading p,
 .simple-host-app .planuf-live-heading p{
-  color:#e9defa !important;
+  color:#c7d7ff !important;
   font-size:15px;
   font-weight:650;
 }
@@ -272,10 +272,10 @@
 .simple-host-app .ghost-button,
 .simple-host-app .icon-button,
 .simple-host-app .file-button{
-  border:2px solid #d8c4ef !important;
+  border:2px solid #b8d8ff !important;
   background:#fff !important;
   color:var(--gs-violet) !important;
-  box-shadow:0 5px 0 #e5d7f4 !important;
+  box-shadow:0 5px 0 #cfe3ff !important;
 }
 
 .simple-host-app .ghost-button:hover:not(:disabled),
@@ -298,7 +298,7 @@
 .simple-host-app input,
 .simple-host-app textarea,
 .simple-host-app select{
-  border:2px solid #d8c4ef !important;
+  border:2px solid #b8d8ff !important;
   border-radius:14px !important;
   background:#fff !important;
   color:var(--gs-text) !important;
@@ -315,7 +315,7 @@
 .simple-host-app .simple-quiz-title-input{
   min-height:56px;
   padding:0 16px !important;
-  border:2px solid #d8c4ef !important;
+  border:2px solid #b8d8ff !important;
   border-radius:17px !important;
   background:#fff !important;
   color:var(--gs-violet) !important;
@@ -363,8 +363,8 @@
 }
 
 .simple-host-app .simple-dashboard-stats>button:nth-child(1){background:var(--gs-yellow) !important}
-.simple-host-app .simple-dashboard-stats>button:nth-child(2){background:#fce7f3 !important}
-.simple-host-app .simple-dashboard-stats>button:nth-child(3){background:#ede9fe !important}
+.simple-host-app .simple-dashboard-stats>button:nth-child(2){background:#eaf3ff !important}
+.simple-host-app .simple-dashboard-stats>button:nth-child(3){background:#eaf3ff !important}
 
 .simple-host-app .simple-dashboard-stats>button svg{
   width:38px;
@@ -376,7 +376,7 @@
 }
 
 .simple-host-app .simple-dashboard-stats>button span{
-  color:#6b5791 !important;
+  color:#617faa !important;
   font-weight:850;
 }
 
@@ -409,7 +409,7 @@
   border-radius:15px !important;
   background:var(--gs-chip) !important;
   color:var(--gs-text) !important;
-  box-shadow:0 4px 0 #e5d7f4;
+  box-shadow:0 4px 0 #cfe3ff;
 }
 
 .simple-host-app .simple-quiz-list>button:hover{
@@ -425,7 +425,7 @@
 }
 
 .simple-host-app .simple-quiz-list>button span{
-  color:#765f9b !important;
+  color:#7898ca !important;
 }
 
 .simple-host-app .simple-round-strip,
@@ -438,11 +438,11 @@
 .simple-host-app .simple-round-run-tabs>button{
   min-width:132px;
   padding:10px 12px;
-  border:2px solid #d8c4ef !important;
+  border:2px solid #b8d8ff !important;
   border-radius:15px !important;
   background:#fff !important;
   color:var(--gs-text) !important;
-  box-shadow:0 5px 0 #e5d7f4 !important;
+  box-shadow:0 5px 0 #cfe3ff !important;
 }
 
 .simple-host-app .simple-round-strip>button.selected,
@@ -461,17 +461,17 @@
 }
 
 .simple-host-app .round-type-chooser{
-  border:2px solid #ead8fa !important;
+  border:2px solid #c7d7ff !important;
   border-radius:20px !important;
   background:#fbf8ff !important;
 }
 
 .simple-host-app .round-type-grid button{
-  border:2px solid #d8c4ef !important;
+  border:2px solid #b8d8ff !important;
   border-radius:16px !important;
   background:#fff !important;
   color:var(--gs-violet) !important;
-  box-shadow:0 5px 0 #e5d7f4 !important;
+  box-shadow:0 5px 0 #cfe3ff !important;
 }
 
 .simple-host-app .round-type-grid button:hover{
@@ -480,14 +480,14 @@
 }
 
 .simple-host-app .simple-question-card{
-  border:2px solid #ead8fa !important;
+  border:2px solid #c7d7ff !important;
   border-radius:21px !important;
   background:#fff !important;
   box-shadow:0 7px 0 rgba(76,29,149,.08) !important;
 }
 
 .simple-host-app .simple-question-card-head{
-  border-bottom-color:#ead8fa !important;
+  border-bottom-color:#c7d7ff !important;
 }
 
 .simple-host-app .simple-question-card-head strong{
@@ -497,7 +497,7 @@
 .simple-host-app .simple-choice-editor,
 .simple-host-app .simple-media-field,
 .simple-host-app .simple-round-settings{
-  border-color:#ead8fa !important;
+  border-color:#c7d7ff !important;
 }
 
 /* ---------- Live host control deck ---------- */
@@ -527,7 +527,7 @@
 }
 
 .simple-host-app .host-live-status-strip span{
-  color:#8b5cf6 !important;
+  color:#168cff !important;
 }
 
 .simple-host-app .host-live-status-strip strong{
@@ -552,11 +552,11 @@
 .simple-host-app .host-tool-row>button{
   min-height:46px;
   padding:0 14px;
-  border:2px solid #d8c4ef !important;
+  border:2px solid #b8d8ff !important;
   border-radius:15px !important;
   background:#fff !important;
   color:var(--gs-violet) !important;
-  box-shadow:0 5px 0 #e5d7f4 !important;
+  box-shadow:0 5px 0 #cfe3ff !important;
   font-weight:950;
 }
 
@@ -596,7 +596,7 @@
 }
 
 .simple-host-app .host-reveal-mode-row{
-  border-top-color:#e1d2f1 !important;
+  border-top-color:#c7d7ff !important;
 }
 
 .simple-host-app .host-reveal-mode-row button{
@@ -607,13 +607,13 @@
 .simple-host-app .host-reveal-mode-row button.selected{
   background:var(--gs-pink) !important;
   color:#fff !important;
-  box-shadow:0 4px 0 #bd497f !important;
+  box-shadow:0 4px 0 #0a56d8 !important;
 }
 
 .simple-host-app .host-tool-drawer{
   margin-top:14px;
   padding:16px;
-  border:2px solid #d8c4ef !important;
+  border:2px solid #b8d8ff !important;
   border-radius:20px !important;
   background:#fff !important;
   box-shadow:0 8px 0 rgba(76,29,149,.08),0 18px 38px rgba(28,5,67,.10) !important;
@@ -646,14 +646,14 @@
 .simple-host-app .host-team-chip-card{
   flex-basis:330px;
   padding:13px;
-  border:2px solid #ead8fa !important;
+  border:2px solid #c7d7ff !important;
   border-radius:18px !important;
   background:#fff !important;
-  box-shadow:0 6px 0 #eadff5 !important;
+  box-shadow:0 6px 0 #d9e9ff !important;
 }
 
 .simple-host-app .host-team-chip-card>div:first-child span{
-  color:#8b5cf6 !important;
+  color:#168cff !important;
 }
 
 .simple-host-app .host-team-chip-card>div:first-child strong{
@@ -677,11 +677,11 @@
 
 .simple-host-app .host-round-carousel button{
   min-width:132px;
-  border:2px solid #d8c4ef !important;
+  border:2px solid #b8d8ff !important;
   border-radius:15px !important;
   background:#fff !important;
   color:var(--gs-text) !important;
-  box-shadow:0 5px 0 #e5d7f4 !important;
+  box-shadow:0 5px 0 #cfe3ff !important;
 }
 
 .simple-host-app .host-round-carousel button>span{
@@ -711,17 +711,17 @@
   border-radius:13px !important;
   background:var(--gs-pink) !important;
   color:#fff !important;
-  box-shadow:0 5px 0 #bd497f !important;
+  box-shadow:0 5px 0 #0a56d8 !important;
 }
 
 .simple-host-app .host-question-dot-row button{
   min-width:40px;
   height:37px;
-  border:2px solid #d8c4ef !important;
+  border:2px solid #b8d8ff !important;
   border-radius:11px !important;
   background:#fff !important;
   color:var(--gs-violet) !important;
-  box-shadow:0 4px 0 #e5d7f4 !important;
+  box-shadow:0 4px 0 #cfe3ff !important;
 }
 
 .simple-host-app .host-question-dot-row button.current{
@@ -739,10 +739,10 @@
 
 .simple-host-app .host-focus-question-card{
   padding:20px;
-  border:2px solid #ead8fa !important;
+  border:2px solid #c7d7ff !important;
   border-radius:24px !important;
   background:#fff !important;
-  box-shadow:0 8px 0 #eadff5,0 20px 40px rgba(28,5,67,.10) !important;
+  box-shadow:0 8px 0 #d9e9ff,0 20px 40px rgba(28,5,67,.10) !important;
 }
 
 .simple-host-app .host-focus-question-card h2{
@@ -800,18 +800,18 @@
 
 .simple-host-app .icon-step-button,
 .simple-host-app .reveal-toggle{
-  border:2px solid #d8c4ef !important;
+  border:2px solid #b8d8ff !important;
   border-radius:13px !important;
   background:#fff !important;
   color:var(--gs-violet) !important;
-  box-shadow:0 4px 0 #e5d7f4 !important;
+  box-shadow:0 4px 0 #cfe3ff !important;
 }
 
 .simple-host-app .reveal-toggle.active{
   border-color:var(--gs-pink) !important;
   background:var(--gs-pink) !important;
   color:#fff !important;
-  box-shadow:0 5px 0 #bd497f !important;
+  box-shadow:0 5px 0 #0a56d8 !important;
 }
 
 /* ---------- Leaderboards / scores ---------- */
@@ -833,8 +833,8 @@
   background:var(--gs-yellow) !important;
 }
 
-.simple-host-app .simple-leaderboard li:nth-child(2){background:#fce7f3 !important}
-.simple-host-app .simple-leaderboard li:nth-child(3){background:#ede9fe !important}
+.simple-host-app .simple-leaderboard li:nth-child(2){background:#eaf3ff !important}
+.simple-host-app .simple-leaderboard li:nth-child(3){background:#eaf3ff !important}
 
 .simple-host-app .simple-leaderboard li>span,
 .simple-host-app .simple-final-list>div>span{
