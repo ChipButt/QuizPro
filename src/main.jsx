@@ -20,6 +20,7 @@ import "./quiz-taker-v8.css";
 import "./quiz-taker-v9.css";
 import "./quiz-taker-v10.css";
 import "./quiz-taker-team-name-v2.css";
+import "./quiz-taker-stage1.css";
 import "./game-show-host.css";
 
 createRoot(document.getElementById("root")).render(
