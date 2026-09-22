@@ -535,11 +535,3 @@
   }
 }
 
-
-/* Preview editor guide: visible only inside the Quiz Taker preview iframe. */
-.quiz-preview-mode .live-team-page .waiting-fact-copy{
-  outline:1px dashed rgba(124,58,237,.65);
-  outline-offset:4px;
-  border-radius:8px;
-  background:rgba(255,255,255,.16);
-}
