@@ -589,11 +589,16 @@ export default function TeamView({ sessionCode, teamToken }) {
       if (Number.isFinite(Number(record.fontSize)) && Number(record.fontSize) > 0) {
         element.style.fontSize = `${Number(record.fontSize)}px`;
       }
+      if (Number.isFinite(Number(record.zIndex))) {
+        const computedPosition = window.getComputedStyle(element).position;
+        if (computedPosition === "static") element.classList.add("quiz-layout-layered");
+        element.style.zIndex = String(Math.round(Number(record.zIndex)));
+      }
     };
 
     const clearRecordStyles = (element) => {
       if (!element) return;
-      element.classList.remove("quiz-layout-overridden", "quiz-layout-selected", "quiz-layout-locked");
+      element.classList.remove("quiz-layout-overridden", "quiz-layout-selected", "quiz-layout-locked", "quiz-layout-layered");
       element.style.removeProperty("--layout-editor-x");
       element.style.removeProperty("--layout-editor-y");
       element.style.removeProperty("width");
@@ -601,6 +606,7 @@ export default function TeamView({ sessionCode, teamToken }) {
       element.style.removeProperty("max-width");
       element.style.removeProperty("max-height");
       element.style.removeProperty("font-size");
+      element.style.removeProperty("z-index");
     };
 
     const applyAll = () => {
@@ -629,6 +635,9 @@ export default function TeamView({ sessionCode, teamToken }) {
         width: Math.round(Number(record.width || rect.width)),
         height: Math.round(Number(record.height || rect.height)),
         fontSize: Math.round((Number(record.fontSize || parseFloat(styles.fontSize) || 16)) * 10) / 10,
+        zIndex: Number.isFinite(Number(record.zIndex))
+          ? Math.round(Number(record.zIndex))
+          : (styles.zIndex === "auto" ? 0 : Math.round(Number(styles.zIndex) || 0)),
         locked: Boolean(record.locked),
       };
     };
@@ -793,6 +802,7 @@ export default function TeamView({ sessionCode, teamToken }) {
           width: Number.isFinite(Number(message.values?.width)) ? Number(message.values.width) : current.width,
           height: Number.isFinite(Number(message.values?.height)) ? Number(message.values.height) : current.height,
           fontSize: Number.isFinite(Number(message.values?.fontSize)) ? Number(message.values.fontSize) : current.fontSize,
+          zIndex: Number.isFinite(Number(message.values?.zIndex)) ? Math.round(Number(message.values.zIndex)) : current.zIndex,
         };
         saveLayout();
         const element = findByPath(selectedPath);
@@ -819,6 +829,29 @@ export default function TeamView({ sessionCode, teamToken }) {
         element?.classList.remove("quiz-layout-locked");
         updateOverlay();
         if (element) sendSelection(element, selectedPath);
+        return;
+      }
+
+      if ((message.action === "layer-forward" || message.action === "layer-backward") && selectedPath) {
+        const current = layout[selectedPath] || {};
+        if (current.locked) return;
+        const element = findByPath(selectedPath);
+        if (!element) return;
+
+        const styles = window.getComputedStyle(element);
+        const currentLayer = Number.isFinite(Number(current.zIndex))
+          ? Number(current.zIndex)
+          : (styles.zIndex === "auto" ? 0 : Number(styles.zIndex) || 0);
+        const delta = message.action === "layer-forward" ? 1 : -1;
+
+        layout[selectedPath] = {
+          ...current,
+          zIndex: Math.round(currentLayer + delta),
+        };
+        saveLayout();
+        applyRecord(element, layout[selectedPath]);
+        updateOverlay();
+        sendSelection(element, selectedPath);
         return;
       }
 
@@ -895,6 +928,9 @@ export default function TeamView({ sessionCode, teamToken }) {
               width: Math.round(rect.width * 10) / 10,
               height: Math.round(rect.height * 10) / 10,
               fontSize: Math.round((parseFloat(styles.fontSize) || 0) * 10) / 10,
+              zIndex: Number.isFinite(Number(record.zIndex))
+                ? Math.round(Number(record.zIndex))
+                : (styles.zIndex === "auto" ? 0 : Math.round(Number(styles.zIndex) || 0)),
               x: Number(record.x || 0),
               y: Number(record.y || 0),
               locked: Boolean(record.locked),
