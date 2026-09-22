@@ -582,12 +582,12 @@ export default function TeamView({ sessionCode, teamToken }) {
       element.classList.add("quiz-layout-overridden");
 
       if (Number.isFinite(Number(record.width)) && Number(record.width) > 0) {
-        element.style.width = `${Number(record.width)}px`;
-        element.style.maxWidth = "none";
+        element.style.setProperty("width", `${Number(record.width)}px`, "important");
+        element.style.setProperty("max-width", "none", "important");
       }
       if (Number.isFinite(Number(record.height)) && Number(record.height) > 0) {
-        element.style.height = `${Number(record.height)}px`;
-        element.style.maxHeight = "none";
+        element.style.setProperty("height", `${Number(record.height)}px`, "important");
+        element.style.setProperty("max-height", "none", "important");
       }
       if (Number.isFinite(Number(record.fontSize)) && Number(record.fontSize) > 0) {
         element.style.fontSize = `${Number(record.fontSize)}px`;
@@ -659,7 +659,9 @@ export default function TeamView({ sessionCode, teamToken }) {
       let element = rawTarget instanceof Element ? rawTarget : null;
       if (!element) return;
 
-      if (element.closest(".team-timer-clock-wrap")) element = element.closest(".team-timer-clock-wrap");
+      if (element.closest(".team-timer-message")) element = element.closest(".team-timer-message");
+      else if (element.closest(".team-timer-clock")) element = element.closest(".team-timer-clock");
+      else if (element.closest(".team-timer-clock-wrap")) element = element.closest(".team-timer-clock-wrap");
       else if (element.closest("svg")) element = element.closest("svg");
       if (!root.contains(element) || element === root) return;
 
@@ -695,7 +697,9 @@ export default function TeamView({ sessionCode, teamToken }) {
       if (!editEnabled || event.button !== 0) return;
       let element = event.target instanceof Element ? event.target : null;
       if (!element || !root.contains(element) || element === root) return;
-      if (element.closest(".team-timer-clock-wrap")) element = element.closest(".team-timer-clock-wrap");
+      if (element.closest(".team-timer-message")) element = element.closest(".team-timer-message");
+      else if (element.closest(".team-timer-clock")) element = element.closest(".team-timer-clock");
+      else if (element.closest(".team-timer-clock-wrap")) element = element.closest(".team-timer-clock-wrap");
       else if (element.closest("svg")) element = element.closest("svg");
 
       selectElement(element);
@@ -1032,8 +1036,37 @@ export default function TeamView({ sessionCode, teamToken }) {
     ? Math.max(0, Math.ceil((timerEndsAt - Date.now()) / 1000))
     : countdownTick;
   const timerDurationSeconds = Math.max(1, Number(snapshot?.live?.timerDurationSeconds ?? countdown ?? 1));
-  const timerProgress = Math.max(0, Math.min(1, (timerDurationSeconds - countdown) / timerDurationSeconds));
-  const timerFillAngle = Math.round(timerProgress * 36000) / 100;
+  const timerOverlayRef = useRef(null);
+
+  useEffect(() => {
+    const element = timerOverlayRef.current;
+    if (!element) return undefined;
+
+    const active = Boolean(snapshot?.live?.timerActive);
+    const endsAt = Number(snapshot?.live?.timerEndsAt ?? 0);
+    const durationMs = Math.max(1, Number(snapshot?.live?.timerDurationSeconds ?? 0)) * 1000;
+
+    if (!active || !endsAt || !durationMs) {
+      element.style.setProperty("--timer-fill-angle", "0deg");
+      return undefined;
+    }
+
+    let frame = 0;
+    const updateFill = () => {
+      const remainingMs = Math.max(0, endsAt - Date.now());
+      const progress = Math.max(0, Math.min(1, 1 - (remainingMs / durationMs)));
+      element.style.setProperty("--timer-fill-angle", `${progress * 360}deg`);
+
+      if (remainingMs > 0) {
+        frame = window.requestAnimationFrame(updateFill);
+      }
+    };
+
+    updateFill();
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [snapshot?.live?.timerActive, snapshot?.live?.timerEndsAt, snapshot?.live?.timerDurationSeconds]);
 
   const questions = snapshot?.round?.questions ?? [];
   const hostQuestionIndex = Math.max(0, Number(snapshot?.live?.questionIndex ?? 0));
@@ -1160,13 +1193,13 @@ export default function TeamView({ sessionCode, teamToken }) {
       {snapshot.live?.timerActive ? (
         <div
           className={`team-timer-overlay team-timer-clock-wrap ${countdown <= 10 ? "urgent" : ""}`}
-          style={{ "--timer-fill-angle": `${timerFillAngle}deg` }}
+          ref={timerOverlayRef}
           role="timer"
           aria-label={`${countdown} seconds remaining before the round ends`}
         >
           <div className="team-timer-message">
             <strong>ROUND ENDS AT 0</strong>
-            <span>Make sure every question has an answer</span>
+            <span>Make any final changes before time runs out</span>
           </div>
           <div className="team-timer-clock" aria-hidden="true">
             <i className="team-timer-clock-knob" />
