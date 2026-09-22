@@ -218,6 +218,34 @@ export function LiveRunnerPage({ state, updateState, setActivePage, network }) {
   const timerSeconds = useCountdown(state.live?.timerEndsAt, state.live?.timerActive);
   const [timerChoice, setTimerChoice] = useState(60);
 
+  useEffect(() => {
+    if (!state.live?.timerActive || timerSeconds > 0) return;
+    const roundId = state.live?.timerRoundId || round?.id;
+    if (!roundId) return;
+
+    updateState((current) => {
+      if (!current.live?.timerActive) return current;
+      const endsAt = Number(current.live?.timerEndsAt ?? 0);
+      if (endsAt && endsAt > Date.now()) return current;
+
+      return {
+        ...current,
+        live: {
+          ...current.live,
+          timerActive: false,
+          timerEndsAt: 0,
+          timerDurationSeconds: 0,
+          timerRoundId: "",
+          teamScreen: "round_locked",
+          forceLockedRounds: {
+            ...(current.live?.forceLockedRounds ?? {}),
+            [roundId]: true,
+          },
+        },
+      };
+    });
+  }, [timerSeconds, state.live?.timerActive, state.live?.timerEndsAt, state.live?.timerRoundId, round?.id, updateState]);
+
   function loadQuiz(quizId) {
     if (state.live?.sessionActive && (state.teams.length || Object.keys(state.answers ?? {}).length)) {
       const okay = window.confirm("Start a new live quiz session? This clears the current live teams and submitted answers, but does not delete any stored quiz.");
@@ -476,11 +504,11 @@ export function LiveRunnerPage({ state, updateState, setActivePage, network }) {
               <select value={timerChoice} onChange={(event) => setTimerChoice(Number(event.target.value))}>
                 <option value={30}>30 seconds</option><option value={60}>1 minute</option><option value={120}>2 minutes</option><option value={180}>3 minutes</option><option value={300}>5 minutes</option>
               </select>
-              <button className="primary-button" disabled={locked} onClick={startLockTimer}><Clock3 size={15} /> Start lock timer</button>
+              <button className="primary-button" disabled={locked} onClick={startLockTimer}><Clock3 size={15} /> Start round-end timer</button>
             </div>
-            {state.live.timerActive ? <div className="host-countdown"><TimerReset size={18} /><strong>{timerSeconds}s</strong><span>Teams see this countdown. At zero, the round locks automatically.</span><button className="ghost-button compact" onClick={cancelTimer}>Cancel</button></div> : null}
+            {state.live.timerActive ? <div className="host-countdown"><TimerReset size={18} /><strong>{timerSeconds}s</strong><span>Teams see this countdown. At zero, the round ends automatically.</span><button className="ghost-button compact" onClick={cancelTimer}>Cancel</button></div> : null}
             <div className="button-row-inline">
-              {!locked ? <button className="danger-soft-button" onClick={lockRoundNow}><Lock size={15} /> Lock all round answers now</button> : <button className="ghost-button" onClick={unlockRound}><Unlock size={15} /> Re-open round</button>}
+              {!locked ? <button className="danger-soft-button" onClick={lockRoundNow}><Lock size={15} /> End round now</button> : <button className="ghost-button" onClick={unlockRound}><Unlock size={15} /> Re-open round for edits</button>}
               <button className="ghost-button" onClick={revealRoundAnswers}><Eye size={15} /> Reveal round answers</button>
             </div>
           </div>
