@@ -44,15 +44,12 @@ function HostApp() {
 }
 
 function TeamPreview({ stage }) {
-  const previewWidth = 390;
-  const previewHeight = 844;
-
   return (
     <div style={{
       minHeight: "100vh",
       background: "#111827",
       display: "grid",
-      gridTemplateColumns: "220px auto",
+      gridTemplateColumns: "220px minmax(0, 1fr)",
       gap: 28,
       alignItems: "start",
       justifyContent: "center",
@@ -89,25 +86,19 @@ function TeamPreview({ stage }) {
       </aside>
 
       <div style={{
-        width: previewWidth,
-        height: previewHeight,
+        width: "100%",
+        maxWidth: 1100,
+        height: "calc(100vh - 56px)",
         flex: "0 0 auto",
         overflow: "hidden",
         borderRadius: 28,
         background: "#fff",
         boxShadow: "0 14px 50px rgba(0,0,0,.5)",
         border: "8px solid #05070b",
-        boxSizing: "content-box",
+        boxSizing: "border-box",
         position: "relative"
       }}>
-        <div style={{
-          width: previewWidth,
-          height: previewHeight,
-          overflow: "auto",
-          position: "relative"
-        }}>
-          <TeamView sessionCode="__PREVIEW__" teamToken={stage} />
-        </div>
+        <TeamView sessionCode="__PREVIEW__" teamToken={stage} />
       </div>
     </div>
   );

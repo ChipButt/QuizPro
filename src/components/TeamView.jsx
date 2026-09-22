@@ -15,7 +15,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLiveTeamNetwork } from "../hooks/useLiveTeamNetwork.js";
 
-function TeamChrome({ children, status, keyboardActive = false }) {
+function TeamChrome({ children, status, keyboardActive = false, rail = null }) {
   return (
     <main className={`team-page live-team-page ${keyboardActive ? "keyboard-active-page" : ""}`}>
       <div className={`phone-shell live-phone-shell ${keyboardActive ? "keyboard-active" : ""}`}>
@@ -30,8 +30,34 @@ function TeamChrome({ children, status, keyboardActive = false }) {
           </span>
         </header>
         {children}
+        {rail}
       </div>
     </main>
+  );
+}
+
+function LeaderboardRail({ leaderboard, ownId }) {
+  const teams = leaderboard ?? [];
+  return (
+    <aside className="gs-rail">
+      <div className="gs-rail-head">
+        <Trophy size={26} />
+        <h2>Leaderboard</h2>
+      </div>
+      {teams.length ? (
+        <ol className="gs-rankings">
+          {teams.map((team, index) => (
+            <li key={team.id} className={team.id === ownId ? "ours" : ""}>
+              <span>{index + 1}</span>
+              <strong>{team.name || "Unnamed team"}</strong>
+              <b>{formatScore(team.score)}</b>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="gs-rail-empty">Scores appear once the quizmaster releases them.</p>
+      )}
+    </aside>
   );
 }
 
@@ -426,7 +452,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   const showNewQuestionAlert = Boolean(newQuestionWaiting && viewIndex < hostQuestionIndex && canGoForward);
 
   return (
-    <TeamChrome status={status} keyboardActive={answerFocused}>
+    <TeamChrome status={status} keyboardActive={answerFocused} rail={<LeaderboardRail leaderboard={snapshot.leaderboard} ownId={snapshot.team?.id} />}>
       {snapshot.live?.timerActive ? (
         <div className={`team-timer-overlay ${countdown <= 10 ? "urgent" : ""}`}>
           <Timer size={20} />
@@ -446,7 +472,7 @@ export default function TeamView({ sessionCode, teamToken }) {
             <ArrowLeft size={24} />
             <span>Previous</span>
           </button>
-          <div className="question-number-display"><span>QUESTION</span><strong>{question.number ?? viewIndex + 1}</strong><small>of {totalRoundQuestions || questions.length}</small></div>
+          <div className="question-number-display"><span>CURRENT ROUND</span><strong>{question.number ?? viewIndex + 1}</strong><small>QUESTION {question.number ?? viewIndex + 1} of {totalRoundQuestions || questions.length}</small></div>
           <button className={`question-nav-button next ${showNewQuestionAlert ? "new-question-waiting" : ""}`} disabled={!canGoForward} onClick={() => setViewIndex((index) => Math.min(questions.length - 1, index + 1))}>
             <span>Next</span>
             <ArrowRight size={24} />

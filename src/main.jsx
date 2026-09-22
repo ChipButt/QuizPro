@@ -18,6 +18,7 @@ import "./quiz-taker-anti-paste.css";
 import "./quiz-taker-v7.css";
 import "./quiz-taker-v8.css";
 import "./quiz-taker-v9.css";
+import "./quiz-taker-v10.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
