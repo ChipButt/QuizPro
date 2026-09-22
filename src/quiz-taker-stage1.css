@@ -402,8 +402,8 @@
   position:absolute;
   left:50%;
   top:50%;
-  width:min(360px,92vw);
-  height:min(360px,92vw);
+  width:min(var(--preview-waiting-bulb-size,360px),96vw);
+  height:min(var(--preview-waiting-bulb-size,360px),96vw);
   transform:translate(-50%,-50%);
   color:#8d8795;
   stroke:currentColor;
@@ -415,7 +415,7 @@
   left:50%;
   top:39%;
   z-index:2;
-  width:min(158px,43vw);
+  width:min(var(--preview-waiting-fact-width,158px),62vw);
   transform:translate(-50%,-50%);
   display:grid;
   place-items:center;
@@ -507,12 +507,12 @@
   }
 
   .live-team-page .waiting-fact-bulb{
-    width:min(300px,84vw) !important;
-    height:min(300px,84vw) !important;
+    width:min(var(--preview-waiting-bulb-size,300px),90vw) !important;
+    height:min(var(--preview-waiting-bulb-size,300px),90vw) !important;
   }
 
   .live-team-page .waiting-fact-copy{
-    width:min(132px,38vw);
+    width:min(var(--preview-waiting-fact-width,132px),55vw);
   }
 
   .live-team-page .waiting-fact-copy strong{
