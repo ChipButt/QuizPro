@@ -76,6 +76,37 @@ function safeQuestion(state, roundId, question) {
   };
 }
 
+function roundIsFullyRevealed(state, round) {
+  if (!round) return false;
+  if (state.live?.revealedRounds?.[round.id]) return true;
+  const questions = round.questions ?? [];
+  return questions.length > 0 && questions.every((question) => Boolean(state.live?.revealedQuestions?.[question.id]));
+}
+
+function publishedLeaderboard(state, quiz) {
+  const scores = new Map();
+  for (const team of state.teams ?? []) {
+    scores.set(team.id, Number(team.scoreAdjustment ?? 0));
+  }
+
+  for (const round of quiz?.rounds ?? []) {
+    for (const question of round.questions ?? []) {
+      if (!questionIsRevealed(state, round.id, question.id)) continue;
+      for (const [teamId, answer] of Object.entries(state.answers?.[question.id] ?? {})) {
+        if (!scores.has(teamId)) scores.set(teamId, 0);
+        scores.set(teamId, scores.get(teamId) + Number(answer.score ?? 0));
+      }
+    }
+  }
+
+  return (state.teams ?? [])
+    .map((team) => ({
+      ...team,
+      score: scores.get(team.id) ?? 0,
+    }))
+    .sort((a, b) => b.score - a.score || String(a.name || "").localeCompare(String(b.name || "")));
+}
+
 function roundScoreForTeam(state, round, teamId) {
   let score = 0;
   let max = 0;
@@ -100,17 +131,11 @@ function roundScoreForTeam(state, round, teamId) {
 
 function completedRoundScores(state, quiz, team) {
   if (!quiz || !team) return [];
-  const liveRoundIndex = Math.max(0, Number(state.live?.roundIndex ?? 0));
-  const questionIndex = Number(state.live?.questionIndex ?? -1);
-  const teamScreen = state.live?.teamScreen ?? "lobby";
-
-  let completedThrough = liveRoundIndex - 1;
-  if (teamScreen === "round_locked") completedThrough = liveRoundIndex;
-  if (questionIndex < 0 && liveRoundIndex === 0 && teamScreen === "lobby") completedThrough = -1;
 
   return (quiz.rounds ?? [])
-    .slice(0, Math.max(0, completedThrough + 1))
-    .map((round, index) => ({
+    .map((round, index) => ({ round, index }))
+    .filter(({ round }) => roundIsFullyRevealed(state, round))
+    .map(({ round, index }) => ({
       id: round.id,
       number: index + 1,
       title: round.title || `Round ${index + 1}`,
@@ -143,7 +168,7 @@ export function buildTeamSnapshot(state, teamToken) {
 
   const shouldShowLeaderboard = ["leaderboard", "final"].includes(state.live?.teamScreen);
   const leaderboard = shouldShowLeaderboard
-    ? computeLeaderboard(state).map((item) => ({
+    ? publishedLeaderboard(state, quiz).map((item) => ({
         id: item.id,
         name: item.name || "Unnamed team",
         score: item.score,
