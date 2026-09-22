@@ -1016,7 +1016,6 @@ export default function TeamView({ sessionCode, teamToken }) {
   const [viewIndex, setViewIndex] = useState(0);
   const [drafts, setDrafts] = useState({});
   const [audioBlocked, setAudioBlocked] = useState(false);
-  const [answerFocused, setAnswerFocused] = useState(false);
   const [newQuestionWaiting, setNewQuestionWaiting] = useState(false);
   const teamAudioRef = useRef(null);
   const lastPlayNonceRef = useRef(0);
@@ -1179,7 +1178,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   const showNewQuestionAlert = Boolean(newQuestionWaiting && viewIndex < hostQuestionIndex && canGoForward);
 
   return (
-    <TeamChrome status={status} keyboardActive={answerFocused} rail={<LeaderboardRail leaderboard={snapshot.leaderboard} ownId={snapshot.team?.id} />}>
+    <TeamChrome status={status} rail={<LeaderboardRail leaderboard={snapshot.leaderboard} ownId={snapshot.team?.id} />}>
       {snapshot.live?.timerActive ? (
         <div className={`team-timer-overlay ${countdown <= 10 ? "urgent" : ""}`}>
           <Timer size={20} />
@@ -1188,18 +1187,20 @@ export default function TeamView({ sessionCode, teamToken }) {
         </div>
       ) : null}
 
-      <section className={`team-card live-team-card question-team-card ${snapshot.live?.timerActive ? "timer-running" : ""} ${answerFocused ? "keyboard-active" : ""}`}>
+      <section className={`team-card live-team-card question-team-card ${snapshot.live?.timerActive ? "timer-running" : ""}`}>
         <div className="team-question-topline">
-          <div><span>{snapshot.round?.title || "Round"}</span><strong>{snapshot.team.name}</strong></div>
+          <div className="team-question-team-name"><span>TEAM</span><strong>{snapshot.team.name}</strong></div>
           <div className="team-question-progress">{answeredCount}/{totalRoundQuestions || questions.length} answered</div>
         </div>
+
+        <div className="team-current-round-title">{snapshot.round?.title || "Round"}</div>
 
         <div className="team-question-nav">
           <button className="question-nav-button previous" disabled={!canGoBack} onClick={() => setViewIndex((index) => Math.max(0, index - 1))}>
             <ArrowLeft size={24} />
             <span>Previous</span>
           </button>
-          <div className="question-number-display"><span>CURRENT ROUND</span><strong>{question.number ?? viewIndex + 1}</strong><small>QUESTION {question.number ?? viewIndex + 1} of {totalRoundQuestions || questions.length}</small></div>
+          <div className="question-number-display"><strong>{question.number ?? viewIndex + 1}</strong><small>QUESTION {question.number ?? viewIndex + 1} of {totalRoundQuestions || questions.length}</small></div>
           <button className={`question-nav-button next ${showNewQuestionAlert ? "new-question-waiting" : ""}`} disabled={!canGoForward} onClick={() => setViewIndex((index) => Math.min(questions.length - 1, index + 1))}>
             <span>Next</span>
             <ArrowRight size={24} />
@@ -1258,8 +1259,6 @@ export default function TeamView({ sessionCode, teamToken }) {
                   className={`${draft.trim() ? "has-answer" : ""} ${submitted ? "submitted-answer" : ""}`}
                   value={draft}
                   onChange={(event) => setDraft(event.target.value)}
-                  onFocus={() => setAnswerFocused(true)}
-                  onBlur={() => setAnswerFocused(false)}
                   disabled={questionLocked}
                   maxLength={500}
                   placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"}
@@ -1283,14 +1282,15 @@ export default function TeamView({ sessionCode, teamToken }) {
           </div>
         </div>
 
-        <div className="team-round-footer compact-round-footer">
-          <div><span>Round</span><strong>{answeredCount}/{totalRoundQuestions || questions.length} answered</strong></div>
-          {snapshot.round?.teamLocked || roundLocked ? (
+        {snapshot.round?.teamLocked || roundLocked ? (
+          <div className="team-round-footer compact-round-footer">
             <button className="team-lock-round-button" disabled><KeyRound size={15} /> Round locked</button>
-          ) : canLockRound ? (
+          </div>
+        ) : canLockRound ? (
+          <div className="team-round-footer compact-round-footer">
             <button className="team-lock-round-button all-answers-lock" onClick={lockRound}><Lock size={15} /> Lock In ALL Answers</button>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </section>
     </TeamChrome>
   );
