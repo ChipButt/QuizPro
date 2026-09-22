@@ -475,7 +475,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     const root = document.querySelector(".live-phone-shell");
     if (!root) return undefined;
 
-    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v3" : ["waiting", "team-name", "multiple-choice", "answer-reveal", "locked"].includes(teamToken) ? "v2" : "v1";
+    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v4" : ["waiting", "team-name", "multiple-choice", "answer-reveal", "locked"].includes(teamToken) ? "v2" : "v1";
     const storageKey = `quiz-layout-${storageVersion}:${teamToken || "preview"}`;
     let editEnabled = false;
     let selectedPath = "";
@@ -656,7 +656,8 @@ export default function TeamView({ sessionCode, teamToken }) {
       let element = rawTarget instanceof Element ? rawTarget : null;
       if (!element) return;
 
-      if (element.closest("svg")) element = element.closest("svg");
+      if (element.closest(".team-timer-clock-wrap")) element = element.closest(".team-timer-clock-wrap");
+      else if (element.closest("svg")) element = element.closest("svg");
       if (!root.contains(element) || element === root) return;
 
       clearSelectionClasses();
@@ -691,7 +692,8 @@ export default function TeamView({ sessionCode, teamToken }) {
       if (!editEnabled || event.button !== 0) return;
       let element = event.target instanceof Element ? event.target : null;
       if (!element || !root.contains(element) || element === root) return;
-      if (element.closest("svg")) element = element.closest("svg");
+      if (element.closest(".team-timer-clock-wrap")) element = element.closest(".team-timer-clock-wrap");
+      else if (element.closest("svg")) element = element.closest("svg");
 
       selectElement(element);
       if (layout[selectedPath]?.locked) {
