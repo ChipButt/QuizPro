@@ -23,6 +23,7 @@ import "./quiz-taker-team-name-v2.css";
 import "./quiz-taker-stage1.css";
 import "./quiz-taker-question-v11.css";
 import "./game-show-host.css";
+import "./quiz-taker-timer-v12.css";
 import "./unified-typography.css";
 import "./quiz-layout-editor.css";
 
