@@ -1112,55 +1112,22 @@ export default function TeamView({ sessionCode, teamToken }) {
   const answerSaving = Boolean(question && !questionLocked && draft.trim() !== savedText.trim());
   const submitted = Boolean(savedAnswer && draftMatchesSaved);
 
-  useEffect(() => {
-    if (!question || questionLocked || isMultipleChoice) return undefined;
-    const nextText = String(draft ?? "").trim();
-    const currentText = String(savedText ?? "").trim();
-    if (nextText === currentText) return undefined;
-
-    const timer = window.setTimeout(() => {
-      send({ type: "save-answer", questionId: question.id, text: nextText });
-    }, 450);
-    return () => window.clearTimeout(timer);
-  }, [draft, savedText, question?.id, questionLocked, isMultipleChoice, send]);
-
   const answeredCount = useMemo(
     () => questions.filter((item) => String(drafts[item.id] ?? snapshot?.teamAnswers?.[item.id]?.text ?? "").trim()).length,
     [questions, drafts, snapshot?.teamAnswers],
   );
   const totalRoundQuestions = Number(snapshot?.round?.totalQuestions ?? 0);
-  const finalQuestionReleased = totalRoundQuestions > 0 && questions.length >= totalRoundQuestions;
-  const canLockRound = !roundLocked && finalQuestionReleased;
 
   function setDraft(value) {
     if (!question || questionLocked) return;
     setDrafts((current) => ({ ...current, [question.id]: value }));
+    send({ type: "save-answer", questionId: question.id, text: value });
   }
 
   function chooseAnswer(option) {
     if (!question || questionLocked) return;
     setDrafts((current) => ({ ...current, [question.id]: option }));
     send({ type: "save-answer", questionId: question.id, text: option });
-  }
-
-  function lockRound() {
-    if (!canLockRound) return;
-    const unsaved = questions.filter((item) => {
-      const remote = String(snapshot?.teamAnswers?.[item.id]?.text ?? "").trim();
-      const local = String(drafts[item.id] ?? remote).trim();
-      return local !== remote;
-    });
-    const missing = Math.max(0, totalRoundQuestions - questions.filter((item) => String(drafts[item.id] ?? snapshot?.teamAnswers?.[item.id]?.text ?? "").trim()).length);
-    const message = missing
-      ? `Lock in ALL round answers? ${missing} question${missing === 1 ? " is" : "s are"} still blank.`
-      : "Lock in ALL round answers? You will not be able to change them after this.";
-    if (!window.confirm(message)) return;
-
-    for (const item of unsaved) {
-      const remote = String(snapshot?.teamAnswers?.[item.id]?.text ?? "").trim();
-      send({ type: "save-answer", questionId: item.id, text: String(drafts[item.id] ?? remote).trim() });
-    }
-    send({ type: "lock-round" });
   }
 
   function replayAudio() {
@@ -1192,11 +1159,11 @@ export default function TeamView({ sessionCode, teamToken }) {
           className={`team-timer-overlay team-timer-clock-wrap ${countdown <= 10 ? "urgent" : ""}`}
           style={{ "--timer-fill-angle": `${timerFillAngle}deg` }}
           role="timer"
-          aria-label={`${countdown} seconds remaining to lock in your answers`}
+          aria-label={`${countdown} seconds remaining before the round ends`}
         >
           <div className="team-timer-message">
-            <strong>LOCK IN YOUR ANSWERS</strong>
-            <span>before time runs out</span>
+            <strong>ROUND ENDS AT 0</strong>
+            <span>Make sure every question has an answer</span>
           </div>
           <div className="team-timer-clock" aria-hidden="true">
             <i className="team-timer-clock-knob" />
@@ -1300,15 +1267,6 @@ export default function TeamView({ sessionCode, teamToken }) {
           </div>
         </div>
 
-        {snapshot.round?.teamLocked || roundLocked ? (
-          <div className="team-round-footer compact-round-footer">
-            <button className="team-lock-round-button" disabled><KeyRound size={15} /> Round locked</button>
-          </div>
-        ) : canLockRound ? (
-          <div className="team-round-footer compact-round-footer">
-            <button className="team-lock-round-button all-answers-lock" onClick={lockRound}><Lock size={15} /> Lock In ALL Answers</button>
-          </div>
-        ) : null}
       </section>
     </TeamChrome>
   );
