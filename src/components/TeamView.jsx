@@ -871,10 +871,47 @@ export default function TeamView({ sessionCode, teamToken }) {
       }
 
       if (message.action === "export") {
+        const rootRect = root.getBoundingClientRect();
+        const elements = Array.from(root.querySelectorAll("*"))
+          .filter((element) => {
+            if (!(element instanceof HTMLElement || element instanceof SVGElement)) return false;
+            if (element.closest(".quiz-layout-overlay")) return false;
+            if (element instanceof SVGElement && element.tagName.toLowerCase() !== "svg") return false;
+            const styles = window.getComputedStyle(element);
+            if (styles.display === "none" || styles.visibility === "hidden") return false;
+            const rect = element.getBoundingClientRect();
+            return rect.width > 2 && rect.height > 2;
+          })
+          .map((element) => {
+            const path = elementPath(element);
+            const rect = element.getBoundingClientRect();
+            const styles = window.getComputedStyle(element);
+            const record = layout[path] || {};
+            return {
+              path,
+              label: describeElement(element),
+              left: Math.round((rect.left - rootRect.left) * 10) / 10,
+              top: Math.round((rect.top - rootRect.top) * 10) / 10,
+              width: Math.round(rect.width * 10) / 10,
+              height: Math.round(rect.height * 10) / 10,
+              fontSize: Math.round((parseFloat(styles.fontSize) || 0) * 10) / 10,
+              x: Number(record.x || 0),
+              y: Number(record.y || 0),
+              locked: Boolean(record.locked),
+              edited: Boolean(layout[path]),
+            };
+          });
+
         window.parent?.postMessage({
           type: "quiz-layout-export",
+          version: 2,
           stage: teamToken || "preview",
-          layout,
+          viewport: {
+            width: Math.round(rootRect.width),
+            height: Math.round(rootRect.height),
+          },
+          modified: layout,
+          elements,
         }, window.location.origin);
       }
     };
