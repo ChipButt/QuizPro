@@ -182,6 +182,7 @@ export function buildTeamSnapshot(state, teamToken) {
       revealMode: state.live?.revealMode ?? "round",
       timerActive: Boolean(state.live?.timerActive),
       timerEndsAt: Number(state.live?.timerEndsAt ?? 0),
+      timerDurationSeconds: Number(state.live?.timerDurationSeconds ?? 0),
       timerRoundId: state.live?.timerRoundId ?? "",
       finalRevealCount: Number(state.live?.finalRevealCount ?? 0),
       audio: {
