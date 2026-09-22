@@ -1,0 +1,331 @@
+/* Quiz Taker stage 1 refinements
+   Shared chrome + Team Name + Pre-Quiz Waiting only. */
+
+/* ---------- Shared connection / branding ---------- */
+
+.live-team-page .live-phone-topbar{
+  min-height:70px !important;
+  padding:8px 14px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  background:rgba(76,29,149,.28) !important;
+}
+
+.live-team-page .team-global-logo{
+  display:block;
+  width:min(190px,58vw);
+  height:auto;
+  max-height:54px;
+  object-fit:contain;
+  filter:drop-shadow(0 4px 0 rgba(35,9,83,.28));
+}
+
+.live-team-page .team-live-status,
+.live-team-page .team-name-live-status{
+  display:none !important;
+}
+
+.live-team-page .team-connection-note{
+  position:fixed;
+  left:50%;
+  bottom:3px;
+  z-index:80;
+  transform:translateX(-50%);
+  pointer-events:none;
+  white-space:nowrap;
+  color:#a7a4ad;
+  font:500 8px/1.15 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  letter-spacing:.035em;
+  opacity:.42;
+  text-align:center;
+  text-shadow:none;
+}
+
+.live-team-page .team-connection-note.not-connected{
+  opacity:.52;
+}
+
+/* ---------- Team Name ---------- */
+
+.team-name-screen .team-name-stage{
+  padding-bottom:28px;
+}
+
+.team-name-screen .team-name-doodle.bulb-mark{
+  display:none !important;
+}
+
+/* Keep one clean depth shadow only: text + shadow = two visible layers. */
+.team-name-screen .team-name-prompt h1{
+  text-shadow:0 4px 0 #0a5fd0 !important;
+}
+
+.team-name-screen .team-name-prompt h1 em{
+  text-shadow:0 4px 0 #b97800 !important;
+}
+
+.team-name-screen .quiz-in-logo-asset{
+  display:block !important;
+  width:min(100%,320px) !important;
+  max-height:120px !important;
+  height:auto !important;
+  object-fit:contain !important;
+  filter:drop-shadow(0 5px 0 rgba(1,27,76,.48)) !important;
+}
+
+/* ---------- Pre-Quiz Waiting ---------- */
+
+.live-team-page .waiting-team-card{
+  padding-bottom:30px !important;
+}
+
+.live-team-page .waiting-team-banner{
+  width:100% !important;
+  min-height:190px !important;
+  margin:0 !important;
+  padding:19px 18px 22px !important;
+  display:grid !important;
+  grid-template-rows:auto auto !important;
+  align-content:center !important;
+  gap:20px !important;
+  overflow:visible !important;
+  border-radius:20px !important;
+}
+
+.live-team-page .waiting-team-name{
+  width:100% !important;
+  min-width:0 !important;
+  display:grid !important;
+  place-items:center !important;
+  gap:5px !important;
+  text-align:center !important;
+  overflow:visible !important;
+}
+
+.live-team-page .waiting-team-name>span{
+  display:block !important;
+  color:rgba(253,224,71,.94) !important;
+  font-size:10px !important;
+  line-height:1 !important;
+  font-weight:950 !important;
+  letter-spacing:.16em !important;
+  text-transform:uppercase !important;
+}
+
+.live-team-page .waiting-team-name>strong{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  margin:0 !important;
+  color:#fff !important;
+  font-size:clamp(28px,8.5vw,40px) !important;
+  line-height:1.05 !important;
+  font-weight:1000 !important;
+  letter-spacing:-.035em !important;
+  text-align:center !important;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  overflow-wrap:anywhere !important;
+}
+
+.live-team-page .waiting-team-meta{
+  width:66.666% !important;
+  margin:0 auto !important;
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  align-items:start !important;
+  gap:18px !important;
+}
+
+.live-team-page .waiting-team-meta>div{
+  min-width:0 !important;
+  display:grid !important;
+  place-items:center !important;
+  gap:5px !important;
+  text-align:center !important;
+}
+
+.live-team-page .waiting-team-meta span{
+  display:block !important;
+  color:rgba(253,224,71,.94) !important;
+  font-size:9px !important;
+  line-height:1 !important;
+  font-weight:950 !important;
+  letter-spacing:.14em !important;
+}
+
+.live-team-page .waiting-team-meta strong{
+  display:block !important;
+  color:#fff !important;
+  font-size:28px !important;
+  line-height:1 !important;
+  font-weight:1000 !important;
+}
+
+/* Fun fact: no pink card/bubble. A bulb turns on, fact appears,
+   bulb flickers and both clear before the next fact arrives. */
+.live-team-page .waiting-fun-fact.waiting-fun-fact-v2{
+  width:100% !important;
+  min-height:150px !important;
+  margin:2px 0 0 !important;
+  padding:8px 18px 18px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:10px !important;
+  text-align:center !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:var(--gs-text) !important;
+  box-shadow:none !important;
+  transform:none !important;
+  animation:none !important;
+}
+
+.live-team-page .waiting-fun-fact.waiting-fun-fact-v2::before{
+  content:none !important;
+  display:none !important;
+}
+
+.live-team-page .waiting-fact-bulb{
+  flex:0 0 auto;
+  color:#8d8795;
+  stroke:currentColor;
+  transform-origin:50% 56%;
+  animation:waitingBulbCycle 8s ease-in-out both;
+}
+
+.live-team-page .waiting-fact-copy{
+  display:grid;
+  place-items:center;
+  gap:7px;
+  text-align:center;
+  animation:waitingFactCycle 8s ease both;
+}
+
+.live-team-page .waiting-fact-copy span{
+  color:#7c3aed !important;
+  font-size:9px !important;
+  line-height:1 !important;
+  font-weight:950 !important;
+  letter-spacing:.17em !important;
+  text-shadow:none !important;
+}
+
+.live-team-page .waiting-fact-copy strong{
+  max-width:330px;
+  color:#35295d !important;
+  font-size:clamp(15px,4vw,18px) !important;
+  line-height:1.35 !important;
+  font-weight:800 !important;
+  text-shadow:none !important;
+}
+
+@keyframes waitingBulbCycle{
+  0%,7%{
+    color:#8d8795;
+    opacity:.35;
+    filter:none;
+    transform:scale(.94);
+  }
+  11%,58%{
+    color:#ffd429;
+    opacity:1;
+    filter:drop-shadow(0 0 5px rgba(255,212,41,.95)) drop-shadow(0 0 14px rgba(255,212,41,.48));
+    transform:scale(1);
+  }
+  62%{
+    color:#8d8795;
+    opacity:.30;
+    filter:none;
+  }
+  65%{
+    color:#ffd429;
+    opacity:1;
+    filter:drop-shadow(0 0 12px rgba(255,212,41,.72));
+  }
+  68%{
+    color:#8d8795;
+    opacity:.28;
+    filter:none;
+  }
+  71%{
+    color:#ffd429;
+    opacity:1;
+    filter:drop-shadow(0 0 12px rgba(255,212,41,.72));
+  }
+  74%{
+    color:#8d8795;
+    opacity:.26;
+    filter:none;
+  }
+  77%{
+    color:#ffd429;
+    opacity:.9;
+    filter:drop-shadow(0 0 9px rgba(255,212,41,.5));
+  }
+  82%,100%{
+    color:#8d8795;
+    opacity:.20;
+    filter:none;
+    transform:scale(.96);
+  }
+}
+
+@keyframes waitingFactCycle{
+  0%,11%{
+    opacity:0;
+    transform:translateY(5px);
+  }
+  16%,72%{
+    opacity:1;
+    transform:translateY(0);
+  }
+  80%,100%{
+    opacity:0;
+    transform:translateY(-3px);
+  }
+}
+
+@media(max-height:760px){
+  .live-team-page .waiting-team-banner{
+    min-height:160px !important;
+    gap:14px !important;
+    padding:15px 16px 17px !important;
+  }
+
+  .live-team-page .waiting-team-name>strong{
+    font-size:clamp(25px,7vw,34px) !important;
+  }
+
+  .live-team-page .waiting-team-meta strong{
+    font-size:24px !important;
+  }
+
+  .live-team-page .waiting-fun-fact.waiting-fun-fact-v2{
+    min-height:124px !important;
+    padding-bottom:12px !important;
+  }
+
+  .live-team-page .waiting-fact-bulb{
+    width:42px;
+    height:42px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .live-team-page .waiting-fact-bulb,
+  .live-team-page .waiting-fact-copy{
+    animation:none !important;
+    opacity:1 !important;
+    transform:none !important;
+  }
+
+  .live-team-page .waiting-fact-bulb{
+    color:#ffd429 !important;
+  }
+}
