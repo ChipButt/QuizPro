@@ -1,0 +1,111 @@
+/* Quiz Taker visual layout editor — preview only. */
+
+.quiz-preview-mode.quiz-layout-editing{
+  user-select:none;
+}
+
+.quiz-preview-mode.quiz-layout-editing .live-phone-shell *{
+  cursor:grab;
+}
+
+.quiz-preview-mode.quiz-layout-editing.quiz-layout-dragging,
+.quiz-preview-mode.quiz-layout-editing.quiz-layout-dragging *{
+  cursor:grabbing !important;
+}
+
+.quiz-preview-mode .quiz-layout-overridden{
+  translate:var(--layout-editor-x,0px) var(--layout-editor-y,0px) !important;
+}
+
+.quiz-preview-mode.quiz-layout-editing .quiz-layout-selected{
+  outline:2px solid #22d3ee !important;
+  outline-offset:2px !important;
+}
+
+.quiz-preview-mode.quiz-layout-editing .quiz-layout-selected.quiz-layout-locked{
+  outline-color:#f59e0b !important;
+}
+
+.quiz-layout-overlay{
+  position:fixed;
+  z-index:2147483000;
+  display:none;
+  pointer-events:none;
+  border:2px solid #22d3ee;
+  border-radius:5px;
+  box-shadow:0 0 0 1px rgba(4,20,45,.45),0 0 12px rgba(34,211,238,.3);
+}
+
+.quiz-layout-overlay.visible{
+  display:block;
+}
+
+.quiz-layout-overlay.locked{
+  border-color:#f59e0b;
+  box-shadow:0 0 0 1px rgba(4,20,45,.45),0 0 12px rgba(245,158,11,.25);
+}
+
+.quiz-layout-overlay-label{
+  position:absolute;
+  left:0;
+  top:-22px;
+  min-width:max-content;
+  padding:3px 6px;
+  border-radius:4px;
+  background:#083344;
+  color:#ecfeff;
+  font:800 9px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  letter-spacing:.06em;
+  pointer-events:none;
+}
+
+.quiz-layout-overlay.locked .quiz-layout-overlay-label{
+  background:#78350f;
+  color:#fff7ed;
+}
+
+.quiz-layout-handle{
+  position:absolute;
+  z-index:2;
+  display:block;
+  width:14px;
+  height:14px;
+  padding:0;
+  border:2px solid #fff;
+  border-radius:3px;
+  background:#06b6d4;
+  box-shadow:0 1px 5px rgba(0,0,0,.35);
+  pointer-events:auto;
+  touch-action:none;
+}
+
+.quiz-layout-overlay.locked .quiz-layout-handle{
+  display:none;
+}
+
+.quiz-layout-handle-x{
+  right:-8px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:ew-resize;
+}
+
+.quiz-layout-handle-y{
+  left:50%;
+  bottom:-8px;
+  transform:translateX(-50%);
+  cursor:ns-resize;
+}
+
+.quiz-layout-handle-both{
+  right:-8px;
+  bottom:-8px;
+  cursor:nwse-resize;
+}
+
+@media(max-width:500px){
+  .quiz-layout-handle{
+    width:16px;
+    height:16px;
+  }
+}
