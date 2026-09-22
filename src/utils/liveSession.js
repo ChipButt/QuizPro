@@ -1,4 +1,4 @@
-import { autoScoreAnswer, computeLeaderboard, createId } from "./quiz.js";
+import { autoScoreAnswer, createId } from "./quiz.js";
 import { waitingFactsForQuiz } from "../data/waitingFacts.js";
 
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
