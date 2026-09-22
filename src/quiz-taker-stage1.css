@@ -386,7 +386,7 @@
   padding:0 !important;
   display:grid !important;
   place-items:center !important;
-  overflow:hidden !important;
+  overflow:visible !important;
 }
 
 .live-team-page .waiting-fact-bulb-stage{
