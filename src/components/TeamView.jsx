@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLiveTeamNetwork } from "../hooks/useLiveTeamNetwork.js";
+import quizInLogo from "../assets/quiz-in-logo.png";
 
 function TeamChrome({ children, status, keyboardActive = false, rail = null, pageClass = "" }) {
   return (
@@ -114,6 +115,86 @@ function ConnectionScreen({ status, error }) {
   );
 }
 
+function TeamNameTableIcon() {
+  return (
+    <svg className="team-meta-svg" viewBox="0 0 72 72" aria-hidden="true">
+      <defs>
+        <linearGradient id="tableTop" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stopColor="#36d7ff" />
+          <stop offset="52%" stopColor="#0aa8ff" />
+          <stop offset="100%" stopColor="#0869ee" />
+        </linearGradient>
+        <linearGradient id="tableLeg" x1="0" x2="1">
+          <stop offset="0%" stopColor="#0877f2" />
+          <stop offset="55%" stopColor="#18bfff" />
+          <stop offset="100%" stopColor="#064cc9" />
+        </linearGradient>
+      </defs>
+      <path className="team-icon-glow" d="M14 25c0-8 10-14 22-14s22 6 22 14-10 14-22 14-22-6-22-14Z" />
+      <path className="team-table-leg" d="M22 37 18 58" />
+      <path className="team-table-leg" d="M36 39v22" />
+      <path className="team-table-leg" d="m50 37 4 21" />
+      <ellipse cx="36" cy="25" rx="23" ry="13" fill="url(#tableTop)" />
+      <ellipse cx="36" cy="23" rx="19" ry="8.5" fill="#49dbff" opacity=".42" />
+      <path d="M17 27c5 7 33 10 39-1" fill="none" stroke="#0758d9" strokeWidth="4" strokeLinecap="round" opacity=".72" />
+    </svg>
+  );
+}
+
+function TeamNamePlayersIcon() {
+  return (
+    <svg className="team-meta-svg" viewBox="0 0 72 72" aria-hidden="true">
+      <defs>
+        <linearGradient id="peopleBlue" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stopColor="#38d9ff" />
+          <stop offset="45%" stopColor="#109fff" />
+          <stop offset="100%" stopColor="#0752dc" />
+        </linearGradient>
+      </defs>
+      <circle className="team-icon-glow-fill" cx="19" cy="28" r="9" />
+      <circle className="team-icon-glow-fill" cx="53" cy="28" r="9" />
+      <circle className="team-icon-glow-fill" cx="36" cy="22" r="12" />
+      <path className="team-icon-glow-fill" d="M8 55c0-11 5-18 13-18s13 7 13 18v5H8Z" />
+      <path className="team-icon-glow-fill" d="M38 55c0-11 5-18 13-18s13 7 13 18v5H38Z" />
+      <path className="team-icon-glow-fill" d="M18 57c0-15 7-24 18-24s18 9 18 24v6H18Z" />
+      <circle cx="19" cy="28" r="8" fill="url(#peopleBlue)" />
+      <circle cx="53" cy="28" r="8" fill="url(#peopleBlue)" />
+      <circle cx="36" cy="22" r="11" fill="url(#peopleBlue)" />
+      <path d="M9 55c0-10 5-17 12-17s12 7 12 17v4H9Z" fill="url(#peopleBlue)" />
+      <path d="M39 55c0-10 5-17 12-17s12 7 12 17v4H39Z" fill="url(#peopleBlue)" />
+      <path d="M19 57c0-14 6-23 17-23s17 9 17 23v5H19Z" fill="url(#peopleBlue)" />
+      <path d="M29 13c3-3 11-4 15 0" fill="none" stroke="#7ceaff" strokeWidth="3" strokeLinecap="round" opacity=".9" />
+    </svg>
+  );
+}
+
+function TeamNamePencilIcon() {
+  return (
+    <svg className="team-name-pencil-svg" viewBox="0 0 64 64" aria-hidden="true">
+      <defs>
+        <linearGradient id="pencilBlue" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stopColor="#54e4ff" />
+          <stop offset="48%" stopColor="#159fff" />
+          <stop offset="100%" stopColor="#0753db" />
+        </linearGradient>
+        <linearGradient id="pencilMetal" x1="0" x2="1">
+          <stop offset="0%" stopColor="#d6edff" />
+          <stop offset="50%" stopColor="#ffffff" />
+          <stop offset="100%" stopColor="#85bff1" />
+        </linearGradient>
+      </defs>
+      <g transform="rotate(-43 32 32)">
+        <path d="M27 10h10a5 5 0 0 1 5 5v31H22V15a5 5 0 0 1 5-5Z" fill="url(#pencilBlue)" />
+        <path d="M22 19h20v7H22Z" fill="url(#pencilMetal)" />
+        <path d="m22 46 10 14 10-14Z" fill="#f7e8d4" />
+        <path d="m28 54 4 6 4-6Z" fill="#0a42a5" />
+        <path d="M27 12h4v31h-4Z" fill="#8bedff" opacity=".72" />
+        <path d="M23 15a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v31" fill="none" stroke="#b9f4ff" strokeWidth="2.2" strokeLinecap="round" opacity=".9" />
+      </g>
+    </svg>
+  );
+}
+
 function TeamNameScreen({ snapshot, send, status }) {
   const [name, setName] = useState("");
 
@@ -131,17 +212,7 @@ function TeamNameScreen({ snapshot, send, status }) {
           <span className="team-name-doodle question-mark" aria-hidden="true">?</span>
           <span className="team-name-doodle bulb-mark" aria-hidden="true">!</span>
 
-          <div className="quiz-in-wordmark" aria-label="Quiz In">
-            <span className="quiz-in-letters">QU</span>
-            <span className="quiz-in-person" aria-hidden="true">
-              <i className="quiz-person-head" />
-              <i className="quiz-person-body" />
-              <i className="quiz-person-arm left" />
-              <i className="quiz-person-arm right" />
-            </span>
-            <span className="quiz-in-letters">Z</span>
-            <span className="quiz-in-second-word">IN</span>
-          </div>
+          <img className="quiz-in-logo-asset" src={quizInLogo} alt="Quiz In" />
 
           <span className={`team-name-live-status ${status === "online" ? "online" : "offline"}`}>
             <i />
@@ -151,7 +222,7 @@ function TeamNameScreen({ snapshot, send, status }) {
 
         <div className="team-name-meta-grid">
           <div className="team-name-meta-card">
-            <span className="team-meta-icon table" aria-hidden="true"><i /></span>
+            <span className="team-meta-icon coded-icon" aria-hidden="true"><TeamNameTableIcon /></span>
             <div>
               <span>TABLE</span>
               <strong>{snapshot.team?.table || "—"}</strong>
@@ -159,9 +230,7 @@ function TeamNameScreen({ snapshot, send, status }) {
           </div>
 
           <div className="team-name-meta-card">
-            <span className="team-meta-icon players" aria-hidden="true">
-              <i /><i /><i />
-            </span>
+            <span className="team-meta-icon coded-icon" aria-hidden="true"><TeamNamePlayersIcon /></span>
             <div>
               <span>PLAYERS</span>
               <strong>{snapshot.team?.players || 1}</strong>
@@ -189,7 +258,7 @@ function TeamNameScreen({ snapshot, send, status }) {
               onChange={(event) => setName(event.target.value)}
               placeholder="Team name..."
             />
-            <span className="team-name-pencil" aria-hidden="true"><i /></span>
+            <span className="team-name-pencil-v2" aria-hidden="true"><TeamNamePencilIcon /></span>
           </div>
           <button className="team-name-lock-button" disabled={!name.trim()}>
             <Lock size={24} strokeWidth={3} />
