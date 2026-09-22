@@ -6,8 +6,8 @@
   top:78px !important;
   right:18px !important;
   left:auto !important;
-  width:98px !important;
-  height:104px !important;
+  width:98px;
+  height:104px;
   min-height:0 !important;
   margin:0 !important;
   padding:10px 0 0 !important;
@@ -40,7 +40,7 @@
   border-radius:50%;
   background:
     conic-gradient(
-      from -90deg,
+      from 0deg,
       #e53935 0 var(--timer-fill-angle,0deg),
       #f7f9fc var(--timer-fill-angle,0deg) 360deg
     );
@@ -57,7 +57,7 @@
   border-radius:50%;
   background:
     repeating-conic-gradient(
-      from -90deg,
+      from 0deg,
       rgba(3,27,60,.35) 0 1.5deg,
       transparent 1.5deg 30deg
     );
@@ -108,7 +108,7 @@
 @media(max-width:420px){
   .live-team-page .team-timer-overlay.team-timer-clock-wrap{
     right:12px !important;
-    width:92px !important;
+    width:92px;
   }
 
   .live-team-page .team-timer-clock{
@@ -119,4 +119,24 @@
   .live-team-page .team-timer-clock strong{
     font-size:28px !important;
   }
+}
+
+/* The timer stays non-interactive during a real quiz, but in preview/editor
+   mode it must receive pointer events so it can be selected, dragged and resized. */
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap{
+  pointer-events:auto !important;
+  cursor:grab;
+}
+
+/* When the editor resizes the outer timer box, scale the visible clock with it
+   rather than leaving the artwork at its original fixed size. */
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap.quiz-layout-overridden .team-timer-clock{
+  width:calc(100% - 10px);
+  height:calc(100% - 16px);
+  min-width:42px;
+  min-height:42px;
+}
+
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap.quiz-layout-overridden .team-timer-clock strong{
+  font-size:clamp(16px,30%,42px) !important;
 }
