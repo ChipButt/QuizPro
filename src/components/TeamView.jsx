@@ -583,10 +583,12 @@ export default function TeamView({ sessionCode, teamToken }) {
 
       if (Number.isFinite(Number(record.width)) && Number(record.width) > 0) {
         element.style.setProperty("width", `${Number(record.width)}px`, "important");
+        element.style.setProperty("min-width", "0", "important");
         element.style.setProperty("max-width", "none", "important");
       }
       if (Number.isFinite(Number(record.height)) && Number(record.height) > 0) {
         element.style.setProperty("height", `${Number(record.height)}px`, "important");
+        element.style.setProperty("min-height", "0", "important");
         element.style.setProperty("max-height", "none", "important");
       }
       if (Number.isFinite(Number(record.fontSize)) && Number(record.fontSize) > 0) {
@@ -606,6 +608,8 @@ export default function TeamView({ sessionCode, teamToken }) {
       element.style.removeProperty("--layout-editor-y");
       element.style.removeProperty("width");
       element.style.removeProperty("height");
+      element.style.removeProperty("min-width");
+      element.style.removeProperty("min-height");
       element.style.removeProperty("max-width");
       element.style.removeProperty("max-height");
       element.style.removeProperty("font-size");
