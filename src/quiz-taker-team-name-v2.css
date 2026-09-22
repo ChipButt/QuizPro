@@ -524,3 +524,21 @@
     animation:none !important;
   }
 }
+
+
+/* ---------- Approved Team Name editor layout ---------- */
+/* Baked from the 390 × 844 layout editor export. */
+
+.team-name-screen .team-name-input-shell{
+  translate:0 -39px;
+}
+
+.team-name-screen .team-name-form-v2 .team-name-input-shell input{
+  position:relative;
+  translate:0 -3px;
+  z-index:-5;
+}
+
+.team-name-screen .team-name-lock-button{
+  translate:-1px -11px;
+}
