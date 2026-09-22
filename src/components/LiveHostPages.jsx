@@ -305,12 +305,13 @@ export function LiveRunnerPage({ state, updateState, setActivePage, network }) {
       teamScreen: "round_review",
       timerActive: true,
       timerEndsAt: Date.now() + duration * 1000,
+      timerDurationSeconds: duration,
       timerRoundId: round.id,
     });
   }
 
   function cancelTimer() {
-    updateLive({ timerActive: false, timerEndsAt: 0, timerRoundId: "" });
+    updateLive({ timerActive: false, timerEndsAt: 0, timerDurationSeconds: 0, timerRoundId: "" });
   }
 
   function lockRoundNow() {
