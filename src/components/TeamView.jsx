@@ -855,6 +855,28 @@ export default function TeamView({ sessionCode, teamToken }) {
         return;
       }
 
+      if (message.action === "center-selected" && selectedPath) {
+        const current = layout[selectedPath] || {};
+        if (current.locked) return;
+        const element = findByPath(selectedPath);
+        if (!element) return;
+
+        const rootRect = root.getBoundingClientRect();
+        const elementRect = element.getBoundingClientRect();
+        const currentX = Number(current.x || 0);
+        const deltaX = (rootRect.left + rootRect.width / 2) - (elementRect.left + elementRect.width / 2);
+
+        layout[selectedPath] = {
+          ...current,
+          x: Math.round((currentX + deltaX) * 10) / 10,
+        };
+        saveLayout();
+        applyRecord(element, layout[selectedPath]);
+        updateOverlay();
+        sendSelection(element, selectedPath);
+        return;
+      }
+
       if (message.action === "lock-all") {
         Object.keys(layout).forEach((path) => {
           layout[path] = { ...layout[path], locked: true };
