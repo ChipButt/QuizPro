@@ -605,9 +605,9 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
 
             {openPanel === "round" ? (
               <>
-                <div className="host-drawer-title"><div><h3>{liveRound?.title || "Live round"}</h3><p>{teamLocks}/{state.teams.length} teams have locked all answers.</p></div><span className={liveLocked ? "drawer-state locked" : "drawer-state"}>{liveLocked ? "LOCKED" : "EDITABLE"}</span></div>
+                <div className="host-drawer-title"><div><h3>{liveRound?.title || "Live round"}</h3><p>Team answers save automatically while the round is in progress.</p></div><span className={liveLocked ? "drawer-state locked" : "drawer-state"}>{liveLocked ? "ROUND OVER" : "IN PROGRESS"}</span></div>
                 <div className="host-drawer-actions">
-                  {!liveLocked ? <button className="danger-soft-button" onClick={lockLiveRoundNow}><Lock size={15} /> Lock round</button> : <button className="ghost-button" onClick={unlockLiveRound}><Unlock size={15} /> Re-open round for edits</button>}
+                  {!liveLocked ? <button className="danger-soft-button" onClick={lockLiveRoundNow}><Lock size={15} /> End round now</button> : <button className="ghost-button" onClick={unlockLiveRound}><Unlock size={15} /> Re-open round for edits</button>}
                   <button className="ghost-button" disabled={!liveRound} onClick={() => autoMarkRound(liveRound)}><RefreshCcw size={15} /> Auto mark round</button>
                   <button className={`reveal-toggle ${liveRoundRevealed ? "active" : ""}`} onClick={toggleLiveRoundAnswers}>
                     {liveRoundRevealed ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -619,12 +619,12 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
 
             {openPanel === "timer" ? (
               <>
-                <div className="host-drawer-title"><div><h3>Round lock timer</h3><p>Teams get a large countdown overlay while they are typing.</p></div>{state.live.timerActive ? <strong className="drawer-countdown">{timerSeconds}s</strong> : null}</div>
+                <div className="host-drawer-title"><div><h3>Round end timer</h3><p>Teams see how long they have left to make sure every question has an answer.</p></div>{state.live.timerActive ? <strong className="drawer-countdown">{timerSeconds}s</strong> : null}</div>
                 <div className="host-timer-controls">
                   <select value={timerChoice} onChange={(event) => setTimerChoice(Number(event.target.value))}>
                     <option value={30}>30 seconds</option><option value={60}>1 minute</option><option value={120}>2 minutes</option><option value={180}>3 minutes</option><option value={300}>5 minutes</option>
                   </select>
-                  {!state.live.timerActive ? <button className="primary-button" disabled={liveLocked || !liveRound} onClick={startLockTimer}><Clock3 size={15} /> Start timer</button> : <button className="ghost-button" onClick={cancelTimer}><X size={15} /> Cancel timer</button>}
+                  {!state.live.timerActive ? <button className="primary-button" disabled={liveLocked || !liveRound} onClick={startLockTimer}><Clock3 size={15} /> Start round-end timer</button> : <button className="ghost-button" onClick={cancelTimer}><X size={15} /> Cancel timer</button>}
                 </div>
               </>
             ) : null}
