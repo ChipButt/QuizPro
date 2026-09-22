@@ -53,12 +53,16 @@ function TeamPreview({ stage }) {
   const [previewScale, setPreviewScale] = useState(1);
   const [bulbSize, setBulbSize] = useState(360);
   const [factBoxWidth, setFactBoxWidth] = useState(158);
+  const [factBoxX, setFactBoxX] = useState(50);
+  const [factBoxY, setFactBoxY] = useState(39);
 
   const sendPreviewStyle = () => {
     iframeRef.current?.contentWindow?.postMessage({
       type: "quiz-preview-style",
       bulbSize,
       factBoxWidth,
+      factBoxX,
+      factBoxY,
     }, window.location.origin);
   };
 
@@ -79,7 +83,7 @@ function TeamPreview({ stage }) {
 
   useEffect(() => {
     sendPreviewStyle();
-  }, [bulbSize, factBoxWidth, stage]);
+  }, [bulbSize, factBoxWidth, factBoxX, factBoxY, stage]);
 
   return (
     <div style={{
@@ -161,11 +165,43 @@ function TeamPreview({ stage }) {
               />
             </label>
 
+            <label style={{ display: "grid", gap: 6, color: "#d1d5db", font: "600 11px system-ui" }}>
+              <span style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                <span>Fact box horizontal</span><strong style={{ color: "#f3c94b" }}>{factBoxX}%</strong>
+              </span>
+              <input
+                type="range"
+                min="20"
+                max="80"
+                step="1"
+                value={factBoxX}
+                onChange={(event) => setFactBoxX(Number(event.target.value))}
+                style={{ width: "100%" }}
+              />
+            </label>
+
+            <label style={{ display: "grid", gap: 6, color: "#d1d5db", font: "600 11px system-ui" }}>
+              <span style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                <span>Fact box vertical</span><strong style={{ color: "#f3c94b" }}>{factBoxY}%</strong>
+              </span>
+              <input
+                type="range"
+                min="18"
+                max="72"
+                step="1"
+                value={factBoxY}
+                onChange={(event) => setFactBoxY(Number(event.target.value))}
+                style={{ width: "100%" }}
+              />
+            </label>
+
             <button
               type="button"
               onClick={() => {
                 setBulbSize(360);
                 setFactBoxWidth(158);
+                setFactBoxX(50);
+                setFactBoxY(39);
               }}
               style={{
                 border: 0,
