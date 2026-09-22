@@ -309,6 +309,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
         ...current.live,
         timerActive: false,
         timerEndsAt: 0,
+        timerDurationSeconds: 0,
         timerRoundId: "",
         teamScreen: "round_locked",
         forceLockedRounds: {
