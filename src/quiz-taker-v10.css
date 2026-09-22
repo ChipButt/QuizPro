@@ -3,27 +3,32 @@
    Overrides v2–v9; keeps every class hook, state and keyboard behavior intact. */
 
 .team-page.live-team-page{
-  --gs-violet:#4c1d95;
-  --gs-violet-deep:#24134f;
-  --gs-violet-mid:#6d28d9;
-  --gs-magenta:#c026d3;
-  --gs-pink:#f472b6;
-  --gs-yellow:#fde047;
-  --gs-chip:#f5eaff;
-  --gs-line:#ead8fa;
-  --gs-text:#24134f;
+  --gs-violet:#031b3c;
+  --gs-violet-deep:#02162f;
+  --gs-violet-mid:#0a56d8;
+  --gs-magenta:#14c7ff;
+  --gs-pink:#168cff;
+  --gs-yellow:#ffd429;
+  --gs-chip:#eaf3ff;
+  --gs-line:#c7d7ff;
+  --gs-text:#02162f;
   position:relative;
   padding:0 !important;
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   color:var(--gs-text);
-  background:#4c1d95 url("https://media.base44.com/images/public/6ab2e67443bc85514ba75206/560abf200_generated_b3899521.jpg") center top/cover fixed !important;
+  background:
+    radial-gradient(circle at 50% 2%,rgba(26,105,238,.34),transparent 28%),
+    radial-gradient(circle at 50% 52%,rgba(0,145,255,.10),transparent 38%),
+    linear-gradient(180deg,#041a39 0%,#02162f 56%,#031b3c 100%) !important;
 }
 
 .team-page.live-team-page::before{
   content:"";
   position:fixed;
   inset:0;
-  background:linear-gradient(180deg,rgba(76,29,149,.18),rgba(76,29,149,.92) 46%,#4c1d95 78%);
+  background:
+    linear-gradient(135deg,transparent 0 10%,rgba(24,77,163,.12) 10% 13%,transparent 13% 36%,rgba(24,77,163,.10) 36% 39%,transparent 39% 70%,rgba(24,77,163,.10) 70% 73%,transparent 73%),
+    linear-gradient(45deg,transparent 0 23%,rgba(20,71,150,.08) 23% 26%,transparent 26% 63%,rgba(20,71,150,.08) 63% 66%,transparent 66%);
   pointer-events:none;
   z-index:0;
 }
@@ -161,7 +166,7 @@
   font-weight:950;
   letter-spacing:.14em;
   text-transform:uppercase;
-  color:#7c3aed;
+  color:#0a56d8;
 }
 
 .team-question-topline>div:first-child strong{
@@ -209,13 +214,13 @@
   letter-spacing:.02em;
   background:var(--gs-chip) !important;
   color:var(--gs-violet) !important;
-  box-shadow:0 6px 0 #d7b9ef !important;
+  box-shadow:0 6px 0 #8ec3ff !important;
 }
 
 .team-question-nav .question-nav-button.next{
   background:var(--gs-pink) !important;
   color:#fff !important;
-  box-shadow:0 6px 0 #c54784 !important;
+  box-shadow:0 6px 0 #0a56d8 !important;
 }
 
 .team-question-nav .question-nav-button:hover:not(:disabled){
@@ -251,7 +256,7 @@
   font-size:10px;
   font-weight:950;
   letter-spacing:.18em;
-  color:#8b5cf6;
+  color:#168cff;
 }
 
 .question-number-display>strong{
@@ -266,12 +271,12 @@
 .question-number-display>small{
   font-size:11px;
   font-weight:900;
-  color:#8b5cf6;
+  color:#168cff;
 }
 
 .team-question-nav .question-nav-button.new-question-waiting{
   background:#fdf0a2 !important;
-  color:#7c3aed !important;
+  color:#0a56d8 !important;
   box-shadow:0 6px 0 #d8b91e !important;
   animation:gsNewPulse .58s ease-in-out infinite alternate;
 }
@@ -283,7 +288,7 @@
   min-width:35px;
   padding:3px 6px;
   border-radius:999px;
-  background:#f472b6;
+  background:#168cff;
   color:#fff;
   font-size:8px;
   line-height:1;
@@ -304,7 +309,7 @@
   padding:14px;
   border:2px solid var(--gs-line) !important;
   border-radius:25px;
-  background:linear-gradient(135deg,#fff 0%,#fff7fd 100%) !important;
+  background:linear-gradient(135deg,#fff 0%,#f7fbff 100%) !important;
   box-shadow:0 8px 0 rgba(76,29,149,.08),0 18px 40px rgba(28,5,67,.12) !important;
 }
 
@@ -314,7 +319,7 @@
   inset:0;
   border-radius:22px;
   border:5px solid transparent;
-  background:linear-gradient(90deg,#f472b6,#fde047,#f472b6) border-box;
+  background:linear-gradient(90deg,#168cff,#ffd429,#168cff) border-box;
   -webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);
   mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;
@@ -329,8 +334,8 @@
 }
 
 .team-question-stage.is-locked{
-  background:#f3f0fa !important;
-  border-color:#d8c4e6 !important;
+  background:#edf5ff !important;
+  border-color:#b9d3f4 !important;
   box-shadow:none !important;
 }
 
@@ -377,13 +382,13 @@
 .live-team-image{
   border:2px solid var(--gs-line);
   border-radius:16px;
-  background:#faf5ff;
+  background:#f4f8ff;
 }
 
 .compact-team-audio{
   border-radius:14px !important;
-  background:#faf5ff !important;
-  border-color:#d8c4ef !important;
+  background:#f4f8ff !important;
+  border-color:#b8d8ff !important;
   color:var(--gs-violet);
 }
 
@@ -392,7 +397,7 @@
 }
 
 .audio-replay-button{
-  border:2px solid #d8c4ef !important;
+  border:2px solid #b8d8ff !important;
   border-radius:12px !important;
   background:#fff !important;
   color:var(--gs-violet) !important;
@@ -488,7 +493,7 @@
 /* Text answers. */
 
 .answer-input-shell textarea{
-  border:2px solid #d8c4ef !important;
+  border:2px solid #b8d8ff !important;
   border-radius:18px !important;
   padding:12px 15px;
   font-size:17px;
@@ -505,11 +510,11 @@
 }
 
 .answer-input-shell textarea::placeholder{
-  color:#a892c9;
+  color:#7898ca;
 }
 
 .answer-input-shell textarea.has-answer:not(.submitted-answer):not(:disabled){
-  border-color:#7c3aed !important;
+  border-color:#0a56d8 !important;
 }
 
 .answer-input-shell textarea.submitted-answer:not(:disabled),
@@ -517,7 +522,7 @@
   opacity:1;
   filter:none;
   border:2px solid var(--gs-violet) !important;
-  background:#f5f0fd !important;
+  background:#f4f8ff !important;
   color:var(--gs-text) !important;
   box-shadow:0 0 0 3px rgba(76,29,149,.14),0 6px 0 rgba(76,29,149,.15) !important;
 }
@@ -531,7 +536,7 @@
 }
 
 .answer-save-status{
-  border:1px solid #d8c4ef;
+  border:1px solid #b8d8ff;
   border-radius:12px;
   background:var(--gs-chip);
   color:var(--gs-violet);
@@ -578,7 +583,7 @@
 }
 
 .compact-round-footer>div span{
-  color:#7c3aed;
+  color:#0a56d8;
   font-weight:950;
 }
 
@@ -673,7 +678,7 @@
 }
 
 .gs-rankings li:nth-child(3){
-  background:#ede9fe;
+  background:#eaf3ff;
 }
 
 .gs-rankings li.ours{
@@ -712,7 +717,7 @@
 
 .gs-rail-empty{
   margin:10px 0 0;
-  color:#7c3aed;
+  color:#0a56d8;
   font-size:14px;
   line-height:1.5;
 }
@@ -744,7 +749,7 @@
   padding:15px 18px !important;
   border-radius:18px !important;
   color:#fff !important;
-  background:linear-gradient(135deg,#4c1d95 0%,#7c3aed 55%,#a855f7 100%) !important;
+  background:linear-gradient(135deg,#031b3c 0%,#0a56d8 55%,#14c7ff 100%) !important;
   box-shadow:0 7px 0 rgba(35,9,83,.28) !important;
 }
 
@@ -789,7 +794,7 @@
   font-size:10px;
   font-weight:950;
   letter-spacing:.14em;
-  color:#7c3aed;
+  color:#0a56d8;
 }
 
 .waiting-next-round strong{
@@ -800,19 +805,19 @@
 }
 
 .waiting-next-round small{
-  color:#6d28d9;
+  color:#0a56d8;
   font-size:12px;
 }
 
 .waiting-score-panel{
   border:2px solid var(--gs-line) !important;
   border-radius:18px !important;
-  background:#faf5ff !important;
+  background:#f4f8ff !important;
   box-shadow:0 6px 0 rgba(76,29,149,.06) !important;
 }
 
 .waiting-score-heading span{
-  color:#7c3aed !important;
+  color:#0a56d8 !important;
 }
 
 .waiting-score-heading strong{
@@ -826,7 +831,7 @@
 }
 
 .waiting-round-score span{
-  color:#7c3aed !important;
+  color:#0a56d8 !important;
 }
 
 .waiting-round-score strong{
@@ -838,7 +843,7 @@
 }
 
 .waiting-round-score>b small{
-  color:#8b5cf6 !important;
+  color:#168cff !important;
 }
 
 .waiting-fun-fact{
@@ -853,7 +858,7 @@
   border-radius:20px !important;
   background:var(--gs-pink) !important;
   color:#fff !important;
-  box-shadow:0 7px 0 #c54784,0 16px 34px rgba(194,24,109,.28) !important;
+  box-shadow:0 7px 0 #0a56d8,0 16px 34px rgba(194,24,109,.28) !important;
   transform:none !important;
   animation:gsRise .5s ease both !important;
 }
@@ -884,7 +889,7 @@
 
 .team-ticket{
   border-radius:16px !important;
-  background:linear-gradient(135deg,#4c1d95,#7c3aed) !important;
+  background:linear-gradient(135deg,#031b3c,#0a56d8) !important;
   color:#fff !important;
 }
 
@@ -893,7 +898,7 @@
 }
 
 .team-ticket small{
-  color:#e9defa !important;
+  color:#c7d7ff !important;
 }
 
 .team-name-card h1{
@@ -904,7 +909,7 @@
 }
 
 .team-name-form label{
-  color:#7c3aed;
+  color:#0a56d8;
   font-size:11px;
   font-weight:950;
   letter-spacing:.16em;
@@ -912,7 +917,7 @@
 
 .team-name-form input{
   min-height:60px !important;
-  border:2px solid #d8c4ef !important;
+  border:2px solid #b8d8ff !important;
   border-radius:16px !important;
   font-size:20px;
   font-weight:850;
@@ -997,7 +1002,7 @@
 }
 
 .team-live-leaderboard li:nth-child(3){
-  background:#ede9fe !important;
+  background:#eaf3ff !important;
 }
 
 .team-live-leaderboard li.ours{
