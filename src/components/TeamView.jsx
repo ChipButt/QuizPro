@@ -475,7 +475,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     const root = document.querySelector(".live-phone-shell");
     if (!root) return undefined;
 
-    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v5" : ["waiting", "team-name", "multiple-choice", "answer-reveal", "locked"].includes(teamToken) ? "v2" : "v1";
+    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v6" : ["waiting", "team-name", "multiple-choice", "answer-reveal", "locked"].includes(teamToken) ? "v2" : "v1";
     const storageKey = `quiz-layout-${storageVersion}:${teamToken || "preview"}`;
     let editEnabled = false;
     let selectedPath = "";
@@ -1192,8 +1192,12 @@ export default function TeamView({ sessionCode, teamToken }) {
           className={`team-timer-overlay team-timer-clock-wrap ${countdown <= 10 ? "urgent" : ""}`}
           style={{ "--timer-fill-angle": `${timerFillAngle}deg` }}
           role="timer"
-          aria-label={`${countdown} seconds remaining`}
+          aria-label={`${countdown} seconds remaining to lock in your answers`}
         >
+          <div className="team-timer-message">
+            <strong>LOCK IN YOUR ANSWERS</strong>
+            <span>before time runs out</span>
+          </div>
           <div className="team-timer-clock" aria-hidden="true">
             <i className="team-timer-clock-knob" />
             <strong>{countdown}</strong>
