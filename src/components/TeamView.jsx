@@ -1146,7 +1146,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   if (!snapshot.team.nameLocked) return <TeamNameScreen snapshot={snapshot} send={send} status={status} />;
   if (screen === "leaderboard") return <LeaderboardScreen snapshot={snapshot} status={status} />;
   if (screen === "final") return <FinalScreen snapshot={snapshot} status={status} />;
-  if (screen === "round_locked" || !question || (screen === "lobby" && !questions.length)) {
+  if (screen === "round_locked" || (snapshot.live?.timerActive && countdown <= 0) || !question || (screen === "lobby" && !questions.length)) {
     return <WaitingScreen snapshot={snapshot} status={status} />;
   }
 
