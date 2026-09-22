@@ -125,3 +125,28 @@
     min-height:44px;
   }
 }
+
+
+/* ---------- Approved question editor layout ---------- */
+/* Baked from the 390 × 844 question-page editor export. These selectors are
+   shared by text-entry and multiple-choice question screens. */
+
+@media(max-width:979px){
+  .live-team-page .team-question-team-name>strong{
+    width:221px;
+    max-width:none;
+    height:37px;
+    font-size:16px !important;
+    translate:54.5px 1px;
+  }
+
+  .live-team-page .team-question-progress{
+    translate:-106.8px 711px;
+  }
+
+  .live-team-page .team-current-round-title{
+    width:352px;
+    max-width:none;
+    translate:5px 0;
+  }
+}
