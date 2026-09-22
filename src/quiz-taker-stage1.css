@@ -427,7 +427,7 @@
   place-items:center;
   gap:6px;
   text-align:center;
-  animation:waitingFactCycleInsideBulb 8s ease both;
+  animation:waitingFactCycleInsideBulb 8s ease-in-out both;
 }
 
 .live-team-page .waiting-fact-copy span{
@@ -497,9 +497,15 @@
 }
 
 @keyframes waitingFactCycleInsideBulb{
-  0%,11%{opacity:0}
-  16%,72%{opacity:1}
-  80%,100%{opacity:0}
+  0%,7%{opacity:0}
+  11%,58%{opacity:1}
+  62%{opacity:0}
+  65%{opacity:1}
+  68%{opacity:0}
+  71%{opacity:1}
+  74%{opacity:0}
+  77%{opacity:1}
+  82%,100%{opacity:0}
 }
 
 @media(max-height:760px){
