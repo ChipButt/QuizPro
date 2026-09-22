@@ -469,6 +469,36 @@ function FinalScreen({ snapshot, status }) {
 export default function TeamView({ sessionCode, teamToken }) {
   useVisibleViewportHeight();
   const { snapshot, status, error, send } = useLiveTeamNetwork(sessionCode, teamToken);
+
+  useEffect(() => {
+    if (sessionCode !== "__PREVIEW__") return undefined;
+
+    const applyPreviewStyle = (values = {}) => {
+      const bulb = Number(values.bulbSize);
+      const factWidth = Number(values.factBoxWidth);
+      if (Number.isFinite(bulb)) {
+        document.documentElement.style.setProperty("--preview-waiting-bulb-size", `${Math.max(220, Math.min(460, bulb))}px`);
+      }
+      if (Number.isFinite(factWidth)) {
+        document.documentElement.style.setProperty("--preview-waiting-fact-width", `${Math.max(90, Math.min(260, factWidth))}px`);
+      }
+    };
+
+    const onMessage = (event) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type !== "quiz-preview-style") return;
+      applyPreviewStyle(event.data);
+    };
+
+    window.addEventListener("message", onMessage);
+    window.parent?.postMessage({ type: "quiz-preview-ready" }, window.location.origin);
+
+    return () => {
+      window.removeEventListener("message", onMessage);
+      document.documentElement.style.removeProperty("--preview-waiting-bulb-size");
+      document.documentElement.style.removeProperty("--preview-waiting-fact-width");
+    };
+  }, [sessionCode]);
   const [viewIndex, setViewIndex] = useState(0);
   const [drafts, setDrafts] = useState({});
   const [audioBlocked, setAudioBlocked] = useState(false);
