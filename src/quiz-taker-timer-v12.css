@@ -11,8 +11,9 @@
   min-height:0 !important;
   margin:0 !important;
   padding:10px 0 0 !important;
-  display:grid !important;
-  place-items:center !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
   border:0 !important;
   border-radius:0 !important;
   background:transparent !important;
@@ -31,8 +32,10 @@
 
 .live-team-page .team-timer-clock{
   position:relative;
-  width:88px;
-  height:88px;
+  height:calc(100% - 16px);
+  width:auto;
+  max-width:calc(100% - 10px);
+  aspect-ratio:1 / 1;
   box-sizing:border-box;
   display:grid;
   place-items:center;
@@ -105,19 +108,28 @@
   text-shadow:0 1px 0 rgba(255,255,255,.35);
 }
 
-@media(max-width:420px){
+@media(max-width:979px){
+  /* Approved timer layout from the 390 × 844 editor export. */
   .live-team-page .team-timer-overlay.team-timer-clock-wrap{
-    right:12px !important;
-    width:92px;
-  }
-
-  .live-team-page .team-timer-clock{
-    width:82px;
-    height:82px;
+    top:auto !important;
+    bottom:49px !important;
+    left:50% !important;
+    right:auto !important;
+    width:min(168px,calc(100vw - 24px));
+    height:154px;
+    transform:translateX(-50%);
   }
 
   .live-team-page .team-timer-clock strong{
-    font-size:28px !important;
+    font-size:clamp(24px,7.5vw,34px) !important;
+  }
+
+  .live-team-page .team-timer-overlay + .question-team-card{
+    translate:0 1px;
+  }
+
+  .live-team-page .team-timer-overlay + .question-team-card .team-question-team-name{
+    translate:-1px 0;
   }
 }
 
@@ -128,13 +140,14 @@
   cursor:grab;
 }
 
-/* When the editor resizes the outer timer box, scale the visible clock with it
-   rather than leaving the artwork at its original fixed size. */
+/* Resizing the outer timer box resizes the visible circular clock with it. */
 .quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap.quiz-layout-overridden .team-timer-clock{
-  width:calc(100% - 10px);
   height:calc(100% - 16px);
+  width:auto;
+  max-width:calc(100% - 10px);
   min-width:42px;
   min-height:42px;
+  aspect-ratio:1 / 1;
 }
 
 .quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap.quiz-layout-overridden .team-timer-clock strong{
