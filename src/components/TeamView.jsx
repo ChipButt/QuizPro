@@ -4,6 +4,7 @@ import {
   CheckCircle2,
   Crown,
   KeyRound,
+  Lightbulb,
   Lock,
   RotateCcw,
   Timer,
@@ -17,21 +18,25 @@ import { useLiveTeamNetwork } from "../hooks/useLiveTeamNetwork.js";
 import quizInLogo from "../assets/quiz-in-logo.png";
 
 function TeamChrome({ children, status, keyboardActive = false, rail = null, pageClass = "" }) {
+  const connectionLabel = status === "online"
+    ? "Connected to Quiz Host"
+    : status === "reconnecting"
+      ? "Reconnecting to Quiz Host"
+      : status === "connecting"
+        ? "Connecting to Quiz Host"
+        : "Quiz Host connection unavailable";
+
   return (
     <main className={`team-page live-team-page ${pageClass} ${keyboardActive ? "keyboard-active-page" : ""}`}>
       <div className={`phone-shell live-phone-shell ${pageClass} ${keyboardActive ? "keyboard-active" : ""}`}>
         <header className="phone-topbar live-phone-topbar">
-          <div className="brand-lockup">
-            <span className="brand-mark"><Crown size={19} /></span>
-            <strong>Quizmaster<span>Pro</span></strong>
-          </div>
-          <span className={`team-live-status ${status === "online" ? "online" : "offline"}`}>
-            {status === "online" ? <Wifi size={14} /> : <WifiOff size={14} />}
-            {status === "online" ? "Live" : status}
-          </span>
+          <img className="team-global-logo" src={quizInLogo} alt="Quiz In" />
         </header>
         {children}
         {rail}
+        <div className={`team-connection-note ${status === "online" ? "connected" : "not-connected"}`}>
+          {connectionLabel}
+        </div>
       </div>
     </main>
   );
@@ -210,14 +215,7 @@ function TeamNameScreen({ snapshot, send, status }) {
       <section className="team-name-stage">
         <header className="team-name-hero">
           <span className="team-name-doodle question-mark" aria-hidden="true">?</span>
-          <span className="team-name-doodle bulb-mark" aria-hidden="true">!</span>
-
           <img className="quiz-in-logo-asset" src={quizInLogo} alt="Quiz In" />
-
-          <span className={`team-name-live-status ${status === "online" ? "online" : "offline"}`}>
-            <i />
-            {status === "online" ? "LIVE" : status}
-          </span>
         </header>
 
         <div className="team-name-meta-grid">
@@ -286,7 +284,7 @@ function WaitingScreen({ snapshot, status }) {
     if (facts.length < 2) return undefined;
     const timer = window.setInterval(() => {
       setFactIndex((index) => (index + 1) % facts.length);
-    }, 7000);
+    }, 8000);
     return () => window.clearInterval(timer);
   }, [facts.length]);
 
@@ -312,7 +310,7 @@ function WaitingScreen({ snapshot, status }) {
       <section className="team-card live-team-card waiting-team-card">
         <div className="waiting-team-banner">
           <div className="waiting-team-name">
-            <span>TEAM</span>
+            <span>TEAM NAME</span>
             <strong>{snapshot.team.name}</strong>
           </div>
           <div className="waiting-team-meta">
@@ -352,9 +350,12 @@ function WaitingScreen({ snapshot, status }) {
         ) : null}
 
         {fact ? (
-          <div className="waiting-fun-fact" key={`${factIndex}-${fact}`}>
-            <span>FUN FACT</span>
-            <strong>{fact}</strong>
+          <div className="waiting-fun-fact waiting-fun-fact-v2" key={`${factIndex}-${fact}`}>
+            <Lightbulb className="waiting-fact-bulb" size={50} strokeWidth={2.2} />
+            <div className="waiting-fact-copy">
+              <span>FUN FACT</span>
+              <strong>{fact}</strong>
+            </div>
           </div>
         ) : null}
       </section>
