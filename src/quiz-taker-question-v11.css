@@ -26,6 +26,9 @@
 
 .live-team-page .team-question-team-name>span{
   flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  text-align:center;
   color:#0a56d8 !important;
   font-size:10px !important;
   line-height:1 !important;
@@ -36,6 +39,9 @@
 .live-team-page .team-question-team-name>strong{
   min-width:0;
   max-width:100%;
+  display:grid;
+  place-items:center;
+  text-align:center;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
