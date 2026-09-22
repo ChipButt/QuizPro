@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import HostShell from "./components/HostShell.jsx";
 import TeamView from "./components/TeamView.jsx";
 import { useGitHubQuizLibrary } from "./hooks/useGitHubQuizLibrary.js";
@@ -49,7 +49,18 @@ function TeamPreview({ stage }) {
   const FRAME_BORDER = 8;
   const FRAME_WIDTH = PHONE_WIDTH + FRAME_BORDER * 2;
   const FRAME_HEIGHT = PHONE_HEIGHT + FRAME_BORDER * 2;
+  const iframeRef = useRef(null);
   const [previewScale, setPreviewScale] = useState(1);
+  const [bulbSize, setBulbSize] = useState(360);
+  const [factBoxWidth, setFactBoxWidth] = useState(158);
+
+  const sendPreviewStyle = () => {
+    iframeRef.current?.contentWindow?.postMessage({
+      type: "quiz-preview-style",
+      bulbSize,
+      factBoxWidth,
+    }, window.location.origin);
+  };
 
   useEffect(() => {
     const updateScale = () => {
@@ -65,6 +76,10 @@ function TeamPreview({ stage }) {
     window.addEventListener("resize", updateScale);
     return () => window.removeEventListener("resize", updateScale);
   }, [FRAME_HEIGHT, FRAME_WIDTH]);
+
+  useEffect(() => {
+    sendPreviewStyle();
+  }, [bulbSize, factBoxWidth, stage]);
 
   return (
     <div style={{
@@ -105,6 +120,67 @@ function TeamPreview({ stage }) {
             marginTop: window.innerWidth >= 760 ? 6 : 0
           }}>Exit preview</a>
         </div>
+
+        {stage === "waiting" ? (
+          <div style={{
+            marginTop: 14,
+            paddingTop: 14,
+            borderTop: "1px solid #26324a",
+            display: "grid",
+            gap: 14
+          }}>
+            <div style={{ color: "#fff", font: "700 12px system-ui" }}>Waiting-page sizing</div>
+
+            <label style={{ display: "grid", gap: 6, color: "#d1d5db", font: "600 11px system-ui" }}>
+              <span style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                <span>Light bulb</span><strong style={{ color: "#f3c94b" }}>{bulbSize}px</strong>
+              </span>
+              <input
+                type="range"
+                min="240"
+                max="430"
+                step="5"
+                value={bulbSize}
+                onChange={(event) => setBulbSize(Number(event.target.value))}
+                style={{ width: "100%" }}
+              />
+            </label>
+
+            <label style={{ display: "grid", gap: 6, color: "#d1d5db", font: "600 11px system-ui" }}>
+              <span style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                <span>Fact box width</span><strong style={{ color: "#f3c94b" }}>{factBoxWidth}px</strong>
+              </span>
+              <input
+                type="range"
+                min="105"
+                max="230"
+                step="5"
+                value={factBoxWidth}
+                onChange={(event) => setFactBoxWidth(Number(event.target.value))}
+                style={{ width: "100%" }}
+              />
+            </label>
+
+            <button
+              type="button"
+              onClick={() => {
+                setBulbSize(360);
+                setFactBoxWidth(158);
+              }}
+              style={{
+                border: 0,
+                borderRadius: 8,
+                padding: "8px 10px",
+                background: "#26324a",
+                color: "#fff",
+                font: "700 11px system-ui",
+                cursor: "pointer"
+              }}
+            >
+              Reset sizes
+            </button>
+          </div>
+        ) : null}
       </aside>
 
       <div style={{
@@ -133,9 +209,11 @@ function TeamPreview({ stage }) {
             overflow: "hidden"
           }}>
             <iframe
+              ref={iframeRef}
               key={stage}
               title={`Quiz-taker preview: ${stage}`}
               src={`#/join/__PREVIEW__/${encodeURIComponent(stage)}`}
+              onLoad={sendPreviewStyle}
               style={{
                 display: "block",
                 width: PHONE_WIDTH,
