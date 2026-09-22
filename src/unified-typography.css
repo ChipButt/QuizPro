@@ -1,0 +1,45 @@
+/* Unified Quiz In typography
+   One font family across Quizmaker + Quiz Taker.
+   Sizes, weights and hierarchy can vary, but the typeface is intentionally uniform. */
+
+:root{
+  --quiz-font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+html,
+body,
+#root{
+  font-family:var(--quiz-font-family) !important;
+}
+
+#root *,
+#root *::before,
+#root *::after,
+button,
+input,
+textarea,
+select,
+option{
+  font-family:var(--quiz-font-family) !important;
+}
+
+button,
+input,
+textarea,
+select{
+  font:inherit;
+}
+
+/* Ensure old theme-specific display/serif rules cannot reappear. */
+h1,h2,h3,h4,h5,h6,
+p,span,strong,b,small,label,
+.waiting-next-round strong,
+.waiting-headline h1,
+.team-name-prompt h1,
+.team-name-prompt h1 em,
+.simple-page-heading h1,
+.planuf-live-heading h1,
+.simple-section-heading h2,
+.host-focus-question-card h2{
+  font-family:var(--quiz-font-family) !important;
+}
