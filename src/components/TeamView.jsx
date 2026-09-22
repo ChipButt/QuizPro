@@ -1021,7 +1021,11 @@ export default function TeamView({ sessionCode, teamToken }) {
   const viewIndexRef = useRef(0);
   const previousRoundIdRef = useRef("");
   const previousHostQuestionRef = useRef(-1);
-  const countdown = useCountdown(snapshot?.live?.timerEndsAt, snapshot?.live?.timerActive);
+  const countdownTick = useCountdown(snapshot?.live?.timerEndsAt, snapshot?.live?.timerActive);
+  const timerEndsAt = Number(snapshot?.live?.timerEndsAt ?? 0);
+  const countdown = snapshot?.live?.timerActive && countdownTick <= 0 && timerEndsAt > Date.now()
+    ? Math.max(0, Math.ceil((timerEndsAt - Date.now()) / 1000))
+    : countdownTick;
   const timerDurationSeconds = Math.max(1, Number(snapshot?.live?.timerDurationSeconds ?? countdown ?? 1));
   const timerProgress = Math.max(0, Math.min(1, (timerDurationSeconds - countdown) / timerDurationSeconds));
   const timerFillAngle = Math.round(timerProgress * 36000) / 100;
