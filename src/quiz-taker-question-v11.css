@@ -140,12 +140,18 @@
    shared by text-entry and multiple-choice question screens. */
 
 @media(max-width:979px){
+  .live-team-page .team-question-team-name>span{
+    width:220px;
+    max-width:none;
+    translate:55px 0;
+  }
+
   .live-team-page .team-question-team-name>strong{
-    width:221px;
+    width:220px;
     max-width:none;
     height:37px;
     font-size:16px !important;
-    translate:54.5px 1px;
+    translate:55px 0;
   }
 
   .live-team-page .team-question-progress{
