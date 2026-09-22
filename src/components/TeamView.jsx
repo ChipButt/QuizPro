@@ -7,7 +7,6 @@ import {
   Lightbulb,
   Lock,
   RotateCcw,
-  Timer,
   Trophy,
   Volume2,
   Wifi,
@@ -1023,6 +1022,9 @@ export default function TeamView({ sessionCode, teamToken }) {
   const previousRoundIdRef = useRef("");
   const previousHostQuestionRef = useRef(-1);
   const countdown = useCountdown(snapshot?.live?.timerEndsAt, snapshot?.live?.timerActive);
+  const timerDurationSeconds = Math.max(1, Number(snapshot?.live?.timerDurationSeconds ?? countdown ?? 1));
+  const timerProgress = Math.max(0, Math.min(1, (timerDurationSeconds - countdown) / timerDurationSeconds));
+  const timerFillAngle = Math.round(timerProgress * 36000) / 100;
 
   const questions = snapshot?.round?.questions ?? [];
   const hostQuestionIndex = Math.max(0, Number(snapshot?.live?.questionIndex ?? 0));
@@ -1180,10 +1182,16 @@ export default function TeamView({ sessionCode, teamToken }) {
   return (
     <TeamChrome status={status} rail={<LeaderboardRail leaderboard={snapshot.leaderboard} ownId={snapshot.team?.id} />}>
       {snapshot.live?.timerActive ? (
-        <div className={`team-timer-overlay ${countdown <= 10 ? "urgent" : ""}`}>
-          <Timer size={20} />
-          <span>ANSWERS LOCK IN</span>
-          <strong>{countdown}s</strong>
+        <div
+          className={`team-timer-overlay team-timer-clock-wrap ${countdown <= 10 ? "urgent" : ""}`}
+          style={{ "--timer-fill-angle": `${timerFillAngle}deg` }}
+          role="timer"
+          aria-label={`${countdown} seconds remaining`}
+        >
+          <div className="team-timer-clock" aria-hidden="true">
+            <i className="team-timer-clock-knob" />
+            <strong>{countdown}</strong>
+          </div>
         </div>
       ) : null}
 
