@@ -15,10 +15,10 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLiveTeamNetwork } from "../hooks/useLiveTeamNetwork.js";
 
-function TeamChrome({ children, status, keyboardActive = false, rail = null }) {
+function TeamChrome({ children, status, keyboardActive = false, rail = null, pageClass = "" }) {
   return (
-    <main className={`team-page live-team-page ${keyboardActive ? "keyboard-active-page" : ""}`}>
-      <div className={`phone-shell live-phone-shell ${keyboardActive ? "keyboard-active" : ""}`}>
+    <main className={`team-page live-team-page ${pageClass} ${keyboardActive ? "keyboard-active-page" : ""}`}>
+      <div className={`phone-shell live-phone-shell ${pageClass} ${keyboardActive ? "keyboard-active" : ""}`}>
         <header className="phone-topbar live-phone-topbar">
           <div className="brand-lockup">
             <span className="brand-mark"><Crown size={19} /></span>
@@ -125,33 +125,86 @@ function TeamNameScreen({ snapshot, send, status }) {
   }
 
   return (
-    <TeamChrome status={status}>
-      <section className="team-card live-team-card team-name-card">
-        <div className="team-ticket">
-          <span>YOUR TEAM</span>
-          <strong>Table {snapshot.team?.table || "—"}</strong>
-          <small>{snapshot.team?.players || 1} player{Number(snapshot.team?.players || 1) === 1 ? "" : "s"}</small>
+    <TeamChrome status={status} pageClass="team-name-screen">
+      <section className="team-name-stage">
+        <header className="team-name-hero">
+          <span className="team-name-doodle question-mark" aria-hidden="true">?</span>
+          <span className="team-name-doodle bulb-mark" aria-hidden="true">!</span>
+
+          <div className="quiz-in-wordmark" aria-label="Quiz In">
+            <span className="quiz-in-letters">QU</span>
+            <span className="quiz-in-person" aria-hidden="true">
+              <i className="quiz-person-head" />
+              <i className="quiz-person-body" />
+              <i className="quiz-person-arm left" />
+              <i className="quiz-person-arm right" />
+            </span>
+            <span className="quiz-in-letters">Z</span>
+            <span className="quiz-in-second-word">IN</span>
+          </div>
+
+          <span className={`team-name-live-status ${status === "online" ? "online" : "offline"}`}>
+            <i />
+            {status === "online" ? "LIVE" : status}
+          </span>
+        </header>
+
+        <div className="team-name-meta-grid">
+          <div className="team-name-meta-card">
+            <span className="team-meta-icon table" aria-hidden="true"><i /></span>
+            <div>
+              <span>TABLE</span>
+              <strong>{snapshot.team?.table || "—"}</strong>
+            </div>
+          </div>
+
+          <div className="team-name-meta-card">
+            <span className="team-meta-icon players" aria-hidden="true">
+              <i /><i /><i />
+            </span>
+            <div>
+              <span>PLAYERS</span>
+              <strong>{snapshot.team?.players || 1}</strong>
+            </div>
+          </div>
         </div>
-        <div className="team-name-burst">🎉</div>
-        <h1>Give your team a name</h1>
-        <form className="team-name-form" onSubmit={submit}>
-          <label htmlFor="team-name">TEAM NAME</label>
-          <input
-            id="team-name"
-            autoFocus
-            maxLength={60}
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="The Quizzy Rascals"
-          />
-          <button className="primary-button full-width" disabled={!name.trim()}>
-            <Lock size={16} /> Lock in team name
+
+        <div className="team-name-prompt">
+          <Crown className="team-name-crown" size={58} strokeWidth={2.7} />
+          <h1>
+            <span>Give your</span>
+            <span><em>team</em> a name</span>
+          </h1>
+          <p>Something clever? Funny?<br />Or just your usual suspects?</p>
+        </div>
+
+        <form className="team-name-form team-name-form-v2" onSubmit={submit}>
+          <label className="visually-hidden" htmlFor="team-name">Team name</label>
+          <div className="team-name-input-shell">
+            <input
+              id="team-name"
+              autoFocus
+              maxLength={60}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Team name..."
+            />
+            <span className="team-name-pencil" aria-hidden="true"><i /></span>
+          </div>
+          <button className="team-name-lock-button" disabled={!name.trim()}>
+            <Lock size={24} strokeWidth={3} />
+            <span>LOCK IN TEAM NAME</span>
           </button>
         </form>
+
+        <footer className="team-name-footer" aria-hidden="true">
+          <span>PEOPLE</span><i /><span>QUESTIONS</span><i /><span>GOOD TIMES</span>
+        </footer>
       </section>
     </TeamChrome>
   );
 }
+
 
 function WaitingScreen({ snapshot, status }) {
   const facts = snapshot.waitingFacts ?? [];
