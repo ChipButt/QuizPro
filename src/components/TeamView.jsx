@@ -354,12 +354,15 @@ function WaitingScreen({ snapshot, status }) {
   const totalRounds = Number(snapshot.quiz?.totalRounds ?? 0);
   const screen = snapshot.live?.teamScreen ?? "lobby";
   const beforeFirstRound = liveRoundIndex === 0 && Number(snapshot.live?.questionIndex ?? -1) < 0 && scores.length === 0;
-  const afterFinalRound = screen === "round_locked" && totalRounds > 0 && liveRoundIndex >= totalRounds - 1;
-  const heading = afterFinalRound
-    ? "The Results Will Be Announced Soon"
-    : beforeFirstRound
-      ? "The Quiz Will Begin Soon"
-      : "The Next Round Will Start Soon";
+  const awaitingAnswerReview = screen === "round_locked" && !snapshot.round?.reviewComplete;
+  const afterFinalRound = screen === "round_locked" && totalRounds > 0 && liveRoundIndex >= totalRounds - 1 && !awaitingAnswerReview;
+  const heading = awaitingAnswerReview
+    ? "The Answers Will Be Reviewed Soon"
+    : afterFinalRound
+      ? "The Results Will Be Announced Soon"
+      : beforeFirstRound
+        ? "The Quiz Will Begin Soon"
+        : "The Next Round Will Start Soon";
   const fact = facts.length ? facts[factIndex % facts.length] : "";
 
   return (
@@ -377,11 +380,11 @@ function WaitingScreen({ snapshot, status }) {
         </div>
 
         <div className="waiting-headline">
-          <span>{afterFinalRound ? "QUIZ COMPLETE" : beforeFirstRound ? "GET READY" : "BETWEEN ROUNDS"}</span>
+          <span>{awaitingAnswerReview ? "ROUND COMPLETE" : afterFinalRound ? "QUIZ COMPLETE" : beforeFirstRound ? "GET READY" : "BETWEEN ROUNDS"}</span>
           <h1>{heading}</h1>
         </div>
 
-        {!afterFinalRound && snapshot.nextRound ? (
+        {!afterFinalRound && !awaitingAnswerReview && snapshot.nextRound ? (
           <div className="waiting-next-round">
             <span>NEXT UP · ROUND {snapshot.nextRound.number}</span>
             <strong>{snapshot.nextRound.title}</strong>
