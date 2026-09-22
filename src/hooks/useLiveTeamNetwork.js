@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { WAITING_FACT_POOL } from "../data/waitingFacts.js";
 
 const PEERJS_CDN = "https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js";
 let peerPromise;
@@ -26,10 +27,7 @@ function previewSnapshot(stage) {
     type: "snapshot",
     team: { id: "preview-team", name: "The Quizzy Rascals", nameLocked: true, table: 7, players: 4 },
     quiz: { totalRounds: 5 },
-    waitingFacts: [
-      "A group of flamingos is called a flamboyance.",
-      "The shortest war in recorded history lasted less than an hour.",
-    ],
+    waitingFacts: WAITING_FACT_POOL.slice(0, 50).map((fact) => fact.text),
     roundScores: [],
     leaderboard: [
       { id: "team-2", name: "Universally Challenged", score: 38 },
