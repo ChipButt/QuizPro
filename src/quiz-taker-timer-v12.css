@@ -57,12 +57,14 @@
 }
 
 .live-team-page .team-timer-message span{
+  width:min(150px,100%);
   color:#41506a !important;
   font-size:9px !important;
-  line-height:1.05 !important;
+  line-height:1.12 !important;
   font-weight:800 !important;
   letter-spacing:.01em !important;
-  white-space:nowrap;
+  text-align:center;
+  white-space:normal;
 }
 
 .live-team-page .team-timer-clock{
