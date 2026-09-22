@@ -1,5 +1,10 @@
 /* Quiz Taker timer clock.
-   The red sector starts empty and fills clockwise as the selected timer elapses. */
+   The red sector starts empty and fills clockwise as the selected timer elapses.
+   Timer mode must not move the underlying question layout. */
+
+.live-team-page .question-team-card.timer-running{
+  padding-top:14px !important;
+}
 
 .live-team-page .team-timer-overlay.team-timer-clock-wrap{
   position:fixed !important;
@@ -12,8 +17,10 @@
   margin:0 !important;
   padding:10px 0 0 !important;
   display:flex !important;
+  flex-direction:column !important;
   align-items:center !important;
   justify-content:center !important;
+  gap:4px !important;
   border:0 !important;
   border-radius:0 !important;
   background:transparent !important;
@@ -30,9 +37,37 @@
   animation:none !important;
 }
 
+.live-team-page .team-timer-message{
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  gap:1px;
+  text-align:center;
+  line-height:1;
+}
+
+.live-team-page .team-timer-message strong{
+  margin:0 !important;
+  color:#031b3c !important;
+  font-size:11px !important;
+  line-height:1.05 !important;
+  font-weight:1000 !important;
+  letter-spacing:.035em !important;
+  white-space:nowrap;
+}
+
+.live-team-page .team-timer-message span{
+  color:#41506a !important;
+  font-size:9px !important;
+  line-height:1.05 !important;
+  font-weight:800 !important;
+  letter-spacing:.01em !important;
+  white-space:nowrap;
+}
+
 .live-team-page .team-timer-clock{
   position:relative;
-  height:calc(100% - 16px);
+  height:calc(100% - 38px);
   width:auto;
   max-width:calc(100% - 10px);
   aspect-ratio:1 / 1;
@@ -123,14 +158,6 @@
   .live-team-page .team-timer-clock strong{
     font-size:clamp(24px,7.5vw,34px) !important;
   }
-
-  .live-team-page .team-timer-overlay + .question-team-card{
-    translate:0 1px;
-  }
-
-  .live-team-page .team-timer-overlay + .question-team-card .team-question-team-name{
-    translate:-1px 0;
-  }
 }
 
 /* The timer stays non-interactive during a real quiz, but in preview/editor
@@ -142,7 +169,7 @@
 
 /* Resizing the outer timer box resizes the visible circular clock with it. */
 .quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap.quiz-layout-overridden .team-timer-clock{
-  height:calc(100% - 16px);
+  height:calc(100% - 38px);
   width:auto;
   max-width:calc(100% - 10px);
   min-width:42px;
