@@ -350,6 +350,7 @@ export function LiveRunnerPage({ state, updateState, setActivePage, network }) {
         ...current.live,
         timerActive: false,
         timerEndsAt: 0,
+        timerDurationSeconds: 0,
         timerRoundId: "",
         teamScreen: "round_locked",
         forceLockedRounds: { ...(current.live.forceLockedRounds ?? {}), [round.id]: true },
@@ -415,7 +416,6 @@ export function LiveRunnerPage({ state, updateState, setActivePage, network }) {
   }
 
   const locked = round ? isRoundForceLocked(state, round.id) : false;
-  const teamLocks = round ? Object.values(state.teamRoundLocks?.[round.id] ?? {}).filter(Boolean).length : 0;
   const finalRevealCount = Number(state.live.finalRevealCount ?? 0);
   const finalRevealOrder = leaderboard.slice().reverse().slice(0, finalRevealCount);
 
@@ -433,7 +433,7 @@ export function LiveRunnerPage({ state, updateState, setActivePage, network }) {
         <div><span>Session</span><strong>{state.live.sessionCode}</strong></div>
         <div><span>Teams</span><strong>{state.teams.length}</strong></div>
         <div><span>Team names locked</span><strong>{state.teams.filter((team) => team.nameLocked).length}</strong></div>
-        <div><span>Round locks</span><strong>{teamLocks}/{state.teams.length}</strong></div>
+        <div><span>Round status</span><strong>{locked ? "OVER" : "LIVE"}</strong></div>
         <button className="ghost-button compact" onClick={replaceSessionCode}><RefreshCcw size={14} /> New session code</button>
       </div>
 
@@ -453,7 +453,7 @@ export function LiveRunnerPage({ state, updateState, setActivePage, network }) {
           {round ? (
             <div className="round-control-summary">
               <strong>{round.title || `Round ${state.live.roundIndex + 1}`}</strong>
-              <span>{round.questions.length} questions · {locked ? "answers locked" : "answers editable"}</span>
+              <span>{round.questions.length} questions · {locked ? "round over" : "answers auto-saving"}</span>
             </div>
           ) : null}
         </Panel>
@@ -497,9 +497,9 @@ export function LiveRunnerPage({ state, updateState, setActivePage, network }) {
           )}
         </Panel>
 
-        <Panel title="End-of-round locking">
+        <Panel title="Round end">
           <div className="round-lock-controls">
-            <div className="round-lock-status"><span>Current state</span><strong>{locked ? "LOCKED" : "EDITABLE"}</strong><small>{teamLocks} of {state.teams.length} teams have voluntarily locked in.</small></div>
+            <div className="round-lock-status"><span>Current state</span><strong>{locked ? "ROUND OVER" : "IN PROGRESS"}</strong><small>Team answers save automatically while the round is running.</small></div>
             <div className="timer-start-row">
               <select value={timerChoice} onChange={(event) => setTimerChoice(Number(event.target.value))}>
                 <option value={30}>30 seconds</option><option value={60}>1 minute</option><option value={120}>2 minutes</option><option value={180}>3 minutes</option><option value={300}>5 minutes</option>
