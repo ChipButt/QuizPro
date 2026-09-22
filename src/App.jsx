@@ -44,12 +44,34 @@ function HostApp() {
 }
 
 function TeamPreview({ stage }) {
+  const PHONE_WIDTH = 390;
+  const PHONE_HEIGHT = 844;
+  const FRAME_BORDER = 8;
+  const FRAME_WIDTH = PHONE_WIDTH + FRAME_BORDER * 2;
+  const FRAME_HEIGHT = PHONE_HEIGHT + FRAME_BORDER * 2;
+  const [previewScale, setPreviewScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      const sidebarWidth = window.innerWidth >= 760 ? 220 : 0;
+      const horizontalChrome = window.innerWidth >= 760 ? 28 + 56 : 28;
+      const verticalChrome = window.innerWidth >= 760 ? 56 : 160;
+      const availableWidth = Math.max(260, window.innerWidth - sidebarWidth - horizontalChrome);
+      const availableHeight = Math.max(420, window.innerHeight - verticalChrome);
+      setPreviewScale(Math.min(1, availableWidth / FRAME_WIDTH, availableHeight / FRAME_HEIGHT));
+    };
+
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, [FRAME_HEIGHT, FRAME_WIDTH]);
+
   return (
     <div style={{
       minHeight: "100vh",
       background: "#111827",
       display: "grid",
-      gridTemplateColumns: "220px minmax(0, 1fr)",
+      gridTemplateColumns: window.innerWidth >= 760 ? "220px minmax(0, 1fr)" : "1fr",
       gap: 28,
       alignItems: "start",
       justifyContent: "center",
@@ -58,9 +80,9 @@ function TeamPreview({ stage }) {
       overflow: "auto"
     }}>
       <aside style={{
-        position: "sticky",
+        position: window.innerWidth >= 760 ? "sticky" : "static",
         top: 28,
-        width: 220,
+        width: window.innerWidth >= 760 ? 220 : "100%",
         padding: 14,
         borderRadius: 14,
         background: "#0b1220",
@@ -68,7 +90,7 @@ function TeamPreview({ stage }) {
         boxSizing: "border-box"
       }}>
         <div style={{ color: "#fff", font: "700 14px system-ui", margin: "2px 4px 12px" }}>Quiz-taker testing</div>
-        <div style={{ display: "grid", gap: 6 }}>
+        <div style={{ display: "grid", gap: 6, gridTemplateColumns: window.innerWidth >= 760 ? "1fr" : "repeat(2, minmax(0, 1fr))" }}>
           {PREVIEW_STAGES.map(([id, label]) => (
             <a key={id} href={`#/preview/${id}`} style={{
               color: id === stage ? "#111" : "#fff",
@@ -80,25 +102,59 @@ function TeamPreview({ stage }) {
           <a href="#/host" style={{
             color: "#fff", background: "#7b2d36", textDecoration: "none",
             padding: "9px 10px", borderRadius: 8, font: "600 12px system-ui",
-            marginTop: 6
+            marginTop: window.innerWidth >= 760 ? 6 : 0
           }}>Exit preview</a>
         </div>
       </aside>
 
       <div style={{
-        width: "100%",
-        maxWidth: 1100,
-        height: "calc(100vh - 56px)",
-        flex: "0 0 auto",
-        overflow: "hidden",
-        borderRadius: 28,
-        background: "#fff",
-        boxShadow: "0 14px 50px rgba(0,0,0,.5)",
-        border: "8px solid #05070b",
-        boxSizing: "border-box",
-        position: "relative"
+        minWidth: 0,
+        display: "grid",
+        justifyItems: "center",
+        alignItems: "start"
       }}>
-        <TeamView sessionCode="__PREVIEW__" teamToken={stage} />
+        <div style={{
+          width: FRAME_WIDTH * previewScale,
+          height: FRAME_HEIGHT * previewScale,
+          position: "relative"
+        }}>
+          <div style={{
+            width: FRAME_WIDTH,
+            height: FRAME_HEIGHT,
+            position: "absolute",
+            inset: 0,
+            transform: `scale(${previewScale})`,
+            transformOrigin: "top left",
+            borderRadius: 28,
+            background: "#05070b",
+            boxShadow: "0 14px 50px rgba(0,0,0,.5)",
+            padding: FRAME_BORDER,
+            boxSizing: "border-box",
+            overflow: "hidden"
+          }}>
+            <iframe
+              key={stage}
+              title={`Quiz-taker preview: ${stage}`}
+              src={`#/join/__PREVIEW__/${encodeURIComponent(stage)}`}
+              style={{
+                display: "block",
+                width: PHONE_WIDTH,
+                height: PHONE_HEIGHT,
+                border: 0,
+                borderRadius: 20,
+                background: "#fff"
+              }}
+            />
+          </div>
+        </div>
+        <div style={{
+          marginTop: 12,
+          color: "#9ca3af",
+          font: "600 11px system-ui",
+          letterSpacing: ".02em"
+        }}>
+          390 × 844 phone viewport · scaled to fit your browser
+        </div>
       </div>
     </div>
   );
