@@ -476,7 +476,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     const root = document.querySelector(".live-phone-shell");
     if (!root) return undefined;
 
-    const storageVersion = ["waiting", "team-name", "question", "multiple-choice", "timer", "answer-reveal", "locked"].includes(teamToken) ? "v2" : "v1";
+    const storageVersion = teamToken === "question" ? "v3" : ["waiting", "team-name", "multiple-choice", "timer", "answer-reveal", "locked"].includes(teamToken) ? "v2" : "v1";
     const storageKey = `quiz-layout-${storageVersion}:${teamToken || "preview"}`;
     let editEnabled = false;
     let selectedPath = "";
