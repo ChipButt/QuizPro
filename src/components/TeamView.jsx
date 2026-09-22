@@ -476,11 +476,19 @@ export default function TeamView({ sessionCode, teamToken }) {
     const applyPreviewStyle = (values = {}) => {
       const bulb = Number(values.bulbSize);
       const factWidth = Number(values.factBoxWidth);
+      const factX = Number(values.factBoxX);
+      const factY = Number(values.factBoxY);
       if (Number.isFinite(bulb)) {
         document.documentElement.style.setProperty("--preview-waiting-bulb-size", `${Math.max(220, Math.min(460, bulb))}px`);
       }
       if (Number.isFinite(factWidth)) {
         document.documentElement.style.setProperty("--preview-waiting-fact-width", `${Math.max(90, Math.min(260, factWidth))}px`);
+      }
+      if (Number.isFinite(factX)) {
+        document.documentElement.style.setProperty("--preview-waiting-fact-x", `${Math.max(10, Math.min(90, factX))}%`);
+      }
+      if (Number.isFinite(factY)) {
+        document.documentElement.style.setProperty("--preview-waiting-fact-y", `${Math.max(10, Math.min(90, factY))}%`);
       }
     };
 
@@ -490,13 +498,17 @@ export default function TeamView({ sessionCode, teamToken }) {
       applyPreviewStyle(event.data);
     };
 
+    document.documentElement.classList.add("quiz-preview-mode");
     window.addEventListener("message", onMessage);
     window.parent?.postMessage({ type: "quiz-preview-ready" }, window.location.origin);
 
     return () => {
       window.removeEventListener("message", onMessage);
+      document.documentElement.classList.remove("quiz-preview-mode");
       document.documentElement.style.removeProperty("--preview-waiting-bulb-size");
       document.documentElement.style.removeProperty("--preview-waiting-fact-width");
+      document.documentElement.style.removeProperty("--preview-waiting-fact-x");
+      document.documentElement.style.removeProperty("--preview-waiting-fact-y");
     };
   }, [sessionCode]);
   const [viewIndex, setViewIndex] = useState(0);
