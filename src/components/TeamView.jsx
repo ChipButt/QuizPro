@@ -480,6 +480,17 @@ export default function TeamView({ sessionCode, teamToken }) {
     let editEnabled = false;
     let selectedPath = "";
     let layout = {};
+    let dragState = null;
+
+    const overlay = document.createElement("div");
+    overlay.className = "quiz-layout-overlay";
+    overlay.innerHTML = `
+      <div class="quiz-layout-overlay-label"></div>
+      <button type="button" class="quiz-layout-handle quiz-layout-handle-x" data-resize="x" aria-label="Resize width"></button>
+      <button type="button" class="quiz-layout-handle quiz-layout-handle-y" data-resize="y" aria-label="Resize height"></button>
+      <button type="button" class="quiz-layout-handle quiz-layout-handle-both" data-resize="both" aria-label="Resize width and height"></button>
+    `;
+    document.body.appendChild(overlay);
 
     try {
       layout = JSON.parse(window.localStorage.getItem(storageKey) || "{}") || {};
@@ -536,6 +547,31 @@ export default function TeamView({ sessionCode, teamToken }) {
       });
     };
 
+    const updateOverlay = () => {
+      if (!editEnabled || !selectedPath) {
+        overlay.classList.remove("visible", "locked");
+        return;
+      }
+
+      const element = findByPath(selectedPath);
+      if (!element) {
+        overlay.classList.remove("visible", "locked");
+        return;
+      }
+
+      const rect = element.getBoundingClientRect();
+      const locked = Boolean(layout[selectedPath]?.locked);
+      overlay.style.left = `${rect.left}px`;
+      overlay.style.top = `${rect.top}px`;
+      overlay.style.width = `${Math.max(1, rect.width)}px`;
+      overlay.style.height = `${Math.max(1, rect.height)}px`;
+      overlay.classList.add("visible");
+      overlay.classList.toggle("locked", locked);
+
+      const label = overlay.querySelector(".quiz-layout-overlay-label");
+      if (label) label.textContent = locked ? "LOCKED" : "DRAG TO MOVE";
+    };
+
     const applyRecord = (element, record = {}) => {
       if (!element) return;
       element.style.setProperty("--layout-editor-x", `${Number(record.x || 0)}px`);
@@ -580,6 +616,7 @@ export default function TeamView({ sessionCode, teamToken }) {
           if (layout[selectedPath]?.locked) selected.classList.add("quiz-layout-locked");
         }
       }
+      updateOverlay();
     };
 
     const readValues = (element, path) => {
@@ -618,13 +655,99 @@ export default function TeamView({ sessionCode, teamToken }) {
       element.classList.add("quiz-layout-selected");
       if (layout[selectedPath]?.locked) element.classList.add("quiz-layout-locked");
       sendSelection(element, selectedPath);
+      updateOverlay();
     };
 
-    const onEditorClick = (event) => {
-      if (!editEnabled) return;
+    const beginDrag = (event, mode, path, element) => {
+      const current = layout[path] || {};
+      if (current.locked) return;
+
+      const values = readValues(element, path);
+      dragState = {
+        mode,
+        path,
+        startX: event.clientX,
+        startY: event.clientY,
+        x: values.x,
+        y: values.y,
+        width: values.width,
+        height: values.height,
+      };
+      document.documentElement.classList.add("quiz-layout-dragging");
       event.preventDefault();
       event.stopPropagation();
-      selectElement(event.target);
+    };
+
+    const onEditorPointerDown = (event) => {
+      if (!editEnabled || event.button !== 0) return;
+      let element = event.target instanceof Element ? event.target : null;
+      if (!element || !root.contains(element) || element === root) return;
+      if (element.closest("svg")) element = element.closest("svg");
+
+      selectElement(element);
+      if (layout[selectedPath]?.locked) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      beginDrag(event, "move", selectedPath, element);
+    };
+
+    const onPointerMove = (event) => {
+      if (!dragState) return;
+      const element = findByPath(dragState.path);
+      if (!element) return;
+
+      const dx = event.clientX - dragState.startX;
+      const dy = event.clientY - dragState.startY;
+      const current = layout[dragState.path] || {};
+
+      if (dragState.mode === "move") {
+        layout[dragState.path] = {
+          ...current,
+          x: Math.round(dragState.x + dx),
+          y: Math.round(dragState.y + dy),
+        };
+      } else if (dragState.mode === "x") {
+        layout[dragState.path] = {
+          ...current,
+          width: Math.max(18, Math.round(dragState.width + dx)),
+        };
+      } else if (dragState.mode === "y") {
+        layout[dragState.path] = {
+          ...current,
+          height: Math.max(12, Math.round(dragState.height + dy)),
+        };
+      } else {
+        layout[dragState.path] = {
+          ...current,
+          width: Math.max(18, Math.round(dragState.width + dx)),
+          height: Math.max(12, Math.round(dragState.height + dy)),
+        };
+      }
+
+      applyRecord(element, layout[dragState.path]);
+      updateOverlay();
+      sendSelection(element, dragState.path);
+      event.preventDefault();
+    };
+
+    const onPointerUp = () => {
+      if (!dragState) return;
+      saveLayout();
+      const element = findByPath(dragState.path);
+      if (element) sendSelection(element, dragState.path);
+      dragState = null;
+      document.documentElement.classList.remove("quiz-layout-dragging");
+      updateOverlay();
+    };
+
+    const onHandlePointerDown = (event) => {
+      if (!editEnabled || !selectedPath || event.button !== 0) return;
+      const element = findByPath(selectedPath);
+      if (!element || layout[selectedPath]?.locked) return;
+      const mode = event.currentTarget?.dataset?.resize || "both";
+      beginDrag(event, mode, selectedPath, element);
     };
 
     const onMessage = (event) => {
@@ -651,7 +774,11 @@ export default function TeamView({ sessionCode, teamToken }) {
         if (!editEnabled) {
           clearSelectionClasses();
           selectedPath = "";
+          dragState = null;
+          overlay.classList.remove("visible", "locked");
           window.parent?.postMessage({ type: "quiz-layout-selection-cleared" }, window.location.origin);
+        } else {
+          updateOverlay();
         }
         return;
       }
@@ -670,6 +797,7 @@ export default function TeamView({ sessionCode, teamToken }) {
         saveLayout();
         const element = findByPath(selectedPath);
         applyRecord(element, layout[selectedPath]);
+        updateOverlay();
         if (element) sendSelection(element, selectedPath);
         return;
       }
@@ -679,6 +807,7 @@ export default function TeamView({ sessionCode, teamToken }) {
         saveLayout();
         const element = findByPath(selectedPath);
         element?.classList.add("quiz-layout-locked");
+        updateOverlay();
         if (element) sendSelection(element, selectedPath);
         return;
       }
@@ -688,6 +817,7 @@ export default function TeamView({ sessionCode, teamToken }) {
         saveLayout();
         const element = findByPath(selectedPath);
         element?.classList.remove("quiz-layout-locked");
+        updateOverlay();
         if (element) sendSelection(element, selectedPath);
         return;
       }
@@ -750,7 +880,14 @@ export default function TeamView({ sessionCode, teamToken }) {
     };
 
     document.documentElement.classList.add("quiz-preview-mode");
-    root.addEventListener("click", onEditorClick, true);
+    root.addEventListener("pointerdown", onEditorPointerDown, true);
+    window.addEventListener("pointermove", onPointerMove, true);
+    window.addEventListener("pointerup", onPointerUp, true);
+    window.addEventListener("resize", updateOverlay);
+    window.addEventListener("scroll", updateOverlay, true);
+    overlay.querySelectorAll(".quiz-layout-handle").forEach((handle) => {
+      handle.addEventListener("pointerdown", onHandlePointerDown);
+    });
     window.addEventListener("message", onMessage);
 
     const observer = new MutationObserver(() => window.requestAnimationFrame(applyAll));
@@ -761,9 +898,17 @@ export default function TeamView({ sessionCode, teamToken }) {
 
     return () => {
       observer.disconnect();
-      root.removeEventListener("click", onEditorClick, true);
+      root.removeEventListener("pointerdown", onEditorPointerDown, true);
+      window.removeEventListener("pointermove", onPointerMove, true);
+      window.removeEventListener("pointerup", onPointerUp, true);
+      window.removeEventListener("resize", updateOverlay);
+      window.removeEventListener("scroll", updateOverlay, true);
+      overlay.querySelectorAll(".quiz-layout-handle").forEach((handle) => {
+        handle.removeEventListener("pointerdown", onHandlePointerDown);
+      });
       window.removeEventListener("message", onMessage);
-      document.documentElement.classList.remove("quiz-preview-mode", "quiz-layout-editing");
+      overlay.remove();
+      document.documentElement.classList.remove("quiz-preview-mode", "quiz-layout-editing", "quiz-layout-dragging");
       clearSelectionClasses();
       document.documentElement.style.removeProperty("--preview-waiting-bulb-size");
       document.documentElement.style.removeProperty("--preview-waiting-fact-width");
