@@ -412,8 +412,8 @@
 
 .live-team-page .waiting-fact-copy{
   position:absolute;
-  left:50%;
-  top:39%;
+  left:var(--preview-waiting-fact-x,50%);
+  top:var(--preview-waiting-fact-y,39%);
   z-index:2;
   width:min(var(--preview-waiting-fact-width,158px),62vw);
   transform:translate(-50%,-50%);
@@ -533,4 +533,13 @@
     opacity:1 !important;
     transform:translate(-50%,-50%) !important;
   }
+}
+
+
+/* Preview editor guide: visible only inside the Quiz Taker preview iframe. */
+.quiz-preview-mode .live-team-page .waiting-fact-copy{
+  outline:1px dashed rgba(124,58,237,.65);
+  outline-offset:4px;
+  border-radius:8px;
+  background:rgba(255,255,255,.16);
 }
