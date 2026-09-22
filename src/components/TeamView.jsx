@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLiveTeamNetwork } from "../hooks/useLiveTeamNetwork.js";
-import quizInLogo from "../assets/quiz-in-logo.png";
+const quizInLogo = "/QuizPro/quiz-in-logo-transparent.png";
 
 function TeamChrome({ children, status, keyboardActive = false, rail = null, pageClass = "" }) {
   const connectionLabel = status === "online"
@@ -351,10 +351,12 @@ function WaitingScreen({ snapshot, status }) {
 
         {fact ? (
           <div className="waiting-fun-fact waiting-fun-fact-v2" key={`${factIndex}-${fact}`}>
-            <Lightbulb className="waiting-fact-bulb" size={50} strokeWidth={2.2} />
-            <div className="waiting-fact-copy">
-              <span>FUN FACT</span>
-              <strong>{fact}</strong>
+            <div className="waiting-fact-bulb-stage">
+              <Lightbulb className="waiting-fact-bulb" strokeWidth={2.15} />
+              <div className="waiting-fact-copy">
+                <span>FUN FACT</span>
+                <strong>{fact}</strong>
+              </div>
             </div>
           </div>
         ) : null}
