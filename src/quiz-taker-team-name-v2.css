@@ -1,0 +1,635 @@
+/* Team name screen v2.
+   Uses the same CSS-first, tactile game-show system as Base44's v10 styling,
+   but follows the approved Quiz In team-name layout more closely. */
+
+.team-page.live-team-page.team-name-screen{
+  --tn-navy:#031b3c;
+  --tn-navy-2:#062654;
+  --tn-blue:#168cff;
+  --tn-blue-deep:#0a56d8;
+  --tn-cyan:#14c7ff;
+  --tn-gold:#ffd429;
+  --tn-gold-deep:#d49f00;
+  --tn-copy:#c7d7ff;
+  min-height:100dvh;
+  overflow:auto;
+  background:
+    radial-gradient(circle at 50% 2%,rgba(26,105,238,.34),transparent 28%),
+    radial-gradient(circle at 50% 52%,rgba(0,145,255,.10),transparent 38%),
+    linear-gradient(180deg,#041a39 0%,#02162f 56%,#031b3c 100%) !important;
+  color:#fff;
+}
+
+.team-page.live-team-page.team-name-screen::before{
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(135deg,transparent 0 10%,rgba(24,77,163,.12) 10% 13%,transparent 13% 36%,rgba(24,77,163,.10) 36% 39%,transparent 39% 70%,rgba(24,77,163,.10) 70% 73%,transparent 73%),
+    linear-gradient(45deg,transparent 0 23%,rgba(20,71,150,.08) 23% 26%,transparent 26% 63%,rgba(20,71,150,.08) 63% 66%,transparent 66%);
+  opacity:1;
+}
+
+.team-name-screen.live-phone-shell{
+  width:100% !important;
+  min-height:100dvh;
+  height:100dvh;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:block !important;
+  overflow:auto !important;
+  background:transparent !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+}
+
+.team-name-screen .live-phone-topbar{
+  display:none !important;
+}
+
+.team-name-stage{
+  position:relative;
+  z-index:1;
+  width:min(100%,430px);
+  min-height:100dvh;
+  margin:0 auto;
+  padding:14px 16px 16px;
+  display:grid;
+  grid-template-rows:auto auto minmax(0,1fr) auto auto;
+  gap:14px;
+  box-sizing:border-box;
+}
+
+/* ---------- Logo / header ---------- */
+
+.team-name-hero{
+  position:relative;
+  min-height:142px;
+  display:grid;
+  place-items:center;
+  padding:8px 38px 0;
+  border-radius:0 0 26px 26px;
+}
+
+.team-name-hero::after{
+  content:"";
+  position:absolute;
+  left:1%;
+  right:1%;
+  bottom:0;
+  height:3px;
+  border-radius:999px;
+  background:linear-gradient(90deg,transparent,var(--tn-blue),var(--tn-cyan),var(--tn-blue),transparent);
+  box-shadow:0 0 16px rgba(20,199,255,.75);
+}
+
+.quiz-in-wordmark{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  transform:translateY(-2px);
+  filter:drop-shadow(0 8px 0 rgba(2,35,89,.75));
+  white-space:nowrap;
+}
+
+.quiz-in-letters,
+.quiz-in-second-word{
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:clamp(48px,15vw,66px);
+  line-height:.9;
+  font-weight:1000;
+  letter-spacing:-.085em;
+  color:#fff;
+  text-shadow:
+    0 2px 0 #d6eaff,
+    0 4px 0 #7dafff;
+}
+
+.quiz-in-second-word{
+  margin-left:8px;
+  color:var(--tn-gold);
+  text-shadow:
+    0 2px 0 #fff09a,
+    0 4px 0 #d6a400;
+}
+
+.quiz-in-person{
+  position:relative;
+  width:34px;
+  height:66px;
+  margin:0 2px -2px 0;
+  flex:0 0 auto;
+}
+
+.quiz-in-person::before,
+.quiz-in-person::after{
+  content:"";
+  position:absolute;
+  top:-7px;
+  width:4px;
+  height:13px;
+  border-radius:999px;
+  background:var(--tn-gold);
+}
+
+.quiz-in-person::before{left:4px;transform:rotate(-36deg)}
+.quiz-in-person::after{right:4px;transform:rotate(36deg)}
+
+.quiz-person-head{
+  position:absolute;
+  top:3px;
+  left:50%;
+  width:20px;
+  height:20px;
+  margin-left:-10px;
+  border-radius:50%;
+  background:linear-gradient(180deg,#ffe86c,var(--tn-gold));
+  box-shadow:0 3px 0 var(--tn-gold-deep),0 0 14px rgba(255,212,41,.38);
+}
+
+.quiz-person-body{
+  position:absolute;
+  top:27px;
+  left:50%;
+  width:18px;
+  height:34px;
+  margin-left:-9px;
+  border-radius:7px 7px 9px 9px;
+  background:linear-gradient(180deg,#ffe45b,var(--tn-gold));
+  box-shadow:0 3px 0 var(--tn-gold-deep);
+}
+
+.quiz-person-arm{
+  position:absolute;
+  top:33px;
+  width:7px;
+  height:24px;
+  border-radius:999px;
+  background:var(--tn-gold);
+  transform-origin:top center;
+}
+
+.quiz-person-arm.left{left:4px;transform:rotate(8deg)}
+.quiz-person-arm.right{right:4px;transform:rotate(-8deg)}
+
+.team-name-live-status{
+  position:absolute;
+  right:2px;
+  top:4px;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 8px;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;
+  background:rgba(2,21,50,.52);
+  color:#d6e7ff;
+  font-size:8px;
+  font-weight:950;
+  letter-spacing:.09em;
+  backdrop-filter:blur(8px);
+}
+
+.team-name-live-status i{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#f472b6;
+}
+
+.team-name-live-status.online i{
+  background:#61e6aa;
+  box-shadow:0 0 9px rgba(97,230,170,.75);
+}
+
+.team-name-doodle{
+  position:absolute;
+  color:var(--tn-blue);
+  font-family:system-ui,sans-serif;
+  font-weight:1000;
+  line-height:1;
+  opacity:.82;
+  text-shadow:0 0 16px rgba(22,140,255,.24);
+}
+
+.team-name-doodle.question-mark{
+  left:2px;
+  top:19px;
+  font-size:56px;
+  transform:rotate(-10deg);
+}
+
+.team-name-doodle.bulb-mark{
+  right:8px;
+  bottom:18px;
+  width:36px;
+  height:44px;
+  display:grid;
+  place-items:center;
+  border:5px solid var(--tn-blue-deep);
+  border-radius:50% 50% 44% 44%;
+  color:var(--tn-gold);
+  font-size:22px;
+  transform:rotate(10deg);
+}
+
+/* ---------- Table + players ---------- */
+
+.team-name-meta-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.team-name-meta-card{
+  min-height:104px;
+  display:grid;
+  grid-template-columns:58px minmax(0,1fr);
+  align-items:center;
+  gap:9px;
+  padding:13px 13px;
+  border:2px solid rgba(22,140,255,.82);
+  border-radius:21px;
+  background:linear-gradient(145deg,rgba(6,34,73,.94),rgba(3,23,52,.96));
+  box-shadow:
+    inset 0 0 0 1px rgba(82,174,255,.13),
+    0 6px 0 rgba(0,65,169,.42),
+    0 12px 25px rgba(0,0,0,.15);
+}
+
+.team-name-meta-card>div{
+  min-width:0;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:6px;
+}
+
+.team-name-meta-card>div>span{
+  color:#c9d8ff;
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:.04em;
+  text-align:center;
+}
+
+.team-name-meta-card>div>strong{
+  min-height:44px;
+  display:grid;
+  place-items:center;
+  border:2px solid rgba(40,139,255,.58);
+  border-radius:12px;
+  background:rgba(9,45,91,.62);
+  color:#fff;
+  font-size:30px;
+  line-height:1;
+  font-weight:1000;
+  box-shadow:inset 0 0 12px rgba(22,140,255,.08);
+}
+
+.team-meta-icon{
+  position:relative;
+  width:56px;
+  height:56px;
+  display:block;
+}
+
+.team-meta-icon.table::before{
+  content:"";
+  position:absolute;
+  left:6px;
+  top:11px;
+  width:44px;
+  height:20px;
+  border-radius:50%;
+  background:linear-gradient(180deg,#20c1ff,#0589f6);
+  border:2px solid #52d5ff;
+  box-shadow:0 4px 0 #0870c7;
+}
+
+.team-meta-icon.table::after{
+  content:"";
+  position:absolute;
+  left:13px;
+  top:29px;
+  width:6px;
+  height:24px;
+  border-radius:999px;
+  background:#1bb8ff;
+  box-shadow:25px 0 0 #1bb8ff;
+  transform:skew(-5deg);
+}
+
+.team-meta-icon.players i{
+  position:absolute;
+  bottom:8px;
+  width:21px;
+  height:27px;
+  border-radius:12px 12px 7px 7px;
+  background:linear-gradient(180deg,#1ca9ff,#0877ef);
+}
+
+.team-meta-icon.players i::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:-15px;
+  width:18px;
+  height:18px;
+  margin-left:-9px;
+  border-radius:50%;
+  background:#1599ff;
+}
+
+.team-meta-icon.players i:nth-child(1){left:0;transform:scale(.76);transform-origin:bottom}
+.team-meta-icon.players i:nth-child(2){left:18px;z-index:2}
+.team-meta-icon.players i:nth-child(3){right:-3px;transform:scale(.76);transform-origin:bottom}
+
+/* ---------- Prompt ---------- */
+
+.team-name-prompt{
+  position:relative;
+  min-height:245px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:12px 8px 8px;
+}
+
+.team-name-crown{
+  margin-bottom:3px;
+  color:var(--tn-gold);
+  filter:drop-shadow(0 5px 0 rgba(182,126,0,.35)) drop-shadow(0 0 10px rgba(255,212,41,.18));
+  transform:rotate(-2deg);
+}
+
+.team-name-prompt::before,
+.team-name-prompt::after{
+  content:"★";
+  position:absolute;
+  top:48px;
+  font-size:24px;
+  color:var(--tn-gold);
+  text-shadow:0 0 10px rgba(255,212,41,.2);
+}
+
+.team-name-prompt::before{left:18px;transform:rotate(-18deg)}
+.team-name-prompt::after{right:18px;color:var(--tn-blue);transform:rotate(16deg)}
+
+.team-name-prompt h1{
+  margin:0 !important;
+  display:grid;
+  gap:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif !important;
+  font-size:clamp(43px,13.4vw,58px) !important;
+  line-height:.9 !important;
+  letter-spacing:-.075em !important;
+  font-weight:1000 !important;
+  text-transform:uppercase;
+  color:#fff !important;
+  transform:rotate(-1deg);
+  text-shadow:
+    0 3px 0 #8ec3ff,
+    0 6px 0 #0a5fd0,
+    0 0 20px rgba(20,140,255,.10);
+}
+
+.team-name-prompt h1 span:last-child{
+  transform:translateY(-1px);
+}
+
+.team-name-prompt h1 em{
+  color:var(--tn-gold);
+  font-style:normal;
+  text-shadow:
+    0 3px 0 #e0a500,
+    0 6px 0 #b97800;
+}
+
+.team-name-prompt p{
+  margin:13px 0 0;
+  color:var(--tn-copy);
+  font-size:15px;
+  line-height:1.35;
+  font-weight:550;
+}
+
+.team-name-prompt p::after{
+  content:"";
+  display:block;
+  width:54%;
+  height:5px;
+  margin:10px auto 0;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--tn-blue-deep),var(--tn-blue),var(--tn-cyan));
+  transform:rotate(-3deg);
+}
+
+/* ---------- Input / button ---------- */
+
+.team-name-form-v2{
+  display:grid;
+  gap:12px;
+}
+
+.visually-hidden{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  padding:0 !important;
+  margin:-1px !important;
+  overflow:hidden !important;
+  clip:rect(0,0,0,0) !important;
+  white-space:nowrap !important;
+  border:0 !important;
+}
+
+.team-name-input-shell{
+  position:relative;
+}
+
+.team-name-form-v2 .team-name-input-shell input{
+  width:100%;
+  min-height:64px !important;
+  padding:0 64px 0 18px !important;
+  border:3px solid var(--tn-blue) !important;
+  border-radius:17px !important;
+  background:linear-gradient(180deg,rgba(5,34,74,.96),rgba(2,24,53,.98)) !important;
+  color:#fff !important;
+  font-size:21px !important;
+  font-weight:800 !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(81,180,255,.16),
+    0 6px 0 rgba(0,67,161,.48),
+    0 0 20px rgba(17,135,255,.12) !important;
+}
+
+.team-name-form-v2 input::placeholder{
+  color:#7898ca !important;
+  opacity:1;
+}
+
+.team-name-form-v2 input:focus{
+  border-color:var(--tn-cyan) !important;
+  outline:4px solid rgba(255,212,41,.75) !important;
+  outline-offset:3px;
+  box-shadow:0 6px 0 rgba(0,67,161,.48),0 0 24px rgba(20,199,255,.28) !important;
+}
+
+.team-name-pencil{
+  position:absolute;
+  right:22px;
+  top:50%;
+  width:23px;
+  height:23px;
+  transform:translateY(-50%) rotate(-45deg);
+  pointer-events:none;
+}
+
+.team-name-pencil::before{
+  content:"";
+  position:absolute;
+  left:7px;
+  top:0;
+  width:9px;
+  height:18px;
+  border-radius:3px 3px 1px 1px;
+  background:linear-gradient(90deg,#d7e6ff,#fff,#9fbde7);
+  box-shadow:0 0 0 2px rgba(111,165,230,.18);
+}
+
+.team-name-pencil::after{
+  content:"";
+  position:absolute;
+  left:7px;
+  bottom:0;
+  width:0;
+  height:0;
+  border-left:5px solid transparent;
+  border-right:5px solid transparent;
+  border-top:8px solid #b8d4ef;
+}
+
+.team-name-lock-button{
+  min-height:82px;
+  width:84%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  border:2px solid #fff6a3 !important;
+  border-radius:999px !important;
+  background:linear-gradient(180deg,#ffe554 0%,var(--tn-gold) 58%,#ffc50e 100%) !important;
+  color:#042452 !important;
+  font-size:16px !important;
+  font-weight:1000 !important;
+  letter-spacing:.015em;
+  box-shadow:
+    inset 0 4px 0 rgba(255,255,255,.42),
+    0 7px 0 #b57b00,
+    0 14px 30px rgba(0,0,0,.22),
+    0 0 18px rgba(255,212,41,.16) !important;
+}
+
+.team-name-lock-button:not(:disabled):hover{
+  filter:brightness(1.05);
+  transform:translateY(-2px);
+}
+
+.team-name-lock-button:not(:disabled):active{
+  transform:translateY(5px) !important;
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.30),0 2px 0 #b57b00 !important;
+}
+
+.team-name-lock-button:disabled{
+  opacity:.58;
+  filter:saturate(.72);
+  cursor:not-allowed;
+}
+
+/* ---------- Footer ---------- */
+
+.team-name-footer{
+  min-height:26px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  color:#c9d8ff;
+  font-size:10px;
+  font-weight:850;
+  letter-spacing:.08em;
+  white-space:nowrap;
+}
+
+.team-name-footer i{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--tn-blue);
+  box-shadow:0 0 8px rgba(22,140,255,.45);
+}
+
+/* ---------- Short phones ---------- */
+
+@media(max-height:760px){
+  .team-name-stage{
+    gap:9px;
+    padding-top:8px;
+    padding-bottom:10px;
+  }
+
+  .team-name-hero{min-height:112px}
+  .quiz-in-letters,.quiz-in-second-word{font-size:48px}
+  .quiz-in-person{height:58px;transform:scale(.88)}
+
+  .team-name-meta-card{
+    min-height:88px;
+    padding:9px 10px;
+    grid-template-columns:48px minmax(0,1fr);
+  }
+
+  .team-meta-icon{transform:scale(.84);transform-origin:center}
+
+  .team-name-prompt{min-height:190px;padding:3px 6px}
+  .team-name-crown{width:46px;height:46px}
+  .team-name-prompt h1{font-size:42px !important}
+  .team-name-prompt p{margin-top:8px;font-size:13px}
+  .team-name-prompt p::after{margin-top:6px}
+
+  .team-name-form-v2{gap:9px}
+  .team-name-form-v2 .team-name-input-shell input{min-height:56px !important}
+  .team-name-lock-button{min-height:70px}
+
+  .team-name-footer{font-size:9px}
+}
+
+/* Keep the team-name design phone-like on desktop join links too. */
+@media(min-width:980px){
+  .team-name-screen.live-phone-shell{
+    width:min(430px,100%) !important;
+    max-width:430px !important;
+    min-height:100dvh;
+    grid-template-columns:1fr !important;
+    grid-template-rows:1fr !important;
+    padding:0 !important;
+  }
+
+  .team-page.live-team-page.team-name-screen{
+    display:grid;
+    place-items:start center;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .team-name-screen *,
+  .team-name-screen *::before,
+  .team-name-screen *::after{
+    transition:none !important;
+    animation:none !important;
+  }
+}
