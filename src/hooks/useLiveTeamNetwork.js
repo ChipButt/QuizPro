@@ -70,6 +70,7 @@ function previewSnapshot(stage) {
     questionIndex: 0,
     timerActive: stage === "timer",
     timerEndsAt: stage === "timer" ? Date.now() + 45000 : null,
+    timerDurationSeconds: stage === "timer" ? 45 : 0,
   };
   base.round = {
     id: "preview-round",
