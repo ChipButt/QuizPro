@@ -9,7 +9,7 @@
   display:flex !important;
   align-items:center !important;
   justify-content:center !important;
-  background:rgba(76,29,149,.28) !important;
+  background:rgba(6,38,84,.45) !important;
 }
 
 .live-team-page .team-global-logo{
@@ -208,7 +208,7 @@
 }
 
 .live-team-page .waiting-fact-copy span{
-  color:#7c3aed !important;
+  color:#0a56d8 !important;
   font-size:9px !important;
   line-height:1 !important;
   font-weight:950 !important;
@@ -218,7 +218,7 @@
 
 .live-team-page .waiting-fact-copy strong{
   max-width:330px;
-  color:#35295d !important;
+  color:#031b3c !important;
   font-size:clamp(15px,4vw,18px) !important;
   line-height:1.35 !important;
   font-weight:800 !important;
