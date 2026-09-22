@@ -329,3 +329,221 @@
     color:#ffd429 !important;
   }
 }
+
+
+/* ---------- Stage 1.1 corrections ---------- */
+
+/* Team Name must remain one locked phone screen: no extra top strip and no scrolling. */
+.team-page.live-team-page.team-name-screen{
+  height:100dvh !important;
+  min-height:100dvh !important;
+  overflow:hidden !important;
+}
+
+.team-name-screen.live-phone-shell{
+  height:100dvh !important;
+  min-height:100dvh !important;
+  overflow:hidden !important;
+}
+
+.team-name-screen .live-phone-topbar{
+  display:none !important;
+  min-height:0 !important;
+  height:0 !important;
+  padding:0 !important;
+  border:0 !important;
+}
+
+.team-name-screen .team-name-stage{
+  height:100dvh !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+  padding-bottom:25px !important;
+}
+
+/* Kill the legacy pseudo-label which was causing TEAM NAME to appear twice. */
+.live-team-page .waiting-team-name>span::after{
+  content:none !important;
+  display:none !important;
+}
+
+/* The pre-quiz card keeps the fact area as the whole remaining white section. */
+.live-team-page .waiting-team-card{
+  display:grid !important;
+  grid-template-rows:auto auto auto minmax(230px,1fr) !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+}
+
+.live-team-page .waiting-fun-fact.waiting-fun-fact-v2{
+  grid-row:4 !important;
+  align-self:stretch !important;
+  justify-self:stretch !important;
+  width:100% !important;
+  height:100% !important;
+  min-height:230px !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:grid !important;
+  place-items:center !important;
+  overflow:hidden !important;
+}
+
+.live-team-page .waiting-fact-bulb-stage{
+  position:relative;
+  width:min(100%,310px);
+  height:100%;
+  min-height:230px;
+  display:grid;
+  place-items:center;
+}
+
+.live-team-page .waiting-fact-bulb{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:min(270px,74vw);
+  height:min(270px,74vw);
+  transform:translate(-50%,-50%);
+  color:#8d8795;
+  stroke:currentColor;
+  transform-origin:center;
+  animation:waitingBulbCycleLarge 8s ease-in-out both;
+}
+
+.live-team-page .waiting-fact-copy{
+  position:absolute;
+  left:50%;
+  top:39%;
+  z-index:2;
+  width:min(158px,43vw);
+  transform:translate(-50%,-50%);
+  display:grid;
+  place-items:center;
+  gap:6px;
+  text-align:center;
+  animation:waitingFactCycleInsideBulb 8s ease both;
+}
+
+.live-team-page .waiting-fact-copy span{
+  color:#9a6f00 !important;
+  font-size:8px !important;
+  letter-spacing:.14em !important;
+}
+
+.live-team-page .waiting-fact-copy strong{
+  max-width:100% !important;
+  color:#3f3211 !important;
+  font-size:clamp(11px,3.15vw,14px) !important;
+  line-height:1.2 !important;
+  font-weight:850 !important;
+}
+
+@keyframes waitingBulbCycleLarge{
+  0%,7%{
+    color:#9c99a1;
+    opacity:.28;
+    filter:none;
+    transform:translate(-50%,-50%) scale(.96);
+  }
+  11%,58%{
+    color:#ffd429;
+    opacity:1;
+    filter:drop-shadow(0 0 7px rgba(255,212,41,.95)) drop-shadow(0 0 20px rgba(255,212,41,.52));
+    transform:translate(-50%,-50%) scale(1);
+  }
+  62%{
+    color:#9c99a1;
+    opacity:.30;
+    filter:none;
+  }
+  65%{
+    color:#ffd429;
+    opacity:1;
+    filter:drop-shadow(0 0 16px rgba(255,212,41,.8));
+  }
+  68%{
+    color:#9c99a1;
+    opacity:.28;
+    filter:none;
+  }
+  71%{
+    color:#ffd429;
+    opacity:1;
+    filter:drop-shadow(0 0 16px rgba(255,212,41,.8));
+  }
+  74%{
+    color:#9c99a1;
+    opacity:.25;
+    filter:none;
+  }
+  77%{
+    color:#ffd429;
+    opacity:.92;
+    filter:drop-shadow(0 0 12px rgba(255,212,41,.62));
+  }
+  82%,100%{
+    color:#9c99a1;
+    opacity:.18;
+    filter:none;
+    transform:translate(-50%,-50%) scale(.97);
+  }
+}
+
+@keyframes waitingFactCycleInsideBulb{
+  0%,11%{
+    opacity:0;
+    transform:translate(-50%,calc(-50% + 4px));
+  }
+  16%,72%{
+    opacity:1;
+    transform:translate(-50%,-50%);
+  }
+  80%,100%{
+    opacity:0;
+    transform:translate(-50%,calc(-50% - 3px));
+  }
+}
+
+@media(max-height:760px){
+  .team-name-screen .team-name-stage{
+    padding-bottom:22px !important;
+  }
+
+  .live-team-page .waiting-team-card{
+    grid-template-rows:auto auto auto minmax(185px,1fr) !important;
+  }
+
+  .live-team-page .waiting-fun-fact.waiting-fun-fact-v2,
+  .live-team-page .waiting-fact-bulb-stage{
+    min-height:185px !important;
+  }
+
+  .live-team-page .waiting-fact-bulb{
+    width:min(220px,64vw) !important;
+    height:min(220px,64vw) !important;
+  }
+
+  .live-team-page .waiting-fact-copy{
+    width:min(132px,38vw);
+  }
+
+  .live-team-page .waiting-fact-copy strong{
+    font-size:11px !important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .live-team-page .waiting-fact-bulb{
+    animation:none !important;
+    color:#ffd429 !important;
+    opacity:1 !important;
+    transform:translate(-50%,-50%) !important;
+  }
+
+  .live-team-page .waiting-fact-copy{
+    animation:none !important;
+    opacity:1 !important;
+    transform:translate(-50%,-50%) !important;
+  }
+}
