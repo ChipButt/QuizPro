@@ -130,7 +130,13 @@ function TeamPreview({ stage }) {
       }
 
       if (message.type === "quiz-layout-export") {
-        setLayoutExport(JSON.stringify(message.layout || {}, null, 2));
+        setLayoutExport(JSON.stringify({
+          version: message.version || 2,
+          stage: message.stage,
+          viewport: message.viewport,
+          modified: message.modified || {},
+          elements: message.elements || [],
+        }, null, 2));
         return;
       }
 
@@ -351,28 +357,51 @@ function TeamPreview({ stage }) {
                 onClick={() => sendEditor("export")}
                 style={{ gridColumn: "1 / -1", border: 0, borderRadius: 7, padding: "7px", background: "#312e81", color: "#fff", font: "700 9px system-ui", cursor: "pointer" }}
               >
-                Show layout JSON
+                Generate full page JSON
               </button>
             </div>
           ) : null}
 
           {layoutExport ? (
-            <textarea
-              readOnly
-              value={layoutExport}
-              style={{
-                width: "100%",
-                minHeight: 120,
-                boxSizing: "border-box",
-                resize: "vertical",
-                border: "1px solid #334155",
-                borderRadius: 7,
-                background: "#020617",
-                color: "#cbd5e1",
-                padding: 7,
-                font: "500 8px/1.3 monospace"
-              }}
-            />
+            <div style={{ display: "grid", gap: 7 }}>
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(layoutExport);
+                  } catch {
+                    // The textarea remains available for manual copy if clipboard permission is blocked.
+                  }
+                }}
+                style={{
+                  border: 0,
+                  borderRadius: 7,
+                  padding: "8px 9px",
+                  background: "#0f766e",
+                  color: "#fff",
+                  font: "800 10px system-ui",
+                  cursor: "pointer"
+                }}
+              >
+                Copy full page JSON
+              </button>
+              <textarea
+                readOnly
+                value={layoutExport}
+                style={{
+                  width: "100%",
+                  minHeight: 150,
+                  boxSizing: "border-box",
+                  resize: "vertical",
+                  border: "1px solid #334155",
+                  borderRadius: 7,
+                  background: "#020617",
+                  color: "#cbd5e1",
+                  padding: 7,
+                  font: "500 8px/1.3 monospace"
+                }}
+              />
+            </div>
           ) : null}
         </div>
 
