@@ -109,3 +109,9 @@
     height:16px;
   }
 }
+
+
+/* Elements given an explicit layer need a stacking context without changing their flow. */
+.quiz-preview-mode .quiz-layout-layered{
+  position:relative !important;
+}
