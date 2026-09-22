@@ -90,8 +90,8 @@ function publishedLeaderboard(state, quiz) {
   }
 
   for (const round of quiz?.rounds ?? []) {
+    if (!roundIsFullyRevealed(state, round)) continue;
     for (const question of round.questions ?? []) {
-      if (!questionIsRevealed(state, round.id, question.id)) continue;
       for (const [teamId, answer] of Object.entries(state.answers?.[question.id] ?? {})) {
         if (!scores.has(teamId)) scores.set(teamId, 0);
         scores.set(teamId, scores.get(teamId) + Number(answer.score ?? 0));
@@ -225,6 +225,7 @@ export function buildTeamSnapshot(state, teamToken) {
           forceLocked: isRoundForceLocked(state, round.id),
           teamLocked: team ? isTeamRoundLocked(state, round.id, team.id) : false,
           revealed: Boolean(state.live?.revealedRounds?.[round.id]),
+          reviewComplete: roundIsFullyRevealed(state, round),
         }
       : null,
     nextRound: upcomingRound
