@@ -15,7 +15,65 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLiveTeamNetwork } from "../hooks/useLiveTeamNetwork.js";
-const quizInLogo = "/QuizPro/quiz-in-logo-transparent.png";
+const QUIZ_IN_LOGO_SOURCE = "/QuizPro/Quiz%20In%20Logo.png";
+
+function QuizInLogo({ className = "" }) {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return undefined;
+
+    let cancelled = false;
+    const image = new Image();
+    image.decoding = "async";
+    image.src = QUIZ_IN_LOGO_SOURCE;
+
+    image.onload = () => {
+      if (cancelled || !canvasRef.current) return;
+      const maxWidth = 1024;
+      const scale = Math.min(1, maxWidth / image.naturalWidth);
+      const width = Math.max(1, Math.round(image.naturalWidth * scale));
+      const height = Math.max(1, Math.round(image.naturalHeight * scale));
+      canvas.width = width;
+      canvas.height = height;
+
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) return;
+      context.clearRect(0, 0, width, height);
+      context.drawImage(image, 0, 0, width, height);
+
+      const pixels = context.getImageData(0, 0, width, height);
+      const data = pixels.data;
+
+      for (let index = 0; index < data.length; index += 4) {
+        const red = data[index];
+        const green = data[index + 1];
+        const blue = data[index + 2];
+        const dominance = green - Math.max(red, blue);
+
+        if (green > 115 && dominance > 38) {
+          if (green > 175 && dominance > 82 && red < 150 && blue < 150) {
+            data[index + 3] = 0;
+          } else {
+            const alpha = Math.max(0, Math.min(255, 255 - ((dominance - 38) / 44) * 255));
+            data[index + 3] = Math.min(data[index + 3], alpha);
+            if (alpha > 0) data[index + 1] = Math.min(green, Math.max(red, blue));
+          }
+        }
+      }
+
+      context.putImageData(pixels, 0, 0);
+    };
+
+    return () => {
+      cancelled = true;
+      image.onload = null;
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className={className} role="img" aria-label="Quiz In" />;
+}
 
 function TeamChrome({ children, status, keyboardActive = false, rail = null, pageClass = "" }) {
   const connectionLabel = status === "online"
@@ -30,7 +88,7 @@ function TeamChrome({ children, status, keyboardActive = false, rail = null, pag
     <main className={`team-page live-team-page ${pageClass} ${keyboardActive ? "keyboard-active-page" : ""}`}>
       <div className={`phone-shell live-phone-shell ${pageClass} ${keyboardActive ? "keyboard-active" : ""}`}>
         <header className="phone-topbar live-phone-topbar">
-          <img className="team-global-logo" src={quizInLogo} alt="Quiz In" />
+          <QuizInLogo className="team-global-logo" />
         </header>
         {children}
         {rail}
@@ -215,7 +273,7 @@ function TeamNameScreen({ snapshot, send, status }) {
       <section className="team-name-stage">
         <header className="team-name-hero">
           <span className="team-name-doodle question-mark" aria-hidden="true">?</span>
-          <img className="quiz-in-logo-asset" src={quizInLogo} alt="Quiz In" />
+          <QuizInLogo className="quiz-in-logo-asset" />
         </header>
 
         <div className="team-name-meta-grid">
