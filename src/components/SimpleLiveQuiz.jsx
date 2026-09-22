@@ -93,6 +93,34 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   const hostAudioRef = useRef(null);
 
   useEffect(() => {
+    if (!state.live?.timerActive || timerSeconds > 0) return;
+    const roundId = state.live?.timerRoundId || liveRound?.id;
+    if (!roundId) return;
+
+    updateState((current) => {
+      if (!current.live?.timerActive) return current;
+      const endsAt = Number(current.live?.timerEndsAt ?? 0);
+      if (endsAt && endsAt > Date.now()) return current;
+
+      return {
+        ...current,
+        live: {
+          ...current.live,
+          timerActive: false,
+          timerEndsAt: 0,
+          timerDurationSeconds: 0,
+          timerRoundId: "",
+          teamScreen: "round_locked",
+          forceLockedRounds: {
+            ...(current.live?.forceLockedRounds ?? {}),
+            [roundId]: true,
+          },
+        },
+      };
+    });
+  }, [timerSeconds, state.live?.timerActive, state.live?.timerEndsAt, state.live?.timerRoundId, liveRound?.id, updateState]);
+
+  useEffect(() => {
     if (!quiz) return;
     setReviewRoundIndex((current) => Math.min(current, Math.max(0, quiz.rounds.length - 1)));
   }, [quiz?.id, quiz?.rounds?.length]);
@@ -579,7 +607,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
               <>
                 <div className="host-drawer-title"><div><h3>{liveRound?.title || "Live round"}</h3><p>{teamLocks}/{state.teams.length} teams have locked all answers.</p></div><span className={liveLocked ? "drawer-state locked" : "drawer-state"}>{liveLocked ? "LOCKED" : "EDITABLE"}</span></div>
                 <div className="host-drawer-actions">
-                  {!liveLocked ? <button className="danger-soft-button" onClick={lockLiveRoundNow}><Lock size={15} /> Lock round</button> : <button className="ghost-button" onClick={unlockLiveRound}><Unlock size={15} /> Re-open round</button>}
+                  {!liveLocked ? <button className="danger-soft-button" onClick={lockLiveRoundNow}><Lock size={15} /> Lock round</button> : <button className="ghost-button" onClick={unlockLiveRound}><Unlock size={15} /> Re-open round for edits</button>}
                   <button className="ghost-button" disabled={!liveRound} onClick={() => autoMarkRound(liveRound)}><RefreshCcw size={15} /> Auto mark round</button>
                   <button className={`reveal-toggle ${liveRoundRevealed ? "active" : ""}`} onClick={toggleLiveRoundAnswers}>
                     {liveRoundRevealed ? <EyeOff size={15} /> : <Eye size={15} />}
