@@ -367,6 +367,11 @@
   display:none !important;
 }
 
+/* Approved waiting-page editor position. */
+.live-team-page .waiting-next-round{
+  transform:translateY(-15px) !important;
+}
+
 /* The pre-quiz card keeps the fact area as the whole remaining white section. */
 .live-team-page .waiting-team-card{
   display:grid !important;
@@ -402,9 +407,9 @@
   position:absolute;
   left:50%;
   top:50%;
-  width:min(var(--preview-waiting-bulb-size,360px),96vw);
+  width:min(var(--preview-waiting-bulb-size,355px),96vw);
   height:min(var(--preview-waiting-bulb-size,360px),96vw);
-  transform:translate(-50%,-50%);
+  transform:translate(-50%,calc(-50% - 9px));
   color:#8d8795;
   stroke:currentColor;
   animation:waitingBulbCycleLarge 8s ease-in-out both;
@@ -416,7 +421,8 @@
   top:var(--preview-waiting-fact-y,39%);
   z-index:2;
   width:min(var(--preview-waiting-fact-width,158px),62vw);
-  transform:translate(-50%,-50%);
+  height:120px;
+  transform:translate(-50%,calc(-50% - 41px));
   display:grid;
   place-items:center;
   gap:6px;
@@ -428,14 +434,18 @@
   color:#9a6f00 !important;
   font-size:8px !important;
   letter-spacing:.14em !important;
+  translate:0 7px;
 }
 
 .live-team-page .waiting-fact-copy strong{
+  width:145px;
+  height:124px;
   max-width:100% !important;
   color:#3f3211 !important;
   font-size:clamp(11px,3.15vw,14px) !important;
   line-height:1.2 !important;
   font-weight:850 !important;
+  translate:0 18px;
 }
 
 @keyframes waitingBulbCycleLarge{
