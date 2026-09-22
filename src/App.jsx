@@ -119,6 +119,7 @@ function TeamPreview({ stage }) {
           width: Number(message.width || 0),
           height: Number(message.height || 0),
           fontSize: Number(message.fontSize || 16),
+          zIndex: Number(message.zIndex || 0),
           locked: Boolean(message.locked),
         });
         return;
@@ -255,11 +256,12 @@ function TeamPreview({ stage }) {
                   ["width", "Width"],
                   ["height", "Height"],
                   ["fontSize", "Text size"],
+                  ["zIndex", "Layer"],
                 ].map(([field, label]) => (
                   <label key={field} style={{
                     display: "grid",
                     gap: 3,
-                    gridColumn: field === "fontSize" ? "1 / -1" : undefined,
+                    gridColumn: ["fontSize", "zIndex"].includes(field) ? "1 / -1" : undefined,
                     color: "#9ca3af",
                     font: "600 9px system-ui"
                   }}>
@@ -286,6 +288,40 @@ function TeamPreview({ stage }) {
                 ))}
               </div>
 
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                <button
+                  type="button"
+                  disabled={selectedElement.locked}
+                  onClick={() => sendEditor("layer-backward")}
+                  style={{
+                    border: 0,
+                    borderRadius: 7,
+                    padding: "8px 7px",
+                    background: selectedElement.locked ? "#1f2937" : "#334155",
+                    color: selectedElement.locked ? "#6b7280" : "#fff",
+                    font: "800 9px system-ui",
+                    cursor: selectedElement.locked ? "not-allowed" : "pointer"
+                  }}
+                >
+                  ← Back 1 layer
+                </button>
+                <button
+                  type="button"
+                  disabled={selectedElement.locked}
+                  onClick={() => sendEditor("layer-forward")}
+                  style={{
+                    border: 0,
+                    borderRadius: 7,
+                    padding: "8px 7px",
+                    background: selectedElement.locked ? "#1f2937" : "#0c4a6e",
+                    color: selectedElement.locked ? "#6b7280" : "#fff",
+                    font: "800 9px system-ui",
+                    cursor: selectedElement.locked ? "not-allowed" : "pointer"
+                  }}
+                >
+                  Forward 1 layer →
+                </button>
+              </div>
               <button
                 type="button"
                 onClick={() => sendEditor(selectedElement.locked ? "unlock-selected" : "lock-selected")}
