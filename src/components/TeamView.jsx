@@ -473,44 +473,305 @@ export default function TeamView({ sessionCode, teamToken }) {
   useEffect(() => {
     if (sessionCode !== "__PREVIEW__") return undefined;
 
-    const applyPreviewStyle = (values = {}) => {
-      const bulb = Number(values.bulbSize);
-      const factWidth = Number(values.factBoxWidth);
-      const factX = Number(values.factBoxX);
-      const factY = Number(values.factBoxY);
-      if (Number.isFinite(bulb)) {
-        document.documentElement.style.setProperty("--preview-waiting-bulb-size", `${Math.max(220, Math.min(460, bulb))}px`);
+    const root = document.querySelector(".live-phone-shell");
+    if (!root) return undefined;
+
+    const storageKey = `quiz-layout-v1:${teamToken || "preview"}`;
+    let editEnabled = false;
+    let selectedPath = "";
+    let layout = {};
+
+    try {
+      layout = JSON.parse(window.localStorage.getItem(storageKey) || "{}") || {};
+    } catch {
+      layout = {};
+    }
+
+    const saveLayout = () => {
+      window.localStorage.setItem(storageKey, JSON.stringify(layout));
+    };
+
+    const elementPath = (element) => {
+      if (!element || element === root) return ":scope";
+      const parts = [];
+      let node = element;
+
+      while (node && node !== root) {
+        const parent = node.parentElement;
+        if (!parent) break;
+        const siblings = Array.from(parent.children).filter((item) => item.tagName === node.tagName);
+        const index = siblings.indexOf(node) + 1;
+        parts.unshift(`${node.tagName.toLowerCase()}:nth-of-type(${Math.max(1, index)})`);
+        node = parent;
       }
-      if (Number.isFinite(factWidth)) {
-        document.documentElement.style.setProperty("--preview-waiting-fact-width", `${Math.max(90, Math.min(260, factWidth))}px`);
+      return parts.join(" > ");
+    };
+
+    const findByPath = (path) => {
+      if (!path || path === ":scope") return root;
+      try {
+        return root.querySelector(path);
+      } catch {
+        return null;
       }
-      if (Number.isFinite(factX)) {
-        document.documentElement.style.setProperty("--preview-waiting-fact-x", `${Math.max(10, Math.min(90, factX))}%`);
+    };
+
+    const describeElement = (element) => {
+      const className = String(element?.className?.baseVal ?? element?.className ?? "")
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .join(".");
+      const text = String(element?.innerText ?? element?.textContent ?? "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 34);
+      const name = element?.tagName?.toLowerCase() || "element";
+      return text ? `${name}${className ? `.${className}` : ""} · ${text}` : `${name}${className ? `.${className}` : ""}`;
+    };
+
+    const clearSelectionClasses = () => {
+      root.querySelectorAll(".quiz-layout-selected,.quiz-layout-locked").forEach((element) => {
+        element.classList.remove("quiz-layout-selected", "quiz-layout-locked");
+      });
+    };
+
+    const applyRecord = (element, record = {}) => {
+      if (!element) return;
+      element.style.setProperty("--layout-editor-x", `${Number(record.x || 0)}px`);
+      element.style.setProperty("--layout-editor-y", `${Number(record.y || 0)}px`);
+      element.classList.add("quiz-layout-overridden");
+
+      if (Number.isFinite(Number(record.width)) && Number(record.width) > 0) {
+        element.style.width = `${Number(record.width)}px`;
+        element.style.maxWidth = "none";
       }
-      if (Number.isFinite(factY)) {
-        document.documentElement.style.setProperty("--preview-waiting-fact-y", `${Math.max(10, Math.min(90, factY))}%`);
+      if (Number.isFinite(Number(record.height)) && Number(record.height) > 0) {
+        element.style.height = `${Number(record.height)}px`;
+        element.style.maxHeight = "none";
       }
+      if (Number.isFinite(Number(record.fontSize)) && Number(record.fontSize) > 0) {
+        element.style.fontSize = `${Number(record.fontSize)}px`;
+      }
+    };
+
+    const clearRecordStyles = (element) => {
+      if (!element) return;
+      element.classList.remove("quiz-layout-overridden", "quiz-layout-selected", "quiz-layout-locked");
+      element.style.removeProperty("--layout-editor-x");
+      element.style.removeProperty("--layout-editor-y");
+      element.style.removeProperty("width");
+      element.style.removeProperty("height");
+      element.style.removeProperty("max-width");
+      element.style.removeProperty("max-height");
+      element.style.removeProperty("font-size");
+    };
+
+    const applyAll = () => {
+      Object.entries(layout).forEach(([path, record]) => {
+        const element = findByPath(path);
+        if (element) applyRecord(element, record);
+      });
+
+      if (selectedPath) {
+        const selected = findByPath(selectedPath);
+        if (selected) {
+          selected.classList.add("quiz-layout-selected");
+          if (layout[selectedPath]?.locked) selected.classList.add("quiz-layout-locked");
+        }
+      }
+    };
+
+    const readValues = (element, path) => {
+      const rect = element.getBoundingClientRect();
+      const styles = window.getComputedStyle(element);
+      const record = layout[path] || {};
+      return {
+        x: Number(record.x || 0),
+        y: Number(record.y || 0),
+        width: Math.round(Number(record.width || rect.width)),
+        height: Math.round(Number(record.height || rect.height)),
+        fontSize: Math.round((Number(record.fontSize || parseFloat(styles.fontSize) || 16)) * 10) / 10,
+        locked: Boolean(record.locked),
+      };
+    };
+
+    const sendSelection = (element, path) => {
+      const values = readValues(element, path);
+      window.parent?.postMessage({
+        type: "quiz-layout-selection",
+        path,
+        label: describeElement(element),
+        ...values,
+      }, window.location.origin);
+    };
+
+    const selectElement = (rawTarget) => {
+      let element = rawTarget instanceof Element ? rawTarget : null;
+      if (!element) return;
+
+      if (element.closest("svg")) element = element.closest("svg");
+      if (!root.contains(element) || element === root) return;
+
+      clearSelectionClasses();
+      selectedPath = elementPath(element);
+      element.classList.add("quiz-layout-selected");
+      if (layout[selectedPath]?.locked) element.classList.add("quiz-layout-locked");
+      sendSelection(element, selectedPath);
+    };
+
+    const onEditorClick = (event) => {
+      if (!editEnabled) return;
+      event.preventDefault();
+      event.stopPropagation();
+      selectElement(event.target);
     };
 
     const onMessage = (event) => {
       if (event.origin !== window.location.origin) return;
-      if (event.data?.type !== "quiz-preview-style") return;
-      applyPreviewStyle(event.data);
+      const message = event.data || {};
+
+      if (message.type === "quiz-preview-style") {
+        const bulb = Number(message.bulbSize);
+        const factWidth = Number(message.factBoxWidth);
+        const factX = Number(message.factBoxX);
+        const factY = Number(message.factBoxY);
+        if (Number.isFinite(bulb)) document.documentElement.style.setProperty("--preview-waiting-bulb-size", `${Math.max(220, Math.min(460, bulb))}px`);
+        if (Number.isFinite(factWidth)) document.documentElement.style.setProperty("--preview-waiting-fact-width", `${Math.max(90, Math.min(260, factWidth))}px`);
+        if (Number.isFinite(factX)) document.documentElement.style.setProperty("--preview-waiting-fact-x", `${Math.max(10, Math.min(90, factX))}%`);
+        if (Number.isFinite(factY)) document.documentElement.style.setProperty("--preview-waiting-fact-y", `${Math.max(10, Math.min(90, factY))}%`);
+        return;
+      }
+
+      if (message.type !== "quiz-layout-editor") return;
+
+      if (message.action === "set-enabled") {
+        editEnabled = Boolean(message.enabled);
+        document.documentElement.classList.toggle("quiz-layout-editing", editEnabled);
+        if (!editEnabled) {
+          clearSelectionClasses();
+          selectedPath = "";
+          window.parent?.postMessage({ type: "quiz-layout-selection-cleared" }, window.location.origin);
+        }
+        return;
+      }
+
+      if (message.action === "update-selected" && selectedPath) {
+        const current = layout[selectedPath] || {};
+        if (current.locked) return;
+        layout[selectedPath] = {
+          ...current,
+          x: Number.isFinite(Number(message.values?.x)) ? Number(message.values.x) : Number(current.x || 0),
+          y: Number.isFinite(Number(message.values?.y)) ? Number(message.values.y) : Number(current.y || 0),
+          width: Number.isFinite(Number(message.values?.width)) ? Number(message.values.width) : current.width,
+          height: Number.isFinite(Number(message.values?.height)) ? Number(message.values.height) : current.height,
+          fontSize: Number.isFinite(Number(message.values?.fontSize)) ? Number(message.values.fontSize) : current.fontSize,
+        };
+        saveLayout();
+        const element = findByPath(selectedPath);
+        applyRecord(element, layout[selectedPath]);
+        if (element) sendSelection(element, selectedPath);
+        return;
+      }
+
+      if (message.action === "lock-selected" && selectedPath) {
+        layout[selectedPath] = { ...(layout[selectedPath] || {}), locked: true };
+        saveLayout();
+        const element = findByPath(selectedPath);
+        element?.classList.add("quiz-layout-locked");
+        if (element) sendSelection(element, selectedPath);
+        return;
+      }
+
+      if (message.action === "unlock-selected" && selectedPath) {
+        layout[selectedPath] = { ...(layout[selectedPath] || {}), locked: false };
+        saveLayout();
+        const element = findByPath(selectedPath);
+        element?.classList.remove("quiz-layout-locked");
+        if (element) sendSelection(element, selectedPath);
+        return;
+      }
+
+      if (message.action === "lock-all") {
+        Object.keys(layout).forEach((path) => {
+          layout[path] = { ...layout[path], locked: true };
+        });
+        saveLayout();
+        applyAll();
+        if (selectedPath) {
+          const element = findByPath(selectedPath);
+          if (element) sendSelection(element, selectedPath);
+        }
+        return;
+      }
+
+      if (message.action === "unlock-all") {
+        Object.keys(layout).forEach((path) => {
+          layout[path] = { ...layout[path], locked: false };
+        });
+        saveLayout();
+        applyAll();
+        if (selectedPath) {
+          const element = findByPath(selectedPath);
+          if (element) sendSelection(element, selectedPath);
+        }
+        return;
+      }
+
+      if (message.action === "reset-selected" && selectedPath) {
+        const element = findByPath(selectedPath);
+        clearRecordStyles(element);
+        delete layout[selectedPath];
+        saveLayout();
+        if (element) {
+          element.classList.add("quiz-layout-selected");
+          sendSelection(element, selectedPath);
+        }
+        return;
+      }
+
+      if (message.action === "reset-page") {
+        Object.keys(layout).forEach((path) => clearRecordStyles(findByPath(path)));
+        layout = {};
+        selectedPath = "";
+        saveLayout();
+        clearSelectionClasses();
+        window.parent?.postMessage({ type: "quiz-layout-selection-cleared" }, window.location.origin);
+        return;
+      }
+
+      if (message.action === "export") {
+        window.parent?.postMessage({
+          type: "quiz-layout-export",
+          stage: teamToken || "preview",
+          layout,
+        }, window.location.origin);
+      }
     };
 
     document.documentElement.classList.add("quiz-preview-mode");
+    root.addEventListener("click", onEditorClick, true);
     window.addEventListener("message", onMessage);
+
+    const observer = new MutationObserver(() => window.requestAnimationFrame(applyAll));
+    observer.observe(root, { childList: true, subtree: true });
+    applyAll();
+
     window.parent?.postMessage({ type: "quiz-preview-ready" }, window.location.origin);
 
     return () => {
+      observer.disconnect();
+      root.removeEventListener("click", onEditorClick, true);
       window.removeEventListener("message", onMessage);
-      document.documentElement.classList.remove("quiz-preview-mode");
+      document.documentElement.classList.remove("quiz-preview-mode", "quiz-layout-editing");
+      clearSelectionClasses();
       document.documentElement.style.removeProperty("--preview-waiting-bulb-size");
       document.documentElement.style.removeProperty("--preview-waiting-fact-width");
       document.documentElement.style.removeProperty("--preview-waiting-fact-x");
       document.documentElement.style.removeProperty("--preview-waiting-fact-y");
     };
-  }, [sessionCode]);
+  }, [sessionCode, teamToken]);
+
   const [viewIndex, setViewIndex] = useState(0);
   const [drafts, setDrafts] = useState({});
   const [audioBlocked, setAudioBlocked] = useState(false);
