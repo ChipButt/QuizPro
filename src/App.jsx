@@ -322,6 +322,23 @@ function TeamPreview({ stage }) {
                   Forward 1 layer →
                 </button>
               </div>
+
+              <button
+                type="button"
+                disabled={selectedElement.locked}
+                onClick={() => sendEditor("center-selected")}
+                style={{
+                  border: 0,
+                  borderRadius: 7,
+                  padding: "8px 9px",
+                  background: selectedElement.locked ? "#1f2937" : "#1d4ed8",
+                  color: selectedElement.locked ? "#6b7280" : "#fff",
+                  font: "800 10px system-ui",
+                  cursor: selectedElement.locked ? "not-allowed" : "pointer"
+                }}
+              >
+                Center align
+              </button>
               <button
                 type="button"
                 onClick={() => sendEditor(selectedElement.locked ? "unlock-selected" : "lock-selected")}
