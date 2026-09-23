@@ -478,6 +478,12 @@ function LeaderboardScreen({ snapshot, status }) {
 }
 
 function FinalTrophy({ place }) {
+  const metalId = `trophy-metal-${place}`;
+  const rimId = `trophy-rim-${place}`;
+  const shadeId = `trophy-shade-${place}`;
+  const glowId = `trophy-glow-${place}`;
+  const shadowId = `trophy-shadow-${place}`;
+
   return (
     <svg
       className="final-trophy-art"
@@ -486,68 +492,118 @@ function FinalTrophy({ place }) {
       aria-label={`${place === 1 ? "Gold" : place === 2 ? "Silver" : "Bronze"} trophy`}
     >
       <defs>
-        <linearGradient id={`trophy-metal-${place}`} x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={metalId} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="42%" stopColor="var(--trophy-metal)" />
+          <stop offset="28%" stopColor="var(--trophy-metal)" />
+          <stop offset="62%" stopColor="var(--trophy-metal-light)" />
           <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
-        <linearGradient id={`trophy-shine-${place}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="rgba(255,255,255,.72)" />
-          <stop offset="38%" stopColor="rgba(255,255,255,.18)" />
-          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        <linearGradient id={rimId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="48%" stopColor="var(--trophy-metal)" />
+          <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
-        <filter id={`trophy-shadow-${place}`} x="-30%" y="-20%" width="160%" height="180%">
+        <linearGradient id={shadeId} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="rgba(0,0,0,.20)" />
+          <stop offset="23%" stopColor="rgba(255,255,255,.34)" />
+          <stop offset="52%" stopColor="rgba(255,255,255,.08)" />
+          <stop offset="79%" stopColor="rgba(0,0,0,.08)" />
+          <stop offset="100%" stopColor="rgba(0,0,0,.24)" />
+        </linearGradient>
+        <radialGradient id={glowId} cx="38%" cy="18%" r="72%">
+          <stop offset="0%" stopColor="rgba(255,255,255,.55)" />
+          <stop offset="45%" stopColor="rgba(255,255,255,.08)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </radialGradient>
+        <filter id={shadowId} x="-35%" y="-25%" width="170%" height="190%">
           <feDropShadow dx="0" dy="7" stdDeviation="5" floodColor="rgba(0,0,0,.34)" />
         </filter>
       </defs>
 
-      <g filter={`url(#trophy-shadow-${place})`}>
+      <g filter={`url(#${shadowId})`}>
         <path
-          d="M44 31H25c-8 0-12 6-11 14 2 23 14 39 38 45l5-15C41 71 33 61 31 48h13Z"
-          fill={`url(#trophy-metal-${place})`}
+          d="M48 37H27c-9 0-14 7-13 17 2 21 13 37 36 44l6-14c-17-5-25-16-27-31h19"
+          fill="none"
+          stroke={`url(#${metalId})`}
+          strokeWidth="11"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
-          d="M116 31h19c8 0 12 6 11 14-2 23-14 39-38 45l-5-15c16-4 24-14 26-27h-13Z"
-          fill={`url(#trophy-metal-${place})`}
+          d="M112 37h21c9 0 14 7 13 17-2 21-13 37-36 44l-6-14c17-5 25-16 27-31h-19"
+          fill="none"
+          stroke={`url(#${metalId})`}
+          strokeWidth="11"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
+
         <path
-          d="M41 25h78l-8 51c-3 21-15 34-31 34S52 97 49 76Z"
-          fill={`url(#trophy-metal-${place})`}
+          d="M43 29h74l-6 46c-3 24-15 38-31 38S52 99 49 75Z"
+          fill={`url(#${metalId})`}
           stroke="var(--trophy-metal-dark)"
-          strokeWidth="2.5"
+          strokeWidth="2.6"
+          strokeLinejoin="round"
         />
         <path
-          d="M51 34h58l-3 20H54Z"
-          fill={`url(#trophy-shine-${place})`}
-          opacity=".72"
+          d="M50 36h60l-5 36c-2 17-11 29-25 32-14-3-23-15-25-32Z"
+          fill={`url(#${shadeId})`}
+          opacity=".55"
         />
         <path
-          d="M72 108h16v18H72Z"
-          fill={`url(#trophy-metal-${place})`}
+          d="M50 34c10 6 50 6 60 0"
+          fill="none"
+          stroke="rgba(255,255,255,.28)"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M56 36c4 0 10 0 15 0-7 14-8 34-4 54-8-10-12-25-11-54Z"
+          fill={`url(#${glowId})`}
+          opacity=".8"
+        />
+
+        <rect
+          x="39"
+          y="21"
+          width="82"
+          height="16"
+          rx="8"
+          fill={`url(#${rimId})`}
+          stroke="var(--trophy-metal-dark)"
+          strokeWidth="2.4"
+        />
+        <path d="M48 26h64" stroke="rgba(255,255,255,.55)" strokeWidth="2.2" strokeLinecap="round" />
+
+        <path
+          d="M71 111h18v18H71Z"
+          fill={`url(#${metalId})`}
           stroke="var(--trophy-metal-dark)"
           strokeWidth="2"
         />
         <path
-          d="M60 124h40l7 12H53Z"
-          fill={`url(#trophy-metal-${place})`}
+          d="M61 127h38l10 13H51Z"
+          fill={`url(#${rimId})`}
           stroke="var(--trophy-metal-dark)"
-          strokeWidth="2"
+          strokeWidth="2.2"
+          strokeLinejoin="round"
         />
         <rect
-          x="45"
-          y="135"
-          width="70"
-          height="20"
-          rx="5"
-          fill={`url(#trophy-metal-${place})`}
+          x="43"
+          y="138"
+          width="74"
+          height="18"
+          rx="4"
+          fill={`url(#${rimId})`}
           stroke="var(--trophy-metal-dark)"
-          strokeWidth="2"
+          strokeWidth="2.2"
         />
-        <path d="M53 141h54" stroke="rgba(255,255,255,.42)" strokeWidth="2" strokeLinecap="round" />
+        <path d="M50 143h60" stroke="rgba(255,255,255,.42)" strokeWidth="2" strokeLinecap="round" />
       </g>
     </svg>
   );
 }
+
 
 function FinalScreen({ snapshot, status }) {
   const ownId = snapshot.team?.id;
