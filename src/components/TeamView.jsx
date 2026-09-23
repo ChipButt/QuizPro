@@ -367,7 +367,7 @@ function WaitingScreen({ snapshot, status }) {
 
   return (
     <TeamChrome status={status}>
-      <section className="team-card live-team-card waiting-team-card">
+      <section className={`team-card live-team-card waiting-team-card ${beforeFirstRound ? "waiting-state-initial" : awaitingAnswerReview ? "waiting-state-review" : "waiting-state-between"}`}>
         <div className="waiting-team-banner">
           <div className="waiting-team-name">
             <span>TEAM NAME</span>
