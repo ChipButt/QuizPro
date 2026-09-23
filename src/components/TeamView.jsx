@@ -481,118 +481,154 @@ function FinalTrophy({ place }) {
   const rankLabel = place === 1 ? "1st" : place === 2 ? "2nd" : "3rd";
   const metalId = `trophy-metal-${place}`;
   const bowlId = `trophy-bowl-${place}`;
-  const edgeId = `trophy-edge-${place}`;
+  const rimId = `trophy-rim-${place}`;
   const shineId = `trophy-shine-${place}`;
   const shadowId = `trophy-shadow-${place}`;
+  const baseId = `trophy-base-${place}`;
 
   return (
     <svg
       className="final-trophy-art"
-      viewBox="0 0 220 220"
+      viewBox="0 0 220 250"
       role="img"
       aria-label={`${place === 1 ? "Gold" : place === 2 ? "Silver" : "Bronze"} trophy`}
     >
       <defs>
         <linearGradient id={metalId} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="22%" stopColor="var(--trophy-metal)" />
-          <stop offset="50%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="76%" stopColor="var(--trophy-metal)" />
+          <stop offset="18%" stopColor="var(--trophy-metal)" />
+          <stop offset="39%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="63%" stopColor="var(--trophy-metal)" />
+          <stop offset="82%" stopColor="var(--trophy-metal-light)" />
           <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
         <linearGradient id={bowlId} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="var(--trophy-metal-dark)" />
-          <stop offset="18%" stopColor="var(--trophy-metal)" />
-          <stop offset="36%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="52%" stopColor="var(--trophy-metal)" />
-          <stop offset="74%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="14%" stopColor="var(--trophy-metal)" />
+          <stop offset="30%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="49%" stopColor="var(--trophy-metal)" />
+          <stop offset="69%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="86%" stopColor="var(--trophy-metal)" />
           <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
-        <linearGradient id={edgeId} x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={rimId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="54%" stopColor="var(--trophy-metal)" />
+          <stop offset="48%" stopColor="var(--trophy-metal)" />
           <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
         <linearGradient id={shineId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="rgba(255,255,255,.78)" />
-          <stop offset="42%" stopColor="rgba(255,255,255,.18)" />
+          <stop offset="0%" stopColor="rgba(255,255,255,.82)" />
+          <stop offset="38%" stopColor="rgba(255,255,255,.26)" />
           <stop offset="100%" stopColor="rgba(255,255,255,0)" />
         </linearGradient>
+        <linearGradient id={baseId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#26334a" />
+          <stop offset="45%" stopColor="#111a2b" />
+          <stop offset="100%" stopColor="#060b14" />
+        </linearGradient>
         <filter id={shadowId} x="-35%" y="-25%" width="170%" height="190%">
-          <feDropShadow dx="0" dy="8" stdDeviation="6" floodColor="rgba(0,0,0,.28)" />
+          <feDropShadow dx="0" dy="9" stdDeviation="7" floodColor="rgba(0,0,0,.30)" />
         </filter>
       </defs>
 
       <g filter={`url(#${shadowId})`}>
-        {/* Closed, filled handles joined cleanly into the bowl at both ends. */}
+        {/* Substantial classic trophy handles with real cut-outs. */}
         <path
-          d="M77 67
-             C56 57 37 58 25 72
-             C14 85 14 108 24 124
-             C34 140 52 150 76 150
-             L84 132
-             C67 132 55 126 48 116
-             C41 106 40 92 46 84
-             C52 77 62 77 75 84
-             Z"
+          d="M76 70
+             C52 54 27 58 16 78
+             C4 100 10 132 28 151
+             C42 166 61 173 83 168
+             L89 149
+             C73 153 59 149 49 139
+             C36 127 32 106 40 93
+             C46 82 59 82 75 93
+             Z
+             M64 82
+             C53 78 46 81 42 89
+             C36 101 40 119 50 129
+             C57 136 66 139 77 137
+             L81 124
+             C72 126 65 123 60 118
+             C54 112 52 102 56 95
+             C58 91 61 87 64 82Z"
           fill={`url(#${metalId})`}
+          fillRule="evenodd"
+          clipRule="evenodd"
         />
         <path
-          d="M143 67
-             C164 57 183 58 195 72
-             C206 85 206 108 196 124
-             C186 140 168 150 144 150
-             L136 132
-             C153 132 165 126 172 116
-             C179 106 180 92 174 84
-             C168 77 158 77 145 84
-             Z"
+          d="M144 70
+             C168 54 193 58 204 78
+             C216 100 210 132 192 151
+             C178 166 159 173 137 168
+             L131 149
+             C147 153 161 149 171 139
+             C184 127 188 106 180 93
+             C174 82 161 82 145 93
+             Z
+             M156 82
+             C167 78 174 81 178 89
+             C184 101 180 119 170 129
+             C163 136 154 139 143 137
+             L139 124
+             C148 126 155 123 160 118
+             C166 112 168 102 164 95
+             C162 91 159 87 156 82Z"
           fill={`url(#${metalId})`}
+          fillRule="evenodd"
+          clipRule="evenodd"
         />
 
-        {/* Cup body */}
+        {/* Open rolled rim and visible cup opening. */}
+        <ellipse cx="110" cy="58" rx="49" ry="14" fill="#182032" opacity=".78" />
+        <ellipse cx="110" cy="55" rx="53" ry="16" fill={`url(#${rimId})`} />
+        <ellipse cx="110" cy="55" rx="43" ry="10" fill="#182032" opacity=".92" />
+        <ellipse cx="110" cy="51.5" rx="34" ry="5.6" fill="rgba(255,255,255,.16)" />
+
+        {/* Deep traditional bowl. */}
         <path
-          d="M72 58h76
-             c-2 31-7 61-19 82
-             c-7 13-13 19-19 19
-             s-12-6-19-19
-             C79 119 74 89 72 58Z"
+          d="M62 59
+             C65 97 72 130 88 153
+             C95 163 102 168 110 168
+             C118 168 125 163 132 153
+             C148 130 155 97 158 59
+             C145 70 75 70 62 59Z"
           fill={`url(#${bowlId})`}
         />
         <path
-          d="M85 66h22
-             c-8 27-7 55 2 77
-             c-12-8-18-28-21-50
-             c-1-9-2-18-3-27Z"
+          d="M76 70
+             C78 95 83 120 94 143
+             C98 151 102 156 106 159
+             C96 147 91 127 89 107
+             C87 91 87 78 89 68Z"
           fill={`url(#${shineId})`}
           opacity=".78"
         />
         <path
-          d="M137 66h-12c5 20 4 41-1 59 8-10 11-24 13-42Z"
-          fill="rgba(0,0,0,.08)"
+          d="M145 70
+             C142 96 137 121 128 142
+             C136 133 143 111 147 83Z"
+          fill="rgba(0,0,0,.07)"
         />
 
-        {/* Rolled rim */}
-        <rect x="66" y="45" width="88" height="20" rx="10" fill={`url(#${edgeId})`} />
-        <path d="M77 51h66" stroke="rgba(255,255,255,.58)" strokeWidth="2.6" strokeLinecap="round" />
-        <path d="M76 61c13 7 55 7 68 0" fill="none" stroke="rgba(255,255,255,.20)" strokeWidth="2" strokeLinecap="round" />
-
-        {/* Engraved finishing position */}
+        {/* Engraved place on the metal bowl. */}
         <text
           className="final-trophy-rank-engraving"
           x="110"
-          y="108"
+          y="116"
           textAnchor="middle"
           dominantBaseline="middle"
         >
           {rankLabel}
         </text>
 
-        {/* Stem and weighted base */}
-        <path d="M101 158h18l-2 23h-14Z" fill={`url(#${bowlId})`} />
-        <path d="M88 180h44l12 13H76Z" fill={`url(#${edgeId})`} />
-        <rect x="70" y="191" width="80" height="18" rx="4" fill={`url(#${edgeId})`} />
-        <path d="M80 197h60" stroke="rgba(255,255,255,.38)" strokeWidth="2" strokeLinecap="round" />
+        {/* Decorative neck, stem and dark award base like the reference. */}
+        <ellipse cx="110" cy="170" rx="22" ry="7" fill={`url(#${rimId})`} />
+        <path d="M101 168h18l4 25h-26Z" fill={`url(#${bowlId})`} />
+        <ellipse cx="110" cy="193" rx="28" ry="8" fill={`url(#${rimId})`} />
+        <path d="M82 192h56l10 14H72Z" fill={`url(#${rimId})`} />
+        <rect x="65" y="204" width="90" height="27" rx="5" fill={`url(#${baseId})`} />
+        <rect x="75" y="211" width="70" height="11" rx="2.5" fill="rgba(255,255,255,.08)" />
+        <path d="M74 208h72" stroke="rgba(255,255,255,.18)" strokeWidth="1.5" strokeLinecap="round" />
       </g>
     </svg>
   );
