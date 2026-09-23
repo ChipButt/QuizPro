@@ -3217,3 +3217,155 @@
 .live-team-page .final-podium-slot.ours .final-trophy-engraving{
   outline:0 !important;
 }
+
+
+/* ---------- Final podium information hierarchy ---------- */
+/* Rank is engraved into each trophy; team identity moves to a plaque fixed
+   to the podium face. Positioning of the trophies/plinths is unchanged. */
+
+.live-team-page .final-trophy-rank-engraving{
+  fill:var(--trophy-engrave);
+  font-size:34px;
+  font-weight:1000;
+  letter-spacing:-.06em;
+  paint-order:stroke fill;
+  stroke:rgba(255,255,255,.24);
+  stroke-width:1px;
+  filter:drop-shadow(0 1px 0 rgba(255,255,255,.35)) drop-shadow(0 -1px 0 rgba(0,0,0,.24));
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-rank-engraving{
+  font-size:39px;
+}
+
+.live-team-page .final-podium-block{
+  display:grid !important;
+  place-items:center !important;
+  padding:5px 5px 4px !important;
+  box-sizing:border-box;
+}
+
+.live-team-page .final-podium-plaque{
+  position:relative;
+  z-index:5;
+  width:calc(100% - 8px);
+  min-width:0;
+  min-height:25px;
+  box-sizing:border-box;
+  padding:4px 5px 3px;
+  display:grid;
+  justify-items:center;
+  align-content:center;
+  gap:2px;
+  border:1px solid var(--trophy-metal-dark);
+  border-radius:4px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.05)),
+    var(--trophy-metal);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.46),
+    inset 0 -1px 0 rgba(0,0,0,.14),
+    0 2px 3px rgba(0,0,0,.2);
+}
+
+.live-team-page .final-podium-slot.first .final-podium-plaque{
+  min-height:31px;
+  border-color:#987000;
+}
+
+.live-team-page .final-podium-plaque strong{
+  width:100%;
+  min-width:0;
+  color:var(--trophy-engrave) !important;
+  font-size:7.5px !important;
+  line-height:1.02 !important;
+  font-weight:1000 !important;
+  letter-spacing:-.01em !important;
+  text-align:center;
+  overflow-wrap:anywhere;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.3),
+    0 -1px 0 rgba(0,0,0,.12);
+}
+
+.live-team-page .final-podium-slot.first .final-podium-plaque strong{
+  font-size:8.4px !important;
+}
+
+.live-team-page .final-podium-plaque b{
+  margin:0 !important;
+  display:flex !important;
+  align-items:baseline;
+  justify-content:center;
+  gap:2px;
+  color:var(--trophy-engrave) !important;
+  font-size:9.5px !important;
+  line-height:1 !important;
+  font-weight:1000 !important;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.28),
+    0 -1px 0 rgba(0,0,0,.12);
+}
+
+.live-team-page .final-podium-slot.first .final-podium-plaque b{
+  font-size:10.5px !important;
+}
+
+.live-team-page .final-podium-plaque b small{
+  margin:0 !important;
+  color:var(--trophy-engrave) !important;
+  font-size:5px !important;
+  line-height:1 !important;
+  font-weight:1000 !important;
+  letter-spacing:.08em !important;
+}
+
+.live-team-page .final-podium-plaque .final-podium-mystery{
+  height:auto !important;
+  color:var(--trophy-engrave) !important;
+  font-size:15px !important;
+}
+
+.live-team-page .final-podium-plaque .final-podium-waiting{
+  color:var(--trophy-engrave) !important;
+  font-size:5.1px !important;
+  line-height:1.05 !important;
+  letter-spacing:.04em !important;
+}
+
+/* Retire the old engraving overlay if stale markup survives a cached build. */
+.live-team-page .final-trophy-engraving{
+  display:none !important;
+}
+
+.live-team-page .final-podium-slot.ours .final-podium-plaque{
+  outline:2px solid #14c7ff;
+  outline-offset:1px;
+}
+
+@media(max-height:760px){
+  .live-team-page .final-trophy-rank-engraving{
+    font-size:29px;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-rank-engraving{
+    font-size:33px;
+  }
+
+  .live-team-page .final-podium-plaque{
+    min-height:22px;
+    padding:3px 4px 2px;
+  }
+
+  .live-team-page .final-podium-slot.first .final-podium-plaque{
+    min-height:27px;
+  }
+
+  .live-team-page .final-podium-plaque strong{
+    font-size:6.8px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-podium-plaque strong{
+    font-size:7.5px !important;
+  }
+}
