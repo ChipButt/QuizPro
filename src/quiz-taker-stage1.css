@@ -707,3 +707,11 @@
 .live-team-page .waiting-team-card.waiting-no-fun-fact .waiting-fun-fact{
   display:none !important;
 }
+
+/* Approved Between Rounds score-panel position from the supplied editor JSON. */
+@media(max-width:979px){
+  .live-team-page .waiting-team-card.waiting-state-review .waiting-score-panel,
+  .live-team-page .waiting-team-card.waiting-state-between .waiting-score-panel{
+    translate:0 -46px !important;
+  }
+}
