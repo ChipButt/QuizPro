@@ -465,3 +465,53 @@
 .quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock.quiz-layout-overridden{
   translate:none !important;
 }
+
+
+/* ---------- Definitive clock-only top-left position ---------- */
+/* Move only the circular clock. The warning/message keeps its approved position. */
+@media(max-width:979px){
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock{
+    position:fixed !important;
+    left:12px !important;
+    right:auto !important;
+    top:84px !important;
+    bottom:auto !important;
+    width:64px !important;
+    height:64px !important;
+    min-width:64px !important;
+    min-height:64px !important;
+    max-width:64px !important;
+    max-height:64px !important;
+    margin:0 !important;
+    transform:none !important;
+    translate:none !important;
+    z-index:95 !important;
+  }
+}
+
+@media(min-width:980px){
+  /* Restore the message wrapper to its original top-right area. */
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap{
+    top:78px !important;
+    right:18px !important;
+    left:auto !important;
+  }
+
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock{
+    position:fixed !important;
+    left:18px !important;
+    right:auto !important;
+    top:84px !important;
+    bottom:auto !important;
+    width:68px !important;
+    height:68px !important;
+    min-width:68px !important;
+    min-height:68px !important;
+    max-width:68px !important;
+    max-height:68px !important;
+    margin:0 !important;
+    transform:none !important;
+    translate:none !important;
+    z-index:95 !important;
+  }
+}
