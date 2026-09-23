@@ -725,7 +725,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                     <button
                       type="button"
                       key={team.id}
-                      className="host-team-tile"
+                      className={`host-team-tile ${team.paid ? "paid" : ""}`}
                       onClick={() => setSelectedTeamId(team.id)}
                     >
                       {team.table ? <span className="host-team-tile-table">Table {team.table}</span> : null}
@@ -845,8 +845,19 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
             </div>
 
             <div className="host-team-popup-edit">
+              <label className="host-team-popup-name-field">
+                <span>Team Name</span>
+                <input
+                  value={selectedTeam.name ?? ""}
+                  onChange={(event) => {
+                    const name = event.target.value;
+                    updateTeam(selectedTeam.id, { name, nameLocked: Boolean(name.trim()) });
+                  }}
+                  placeholder="Waiting"
+                />
+              </label>
               <label>
-                <span>Table</span>
+                <span>Table Number</span>
                 <input
                   value={selectedTeam.table ?? ""}
                   onChange={(event) => updateTeam(selectedTeam.id, { table: event.target.value })}
@@ -854,7 +865,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                 />
               </label>
               <label>
-                <span>Players</span>
+                <span>Number of Players</span>
                 <input
                   type="number"
                   min="1"
@@ -864,6 +875,15 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                 />
               </label>
             </div>
+
+            <button
+              type="button"
+              className={`host-team-paid-toggle ${selectedTeam.paid ? "paid" : ""}`}
+              onClick={() => updateTeam(selectedTeam.id, { paid: !selectedTeam.paid })}
+            >
+              <Check size={16} />
+              {selectedTeam.paid ? "Paid" : "Mark as Paid"}
+            </button>
 
             <button
               type="button"
