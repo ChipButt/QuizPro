@@ -115,3 +115,19 @@
 .quiz-preview-mode .quiz-layout-layered{
   position:relative !important;
 }
+
+
+/* Timer message and clock are edited independently. Their page CSS has fixed
+   default positions, so these higher-specificity preview rules must restore
+   the editor translate offsets while either child is being moved. */
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-message.quiz-layout-overridden,
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock.quiz-layout-overridden{
+  translate:var(--layout-editor-x,0px) var(--layout-editor-y,0px) !important;
+}
+
+.quiz-preview-mode.quiz-layout-editing .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-message,
+.quiz-preview-mode.quiz-layout-editing .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock{
+  pointer-events:auto !important;
+  touch-action:none !important;
+  cursor:grab !important;
+}
