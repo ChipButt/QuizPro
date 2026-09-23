@@ -5,9 +5,11 @@ import {
   Eye,
   Lock,
   Menu,
+  Plus,
   Play,
   RotateCcw,
   TimerReset,
+  Trash2,
   Trophy,
   Unlock,
 } from "lucide-react";
@@ -491,6 +493,8 @@ export default function QuizmasterPreviewView({ stage }) {
   const [liveTab, setLiveTab] = useState("questions");
   const [menuOpen, setMenuOpen] = useState(false);
   const [screenPreview, setScreenPreview] = useState(null);
+  const [newTeamTable, setNewTeamTable] = useState("");
+  const [newTeamPlayers, setNewTeamPlayers] = useState(4);
   const [now, setNow] = useState(Date.now());
 
   useQuizmasterLayoutEditor(rootRef, stage);
@@ -565,6 +569,12 @@ export default function QuizmasterPreviewView({ stage }) {
       return;
     }
     sendAction("send-question");
+  };
+
+  const addPreviewTeam = () => {
+    sendAction("add-preview-team", { table: newTeamTable, players: newTeamPlayers });
+    setNewTeamTable("");
+    setNewTeamPlayers(4);
   };
 
   const previewTeamScreen = (screen) => {
@@ -669,6 +679,59 @@ export default function QuizmasterPreviewView({ stage }) {
           </div>
           <b>{teams.length} TEAMS</b>
         </header>
+
+        <section className="qm-preview-control-card qm-team-manager-card">
+          <div className="qm-preview-section-title qm-team-manager-title">
+            <span>Manage Teams</span>
+            <strong>{teams.length} teams</strong>
+          </div>
+
+          <div className="qm-add-team-row">
+            <label>
+              <span>Table</span>
+              <input
+                value={newTeamTable}
+                onChange={(event) => setNewTeamTable(event.target.value)}
+                placeholder="7"
+              />
+            </label>
+            <label>
+              <span>Players</span>
+              <input
+                type="number"
+                min="1"
+                max="30"
+                value={newTeamPlayers}
+                onChange={(event) => setNewTeamPlayers(Math.max(1, Number(event.target.value) || 1))}
+              />
+            </label>
+            <button type="button" className="primary" onClick={addPreviewTeam}>
+              <Plus size={14} /> Add Team
+            </button>
+          </div>
+
+          <div className="qm-team-manager-list">
+            {teams.map((team, index) => (
+              <div className="qm-team-manager-row" key={team.id}>
+                <div>
+                  <strong>{team.name}</strong>
+                  <span>Table {team.table} · {team.players} player{team.players === 1 ? "" : "s"}</span>
+                </div>
+                {team.id === "preview-team" ? (
+                  <small>TEST PHONE</small>
+                ) : (
+                  <button
+                    type="button"
+                    aria-label={`Remove ${team.name}`}
+                    onClick={() => sendAction("remove-preview-team", { teamId: team.id })}
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
 
         <section className="qm-preview-round-card qm-live-question-strip">
           <div className="qm-preview-round-top">
