@@ -303,3 +303,15 @@
     height:28px !important;
   }
 }
+
+
+.live-team-page .team-question-stage.is-revealed .your-answer-label{
+  display:block;
+  margin:0 0 6px 2px;
+  color:#6b7280 !important;
+  font-size:10px !important;
+  line-height:1 !important;
+  font-weight:950 !important;
+  letter-spacing:.13em !important;
+  text-transform:uppercase;
+}
