@@ -1736,12 +1736,6 @@ export default function TeamView({ sessionCode, teamToken }) {
               </div>
             ) : null}
 
-            {!isMultipleChoice && !questionLocked && draft.trim() && !answerSaving ? (
-              <div className="answer-save-status saved">
-                <CheckCircle2 size={15} />
-                <strong>Answer Updated</strong>
-              </div>
-            ) : null}
           </div>
         </div>
 
