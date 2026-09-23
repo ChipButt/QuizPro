@@ -242,3 +242,85 @@
     font-size:16px !important;
   }
 }
+
+
+/* ---------- Timer safe-zone + independent editor controls ---------- */
+/* The previous phone timer sat over the lower answer area. The timer wrapper is
+   now just a non-interactive positioning layer; the message and clock are
+   independent movable elements so multiple-choice answers stay unobstructed. */
+@media(max-width:979px){
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap{
+    position:fixed !important;
+    inset:0 !important;
+    width:100vw !important;
+    height:100dvh !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:none !important;
+    max-height:none !important;
+    margin:0 !important;
+    padding:0 !important;
+    transform:none !important;
+    translate:none !important;
+    display:block !important;
+    pointer-events:none !important;
+  }
+
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-message{
+    position:absolute !important;
+    left:18px !important;
+    top:84px !important;
+    width:226px !important;
+    height:auto !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:none !important;
+    max-height:none !important;
+    margin:0 !important;
+    transform:none !important;
+    translate:none !important;
+    z-index:2;
+  }
+
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock{
+    position:absolute !important;
+    left:auto !important;
+    right:18px !important;
+    top:84px !important;
+    width:64px !important;
+    height:64px !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:none !important;
+    max-height:none !important;
+    margin:0 !important;
+    aspect-ratio:1 / 1 !important;
+    transform:none !important;
+    translate:none !important;
+    z-index:3;
+  }
+
+  .live-team-page .team-timer-message strong{
+    white-space:normal !important;
+  }
+}
+
+/* The wrapper itself should never be the draggable target in preview.
+   Only the message block and the clock are interactive, independently. */
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap{
+  pointer-events:none !important;
+  cursor:default !important;
+}
+
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-message,
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock{
+  pointer-events:auto !important;
+  cursor:grab !important;
+}
+
+/* Editor inline values are allowed to override the baked timer typography. */
+.quiz-preview-mode .live-team-page .team-timer-message.quiz-layout-overridden strong,
+.quiz-preview-mode .live-team-page .team-timer-message.quiz-layout-overridden span,
+.quiz-preview-mode .live-team-page .team-timer-clock.quiz-layout-overridden strong{
+  transition:none !important;
+}
