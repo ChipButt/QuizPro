@@ -22,6 +22,7 @@ import {
   WifiOff,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import FinalPodium from "./FinalPodium.jsx";
 import { useEffect, useMemo, useState } from "react";
 import { computeLeaderboard } from "../utils/quiz.js";
 import {
@@ -504,10 +505,12 @@ export function LiveRunnerPage({ state, updateState, setActivePage, network }) {
               <div><strong>{finalRevealCount} / {state.teams.length}</strong><span>teams revealed, starting from last place</span></div>
               <button className="primary-button" disabled={finalRevealCount >= state.teams.length} onClick={revealNextFinalTeam}><Trophy size={16} /> Reveal next place</button>
             </div>
+            <FinalPodium leaderboard={leaderboard} revealedIds={new Set(finalRevealOrder.map((team) => team.id))} />
             <div className="final-reveal-list">
-              {finalRevealOrder.map((team, index) => {
+              {finalRevealOrder.map((team) => {
                 const actualPlace = leaderboard.findIndex((item) => item.id === team.id) + 1;
-                return <div className={actualPlace === 1 ? "winner" : ""} key={team.id}><span>{actualPlace}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score} pts</b></div>;
+                if (actualPlace <= 3) return null;
+                return <div key={team.id}><span>{actualPlace}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score} pts</b></div>;
               })}
             </div>
           </Panel>

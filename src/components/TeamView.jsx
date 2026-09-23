@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLiveTeamNetwork } from "../hooks/useLiveTeamNetwork.js";
+import FinalPodium, { FinalTrophy } from "./FinalPodium.jsx";
 
 function TeamChrome({ children, status, keyboardActive = false, rail = null }) {
   return (
@@ -263,21 +264,28 @@ function FinalScreen({ snapshot, status }) {
   const count = Number(snapshot.live?.finalRevealCount ?? 0);
   const full = snapshot.leaderboard ?? [];
   const revealed = full.slice().reverse().slice(0, count);
+  const revealedIds = new Set(revealed.map((team) => team.id));
+  const restRevealed = revealed.filter((team) => full.findIndex((item) => item.id === team.id) + 1 > 3);
   return (
     <TeamChrome status={status}>
       <section className="team-card live-team-card team-final-card">
-        <Trophy size={40} />
-        <h1>Final results</h1>
-        <div className="team-final-list">
-          {revealed.map((team) => {
-            const place = full.findIndex((item) => item.id === team.id) + 1;
-            return (
-              <div key={team.id} className={place === 1 ? "winner" : ""}>
-                <span>{place}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score} pts</b>
-              </div>
-            );
-          })}
-        </div>
+        <header className="final-head">
+          <FinalTrophy />
+          <h1>Final results</h1>
+        </header>
+        <FinalPodium leaderboard={full} revealedIds={revealedIds} />
+        {restRevealed.length ? (
+          <div className="team-final-list">
+            {restRevealed.map((team) => {
+              const place = full.findIndex((item) => item.id === team.id) + 1;
+              return (
+                <div key={team.id}>
+                  <span>{place}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score} pts</b>
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
       </section>
     </TeamChrome>
   );

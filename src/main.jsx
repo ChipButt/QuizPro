@@ -19,6 +19,7 @@ import "./quiz-taker-v7.css";
 import "./quiz-taker-v8.css";
 import "./quiz-taker-v9.css";
 import "./quiz-taker-v10.css";
+import "./final-podium.css";
 import "./game-show-host.css";
 
 createRoot(document.getElementById("root")).render(
