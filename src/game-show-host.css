@@ -2589,3 +2589,102 @@
     max-width:420px;
   }
 }
+
+
+/* ---------- Team popup meta row + top-banner offset ---------- */
+.simple-host-app .host-team-popup-backdrop{
+  --host-team-popup-top:0px;
+}
+
+.simple-host-app .host-team-popup{
+  height:100%;
+  min-height:100%;
+}
+
+.simple-host-app .host-team-popup-close{
+  top:calc(var(--host-team-popup-top) + max(12px,env(safe-area-inset-top))) !important;
+  right:max(12px,env(safe-area-inset-right)) !important;
+}
+
+.simple-host-app .host-team-popup-edit{
+  width:min(100%,560px);
+  max-width:560px;
+  display:block;
+  margin-top:16px;
+}
+
+.simple-host-app .host-team-popup-name-field{
+  display:grid;
+  width:100%;
+}
+
+.simple-host-app .host-team-popup-meta-row{
+  width:100%;
+  margin-top:9px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(82px,.72fr);
+  gap:8px;
+  align-items:end;
+}
+
+.simple-host-app .host-team-popup-meta-row label{
+  min-width:0;
+}
+
+.simple-host-app .host-team-popup-meta-row .host-team-paid-toggle{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:44px;
+  height:44px;
+  margin:0;
+  padding:6px 8px;
+  align-self:end;
+  white-space:nowrap;
+}
+
+@media(max-width:640px){
+  .simple-host-app .host-team-popup-backdrop{
+    --host-team-popup-top:63px;
+    top:63px;
+    right:0;
+    bottom:0;
+    left:0;
+  }
+
+  .simple-host-app .host-team-popup{
+    height:100%;
+    min-height:100%;
+    padding-top:18px;
+  }
+
+  .simple-host-app .host-team-popup-edit{
+    width:100%;
+    max-width:520px;
+    display:block;
+  }
+
+  .simple-host-app .host-team-popup-meta-row{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) 82px;
+    gap:6px;
+  }
+
+  .simple-host-app .host-team-popup-meta-row label>span{
+    font-size:8px;
+    letter-spacing:.04em;
+  }
+
+  .simple-host-app .host-team-popup-meta-row input{
+    min-height:42px;
+    height:42px;
+    padding-inline:6px;
+    font-size:13px;
+  }
+
+  .simple-host-app .host-team-popup-meta-row .host-team-paid-toggle{
+    min-height:42px;
+    height:42px;
+    padding-inline:5px;
+    font-size:11px;
+  }
+}
