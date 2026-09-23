@@ -137,6 +137,12 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
     setOpenPanel((current) => current === panel ? null : panel);
   }
 
+  function openTeamsPanel() {
+    setScreenPreview(null);
+    setControlsOpen(false);
+    setOpenPanel("teams");
+  }
+
   function loadQuiz(quizId) {
     if (state.live?.sessionActive && (state.teams.length || Object.keys(state.answers ?? {}).length)) {
       const okay = window.confirm("Start a new live quiz? This clears the current teams and submitted answers, but leaves every saved quiz untouched.");
@@ -661,6 +667,12 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
           </button>
         </div>
 
+        <button type="button" className="host-manage-teams-button" onClick={openTeamsPanel}>
+          <Users size={16} />
+          <span>Manage Teams</span>
+          <b>{state.teams.length}</b>
+        </button>
+
         {controlsOpen ? (
           <div className="host-live-controls-popout">
             <label className="host-live-timer-setting">
@@ -675,7 +687,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
             </label>
 
             <div className="host-tool-row">
-              <button className={openPanel === "teams" ? "active" : ""} onClick={() => togglePanel("teams")}><Users size={16} /> Teams <b>{state.teams.length}</b></button>
+              <button className={openPanel === "teams" ? "active" : ""} onClick={openTeamsPanel}><Users size={16} /> Teams <b>{state.teams.length}</b></button>
               <button className={openPanel === "answers" ? "active" : ""} onClick={() => togglePanel("answers")}><Check size={16} /> Round answers <b>{reviewRound?.questions?.reduce((count, item) => count + Object.keys(state.answers?.[item.id] ?? {}).length, 0) ?? 0}</b></button>
               <button className={`${openPanel === "round" ? "active" : ""} ${liveLocked ? "locked" : ""}`} onClick={() => togglePanel("round")}><Settings2 size={16} /> Round</button>
             </div>
@@ -698,7 +710,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
           </div>
         ) : null}
 
-        {controlsOpen && openPanel ? (
+        {openPanel ? (
           <div className={`host-tool-drawer ${openPanel}`}>
             <button className="host-drawer-close" aria-label="Close" onClick={() => setOpenPanel(null)}><X size={16} /></button>
 
