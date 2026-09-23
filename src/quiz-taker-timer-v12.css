@@ -182,3 +182,63 @@
 .quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap.quiz-layout-overridden .team-timer-clock strong{
   font-size:clamp(16px,30%,42px) !important;
 }
+
+
+/* APPROVED TIMER PAGE — literal bake from the supplied 390×844 editor JSON.
+   Keep the timer overlay, message, clock and answered counter at the exact
+   positions visible in that export. */
+@media(max-width:979px){
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap{
+    top:600px !important;
+    bottom:auto !important;
+    left:44.5px !important;
+    right:auto !important;
+    width:303px !important;
+    height:173px !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:none !important;
+    max-height:none !important;
+    padding:0 !important;
+    transform:none !important;
+    translate:none !important;
+    display:block !important;
+  }
+
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-message{
+    position:absolute !important;
+    left:38.5px !important;
+    top:43.1px !important;
+    width:225.9px !important;
+    height:32.7px !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:none !important;
+    max-height:none !important;
+    transform:none !important;
+    translate:none !important;
+  }
+
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock{
+    position:absolute !important;
+    left:119px !important;
+    top:95.8px !important;
+    width:61px !important;
+    height:60px !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:none !important;
+    max-height:none !important;
+    aspect-ratio:auto !important;
+    transform:none !important;
+    translate:none !important;
+  }
+
+  .live-team-page .question-team-card.timer-running .team-question-progress{
+    translate:-58.2px 0 !important;
+  }
+
+  .live-team-page .team-timer-clock strong{
+    font-size:16px !important;
+  }
+}
