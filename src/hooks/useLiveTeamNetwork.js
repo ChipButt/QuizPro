@@ -234,8 +234,26 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
     };
   }, [sessionCode, teamToken, previewMode]);
 
+  useEffect(() => {
+    if (!previewMode) return undefined;
+
+    const onPreviewMessage = (event) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type !== "quiz-preview-snapshot") return;
+      if (!event.data.snapshot) return;
+      setSnapshot(event.data.snapshot);
+      setStatus("online");
+      setError("");
+    };
+
+    window.addEventListener("message", onPreviewMessage);
+    window.parent?.postMessage({ type: "quiz-taker-preview-ready" }, window.location.origin);
+    return () => window.removeEventListener("message", onPreviewMessage);
+  }, [previewMode]);
+
   const send = useCallback((message) => {
     if (previewMode) {
+      window.parent?.postMessage({ type: "quiz-taker-preview-action", message }, window.location.origin);
       setSnapshot((current) => {
         if (!current) return current;
         if (message?.type === "set-team-name") {
