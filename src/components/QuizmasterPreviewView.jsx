@@ -820,6 +820,8 @@ export default function QuizmasterPreviewView({ stage }) {
             </div>
             <div className="qm-preview-answer qm-answer-key-always">CORRECT ANSWER · {currentQuestion?.answer || "Not set"}</div>
           </section>
+
+          {renderAnswerGrid()}
         </>
       ) : (
         <>
