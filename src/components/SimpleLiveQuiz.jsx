@@ -828,7 +828,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
               </div>
             ) : null}
 
-            {liveTab === "answers" ? (askedReviewQuestions.length ? (
+            {askedReviewQuestions.length ? (
               <section className="host-answer-matrix-section">
                 <div className="host-answer-matrix-heading">
                   <div>
@@ -895,7 +895,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
               </section>
             ) : (
               <div className="host-answer-matrix-empty">Send the first question to start the live answer grid.</div>
-            )) : null}
+            )}
           </>
         ) : <p className="simple-empty-copy">This round has no questions.</p>}
       </section>
