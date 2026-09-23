@@ -53,6 +53,22 @@ function previewSnapshot(stage) {
   }
   if (stage === "leaderboard") {
     base.live = { ...base.live, teamScreen: "leaderboard" };
+    base.leaderboard = [
+      { id: "team-2", name: "Universally Challenged", score: 38 },
+      { id: "preview-team", name: "The Quizzy Rascals", score: 35 },
+      { id: "team-3", name: "Agatha Quiztie", score: 31 },
+      { id: "team-4", name: "No Eye Deer", score: 28 },
+      { id: "team-5", name: "The Smartinis", score: 27 },
+      { id: "team-6", name: "Risky Quizness", score: 25 },
+      { id: "team-7", name: "Norfolk 'n' Chance", score: 24 },
+      { id: "team-8", name: "The Know It Ales", score: 22 },
+      { id: "team-9", name: "Victorious Secret", score: 20 },
+      { id: "team-10", name: "Google Wasn't Invited", score: 19 },
+      { id: "team-11", name: "Les Quizerables", score: 17 },
+      { id: "team-12", name: "Let's Get Quizzical", score: 15 },
+      { id: "team-13", name: "The Guessing Game", score: 13 },
+      { id: "team-14", name: "Table Trouble", score: 11 },
+    ];
     return base;
   }
   if (stage === "final") {
