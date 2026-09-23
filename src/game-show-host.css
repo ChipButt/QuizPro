@@ -1762,12 +1762,17 @@
 .simple-host-app .host-live-timer-setting select{
   width:100%;
   min-height:40px;
-  border:1px solid #b9cce8;
+  border:1px solid #3f6596;
   border-radius:10px;
-  background:#fff;
-  color:var(--gs-text);
+  background:#123467;
+  color:#fff;
   padding:7px 9px;
   font-weight:850;
+}
+
+.simple-host-app .host-live-timer-setting select option{
+  background:#123467;
+  color:#fff;
 }
 
 .simple-host-app .host-live-tabs{
