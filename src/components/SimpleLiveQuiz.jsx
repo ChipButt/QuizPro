@@ -730,7 +730,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                     >
                       {team.table ? <span className="host-team-tile-table">Table {team.table}</span> : null}
                       <span className="host-team-tile-players">{Math.max(1, Number(team.players) || 1)} Player{Number(team.players) === 1 ? "" : "s"}</span>
-                      <strong>{team.name || "Waiting"}</strong>
+                      <strong>{team.name || "No Team Name"}</strong>
                     </button>
                   ))}
                   {!state.teams.length ? <p className="simple-empty-copy">No teams added yet.</p> : null}
@@ -818,7 +818,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
             className="host-team-popup"
             role="dialog"
             aria-modal="true"
-            aria-label={selectedTeam.name ? `${selectedTeam.name} team details` : "Waiting team details"}
+            aria-label={selectedTeam.name ? `${selectedTeam.name} team details` : "No Team Name team details"}
             onClick={(event) => event.stopPropagation()}
           >
             <button
@@ -832,7 +832,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
 
             <div className="host-team-popup-details">
               {selectedTeam.table ? <span>TABLE {selectedTeam.table}</span> : null}
-              <h2>{selectedTeam.name || "Waiting"}</h2>
+              <h2>{selectedTeam.name || "No Team Name"}</h2>
               <p>{Math.max(1, Number(selectedTeam.players) || 1)} Player{Number(selectedTeam.players) === 1 ? "" : "s"}</p>
             </div>
 
@@ -853,7 +853,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                     const name = event.target.value;
                     updateTeam(selectedTeam.id, { name, nameLocked: Boolean(name.trim()) });
                   }}
-                  placeholder="Waiting"
+                  placeholder="No Team Name"
                 />
               </label>
               <label>
