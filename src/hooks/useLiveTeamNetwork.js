@@ -92,7 +92,7 @@ function previewSnapshot(stage) {
     return base;
   }
 
-  const multipleChoice = stage === "multiple-choice";
+  const multipleChoice = stage === "multiple-choice" || stage === "timer";
   const revealed = stage === "answer-reveal";
   base.live = {
     ...base.live,
