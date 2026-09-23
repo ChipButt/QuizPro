@@ -1,0 +1,234 @@
+.qm-preview-phone{
+  width:390px;
+  height:844px;
+  box-sizing:border-box;
+  overflow:auto;
+  padding:16px 14px 18px;
+  background:
+    radial-gradient(circle at 50% 0,rgba(33,138,255,.26),transparent 28%),
+    linear-gradient(180deg,#061b38 0%,#03142d 100%);
+  color:#fff;
+}
+
+.qm-preview-loading{
+  min-height:100%;
+  display:grid;
+  place-items:center;
+  color:#b8cdf7;
+  font-weight:800;
+}
+
+.qm-preview-header{
+  min-height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 4px 10px;
+}
+
+.qm-preview-header>div{
+  display:grid;
+  gap:2px;
+}
+
+.qm-preview-header span{
+  color:#35c8ff;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.18em;
+}
+
+.qm-preview-header strong{
+  font-size:24px;
+  line-height:1;
+  font-weight:1000;
+  letter-spacing:-.04em;
+}
+
+.qm-preview-header>b{
+  max-width:135px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:#123467;
+  color:#dce9ff;
+  font-size:10px;
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+
+.qm-preview-header>b.timer-live{
+  background:#b91c1c;
+  color:#fff;
+}
+
+.qm-preview-round-card,
+.qm-preview-control-card{
+  margin-bottom:11px;
+  border:1px solid rgba(80,169,255,.28);
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(9,43,89,.96),rgba(5,28,61,.98));
+  box-shadow:0 8px 22px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.qm-preview-round-card{
+  padding:15px;
+}
+
+.qm-preview-round-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:#6fd5ff;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.12em;
+}
+
+.qm-preview-round-card h1{
+  margin:5px 0 8px;
+  color:#ffd429;
+  font-size:22px;
+  line-height:1;
+  letter-spacing:-.03em;
+}
+
+.qm-preview-round-card p{
+  margin:0;
+  color:#fff;
+  font-size:16px;
+  line-height:1.25;
+  font-weight:800;
+}
+
+.qm-preview-options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:10px;
+}
+
+.qm-preview-options span{
+  min-height:30px;
+  display:flex;
+  align-items:center;
+  padding:5px 8px;
+  border-radius:9px;
+  background:#0b5cc8;
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+}
+
+.qm-preview-answer{
+  margin-top:10px;
+  padding:8px 10px;
+  border-radius:10px;
+  background:#0b7c55;
+  color:#fff;
+  font-size:11px;
+  font-weight:950;
+}
+
+.qm-preview-control-card{
+  padding:12px;
+}
+
+.qm-preview-control-card.compact{
+  padding-bottom:13px;
+}
+
+.qm-preview-section-title{
+  margin-bottom:8px;
+  color:#bcd3fb;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+
+.qm-preview-nav-row{
+  display:grid;
+  grid-template-columns:1fr 1.35fr 1fr;
+  gap:6px;
+}
+
+.qm-preview-action-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:6px;
+}
+
+.qm-preview-action-grid.three{
+  grid-template-columns:repeat(3,1fr);
+  margin-top:0;
+}
+
+.qm-preview-phone button,
+.qm-preview-phone select{
+  min-height:40px;
+  box-sizing:border-box;
+  border:1px solid rgba(135,184,255,.26);
+  border-radius:10px;
+  background:#123467;
+  color:#fff;
+  padding:7px 8px;
+  font-size:10px;
+  line-height:1.1;
+  font-weight:900;
+}
+
+.qm-preview-phone button{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  cursor:pointer;
+}
+
+.qm-preview-phone button.primary{
+  border-color:#ffdf5b;
+  background:linear-gradient(180deg,#ffd429,#e3ad00);
+  color:#122140;
+  box-shadow:0 4px 0 #a77b00;
+}
+
+.qm-preview-phone button.danger{
+  background:#a62536;
+}
+
+.qm-preview-phone button:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+}
+
+.qm-preview-timer-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+}
+
+.qm-preview-phone select{
+  cursor:pointer;
+}
+
+.qm-preview-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:3px 4px 0;
+  color:#8fa9d6;
+  font-size:9px;
+  font-weight:800;
+}
+
+.qm-preview-footer strong{
+  color:#ffd429;
+}
+
+.quiz-preview-mode.quiz-layout-editing .qm-preview-phone *{
+  touch-action:none;
+}
