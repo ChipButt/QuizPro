@@ -450,8 +450,8 @@
 
 @keyframes waitingBulbCycleLarge{
   0%,7%{
-    color:#9c99a1;
-    opacity:.28;
+    color:#6f7380;
+    opacity:.62;
     filter:none;
   }
   11%,58%{
@@ -460,8 +460,8 @@
     filter:drop-shadow(0 0 7px rgba(255,212,41,.95)) drop-shadow(0 0 20px rgba(255,212,41,.52));
   }
   62%{
-    color:#9c99a1;
-    opacity:.30;
+    color:#6f7380;
+    opacity:.62;
     filter:none;
   }
   65%{
@@ -470,8 +470,8 @@
     filter:drop-shadow(0 0 16px rgba(255,212,41,.8));
   }
   68%{
-    color:#9c99a1;
-    opacity:.28;
+    color:#6f7380;
+    opacity:.62;
     filter:none;
   }
   71%{
@@ -480,32 +480,32 @@
     filter:drop-shadow(0 0 16px rgba(255,212,41,.8));
   }
   74%{
-    color:#9c99a1;
-    opacity:.25;
+    color:#6f7380;
+    opacity:.62;
     filter:none;
   }
   77%{
     color:#ffd429;
-    opacity:.92;
+    opacity:.95;
     filter:drop-shadow(0 0 12px rgba(255,212,41,.62));
   }
   82%,100%{
-    color:#9c99a1;
-    opacity:.18;
+    color:#6f7380;
+    opacity:.62;
     filter:none;
   }
 }
 
 @keyframes waitingFactCycleInsideBulb{
-  0%,7%{opacity:0}
+  0%,7%{opacity:.62}
   11%,58%{opacity:1}
-  62%{opacity:0}
+  62%{opacity:.62}
   65%{opacity:1}
-  68%{opacity:0}
+  68%{opacity:.62}
   71%{opacity:1}
-  74%{opacity:0}
-  77%{opacity:1}
-  82%,100%{opacity:0}
+  74%{opacity:.62}
+  77%{opacity:.95}
+  82%,100%{opacity:.62}
 }
 
 @media(max-height:760px){
@@ -710,6 +710,7 @@
   /* JSON rendered geometry: left 14, top 439.6, width 360, height 360. */
   .live-team-page .waiting-team-card.waiting-state-initial .waiting-fact-bulb{
     position:fixed !important;
+    z-index:1 !important;
     left:14px !important;
     top:439.6px !important;
     width:360px !important;
