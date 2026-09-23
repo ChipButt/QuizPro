@@ -752,3 +752,83 @@
 .qm-live-tabs + * .qm-live-top-navigation{
   width:100%;
 }
+
+
+/* ---------- Compact 10-team preview answer grid ---------- */
+.qm-answer-grid-scroll{
+  max-height:464px;
+  overflow:auto;
+  overscroll-behavior:contain;
+  padding-bottom:3px;
+}
+
+.qm-grid-corner,
+.qm-grid-question{
+  min-height:30px;
+  height:30px;
+  padding-block:2px;
+}
+
+.qm-grid-team.qm-grid-correct-label,
+.qm-grid-correct{
+  min-height:34px;
+  height:34px;
+}
+
+.qm-grid-correct{
+  padding:3px 5px;
+  font-size:8px;
+  line-height:1.05;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.qm-grid-team{
+  min-height:40px;
+  height:40px;
+  padding:3px 5px;
+  gap:1px;
+}
+
+.qm-grid-team strong{
+  font-size:8px;
+  line-height:1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.qm-grid-team small{
+  font-size:6px;
+  line-height:1;
+}
+
+.qm-grid-answer{
+  min-height:40px;
+  height:40px;
+  grid-template-rows:minmax(12px,1fr) 17px;
+  gap:2px;
+  padding:3px;
+}
+
+.qm-grid-answer>span{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-size:8px;
+  line-height:1;
+}
+
+.qm-grid-marking{
+  gap:2px;
+}
+
+.qm-grid-marking button{
+  min-height:17px !important;
+  height:17px;
+  padding:0 1px !important;
+  border-radius:4px !important;
+  font-size:8px !important;
+}
