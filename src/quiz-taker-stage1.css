@@ -450,8 +450,8 @@
 
 @keyframes waitingBulbCycleLarge{
   0%,7%{
-    color:#6f7380;
-    opacity:.62;
+    color:#9c99a1;
+    opacity:.28;
     filter:none;
   }
   11%,58%{
@@ -460,8 +460,8 @@
     filter:drop-shadow(0 0 7px rgba(255,212,41,.95)) drop-shadow(0 0 20px rgba(255,212,41,.52));
   }
   62%{
-    color:#6f7380;
-    opacity:.62;
+    color:#9c99a1;
+    opacity:.30;
     filter:none;
   }
   65%{
@@ -470,8 +470,8 @@
     filter:drop-shadow(0 0 16px rgba(255,212,41,.8));
   }
   68%{
-    color:#6f7380;
-    opacity:.62;
+    color:#9c99a1;
+    opacity:.28;
     filter:none;
   }
   71%{
@@ -480,32 +480,32 @@
     filter:drop-shadow(0 0 16px rgba(255,212,41,.8));
   }
   74%{
-    color:#6f7380;
-    opacity:.62;
+    color:#9c99a1;
+    opacity:.25;
     filter:none;
   }
   77%{
     color:#ffd429;
-    opacity:.95;
+    opacity:.92;
     filter:drop-shadow(0 0 12px rgba(255,212,41,.62));
   }
   82%,100%{
-    color:#6f7380;
-    opacity:.62;
+    color:#9c99a1;
+    opacity:.18;
     filter:none;
   }
 }
 
 @keyframes waitingFactCycleInsideBulb{
-  0%,7%{opacity:.62}
+  0%,7%{opacity:0}
   11%,58%{opacity:1}
-  62%{opacity:.62}
+  62%{opacity:0}
   65%{opacity:1}
-  68%{opacity:.62}
+  68%{opacity:0}
   71%{opacity:1}
-  74%{opacity:.62}
-  77%{opacity:.95}
-  82%,100%{opacity:.62}
+  74%{opacity:0}
+  77%{opacity:1}
+  82%,100%{opacity:0}
 }
 
 @media(max-height:760px){
@@ -704,15 +704,17 @@
   }
 
   .live-team-page .waiting-team-card.waiting-state-initial .waiting-fact-bulb-stage{
-    position:static !important;
+    position:relative !important;
+    width:100% !important;
+    height:100% !important;
   }
 
-  /* JSON rendered geometry: left 14, top 439.6, width 360, height 360. */
+  /* Approved JSON geometry, expressed relative to the approved fun-fact
+     container (left 34, top 439.3) so the animated card cannot rebase it. */
   .live-team-page .waiting-team-card.waiting-state-initial .waiting-fact-bulb{
-    position:fixed !important;
-    z-index:1 !important;
-    left:14px !important;
-    top:439.6px !important;
+    position:absolute !important;
+    left:-20px !important;
+    top:.3px !important;
     width:360px !important;
     height:360px !important;
     min-width:0 !important;
@@ -721,13 +723,13 @@
     max-height:none !important;
     transform:none !important;
     translate:none !important;
+    z-index:1 !important;
   }
 
-  /* JSON rendered geometry: left 116, top 502.1, width 158, height 120. */
   .live-team-page .waiting-team-card.waiting-state-initial .waiting-fact-copy{
-    position:fixed !important;
-    left:116px !important;
-    top:502.1px !important;
+    position:absolute !important;
+    left:82px !important;
+    top:62.8px !important;
     width:158px !important;
     height:120px !important;
     min-width:0 !important;
