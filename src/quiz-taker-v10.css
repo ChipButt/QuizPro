@@ -2900,3 +2900,288 @@
     width:78px;
   }
 }
+
+
+/* ---------- Final podium: premium trophy cups seated on plinths ---------- */
+/* Replaces the generic outline trophy treatment. The cup graphic itself
+   reaches the podium top so the trophies visibly sit on the plinths. */
+
+.live-team-page .final-podium{
+  min-height:218px !important;
+  gap:8px !important;
+}
+
+.live-team-page .final-podium-slot{
+  grid-template-rows:minmax(138px,auto) auto !important;
+}
+
+.live-team-page .final-trophy-wrap{
+  min-height:136px !important;
+  padding:0 !important;
+  display:grid !important;
+  place-items:end center !important;
+}
+
+.live-team-page .final-trophy-shell{
+  position:relative;
+  width:100%;
+  height:136px !important;
+  display:grid;
+  place-items:end center !important;
+  overflow:visible;
+  margin-bottom:-5px;
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-shell{
+  height:148px !important;
+}
+
+.live-team-page .final-trophy-shell::before{
+  display:none !important;
+}
+
+.live-team-page .final-trophy-art{
+  position:absolute;
+  z-index:1;
+  left:50%;
+  bottom:-2px;
+  width:116px;
+  height:124px;
+  transform:translateX(-50%);
+  overflow:visible;
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-art{
+  width:132px;
+  height:142px;
+}
+
+.live-team-page .final-podium-slot.second .final-trophy-art{
+  width:112px;
+  height:120px;
+}
+
+.live-team-page .final-podium-slot.third .final-trophy-art{
+  width:108px;
+  height:116px;
+}
+
+/* The engraved panel sits on the broad cup body, not floating outside it. */
+.live-team-page .final-trophy-engraving{
+  position:absolute !important;
+  z-index:4 !important;
+  left:50% !important;
+  top:auto !important;
+  bottom:54px !important;
+  width:62px !important;
+  min-height:38px !important;
+  transform:translateX(-50%) !important;
+  box-sizing:border-box;
+  padding:4px 5px 3px !important;
+  display:grid !important;
+  place-items:center !important;
+  align-content:center !important;
+  gap:2px !important;
+  border:1px solid color-mix(in srgb,var(--trophy-metal-dark) 85%,#000) !important;
+  border-radius:4px !important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,.08)),
+    var(--trophy-metal) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.45),
+    inset 0 -1px 0 rgba(0,0,0,.12) !important;
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-engraving{
+  bottom:61px !important;
+  width:70px !important;
+  min-height:42px !important;
+}
+
+.live-team-page .final-trophy-engraving strong{
+  color:var(--trophy-engrave) !important;
+  font-size:7.4px !important;
+  line-height:1.02 !important;
+  font-weight:1000 !important;
+  text-align:center;
+  text-shadow:0 1px 0 rgba(255,255,255,.25);
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-engraving strong{
+  font-size:8px !important;
+}
+
+.live-team-page .final-trophy-engraving b{
+  color:var(--trophy-engrave) !important;
+  font-size:9.5px !important;
+  line-height:1 !important;
+  font-weight:1000 !important;
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-engraving b{
+  font-size:10.5px !important;
+}
+
+.live-team-page .final-trophy-engraving b small{
+  color:var(--trophy-engrave) !important;
+  font-size:5px !important;
+}
+
+/* Make the plinths compact, weighty and directly connected to the trophy base. */
+.live-team-page .final-podium-block{
+  position:relative;
+  z-index:2;
+  width:100%;
+  overflow:visible !important;
+  border-radius:4px 4px 2px 2px !important;
+  background:
+    linear-gradient(90deg,rgba(255,255,255,.04),transparent 22%,transparent 78%,rgba(255,255,255,.035)),
+    linear-gradient(180deg,#0b3d7d 0%,#062654 45%,#031b3c 100%) !important;
+  border:1px solid rgba(255,255,255,.10) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -5px 10px rgba(0,0,0,.18),
+    0 6px 0 #011127,
+    0 11px 18px rgba(0,0,0,.25) !important;
+}
+
+.live-team-page .final-podium-block::before{
+  content:"";
+  position:absolute;
+  z-index:3;
+  left:2px;
+  right:2px;
+  top:-7px !important;
+  height:9px !important;
+  border-radius:4px 4px 1px 1px;
+  border:1px solid var(--trophy-metal-dark) !important;
+  background:
+    linear-gradient(180deg,var(--trophy-metal-light),var(--trophy-metal) 56%,var(--trophy-metal-dark)) !important;
+  clip-path:polygon(4% 0,96% 0,100% 100%,0 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.62),
+    0 2px 4px rgba(0,0,0,.18);
+}
+
+.live-team-page .final-podium-slot.first .final-podium-block{
+  height:48px !important;
+}
+
+.live-team-page .final-podium-slot.second .final-podium-block{
+  height:39px !important;
+}
+
+.live-team-page .final-podium-slot.third .final-podium-block{
+  height:34px !important;
+}
+
+.live-team-page .final-podium-block>span{
+  font-size:27px !important;
+  color:var(--trophy-metal) !important;
+}
+
+.live-team-page .final-podium-slot.first .final-podium-block>span{
+  font-size:31px !important;
+}
+
+.live-team-page .final-podium-slot.pending .final-trophy-art,
+.live-team-page .final-podium-slot.pending .final-trophy-engraving{
+  opacity:.62;
+}
+
+.live-team-page .final-podium-slot.ours .final-trophy-engraving{
+  outline:2px solid #14c7ff !important;
+  outline-offset:2px;
+}
+
+@media(max-height:760px){
+  .live-team-page .final-podium{
+    min-height:190px !important;
+  }
+
+  .live-team-page .final-podium-slot{
+    grid-template-rows:minmax(112px,auto) auto !important;
+  }
+
+  .live-team-page .final-trophy-wrap{
+    min-height:110px !important;
+  }
+
+  .live-team-page .final-trophy-shell{
+    height:111px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-shell{
+    height:120px !important;
+  }
+
+  .live-team-page .final-trophy-art{
+    width:94px;
+    height:102px;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-art{
+    width:108px;
+    height:116px;
+  }
+
+  .live-team-page .final-podium-slot.second .final-trophy-art{
+    width:91px;
+    height:98px;
+  }
+
+  .live-team-page .final-podium-slot.third .final-trophy-art{
+    width:88px;
+    height:95px;
+  }
+
+  .live-team-page .final-trophy-engraving{
+    bottom:44px !important;
+    width:52px !important;
+    min-height:32px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-engraving{
+    bottom:49px !important;
+    width:58px !important;
+    min-height:35px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-podium-block{
+    height:42px !important;
+  }
+
+  .live-team-page .final-podium-slot.second .final-podium-block{
+    height:35px !important;
+  }
+
+  .live-team-page .final-podium-slot.third .final-podium-block{
+    height:30px !important;
+  }
+}
+
+@media(min-width:980px){
+  .live-team-page .final-podium{
+    min-height:238px !important;
+  }
+
+  .live-team-page .final-trophy-art{
+    width:126px;
+    height:136px;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-art{
+    width:144px;
+    height:154px;
+  }
+
+  .live-team-page .final-podium-slot.second .final-trophy-art{
+    width:121px;
+    height:130px;
+  }
+
+  .live-team-page .final-podium-slot.third .final-trophy-art{
+    width:118px;
+    height:126px;
+  }
+}
