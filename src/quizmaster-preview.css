@@ -1118,3 +1118,226 @@
   color:#ff829a !important;
   box-shadow:none !important;
 }
+
+
+/* ---------- Preview team tiles + QR popup ---------- */
+.qm-team-tile-grid{
+  margin-top:7px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;
+}
+
+.qm-team-tile{
+  min-height:68px !important;
+  padding:7px 6px !important;
+  display:flex !important;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  border:1px solid rgba(123,166,226,.3) !important;
+  border-radius:10px !important;
+  background:#0b2c5c !important;
+  color:#fff !important;
+  box-shadow:none !important;
+  text-align:center;
+}
+
+.qm-team-tile>span{
+  color:#35c8ff;
+  font-size:7px;
+  font-weight:1000;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+}
+
+.qm-team-tile>small{
+  color:#8fa9d4;
+  font-size:7px;
+  font-weight:850;
+}
+
+.qm-team-tile>strong{
+  width:100%;
+  overflow:hidden;
+  color:#fff;
+  font-size:9px;
+  line-height:1.05;
+  font-weight:1000;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+.qm-team-tile.paid{
+  border-color:#15925d !important;
+  background:linear-gradient(180deg,#0f704e,#09583d) !important;
+}
+
+.qm-team-tile.paid>span,
+.qm-team-tile.paid>small{
+  color:#c9ffe7;
+}
+
+.qm-team-popup-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:999;
+  background:#061936;
+}
+
+.qm-team-popup{
+  box-sizing:border-box;
+  width:100%;
+  height:100%;
+  min-height:100dvh;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:22px 14px 26px;
+  color:#fff;
+  background:
+    radial-gradient(circle at 50% -15%,rgba(53,200,255,.18),transparent 42%),
+    linear-gradient(180deg,#0a2e61,#061936);
+  text-align:center;
+}
+
+.qm-team-popup-close{
+  position:fixed;
+  top:10px;
+  right:10px;
+  z-index:2;
+  width:34px;
+  height:34px;
+  min-height:34px !important;
+  padding:0 !important;
+  display:grid;
+  place-items:center;
+  border-radius:999px !important;
+  background:#123467 !important;
+  color:#fff !important;
+  box-shadow:none !important;
+  font-size:22px !important;
+  line-height:1;
+}
+
+.qm-team-popup-details{
+  width:100%;
+  margin:18px auto 12px;
+  display:grid;
+  justify-items:center;
+  gap:4px;
+}
+
+.qm-team-popup-details>span{
+  color:#35c8ff;
+  font-size:8px;
+  font-weight:1000;
+  letter-spacing:.11em;
+}
+
+.qm-team-popup-details h2{
+  margin:0;
+  max-width:100%;
+  color:#ffd429;
+  font-size:26px;
+  line-height:1;
+  font-weight:1000;
+  overflow-wrap:anywhere;
+}
+
+.qm-team-popup-details p{
+  margin:0;
+  color:#bcd3fb;
+  font-size:10px;
+  font-weight:900;
+}
+
+.qm-team-popup-qr{
+  box-sizing:border-box;
+  width:100%;
+  max-width:340px;
+  margin:0 auto;
+  padding:10px;
+  display:grid;
+  place-items:center;
+  border-radius:16px;
+  background:#fff;
+}
+
+.qm-team-popup-qr svg{
+  display:block;
+  width:100% !important;
+  height:auto !important;
+  max-width:none !important;
+}
+
+.qm-team-popup-edit{
+  width:100%;
+  max-width:340px;
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+}
+
+.qm-team-popup-edit label{
+  min-width:0;
+  display:grid;
+  justify-items:center;
+  gap:3px;
+}
+
+.qm-team-popup-edit label.name{
+  grid-column:1 / -1;
+}
+
+.qm-team-popup-edit label>span{
+  color:#8fa9d4;
+  font-size:7px;
+  font-weight:950;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+}
+
+.qm-team-popup-edit input{
+  box-sizing:border-box;
+  width:100%;
+  min-height:34px;
+  border:1px solid #315d96;
+  border-radius:8px;
+  background:#071b3a;
+  color:#fff;
+  padding:6px 7px;
+  font-size:10px;
+  font-weight:900;
+  text-align:center;
+}
+
+.qm-team-paid-toggle{
+  width:100%;
+  max-width:340px;
+  min-height:36px !important;
+  margin-top:10px;
+  background:#123467 !important;
+  color:#fff !important;
+  border:1px solid #315d96 !important;
+  box-shadow:none !important;
+}
+
+.qm-team-paid-toggle.paid{
+  background:#0f9d5f !important;
+  border-color:#15925d !important;
+}
+
+.qm-team-popup-remove{
+  width:100%;
+  max-width:340px;
+  min-height:34px !important;
+  margin-top:7px;
+  background:#511d31 !important;
+  color:#ffbfd0 !important;
+  border:1px solid #7b2d49 !important;
+  box-shadow:none !important;
+}
