@@ -599,6 +599,16 @@ function FinalTrophy({ place }) {
           strokeWidth="2.2"
         />
         <path d="M50 143h60" stroke="rgba(255,255,255,.42)" strokeWidth="2" strokeLinecap="round" />
+
+        <text
+          className="final-trophy-rank-engraving"
+          x="80"
+          y="78"
+          textAnchor="middle"
+          dominantBaseline="middle"
+        >
+          {place}
+        </text>
       </g>
     </svg>
   );
@@ -624,23 +634,22 @@ function FinalScreen({ snapshot, status }) {
         <div className="final-trophy-wrap">
           <div className="final-trophy-shell">
             <FinalTrophy place={place} />
-            <div className="final-trophy-engraving">
-              {isRevealed ? (
-                <>
-                  <strong>{team.name || "Unnamed team"}</strong>
-                  <b>{formatScore(team.score)}<small>PTS</small></b>
-                </>
-              ) : (
-                <>
-                  <strong className="final-podium-mystery">?</strong>
-                  <b className="final-podium-waiting">TO BE REVEALED</b>
-                </>
-              )}
-            </div>
           </div>
         </div>
         <div className="final-podium-block">
-          <span>{place}</span>
+          <div className="final-podium-plaque">
+            {isRevealed ? (
+              <>
+                <strong>{team.name || "Unnamed team"}</strong>
+                <b>{formatScore(team.score)}<small>PTS</small></b>
+              </>
+            ) : (
+              <>
+                <strong className="final-podium-mystery">?</strong>
+                <b className="final-podium-waiting">TO BE REVEALED</b>
+              </>
+            )}
+          </div>
         </div>
       </div>
     );
