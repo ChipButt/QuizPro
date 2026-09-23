@@ -556,7 +556,7 @@ export default function QuizmasterPreviewView({ stage }) {
   const selectedQuestionRevealed = Boolean(currentQuestion?.revealed);
   const canMoveNext = hostQuestionIndex < questions.length - 1;
   const answerFlowLabel = selectedQuestionRevealed
-    ? "Next"
+    ? "Next Question"
     : selectedQuestionAsked
       ? "Push Answer"
       : "Push Question";
@@ -1091,7 +1091,7 @@ export default function QuizmasterPreviewView({ stage }) {
               onClick={runAnswerFlow}
               disabled={selectedQuestionRevealed && !canMoveNext}
             >
-              {selectedQuestionRevealed ? <>Next <ArrowRight size={17} /></> : selectedQuestionAsked ? <><Eye size={16} /> Push Answer</> : <><Play size={15} /> Push Question</>}
+              {selectedQuestionRevealed ? <>Next Question <ArrowRight size={17} /></> : selectedQuestionAsked ? <><Eye size={16} /> Push Answer</> : <><Play size={15} /> Push Question</>}
             </button>
           </div>
 
