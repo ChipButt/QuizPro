@@ -472,7 +472,7 @@
 @media(max-width:979px){
   .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock{
     position:fixed !important;
-    left:12px !important;
+    left:62px !important;
     right:auto !important;
     top:84px !important;
     bottom:auto !important;
@@ -499,7 +499,7 @@
 
   .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock{
     position:fixed !important;
-    left:18px !important;
+    left:68px !important;
     right:auto !important;
     top:84px !important;
     bottom:auto !important;
