@@ -171,6 +171,41 @@ function applyQuizmasterPreviewAction(current, action, values = {}, stage) {
     live: { ...current.live, ...patch },
   });
 
+  if (action === "add-preview-team") {
+    const table = String(values.table ?? "").trim();
+    const players = Math.max(1, Number(values.players) || 1);
+    const id = `preview-added-${Date.now()}`;
+    const number = current.teams.length + 1;
+    const team = {
+      id,
+      name: table ? `Table ${table}` : `Team ${number}`,
+      table: table || number,
+      players,
+    };
+    return {
+      ...current,
+      teams: [...(current.teams || []), team],
+      leaderboard: [...(current.leaderboard || []), { id, name: team.name, score: 0 }],
+    };
+  }
+
+  if (action === "remove-preview-team") {
+    const teamId = values.teamId;
+    if (!teamId || teamId === "preview-team") return current;
+    const nextHistory = Object.fromEntries(
+      Object.entries(current.teamResponseHistory || {}).map(([questionId, responses]) => [
+        questionId,
+        Object.fromEntries(Object.entries(responses || {}).filter(([id]) => id !== teamId)),
+      ]),
+    );
+    return {
+      ...current,
+      teams: (current.teams || []).filter((team) => team.id !== teamId),
+      leaderboard: (current.leaderboard || []).filter((team) => team.id !== teamId),
+      teamResponseHistory: nextHistory,
+    };
+  }
+
   if (action === "previous-question" || action === "next-question") {
     const delta = action === "next-question" ? 1 : -1;
     const nextIndex = Math.max(0, Math.min(Math.max(0, questions.length - 1), hostQuestionIndex + delta));
