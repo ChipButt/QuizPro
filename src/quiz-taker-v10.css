@@ -3796,3 +3796,277 @@
     min-height:46px !important;
   }
 }
+
+
+/* ---------- Final podium premium rebuild ---------- */
+/* Cleaner award styling, taller architectural plinths, and team names that
+   only wrap between words — never through a word. */
+
+.live-team-page .final-podium{
+  min-height:272px !important;
+  gap:10px !important;
+}
+
+.live-team-page .final-trophy-shell{
+  height:154px !important;
+  margin-bottom:-4px !important;
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-shell{
+  height:170px !important;
+}
+
+.live-team-page .final-trophy-art{
+  width:122px !important;
+  height:132px !important;
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-art{
+  width:138px !important;
+  height:150px !important;
+}
+
+.live-team-page .final-podium-slot.second .final-trophy-art{
+  width:118px !important;
+  height:128px !important;
+}
+
+.live-team-page .final-podium-slot.third .final-trophy-art{
+  width:114px !important;
+  height:124px !important;
+}
+
+.live-team-page .final-trophy-rank-engraving{
+  fill:color-mix(in srgb,var(--trophy-metal-dark) 74%,#2b2100) !important;
+  font-size:36px !important;
+  font-weight:1000 !important;
+  letter-spacing:-.06em !important;
+  stroke:rgba(255,255,255,.20) !important;
+  stroke-width:.75px !important;
+  filter:
+    drop-shadow(0 1px 0 rgba(255,255,255,.28))
+    drop-shadow(0 -1px 0 rgba(0,0,0,.20)) !important;
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-rank-engraving{
+  font-size:42px !important;
+}
+
+/* Podium bodies: restrained navy lacquer with a metallic cap and recessed face. */
+.live-team-page .final-podium-block{
+  position:relative;
+  isolation:isolate;
+  overflow:visible !important;
+  display:grid !important;
+  place-items:start center !important;
+  padding:10px 7px 7px !important;
+  border:1px solid rgba(255,255,255,.09) !important;
+  border-radius:3px 3px 2px 2px !important;
+  background:
+    linear-gradient(90deg,rgba(0,0,0,.16),transparent 18%,transparent 82%,rgba(0,0,0,.18)),
+    linear-gradient(180deg,#0a3263 0%,#05254c 48%,#03182f 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    inset 0 -10px 16px rgba(0,0,0,.20),
+    inset 8px 0 16px rgba(0,0,0,.06),
+    inset -8px 0 16px rgba(0,0,0,.08),
+    0 7px 0 #011126,
+    0 13px 22px rgba(0,0,0,.24) !important;
+}
+
+.live-team-page .final-podium-slot.first .final-podium-block{
+  height:96px !important;
+}
+
+.live-team-page .final-podium-slot.second .final-podium-block{
+  height:84px !important;
+}
+
+.live-team-page .final-podium-slot.third .final-podium-block{
+  height:76px !important;
+}
+
+.live-team-page .final-podium-block::before{
+  content:"";
+  position:absolute;
+  z-index:3;
+  left:2px;
+  right:2px;
+  top:-9px !important;
+  height:11px !important;
+  border:1px solid var(--trophy-metal-dark) !important;
+  border-radius:3px 3px 1px 1px;
+  background:
+    linear-gradient(180deg,var(--trophy-metal-light) 0%,var(--trophy-metal) 52%,var(--trophy-metal-dark) 100%) !important;
+  clip-path:polygon(3% 0,97% 0,100% 100%,0 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.58),
+    0 2px 4px rgba(0,0,0,.17);
+}
+
+/* A metallic mounted plaque, with text behaving like real engraved wording. */
+.live-team-page .final-podium-plaque{
+  width:calc(100% - 6px) !important;
+  min-height:58px !important;
+  box-sizing:border-box;
+  padding:8px 7px 7px !important;
+  display:grid !important;
+  justify-items:center !important;
+  align-content:center !important;
+  gap:4px !important;
+  border:1px solid var(--trophy-metal-dark) !important;
+  border-radius:4px !important;
+  background:
+    linear-gradient(100deg,
+      var(--trophy-metal-dark) 0%,
+      var(--trophy-metal) 14%,
+      var(--trophy-metal-light) 34%,
+      var(--trophy-metal) 58%,
+      var(--trophy-metal-dark) 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.52),
+    inset 0 -1px 0 rgba(0,0,0,.16),
+    0 3px 5px rgba(0,0,0,.24) !important;
+}
+
+.live-team-page .final-podium-slot.first .final-podium-plaque{
+  min-height:64px !important;
+}
+
+.live-team-page .final-podium-plaque strong{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  color:#07182e !important;
+  font-size:12px !important;
+  line-height:1.12 !important;
+  font-weight:1000 !important;
+  letter-spacing:-.012em !important;
+  text-align:center !important;
+  white-space:normal !important;
+  word-break:normal !important;
+  overflow-wrap:normal !important;
+  hyphens:none !important;
+  text-wrap:balance;
+  text-shadow:0 1px 0 rgba(255,255,255,.28) !important;
+}
+
+.live-team-page .final-podium-slot.first .final-podium-plaque strong{
+  font-size:13px !important;
+}
+
+.live-team-page .final-podium-plaque b{
+  margin-top:1px !important;
+  color:#07182e !important;
+  font-size:13px !important;
+  line-height:1 !important;
+  font-weight:1000 !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.22) !important;
+}
+
+.live-team-page .final-podium-slot.first .final-podium-plaque b{
+  font-size:14px !important;
+}
+
+.live-team-page .final-podium-plaque b small{
+  color:#183453 !important;
+  font-size:6px !important;
+  font-weight:1000 !important;
+}
+
+/* Prevent any inherited emergency wrapping from splitting a single word. */
+.live-team-page .final-podium-plaque strong,
+.live-team-page .final-podium-plaque strong *{
+  word-break:normal !important;
+  overflow-wrap:normal !important;
+  hyphens:none !important;
+}
+
+.live-team-page .final-podium-slot.ours .final-podium-plaque{
+  outline:2px solid #14c7ff !important;
+  outline-offset:2px;
+}
+
+@media(max-height:760px){
+  .live-team-page .final-podium{
+    min-height:238px !important;
+  }
+
+  .live-team-page .final-trophy-shell{
+    height:132px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-shell{
+    height:146px !important;
+  }
+
+  .live-team-page .final-trophy-art{
+    width:104px !important;
+    height:113px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-art{
+    width:118px !important;
+    height:128px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-podium-block{
+    height:84px !important;
+  }
+
+  .live-team-page .final-podium-slot.second .final-podium-block{
+    height:74px !important;
+  }
+
+  .live-team-page .final-podium-slot.third .final-podium-block{
+    height:68px !important;
+  }
+
+  .live-team-page .final-podium-plaque{
+    min-height:54px !important;
+    padding:7px 6px 6px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-podium-plaque{
+    min-height:59px !important;
+  }
+
+  .live-team-page .final-podium-plaque strong{
+    font-size:12px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-podium-plaque strong{
+    font-size:13px !important;
+  }
+}
+
+@media(min-width:980px){
+  .live-team-page .final-podium{
+    min-height:292px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-podium-block{
+    height:108px !important;
+  }
+
+  .live-team-page .final-podium-slot.second .final-podium-block{
+    height:94px !important;
+  }
+
+  .live-team-page .final-podium-slot.third .final-podium-block{
+    height:86px !important;
+  }
+
+  .live-team-page .final-podium-plaque{
+    min-height:66px !important;
+    padding:9px !important;
+  }
+
+  .live-team-page .final-podium-plaque strong{
+    font-size:14px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-podium-plaque strong{
+    font-size:15px !important;
+  }
+}
