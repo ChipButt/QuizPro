@@ -404,7 +404,5 @@
 /* Inline editor width/height values must win over the default timer sizes. */
 .quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-message.quiz-layout-overridden,
 .quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock.quiz-layout-overridden{
-  left:18px !important;
-  right:auto !important;
   translate:var(--layout-editor-x,0px) var(--layout-editor-y,0px) !important;
 }
