@@ -367,7 +367,7 @@ function WaitingScreen({ snapshot, status }) {
 
   return (
     <TeamChrome status={status}>
-      <section className={`team-card live-team-card waiting-team-card ${beforeFirstRound ? "waiting-state-initial" : awaitingAnswerReview ? "waiting-state-review" : "waiting-state-between"}`}>
+      <section className={`team-card live-team-card waiting-team-card ${beforeFirstRound ? "waiting-state-initial" : awaitingAnswerReview ? "waiting-state-review" : "waiting-state-between"} ${screen === "round_locked" ? "waiting-no-fun-fact" : ""}`}>
         <div className="waiting-team-banner">
           <div className="waiting-team-name">
             <span>TEAM NAME</span>
@@ -409,7 +409,7 @@ function WaitingScreen({ snapshot, status }) {
           </div>
         ) : null}
 
-        {fact ? (
+        {fact && screen !== "round_locked" ? (
           <div className="waiting-fun-fact waiting-fun-fact-v2" key={`${factIndex}-${fact}`}>
             <div className="waiting-fact-bulb-stage">
               <Lightbulb className="waiting-fact-bulb" strokeWidth={2.15} />
