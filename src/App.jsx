@@ -28,6 +28,23 @@ const PREVIEW_LEADERBOARD = [
   { id: "team-14", name: "Table Trouble", score: 11 },
 ];
 
+function simulatedTeamAnswer(question, teamId, teamIndex) {
+  if (!question) return "";
+  if (question.type === "Multiple choice") {
+    const options = question.options || [];
+    if (!options.length) return "";
+    const preferred = [1, 1, 0, 1, 2][teamIndex] ?? 0;
+    return options[Math.min(options.length - 1, preferred)] || options[0];
+  }
+
+  const answersByQuestion = {
+    q1: ["Canberra", "Canberra", "Sydney", "Canberra", "Canberra"],
+    q3: ["Vincent van Gogh", "Van Gogh", "Monet", "Vincent van Gogh", "Van Gogh"],
+  };
+  const choices = answersByQuestion[question.id] || [question.answer, question.answer, "Not sure", question.answer, question.answer];
+  return choices[teamIndex] ?? question.answer ?? "";
+}
+
 function createPreviewHarnessState(stage) {
   const firstIsMultipleChoice = false;
   const questions = [
@@ -104,6 +121,8 @@ function createPreviewHarnessState(stage) {
       { id: "team-5", name: "The Smartinis", table: 9, players: 4 },
     ],
     teamResponses: {},
+    answerWave: 0,
+    hostQuestionIndex: 0,
     quiz: { totalRounds: 5 },
     waitingFacts: [
       "The word quiz may have been popularised in Dublin in the 18th century.",
@@ -139,9 +158,10 @@ function applyQuizmasterPreviewAction(current, action, values = {}, stage) {
   if (!current) return createPreviewHarnessState(stage);
   if (action === "reset-scenario") return createPreviewHarnessState(stage);
 
-  const questionIndex = Math.max(0, Number(current.live?.questionIndex ?? 0));
+  const liveQuestionIndex = Math.max(0, Number(current.live?.questionIndex ?? 0));
+  const hostQuestionIndex = Math.max(0, Number(current.hostQuestionIndex ?? liveQuestionIndex));
   const questions = current.round?.questions || [];
-  const currentQuestion = questions[questionIndex];
+  const currentQuestion = questions[hostQuestionIndex];
 
   const withLive = (patch) => ({
     ...current,
@@ -150,34 +170,32 @@ function applyQuizmasterPreviewAction(current, action, values = {}, stage) {
 
   if (action === "previous-question" || action === "next-question") {
     const delta = action === "next-question" ? 1 : -1;
-    const nextIndex = Math.max(0, Math.min(Math.max(0, questions.length - 1), questionIndex + delta));
+    const nextIndex = Math.max(0, Math.min(Math.max(0, questions.length - 1), hostQuestionIndex + delta));
     return {
       ...current,
-      team: { ...current.team, name: current.team.name || "The Quizzy Rascals", nameLocked: true },
-      live: {
-        ...current.live,
-        teamScreen: "question",
-        questionIndex: nextIndex,
-        timerActive: false,
-        timerEndsAt: 0,
-        timerDurationSeconds: 0,
-      },
+      hostQuestionIndex: nextIndex,
     };
   }
 
   if (action === "send-question") {
+    const sentQuestion = questions[hostQuestionIndex];
+    const nextTeamAnswers = { ...(current.teamAnswers || {}) };
+    if (sentQuestion?.id) delete nextTeamAnswers[sentQuestion.id];
     return {
       ...current,
       team: { ...current.team, name: current.team.name || "The Quizzy Rascals", nameLocked: true },
+      teamAnswers: nextTeamAnswers,
+      teamResponses: {},
+      answerWave: Date.now(),
       round: {
         ...current.round,
         forceLocked: false,
-        questions: questions.map((question, index) => index === questionIndex ? { ...question, revealed: false } : question),
+        questions: questions.map((question, index) => index === hostQuestionIndex ? { ...question, revealed: false } : question),
       },
       live: {
         ...current.live,
         teamScreen: "question",
-        questionIndex,
+        questionIndex: hostQuestionIndex,
         timerActive: false,
         timerEndsAt: 0,
         timerDurationSeconds: 0,
@@ -208,7 +226,7 @@ function applyQuizmasterPreviewAction(current, action, values = {}, stage) {
       ...current,
       round: {
         ...current.round,
-        questions: questions.map((question, index) => index === questionIndex ? replacement : question),
+        questions: questions.map((question, index) => index === hostQuestionIndex ? replacement : question),
       },
       live: { ...current.live, teamScreen: "question", timerActive: false, timerEndsAt: 0, timerDurationSeconds: 0 },
     };
@@ -219,7 +237,7 @@ function applyQuizmasterPreviewAction(current, action, values = {}, stage) {
       ...current,
       round: {
         ...current.round,
-        questions: questions.map((question, index) => index === questionIndex ? { ...question, revealed: true } : question),
+        questions: questions.map((question, index) => index === hostQuestionIndex ? { ...question, revealed: true } : question),
       },
       live: { ...current.live, teamScreen: "question" },
     };
@@ -419,8 +437,6 @@ function TeamPreview({ stage }) {
   };
 
   useEffect(() => {
-    const next = createPreviewHarnessState(stage);
-    setSimState(next);
     setSelectedElement(null);
     setLayoutExport("");
   }, [stage]);
@@ -448,6 +464,33 @@ function TeamPreview({ stage }) {
   useEffect(() => {
     sendSimulation(simState);
   }, [simState]);
+
+  useEffect(() => {
+    if (!simState.answerWave) return undefined;
+    const wave = simState.answerWave;
+    const timers = [650, 1450, 2350, 3450].map((delay, index) => window.setTimeout(() => {
+      setSimState((current) => {
+        if (current.answerWave !== wave) return current;
+        const liveIndex = Math.max(0, Number(current.live?.questionIndex ?? 0));
+        const question = current.round?.questions?.[liveIndex];
+        const team = current.teams?.[index + 1];
+        if (!question || !team || current.teamResponses?.[team.id]) return current;
+        return {
+          ...current,
+          teamResponses: {
+            ...(current.teamResponses || {}),
+            [team.id]: {
+              teamId: team.id,
+              answer: simulatedTeamAnswer(question, team.id, index + 1),
+              receivedAt: Date.now(),
+            },
+          },
+        };
+      });
+    }, delay));
+
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [simState.answerWave]);
 
   useEffect(() => {
     if (!simState.live?.timerActive || !simState.live?.timerEndsAt) return undefined;
@@ -778,9 +821,9 @@ function TeamPreview({ stage }) {
               }}>
                 <iframe
                   ref={teamIframeRef}
-                  key={`team-${stage}`}
-                  title={`Quiz-taker response preview: ${stage}`}
-                  src={`#/join/__PREVIEW__/${encodeURIComponent(stage)}`}
+                  key="team-linked-preview"
+                  title="Quiz-taker live response preview"
+                  src="#/join/__PREVIEW__/linked"
                   onLoad={() => {
                     sendSimulation();
                     sendPreviewStyle();
