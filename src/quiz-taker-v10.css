@@ -4648,3 +4648,69 @@
     font-size:26px !important;
   }
 }
+
+
+/* ---------- New-reference trophy sizing ---------- */
+/* Trophy-only overrides. Podium and plaque styling remain untouched. */
+.live-team-page .final-trophy-art{
+  height:auto !important;
+  aspect-ratio:200 / 230 !important;
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-art{
+  width:140px !important;
+}
+
+.live-team-page .final-podium-slot.second .final-trophy-art{
+  width:122px !important;
+}
+
+.live-team-page .final-podium-slot.third .final-trophy-art{
+  width:118px !important;
+}
+
+/* Keep each trophy mathematically centred over its own podium. */
+.live-team-page .final-trophy-shell{
+  position:relative !important;
+  width:100% !important;
+}
+
+.live-team-page .final-trophy-art{
+  position:absolute !important;
+  left:50% !important;
+  right:auto !important;
+  bottom:0 !important;
+  top:auto !important;
+  margin:0 !important;
+  transform:translateX(-50%) !important;
+  translate:none !important;
+  transform-origin:50% 100% !important;
+}
+
+@media(max-height:760px){
+  .live-team-page .final-podium-slot.first .final-trophy-art{
+    width:120px !important;
+  }
+
+  .live-team-page .final-podium-slot.second .final-trophy-art{
+    width:106px !important;
+  }
+
+  .live-team-page .final-podium-slot.third .final-trophy-art{
+    width:102px !important;
+  }
+}
+
+@media(min-width:980px){
+  .live-team-page .final-podium-slot.first .final-trophy-art{
+    width:150px !important;
+  }
+
+  .live-team-page .final-podium-slot.second .final-trophy-art{
+    width:132px !important;
+  }
+
+  .live-team-page .final-podium-slot.third .final-trophy-art{
+    width:128px !important;
+  }
+}
