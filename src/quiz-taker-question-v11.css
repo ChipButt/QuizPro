@@ -377,3 +377,140 @@
   background:#fff !important;
   color:#031b3c !important;
 }
+
+
+/* ---------- Cross-device keyboard-safe question layout ---------- */
+/* When the software keyboard opens, prioritise the question and answer field.
+   This uses the visual-viewport sizing already supplied by keyboardAnswerFocus.js
+   and removes non-essential chrome that otherwise consumes the reduced height. */
+.keyboard-active-page .live-phone-topbar{
+  display:none !important;
+}
+
+.keyboard-active-page .team-connection-note{
+  display:none !important;
+}
+
+.keyboard-active-page .question-team-card.keyboard-active{
+  box-sizing:border-box !important;
+  width:100% !important;
+  height:var(--team-visible-height,100dvh) !important;
+  min-height:0 !important;
+  max-height:var(--team-visible-height,100dvh) !important;
+  margin:0 !important;
+  padding:6px 10px 8px !important;
+  gap:4px !important;
+  border-radius:0 !important;
+  overflow:hidden !important;
+}
+
+.keyboard-active-page .question-team-card.keyboard-active .team-question-topline,
+.keyboard-active-page .question-team-card.keyboard-active .team-current-round-title{
+  display:none !important;
+}
+
+.keyboard-active-page .question-team-card.keyboard-active .team-question-nav{
+  flex:0 0 auto !important;
+  min-height:40px !important;
+  height:40px !important;
+  margin:0 !important;
+  padding:0 !important;
+  gap:5px !important;
+}
+
+.keyboard-active-page .question-team-card.keyboard-active .question-nav-button{
+  min-height:36px !important;
+  height:36px !important;
+  padding:0 8px !important;
+  font-size:11px !important;
+}
+
+.keyboard-active-page .question-team-card.keyboard-active .question-number-display{
+  min-height:36px !important;
+  height:36px !important;
+}
+
+.keyboard-active-page .question-team-card.keyboard-active .question-number-display>strong{
+  font-size:26px !important;
+  line-height:.85 !important;
+}
+
+.keyboard-active-page .question-team-card.keyboard-active .question-number-display>small{
+  font-size:8px !important;
+}
+
+.keyboard-active-page .question-team-card.keyboard-active .team-question-stage{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  height:auto !important;
+  max-height:none !important;
+  display:grid !important;
+  grid-template-rows:minmax(68px,1fr) auto !important;
+  gap:4px !important;
+  overflow:hidden !important;
+  padding:6px !important;
+}
+
+.keyboard-active-page .question-team-card.keyboard-active .team-question-core{
+  min-height:68px !important;
+  max-height:none !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  padding:0 2px 4px !important;
+}
+
+.keyboard-active-page .question-team-card.keyboard-active .team-question-text{
+  position:sticky !important;
+  top:0 !important;
+  z-index:10 !important;
+  margin:0 !important;
+  padding:4px 3px 6px !important;
+  background:rgba(255,255,255,.98) !important;
+  font-size:clamp(14px,4vw,18px) !important;
+  line-height:1.12 !important;
+}
+
+.keyboard-active-page .question-team-card.keyboard-active .team-answer-zone{
+  min-height:0 !important;
+  padding:2px 0 0 !important;
+  background:#fff !important;
+}
+
+.keyboard-active-page .question-team-card.keyboard-active .answer-input-shell textarea{
+  box-sizing:border-box !important;
+  width:100% !important;
+  height:52px !important;
+  min-height:52px !important;
+  max-height:52px !important;
+  margin:0 !important;
+  padding:8px 10px !important;
+  font-size:16px !important;
+  line-height:1.15 !important;
+}
+
+/* Very short visual viewports: drop navigation too, preserving only the
+   actual question wording and answer field above the keyboard. */
+@media(max-height:520px){
+  .keyboard-active-page .question-team-card.keyboard-active .team-question-nav{
+    display:none !important;
+  }
+
+  .keyboard-active-page .question-team-card.keyboard-active .team-question-stage{
+    grid-template-rows:minmax(58px,1fr) auto !important;
+  }
+
+  .keyboard-active-page .question-team-card.keyboard-active .team-question-core{
+    min-height:58px !important;
+  }
+
+  .keyboard-active-page .question-team-card.keyboard-active .team-question-text{
+    font-size:14px !important;
+    line-height:1.08 !important;
+  }
+
+  .keyboard-active-page .question-team-card.keyboard-active .answer-input-shell textarea{
+    height:48px !important;
+    min-height:48px !important;
+    max-height:48px !important;
+  }
+}
