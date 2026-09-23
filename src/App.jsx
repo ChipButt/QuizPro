@@ -261,6 +261,49 @@ function TeamPreview({ stage }) {
               : "Enable editing to move and resize anything on this page."}
           </div>
 
+          {editorEnabled && stage === "timer" ? (
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 6,
+              padding: 8,
+              borderRadius: 9,
+              background: "#0f172a",
+              border: "1px solid #334155"
+            }}>
+              <button
+                type="button"
+                onClick={() => sendEditor("select-timer-message")}
+                style={{
+                  border: 0,
+                  borderRadius: 7,
+                  padding: "8px 7px",
+                  background: selectedElement?.kind === "timer-message" ? "#0891b2" : "#26324a",
+                  color: "#fff",
+                  font: "800 9px system-ui",
+                  cursor: "pointer"
+                }}
+              >
+                Edit timer text
+              </button>
+              <button
+                type="button"
+                onClick={() => sendEditor("select-timer-clock")}
+                style={{
+                  border: 0,
+                  borderRadius: 7,
+                  padding: "8px 7px",
+                  background: selectedElement?.kind === "timer-clock" ? "#0891b2" : "#26324a",
+                  color: "#fff",
+                  font: "800 9px system-ui",
+                  cursor: "pointer"
+                }}
+              >
+                Edit timer clock
+              </button>
+            </div>
+          ) : null}
+
           {editorEnabled && selectedElement ? (
             <div style={{
               display: "grid",
