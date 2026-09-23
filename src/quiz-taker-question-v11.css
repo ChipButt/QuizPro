@@ -248,16 +248,16 @@
   column-gap:11px !important;
   row-gap:4px !important;
   align-items:center !important;
-  border:2px solid #087447 !important;
+  border:2px solid #d6a700 !important;
   border-radius:18px !important;
   background:
-    linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,0) 42%),
-    linear-gradient(135deg,#16ad6d 0%,#0f9d5f 58%,#0a7f4c 100%) !important;
-  color:#fff !important;
+    linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,0) 42%),
+    linear-gradient(135deg,#ffe36a 0%,#ffd429 58%,#efbd00 100%) !important;
+  color:#031b3c !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.28),
-    0 5px 0 #06653d,
-    0 12px 24px rgba(6,101,61,.24) !important;
+    inset 0 1px 0 rgba(255,255,255,.55),
+    0 5px 0 #b88900,
+    0 12px 24px rgba(184,137,0,.24) !important;
   text-align:left !important;
   overflow:visible !important;
 }
@@ -272,7 +272,7 @@
   box-sizing:border-box;
   border-radius:50%;
   background:#fff;
-  color:#087447;
+  color:#031b3c;
   stroke-width:3;
   box-shadow:0 2px 0 rgba(0,0,0,.12);
 }
@@ -280,7 +280,7 @@
 .live-team-page .team-question-stage.is-revealed .revealed-answer-pill>span{
   grid-area:label;
   min-width:0;
-  color:rgba(255,255,255,.92) !important;
+  color:#5e4a00 !important;
   font-size:10px !important;
   line-height:1.05 !important;
   font-weight:950 !important;
@@ -294,7 +294,7 @@
   min-width:0;
   width:100%;
   margin:0 !important;
-  color:#fff !important;
+  color:#031b3c !important;
   font-size:clamp(16px,4.8vw,21px) !important;
   line-height:1.2 !important;
   font-weight:950 !important;
@@ -328,4 +328,30 @@
   font-weight:950 !important;
   letter-spacing:.13em !important;
   text-transform:uppercase;
+}
+
+
+/* ---------- Revealed answer result tint ---------- */
+.live-team-page .team-question-stage.is-revealed.answer-correct{
+  background:#effbf5 !important;
+  border-color:#73c69f !important;
+  box-shadow:
+    0 8px 0 rgba(15,157,95,.13),
+    0 18px 40px rgba(15,157,95,.13) !important;
+}
+
+.live-team-page .team-question-stage.is-revealed.answer-correct::before{
+  background:linear-gradient(90deg,#0f9d5f,#b6f0d4,#0f9d5f) border-box !important;
+}
+
+.live-team-page .team-question-stage.is-revealed.answer-incorrect{
+  background:#fff1f2 !important;
+  border-color:#e36a76 !important;
+  box-shadow:
+    0 8px 0 rgba(190,24,93,.12),
+    0 18px 40px rgba(190,24,93,.13) !important;
+}
+
+.live-team-page .team-question-stage.is-revealed.answer-incorrect::before{
+  background:linear-gradient(90deg,#be185d,#f3a7b5,#be185d) border-box !important;
 }
