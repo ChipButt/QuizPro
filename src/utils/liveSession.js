@@ -178,7 +178,8 @@ export function buildTeamSnapshot(state, teamToken) {
 
   const liveAudio = state.live?.audio ?? {};
   const liveRoundIndex = Number(state.live?.roundIndex ?? 0);
-  const upcomingRoundIndex = state.live?.teamScreen === "round_locked"
+  const currentRoundComplete = Boolean(round && roundIsFullyRevealed(state, round));
+  const upcomingRoundIndex = currentRoundComplete || state.live?.teamScreen === "round_locked"
     ? liveRoundIndex + 1
     : maxQuestionIndex < 0
       ? liveRoundIndex
