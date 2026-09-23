@@ -355,3 +355,25 @@
 .live-team-page .team-question-stage.is-revealed.answer-incorrect::before{
   background:linear-gradient(90deg,#be185d,#f3a7b5,#be185d) border-box !important;
 }
+
+
+/* ---------- Force app-gold Correct Answer pill ---------- */
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill{
+  border-color:#d6a700 !important;
+  background:#ffd429 !important;
+  color:#031b3c !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.55),
+    0 5px 0 #b88900,
+    0 12px 24px rgba(184,137,0,.24) !important;
+}
+
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill>span,
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill>strong{
+  color:#031b3c !important;
+}
+
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill>svg{
+  background:#fff !important;
+  color:#031b3c !important;
+}
