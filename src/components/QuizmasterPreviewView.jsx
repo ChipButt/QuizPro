@@ -509,12 +509,6 @@ export default function QuizmasterPreviewView({ stage }) {
     window.parent?.postMessage({ type: "quizmaster-preview-action", action, ...values }, window.location.origin);
   };
 
-  const currentQuestion = useMemo(() => {
-    const questions = previewState?.round?.questions || [];
-    const index = Math.max(0, Number(previewState?.live?.questionIndex ?? 0));
-    return questions[index] || questions[0] || null;
-  }, [previewState]);
-
   const countdown = previewState?.live?.timerActive
     ? Math.max(0, Math.ceil((Number(previewState.live.timerEndsAt || 0) - now) / 1000))
     : 0;
@@ -527,10 +521,126 @@ export default function QuizmasterPreviewView({ stage }) {
     );
   }
 
-  const questionIndex = Math.max(0, Number(previewState.live?.questionIndex ?? 0));
   const questions = previewState.round?.questions || [];
+  const hostQuestionIndex = Math.max(0, Math.min(Math.max(0, questions.length - 1), Number(previewState.hostQuestionIndex ?? previewState.live?.questionIndex ?? 0)));
+  const liveQuestionIndex = Math.max(0, Math.min(Math.max(0, questions.length - 1), Number(previewState.live?.questionIndex ?? 0)));
+  const currentQuestion = questions[hostQuestionIndex] || questions[0] || null;
+  const liveQuestion = questions[liveQuestionIndex] || questions[0] || null;
   const currentScreen = previewState.live?.teamScreen || "lobby";
   const revealed = Boolean(currentQuestion?.revealed);
+  const teams = previewState.teams || [];
+  const responses = previewState.teamResponses || {};
+  const receivedCount = teams.filter((team) => responses[team.id]).length;
+
+  const renderTeamResponses = (compact = false) => (
+    <section className={`qm-preview-control-card qm-team-response-card ${compact ? "compact" : ""}`}>
+      <div className="qm-preview-section-title qm-response-title">
+        <span>Team answers · Q{liveQuestionIndex + 1}</span>
+        <strong>{receivedCount}/{teams.length}</strong>
+      </div>
+      <div className="qm-team-response-list">
+        {teams.map((team, index) => {
+          const response = responses[team.id];
+          return (
+            <div key={team.id} className={`qm-team-response-row ${response ? "answered" : "pending"}`}>
+              <div className="qm-team-response-team">
+                <b>{team.name}</b>
+                <span>Table {team.table}{index === 0 ? " · TEST PHONE" : ""}</span>
+              </div>
+              <div className="qm-team-response-answer">
+                {response ? <strong>{response.answer || "—"}</strong> : <span>Waiting…</span>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+
+  if (stage === "teams") {
+    return (
+      <main className="qm-preview-phone" ref={rootRef}>
+        <header className="qm-preview-header">
+          <div>
+            <span>QUIZMASTER</span>
+            <strong>Teams & Answers</strong>
+          </div>
+          <b>{teams.length} TEAMS</b>
+        </header>
+
+        <section className="qm-preview-round-card qm-live-question-strip">
+          <div className="qm-preview-round-top">
+            <span>LIVE QUESTION</span>
+            <small>Q{liveQuestionIndex + 1}</small>
+          </div>
+          <h1>{previewState.round?.title || "General Knowledge"}</h1>
+          <p>{liveQuestion?.text || "Waiting for a question to be sent."}</p>
+        </section>
+
+        {renderTeamResponses(false)}
+
+        <section className="qm-preview-control-card compact">
+          <div className="qm-preview-section-title">Testing note</div>
+          <p className="qm-preview-helper">
+            Four simulated teams answer automatically after a question is sent. The Quiz Taker phone is the fifth team and its real test answer appears here.
+          </p>
+        </section>
+
+        <footer className="qm-preview-footer">
+          <span>{receivedCount} answers received</span>
+          <strong>{Math.max(0, teams.length - receivedCount)} waiting</strong>
+        </footer>
+      </main>
+    );
+  }
+
+  if (stage === "results") {
+    const playingIds = new Set(teams.map((team) => team.id));
+    const playingLeaderboard = (previewState.leaderboard || []).filter((team) => playingIds.has(team.id));
+    return (
+      <main className="qm-preview-phone" ref={rootRef}>
+        <header className="qm-preview-header">
+          <div>
+            <span>QUIZMASTER</span>
+            <strong>Results</strong>
+          </div>
+          <b>{formatScreen(currentScreen)}</b>
+        </header>
+
+        <section className="qm-preview-round-card">
+          <div className="qm-preview-round-top">
+            <span>FIVE TEAM TEST</span>
+            <small>ROUND 1</small>
+          </div>
+          <h1>Leaderboard preview</h1>
+          <div className="qm-results-list">
+            {playingLeaderboard.map((team, index) => (
+              <div key={team.id} className="qm-result-row">
+                <span>{index + 1}</span>
+                <strong>{team.name}</strong>
+                <b>{team.score}</b>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="qm-preview-control-card compact">
+          <div className="qm-preview-section-title">Result screens</div>
+          <div className="qm-preview-action-grid">
+            <button type="button" onClick={() => sendAction("show-leaderboard")}><Trophy size={15} /> Show leaderboard</button>
+            <button type="button" onClick={() => sendAction("show-final")}><Trophy size={15} /> Start final reveal</button>
+            <button type="button" onClick={() => sendAction("reveal-next-final")}><Eye size={15} /> Reveal next team</button>
+            <button type="button" onClick={() => sendAction("show-waiting")}><Unlock size={15} /> Back to waiting</button>
+          </div>
+        </section>
+
+        <footer className="qm-preview-footer">
+          <span>Results controls affect the Quiz Taker display</span>
+          <strong>{teams.length} teams</strong>
+        </footer>
+      </main>
+    );
+  }
 
   return (
     <main className="qm-preview-phone" ref={rootRef}>
@@ -546,8 +656,8 @@ export default function QuizmasterPreviewView({ stage }) {
 
       <section className="qm-preview-round-card">
         <div className="qm-preview-round-top">
-          <span>ROUND 1</span>
-          <small>{questionIndex + 1}/{Math.max(1, questions.length)}</small>
+          <span>ROUND 1 · SELECTED Q{hostQuestionIndex + 1}</span>
+          <small>{hostQuestionIndex === liveQuestionIndex ? "LIVE" : `LIVE Q${liveQuestionIndex + 1}`}</small>
         </div>
         <h1>{previewState.round?.title || "General Knowledge"}</h1>
         <p>{currentQuestion?.text || "No question currently selected."}</p>
@@ -564,13 +674,13 @@ export default function QuizmasterPreviewView({ stage }) {
       <section className="qm-preview-control-card">
         <div className="qm-preview-section-title">Question control</div>
         <div className="qm-preview-nav-row">
-          <button type="button" onClick={() => sendAction("previous-question")} disabled={questionIndex <= 0}>
+          <button type="button" onClick={() => sendAction("previous-question")} disabled={hostQuestionIndex <= 0}>
             <ArrowLeft size={17} /> Previous
           </button>
           <button type="button" className="primary" onClick={() => sendAction("send-question")}>
             <Play size={17} /> Send question
           </button>
-          <button type="button" onClick={() => sendAction("next-question")} disabled={questionIndex >= questions.length - 1}>
+          <button type="button" onClick={() => sendAction("next-question")} disabled={hostQuestionIndex >= questions.length - 1}>
             Next <ArrowRight size={17} />
           </button>
         </div>
@@ -583,6 +693,8 @@ export default function QuizmasterPreviewView({ stage }) {
           </button>
         </div>
       </section>
+
+      {renderTeamResponses(true)}
 
       <section className="qm-preview-control-card">
         <div className="qm-preview-section-title">Round timer</div>
@@ -618,8 +730,8 @@ export default function QuizmasterPreviewView({ stage }) {
       </section>
 
       <footer className="qm-preview-footer">
-        <span>Team: The Quizzy Rascals</span>
-        <strong>{previewState.teamAnswersCount || 0} answers saved</strong>
+        <span>{teams.length} teams connected</span>
+        <strong>{receivedCount}/{teams.length} answered Q{liveQuestionIndex + 1}</strong>
       </footer>
     </main>
   );
