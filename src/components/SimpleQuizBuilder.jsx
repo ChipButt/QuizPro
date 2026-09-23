@@ -313,7 +313,7 @@ export default function SimpleQuizBuilder({ state, updateState }) {
 
       setMediaStatus((current) => ({ ...current, [key]: { busy: false, error: "" } }));
     } catch (error) {
-      const message = error?.message || `QuizPro could not load that ${field} file.`;
+      const message = error?.message || `Quiz In could not load that ${field} file.`;
       setMediaStatus((current) => ({ ...current, [key]: { busy: false, error: message } }));
     }
   }
