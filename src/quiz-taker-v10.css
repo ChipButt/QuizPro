@@ -4531,3 +4531,120 @@
     font-size:28px !important;
   }
 }
+
+
+/* ---------- Reference-match trophy correction ---------- */
+/* Trophy-only overrides. Podium/plaque geometry is intentionally untouched. */
+
+.live-team-page .final-trophy-wrap{
+  width:100% !important;
+  position:relative !important;
+  display:block !important;
+}
+
+.live-team-page .final-trophy-shell{
+  position:relative !important;
+  width:100% !important;
+  display:block !important;
+  margin-left:0 !important;
+  margin-right:0 !important;
+}
+
+/* Force the SVG centre to the exact horizontal centre of its podium slot.
+   This bypasses all earlier grid/flex centring rules. */
+.live-team-page .final-trophy-art{
+  position:absolute !important;
+  left:50% !important;
+  right:auto !important;
+  bottom:0 !important;
+  top:auto !important;
+  margin:0 !important;
+  transform:translateX(-50%) !important;
+  translate:none !important;
+  display:block !important;
+  overflow:visible !important;
+  transform-origin:50% 100% !important;
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-art{
+  width:138px !important;
+  height:152px !important;
+}
+
+.live-team-page .final-podium-slot.second .final-trophy-art{
+  width:120px !important;
+  height:132px !important;
+}
+
+.live-team-page .final-podium-slot.third .final-trophy-art{
+  width:116px !important;
+  height:128px !important;
+}
+
+/* Ordinals stay engraved and compact enough for the softer rounded bowl. */
+.live-team-page .final-trophy-rank-engraving{
+  font-size:21px !important;
+  font-weight:1000 !important;
+  letter-spacing:-.045em !important;
+  fill:color-mix(in srgb,var(--trophy-metal-dark) 84%,#2a210d) !important;
+  stroke:rgba(255,255,255,.16) !important;
+  stroke-width:.45px !important;
+  paint-order:stroke fill;
+  filter:
+    drop-shadow(0 1px 0 rgba(255,255,255,.28))
+    drop-shadow(0 -1px 0 rgba(0,0,0,.18)) !important;
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-rank-engraving{
+  font-size:24px !important;
+}
+
+@media(max-height:760px){
+  .live-team-page .final-podium-slot.first .final-trophy-art{
+    width:118px !important;
+    height:130px !important;
+  }
+
+  .live-team-page .final-podium-slot.second .final-trophy-art{
+    width:104px !important;
+    height:114px !important;
+  }
+
+  .live-team-page .final-podium-slot.third .final-trophy-art{
+    width:100px !important;
+    height:110px !important;
+  }
+
+  .live-team-page .final-trophy-rank-engraving{
+    font-size:18px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-rank-engraving{
+    font-size:21px !important;
+  }
+}
+
+@media(min-width:980px){
+  .live-team-page .final-podium-slot.first .final-trophy-art{
+    width:148px !important;
+    height:163px !important;
+  }
+
+  .live-team-page .final-podium-slot.second .final-trophy-art{
+    width:130px !important;
+    height:143px !important;
+  }
+
+  .live-team-page .final-podium-slot.third .final-trophy-art{
+    width:126px !important;
+    height:139px !important;
+  }
+
+  .live-team-page .final-trophy-rank-engraving{
+    font-size:23px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-rank-engraving{
+    font-size:26px !important;
+  }
+}
