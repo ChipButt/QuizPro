@@ -427,18 +427,51 @@ function WaitingScreen({ snapshot, status }) {
 
 function LeaderboardScreen({ snapshot, status }) {
   const ownId = snapshot.team?.id;
+  const teams = snapshot.leaderboard ?? [];
   return (
     <TeamChrome status={status}>
       <section className="team-card live-team-card team-leaderboard-card">
-        <Trophy size={34} />
-        <h1>Leaderboard</h1>
-        <ol className="team-live-leaderboard">
-          {snapshot.leaderboard.map((team, index) => (
-            <li key={team.id} className={team.id === ownId ? "ours" : ""}>
-              <span>{index + 1}</span><strong>{team.name}</strong><b>{team.score}</b>
-            </li>
-          ))}
-        </ol>
+        <header className="leaderboard-regal-header">
+          <div className="leaderboard-crown-mark" aria-hidden="true">
+            <Crown size={28} />
+          </div>
+          <span className="leaderboard-kicker">OFFICIAL STANDINGS</span>
+          <h1>Leaderboard</h1>
+          <div className="leaderboard-rule" aria-hidden="true">
+            <i />
+            <Trophy size={16} />
+            <i />
+          </div>
+          <p>{teams.length} {teams.length === 1 ? "TEAM" : "TEAMS"} IN THE RACE</p>
+        </header>
+
+        <div className="leaderboard-scroll-frame">
+          {teams.length ? (
+            <ol className="team-live-leaderboard">
+              {teams.map((team, index) => (
+                <li
+                  key={team.id}
+                  className={[
+                    index === 0 ? "podium-first" : "",
+                    index === 1 ? "podium-second" : "",
+                    index === 2 ? "podium-third" : "",
+                    team.id === ownId ? "ours" : "",
+                  ].filter(Boolean).join(" ")}
+                >
+                  <span className="leaderboard-rank">{index + 1}</span>
+                  <strong>{team.name || "Unnamed team"}</strong>
+                  <b>{formatScore(team.score)}<small>PTS</small></b>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div className="leaderboard-empty-state">
+              <Trophy size={28} />
+              <strong>Standings are waiting to be released</strong>
+              <span>The quizmaster will publish them here.</span>
+            </div>
+          )}
+        </div>
       </section>
     </TeamChrome>
   );
