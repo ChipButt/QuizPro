@@ -114,11 +114,11 @@ function createPreviewHarnessState(stage) {
       players: 4,
     },
     teams: [
-      { id: "preview-team", name: "The Quizzy Rascals", table: 7, players: 4 },
-      { id: "team-2", name: "Universally Challenged", table: 2, players: 5 },
-      { id: "team-3", name: "Agatha Quiztie", table: 11, players: 3 },
-      { id: "team-4", name: "No Eye Deer", table: 5, players: 6 },
-      { id: "team-5", name: "The Smartinis", table: 9, players: 4 },
+      { id: "preview-team", name: "The Quizzy Rascals", table: 7, players: 4, paid: false },
+      { id: "team-2", name: "Universally Challenged", table: 2, players: 5, paid: false },
+      { id: "team-3", name: "Agatha Quiztie", table: 11, players: 3, paid: false },
+      { id: "team-4", name: "No Eye Deer", table: 5, players: 6, paid: false },
+      { id: "team-5", name: "The Smartinis", table: 9, players: 4, paid: false },
     ],
     teamResponses: {},
     teamResponseHistory: {},
@@ -181,11 +181,38 @@ function applyQuizmasterPreviewAction(current, action, values = {}, stage) {
       name: table ? `Table ${table}` : `Team ${number}`,
       table: table || number,
       players,
+      paid: false,
     };
     return {
       ...current,
       teams: [...(current.teams || []), team],
       leaderboard: [...(current.leaderboard || []), { id, name: team.name, score: 0 }],
+    };
+  }
+
+  if (action === "update-preview-team") {
+    const teamId = values.teamId;
+    if (!teamId) return current;
+    const patch = values.patch || {};
+    const nextTeams = (current.teams || []).map((team) =>
+      team.id === teamId ? { ...team, ...patch } : team
+    );
+    const updatedTeam = nextTeams.find((team) => team.id === teamId);
+    return {
+      ...current,
+      teams: nextTeams,
+      team: teamId === "preview-team" && updatedTeam
+        ? {
+            ...current.team,
+            name: updatedTeam.name ?? current.team?.name,
+            table: updatedTeam.table ?? current.team?.table,
+            players: updatedTeam.players ?? current.team?.players,
+            nameLocked: Boolean(String(updatedTeam.name || "").trim()),
+          }
+        : current.team,
+      leaderboard: (current.leaderboard || []).map((team) =>
+        team.id === teamId ? { ...team, name: updatedTeam?.name || "Waiting" } : team
+      ),
     };
   }
 
