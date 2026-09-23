@@ -22,7 +22,7 @@ import {
   X,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { autoScoreAnswer, computeLeaderboard } from "../utils/quiz.js";
 import {
   createSessionCode,
@@ -483,6 +483,20 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   const liveLocked = liveRound ? isRoundForceLocked(state, liveRound.id) : false;
   const teamLocks = liveRound ? Object.values(state.teamRoundLocks?.[liveRound.id] ?? {}).filter(Boolean).length : 0;
   const reviewAnswers = reviewQuestion ? state.answers?.[reviewQuestion.id] ?? {} : {};
+  const askedReviewQuestions = (reviewRound?.questions ?? []).filter((item, index) => {
+    if (Object.keys(state.answers?.[item.id] ?? {}).length) return true;
+    if (reviewRoundIndex < liveRoundIndex) return true;
+    if (reviewRoundIndex > liveRoundIndex) return false;
+    return liveQuestionIndex >= 0 && index <= liveQuestionIndex;
+  });
+  const reviewQuestionAsked = Boolean(
+    reviewQuestion &&
+    (
+      Object.keys(state.answers?.[reviewQuestion.id] ?? {}).length ||
+      reviewRoundIndex < liveRoundIndex ||
+      (reviewRoundIndex === liveRoundIndex && liveQuestionIndex >= 0 && reviewQuestionIndex <= liveQuestionIndex)
+    )
+  );
   const questionExplicitlyRevealed = Boolean(liveQuestion && state.live?.revealedQuestions?.[liveQuestion.id]);
   const liveRoundRevealed = Boolean(liveRound && state.live?.revealedRounds?.[liveRound.id]);
   const liveQuestionRevealed = Boolean(liveQuestion && (questionExplicitlyRevealed || liveRoundRevealed));
@@ -672,10 +686,19 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
               <div className="host-focus-question-card">
                 <div className="host-review-kicker">
                   <span>HOST REVIEW</span>
-                  {reviewingLiveQuestion ? <b>ON TEAM SCREENS</b> : <em>Private preview</em>}
+                  {reviewingLiveQuestion ? <b>ON TEAM SCREENS</b> : reviewQuestionAsked ? <em>Already asked</em> : <em>Private preview</em>}
                 </div>
                 {reviewQuestion.image ? <img src={reviewQuestion.image} alt={reviewQuestion.imageName || "Question"} /> : null}
-                <h2>{reviewQuestion.text || "Untitled question"}</h2>
+                <div className="host-question-title-row">
+                  <h2>{reviewQuestion.text || "Untitled question"}</h2>
+                  <button
+                    className={`host-question-live-button ${reviewingLiveQuestion ? "is-live" : reviewQuestionAsked ? "was-asked" : ""}`}
+                    disabled={reviewingLiveQuestion || reviewQuestionAsked}
+                    onClick={pushReviewedQuestion}
+                  >
+                    {reviewingLiveQuestion ? <><Check size={16} /> Question Live</> : reviewQuestionAsked ? <><Check size={16} /> Question Asked</> : <><Send size={16} /> Send Question</>}
+                  </button>
+                </div>
 
                 {reviewQuestion.type === "Multiple choice" && reviewQuestion.options?.length ? (
                   <div className="simple-live-options host-soft-options">
@@ -696,9 +719,8 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                 ) : null}
 
                 <div className="host-question-action-row">
-                  <button className="icon-step-button" disabled={reviewQuestionIndex <= 0} onClick={() => setReviewQuestionIndex((index) => Math.max(0, index - 1))}><ArrowLeft size={16} /></button>
-                  <button className="primary-button host-push-question" onClick={pushReviewedQuestion}><Send size={16} /> {reviewingLiveQuestion ? "Re-push question" : "Push question"}</button>
-                  <button className="icon-step-button" disabled={reviewQuestionIndex >= reviewRound.questions.length - 1} onClick={() => setReviewQuestionIndex((index) => Math.min(reviewRound.questions.length - 1, index + 1))}><ArrowRight size={16} /></button>
+                  <button className="icon-step-button host-question-step previous" disabled={reviewQuestionIndex <= 0} onClick={() => setReviewQuestionIndex((index) => Math.max(0, index - 1))}><ArrowLeft size={16} /> Previous</button>
+                  <button className="icon-step-button host-question-step next" disabled={reviewQuestionIndex >= reviewRound.questions.length - 1} onClick={() => setReviewQuestionIndex((index) => Math.min(reviewRound.questions.length - 1, index + 1))}>Next <ArrowRight size={16} /></button>
                   <button
                     className={`reveal-toggle host-question-reveal ${reviewingLiveQuestion && liveQuestionRevealed ? "active" : ""}`}
                     disabled={!reviewingLiveQuestion || liveRoundRevealed}
@@ -711,6 +733,75 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                 </div>
               </div>
             ) : null}
+
+            {askedReviewQuestions.length ? (
+              <section className="host-answer-matrix-section">
+                <div className="host-answer-matrix-heading">
+                  <div>
+                    <span>LIVE ANSWER GRID</span>
+                    <strong>{askedReviewQuestions.length} question{askedReviewQuestions.length === 1 ? "" : "s"} asked</strong>
+                  </div>
+                  <small>Tap 0 / ½ / ✓ to override auto-marking</small>
+                </div>
+
+                <div className="host-answer-matrix-scroll">
+                  <div
+                    className="host-answer-matrix"
+                    style={{ "--host-answer-columns": askedReviewQuestions.length }}
+                  >
+                    <div className="host-answer-matrix-corner">TEAM</div>
+                    {askedReviewQuestions.map((item) => {
+                      const index = (reviewRound?.questions ?? []).findIndex((question) => question.id === item.id);
+                      return (
+                        <button
+                          type="button"
+                          key={`head-${item.id}`}
+                          className={`host-answer-matrix-question ${reviewRoundIndex === liveRoundIndex && index === liveQuestionIndex ? "is-live" : ""}`}
+                          onClick={() => setReviewQuestionIndex(Math.max(0, index))}
+                        >
+                          <b>Q{index + 1}</b>
+                          <span>{reviewRoundIndex === liveRoundIndex && index === liveQuestionIndex ? "LIVE" : "ASKED"}</span>
+                        </button>
+                      );
+                    })}
+
+                    <div className="host-answer-matrix-row-label correct-label">CORRECT</div>
+                    {askedReviewQuestions.map((item) => (
+                      <div className="host-answer-matrix-correct" key={`correct-${item.id}`}>
+                        {item.answer || "Not set"}
+                      </div>
+                    ))}
+
+                    {state.teams.map((team) => (
+                      <Fragment key={team.id}>
+                        <div className="host-answer-matrix-row-label">
+                          <strong>{team.name || `Table ${team.table || "?"}`}</strong>
+                          <small>{team.table ? `Table ${team.table}` : "Team"}</small>
+                        </div>
+                        {askedReviewQuestions.map((item) => {
+                          const answer = state.answers?.[item.id]?.[team.id];
+                          const max = Number(item.points ?? 1);
+                          return (
+                            <div className={`host-answer-matrix-cell ${answer?.status || "unanswered"}`} key={`${team.id}-${item.id}`}>
+                              <span className="host-answer-matrix-text">{answer?.text || "Waiting…"}</span>
+                              {answer ? (
+                                <div className="host-answer-matrix-marks">
+                                  <button type="button" aria-label="Mark incorrect" className={answer.status === "incorrect" ? "selected incorrect" : ""} onClick={() => markAnswer(item.id, team.id, 0)}>0</button>
+                                  <button type="button" aria-label="Award half points" className={answer.status === "half" ? "selected half" : ""} onClick={() => markAnswer(item.id, team.id, max / 2)}>½</button>
+                                  <button type="button" aria-label="Mark correct" className={answer.status === "correct" ? "selected correct" : ""} onClick={() => markAnswer(item.id, team.id, max)}><Check size={12} /></button>
+                                </div>
+                              ) : null}
+                            </div>
+                          );
+                        })}
+                      </Fragment>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            ) : (
+              <div className="host-answer-matrix-empty">Send the first question to start the live answer grid.</div>
+            )}
           </>
         ) : <p className="simple-empty-copy">This round has no questions.</p>}
       </section>
