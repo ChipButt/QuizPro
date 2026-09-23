@@ -847,34 +847,38 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                   placeholder="No Team Name"
                 />
               </label>
-              <label>
-                <span>Table Number</span>
-                <input
-                  value={selectedTeam.table ?? ""}
-                  onChange={(event) => updateTeam(selectedTeam.id, { table: event.target.value })}
-                  placeholder="No table number"
-                />
-              </label>
-              <label>
-                <span>Number of Players</span>
-                <input
-                  type="number"
-                  min="1"
-                  max="30"
-                  value={selectedTeam.players ?? 1}
-                  onChange={(event) => updateTeam(selectedTeam.id, { players: Math.max(1, Number(event.target.value) || 1) })}
-                />
-              </label>
-            </div>
 
-            <button
-              type="button"
-              className={`host-team-paid-toggle ${selectedTeam.paid ? "paid" : ""}`}
-              onClick={() => updateTeam(selectedTeam.id, { paid: !selectedTeam.paid })}
-            >
-              <Check size={16} />
-              {selectedTeam.paid ? "Paid" : "Mark as Paid"}
-            </button>
+              <div className="host-team-popup-meta-row">
+                <label>
+                  <span>Table Number</span>
+                  <input
+                    value={selectedTeam.table ?? ""}
+                    onChange={(event) => updateTeam(selectedTeam.id, { table: event.target.value })}
+                    placeholder="No table"
+                  />
+                </label>
+
+                <label>
+                  <span>Number of Players</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="30"
+                    value={selectedTeam.players ?? 1}
+                    onChange={(event) => updateTeam(selectedTeam.id, { players: Math.max(1, Number(event.target.value) || 1) })}
+                  />
+                </label>
+
+                <button
+                  type="button"
+                  className={`host-team-paid-toggle ${selectedTeam.paid ? "paid" : ""}`}
+                  onClick={() => updateTeam(selectedTeam.id, { paid: !selectedTeam.paid })}
+                >
+                  <Check size={16} />
+                  <span>{selectedTeam.paid ? "Paid" : "Paid"}</span>
+                </button>
+              </div>
+            </div>
 
             <div className="host-team-popup-qr">
               <QRCodeSVG
