@@ -1487,8 +1487,13 @@ export default function TeamView({ sessionCode, teamToken }) {
   }, [snapshot?.live?.timerActive, snapshot?.live?.timerEndsAt, snapshot?.live?.timerDurationSeconds]);
 
   const questions = snapshot?.round?.questions ?? [];
-  const hostQuestionIndex = Math.max(0, Number(snapshot?.live?.questionIndex ?? 0));
-  const question = questions[viewIndex] ?? questions[questions.length - 1] ?? null;
+  const rawHostQuestionIndex = Number(snapshot?.live?.questionIndex ?? -1);
+  const hostQuestionIndex = rawHostQuestionIndex >= 0
+    ? Math.min(Math.max(0, rawHostQuestionIndex), Math.max(0, questions.length - 1))
+    : -1;
+  const question = hostQuestionIndex >= 0
+    ? (questions[viewIndex] ?? questions[hostQuestionIndex] ?? null)
+    : null;
   const roundLocked = Boolean(
     snapshot?.round?.forceLocked ||
     snapshot?.round?.teamLocked ||
@@ -1597,7 +1602,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   if (!snapshot.team.nameLocked) return <TeamNameScreen snapshot={snapshot} send={send} status={status} />;
   if (screen === "leaderboard") return <LeaderboardScreen snapshot={snapshot} status={status} />;
   if (screen === "final") return <FinalScreen snapshot={snapshot} status={status} />;
-  if (screen === "round_locked" || (snapshot.live?.timerActive && countdown <= 0) || !question || (screen === "lobby" && !questions.length)) {
+  if (screen === "lobby" || screen === "round_locked" || (snapshot.live?.timerActive && countdown <= 0) || !question) {
     return <WaitingScreen snapshot={snapshot} status={status} />;
   }
 
