@@ -131,3 +131,11 @@
   touch-action:none !important;
   cursor:grab !important;
 }
+
+
+/* Timer drag positions are applied directly to left/right/top in TeamView.
+   Do not apply the generic translate movement to these two fixed elements. */
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-message.quiz-layout-overridden,
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock.quiz-layout-overridden{
+  translate:none !important;
+}
