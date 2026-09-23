@@ -493,18 +493,23 @@ function FinalScreen({ snapshot, status }) {
     const isRevealed = team && revealedIds.has(team.id);
     return (
       <div className={`final-podium-slot ${className} ${team?.id === ownId && isRevealed ? "ours" : ""} ${isRevealed ? "revealed" : "pending"}`}>
-        <div className="final-podium-team">
-          {isRevealed ? (
-            <>
-              <strong>{team.name || "Unnamed team"}</strong>
-              <b>{formatScore(team.score)}<small>PTS</small></b>
-            </>
-          ) : (
-            <>
-              <strong className="final-podium-mystery">?</strong>
-              <b className="final-podium-waiting">TO BE REVEALED</b>
-            </>
-          )}
+        <div className="final-trophy-wrap">
+          <div className="final-trophy-shell">
+            <Trophy className="final-trophy-icon" aria-hidden="true" />
+            <div className="final-trophy-engraving">
+              {isRevealed ? (
+                <>
+                  <strong>{team.name || "Unnamed team"}</strong>
+                  <b>{formatScore(team.score)}<small>PTS</small></b>
+                </>
+              ) : (
+                <>
+                  <strong className="final-podium-mystery">?</strong>
+                  <b className="final-podium-waiting">TO BE REVEALED</b>
+                </>
+              )}
+            </div>
+          </div>
         </div>
         <div className="final-podium-block">
           <span>{place}</span>
