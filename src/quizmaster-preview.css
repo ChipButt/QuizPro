@@ -694,6 +694,12 @@
 
 .qm-live-timer-setting select{
   width:100%;
+  color:#fff !important;
+}
+
+.qm-live-timer-setting select option{
+  background:#123467;
+  color:#fff;
 }
 
 .qm-live-screen-controls{
