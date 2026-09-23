@@ -1234,7 +1234,7 @@ export default function TeamView({ sessionCode, teamToken }) {
         </div>
 
         <div className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""}`}>
-          {questionLocked ? <span className="question-lock-key" aria-label="Question locked"><KeyRound size={18} /></span> : null}
+          {questionLocked && !question.revealed ? <span className="question-lock-key" aria-label="Question locked"><KeyRound size={18} /></span> : null}
 
           <div className="team-question-core lockable-zone">
             {question.image ? (
