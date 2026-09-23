@@ -2570,3 +2570,333 @@
     font-size:16px !important;
   }
 }
+
+
+/* ---------- Final results: engraved trophy podium ---------- */
+/* Large metallic trophies carry the team details; the podium blocks are kept
+   deliberately short so the trophies are the visual focus. */
+
+.live-team-page .final-podium-stage{
+  padding:14px 10px 0 !important;
+}
+
+.live-team-page .final-podium{
+  min-height:226px !important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.08fr) minmax(0,1fr) !important;
+  gap:8px !important;
+}
+
+.live-team-page .final-podium-slot{
+  --trophy-metal:#ffd429;
+  --trophy-metal-light:#fff3a8;
+  --trophy-metal-dark:#a97800;
+  --trophy-engrave:#332600;
+  min-width:0;
+  grid-template-rows:minmax(142px,auto) auto !important;
+  align-items:end;
+}
+
+.live-team-page .final-podium-slot.second{
+  --trophy-metal:#d9e5f3;
+  --trophy-metal-light:#fbfdff;
+  --trophy-metal-dark:#748aa4;
+  --trophy-engrave:#33465c;
+}
+
+.live-team-page .final-podium-slot.third{
+  --trophy-metal:#d9a06a;
+  --trophy-metal-light:#f1c89b;
+  --trophy-metal-dark:#875225;
+  --trophy-engrave:#4a2d15;
+}
+
+.live-team-page .final-trophy-wrap{
+  width:100%;
+  min-width:0;
+  min-height:140px;
+  display:grid;
+  place-items:end center;
+  padding-bottom:9px;
+}
+
+.live-team-page .final-trophy-shell{
+  position:relative;
+  width:100%;
+  min-width:0;
+  height:132px;
+  display:grid;
+  place-items:center;
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-shell{
+  height:146px;
+}
+
+.live-team-page .final-trophy-shell::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:7px;
+  width:72%;
+  height:22px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(0,0,0,.34),rgba(0,0,0,0) 70%);
+  filter:blur(2px);
+  pointer-events:none;
+}
+
+.live-team-page .final-trophy-icon{
+  position:absolute;
+  z-index:1;
+  left:50%;
+  top:0;
+  width:108px !important;
+  height:108px !important;
+  transform:translateX(-50%);
+  color:var(--trophy-metal) !important;
+  stroke:currentColor !important;
+  stroke-width:2.15 !important;
+  filter:
+    drop-shadow(0 2px 0 var(--trophy-metal-dark))
+    drop-shadow(0 7px 10px rgba(0,0,0,.27))
+    drop-shadow(0 0 9px rgba(255,255,255,.08));
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-icon{
+  width:124px !important;
+  height:124px !important;
+  filter:
+    drop-shadow(0 3px 0 #9a7000)
+    drop-shadow(0 9px 13px rgba(0,0,0,.31))
+    drop-shadow(0 0 14px rgba(255,212,41,.2));
+}
+
+.live-team-page .final-trophy-engraving{
+  position:absolute;
+  z-index:3;
+  left:50%;
+  top:42px;
+  width:64px;
+  min-height:42px;
+  transform:translateX(-50%);
+  box-sizing:border-box;
+  padding:5px 5px 4px;
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:2px;
+  border:1px solid var(--trophy-metal-dark);
+  border-radius:7px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.05)),
+    var(--trophy-metal);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.5),
+    inset 0 -2px 0 rgba(0,0,0,.11),
+    0 2px 4px rgba(0,0,0,.22);
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-engraving{
+  top:48px;
+  width:73px;
+  min-height:48px;
+  border-color:#987000;
+}
+
+.live-team-page .final-trophy-engraving strong{
+  width:100%;
+  min-width:0;
+  margin:0 !important;
+  color:var(--trophy-engrave) !important;
+  font-size:7.8px !important;
+  line-height:1.05 !important;
+  font-weight:1000 !important;
+  letter-spacing:-.01em !important;
+  text-align:center;
+  overflow-wrap:anywhere;
+  text-shadow:0 1px 0 rgba(255,255,255,.28);
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-engraving strong{
+  font-size:8.5px !important;
+}
+
+.live-team-page .final-trophy-engraving b{
+  margin:0 !important;
+  display:flex !important;
+  align-items:baseline;
+  justify-content:center;
+  gap:2px;
+  color:var(--trophy-engrave) !important;
+  font-size:10px !important;
+  line-height:1 !important;
+  font-weight:1000 !important;
+  letter-spacing:-.02em !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.25);
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-engraving b{
+  font-size:11px !important;
+}
+
+.live-team-page .final-trophy-engraving b small{
+  margin:0 !important;
+  color:var(--trophy-engrave) !important;
+  font-size:5.5px !important;
+  line-height:1 !important;
+  font-weight:1000 !important;
+  letter-spacing:.08em !important;
+}
+
+.live-team-page .final-trophy-engraving .final-podium-mystery{
+  height:auto !important;
+  color:var(--trophy-engrave) !important;
+  font-size:17px !important;
+}
+
+.live-team-page .final-trophy-engraving .final-podium-waiting{
+  color:var(--trophy-engrave) !important;
+  font-size:5.4px !important;
+  line-height:1.05 !important;
+  letter-spacing:.04em !important;
+}
+
+/* Short ceremonial plinths beneath the trophies. */
+.live-team-page .final-podium-block{
+  width:100%;
+  height:44px !important;
+  border:1px solid var(--trophy-metal-dark) !important;
+  border-top:0 !important;
+  border-radius:5px 5px 2px 2px !important;
+  background:
+    linear-gradient(90deg,rgba(255,255,255,.035),transparent 19%,transparent 81%,rgba(255,255,255,.035)),
+    linear-gradient(180deg,#0a376f 0%,#062654 43%,#031b3c 100%) !important;
+  box-shadow:
+    inset 2px 0 0 rgba(255,255,255,.04),
+    inset -2px 0 0 rgba(0,0,0,.14),
+    inset 0 -5px 10px rgba(0,0,0,.16),
+    0 6px 0 #011127,
+    0 10px 17px rgba(0,0,0,.24) !important;
+}
+
+.live-team-page .final-podium-slot.first .final-podium-block{
+  height:56px !important;
+}
+
+.live-team-page .final-podium-slot.second .final-podium-block{
+  height:43px !important;
+}
+
+.live-team-page .final-podium-slot.third .final-podium-block{
+  height:37px !important;
+}
+
+.live-team-page .final-podium-block::before{
+  top:-8px !important;
+  height:10px !important;
+  background:
+    linear-gradient(180deg,var(--trophy-metal-light),var(--trophy-metal) 58%,var(--trophy-metal-dark)) !important;
+  border-color:var(--trophy-metal-dark) !important;
+}
+
+.live-team-page .final-podium-block>span{
+  font-size:30px !important;
+  color:var(--trophy-metal) !important;
+}
+
+.live-team-page .final-podium-slot.first .final-podium-block>span{
+  font-size:36px !important;
+}
+
+.live-team-page .final-podium-slot.ours .final-trophy-engraving{
+  outline:2px solid #14c7ff;
+  outline-offset:2px;
+}
+
+.live-team-page .final-podium-slot.ours .final-trophy-icon{
+  filter:
+    drop-shadow(0 2px 0 var(--trophy-metal-dark))
+    drop-shadow(0 0 7px rgba(20,199,255,.55))
+    drop-shadow(0 7px 10px rgba(0,0,0,.28));
+}
+
+@media(max-height:760px){
+  .live-team-page .final-podium{
+    min-height:198px !important;
+  }
+
+  .live-team-page .final-podium-slot{
+    grid-template-rows:minmax(118px,auto) auto !important;
+  }
+
+  .live-team-page .final-trophy-wrap{
+    min-height:116px;
+  }
+
+  .live-team-page .final-trophy-shell{
+    height:111px;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-shell{
+    height:121px;
+  }
+
+  .live-team-page .final-trophy-icon{
+    width:90px !important;
+    height:90px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-icon{
+    width:103px !important;
+    height:103px !important;
+  }
+
+  .live-team-page .final-trophy-engraving{
+    top:34px;
+    width:55px;
+    min-height:37px;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-engraving{
+    top:39px;
+    width:62px;
+    min-height:41px;
+  }
+
+  .live-team-page .final-podium-slot.first .final-podium-block{
+    height:48px !important;
+  }
+
+  .live-team-page .final-podium-slot.second .final-podium-block{
+    height:38px !important;
+  }
+
+  .live-team-page .final-podium-slot.third .final-podium-block{
+    height:33px !important;
+  }
+}
+
+@media(min-width:980px){
+  .live-team-page .final-podium{
+    min-height:244px !important;
+  }
+
+  .live-team-page .final-trophy-icon{
+    width:116px !important;
+    height:116px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-icon{
+    width:134px !important;
+    height:134px !important;
+  }
+
+  .live-team-page .final-trophy-engraving{
+    width:69px;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-engraving{
+    width:78px;
+  }
+}
