@@ -1291,7 +1291,7 @@ export default function TeamView({ sessionCode, teamToken }) {
                 {question.revealed ? (
                   <div className="revealed-answer-pill">
                     <CheckCircle2 size={18} />
-                    <span>ANSWER</span>
+                    <span>CORRECT ANSWER</span>
                     <strong>{question.answer}</strong>
                   </div>
                 ) : null}
