@@ -249,6 +249,29 @@ function applyQuizmasterPreviewAction(current, action, values = {}, stage) {
     };
   }
 
+  if (action === "mark-preview-answer") {
+    const questionId = values.questionId;
+    const teamId = values.teamId;
+    const status = values.status;
+    if (!questionId || !teamId || !["correct", "half", "incorrect"].includes(status)) return current;
+    const existing = current.teamResponseHistory?.[questionId]?.[teamId];
+    if (!existing) return current;
+    const nextResponse = { ...existing, status, markSource: "manual" };
+    return {
+      ...current,
+      teamResponseHistory: {
+        ...(current.teamResponseHistory || {}),
+        [questionId]: {
+          ...(current.teamResponseHistory?.[questionId] || {}),
+          [teamId]: nextResponse,
+        },
+      },
+      teamResponses: current.live?.questionIndex >= 0 && current.round?.questions?.[current.live.questionIndex]?.id === questionId
+        ? { ...(current.teamResponses || {}), [teamId]: nextResponse }
+        : (current.teamResponses || {}),
+    };
+  }
+
   if (action === "start-timer") {
     const seconds = Math.max(5, Number(values.seconds) || 45);
     return {
@@ -333,9 +356,12 @@ function applyQuizTakerPreviewAction(current, message) {
       [message.questionId]: { text: message.text },
     };
     const currentQuestionId = current.round?.questions?.[Math.max(0, Number(current.live?.questionIndex ?? 0))]?.id;
+    const question = current.round?.questions?.find((item) => item.id === message.questionId);
     const response = {
       teamId: "preview-team",
       answer: message.text,
+      status: String(message.text || "").trim().toLowerCase() === String(question?.answer || "").trim().toLowerCase() ? "correct" : "incorrect",
+      markSource: "auto",
       receivedAt: Date.now(),
     };
     const teamResponses = currentQuestionId === message.questionId
@@ -489,9 +515,12 @@ function TeamPreview({ stage }) {
         const question = current.round?.questions?.find((item) => item.id === wave.questionId);
         const team = current.teams?.[index + 1];
         if (!question || !team || current.teamResponseHistory?.[question.id]?.[team.id]) return current;
+        const answer = simulatedTeamAnswer(question, team.id, index + 1);
         const response = {
           teamId: team.id,
-          answer: simulatedTeamAnswer(question, team.id, index + 1),
+          answer,
+          status: String(answer || "").trim().toLowerCase() === String(question.answer || "").trim().toLowerCase() ? "correct" : "incorrect",
+          markSource: "auto",
           receivedAt: Date.now(),
         };
         return {
