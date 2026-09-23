@@ -1,7 +1,7 @@
 import { CheckCircle2, Cloud, CloudOff, ExternalLink, Github, RefreshCcw, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
-const TOKEN_SETUP_URL = "https://github.com/settings/personal-access-tokens/new?name=QuizPro%20editing&description=Allows%20QuizPro%20to%20save%20the%20shared%20quiz%20library%20to%20ChipButt%2FQuizPro&target_name=ChipButt&contents=write";
+const TOKEN_SETUP_URL = "https://github.com/settings/personal-access-tokens/new?name=Quiz%20In%20editing&description=Allows%20Quiz%20In%20to%20save%20the%20shared%20quiz%20library%20to%20ChipButt%2FQuizPro&target_name=ChipButt&contents=write";
 
 function label(library) {
   if (!library.remoteLoaded || library.status === "loading") return "Loading…";
@@ -15,7 +15,7 @@ function label(library) {
 function friendlyMessage(message) {
   const text = String(message || "");
   if (/Resource not accessible by personal access token/i.test(text)) {
-    return "This token can identify your GitHub account, but it cannot write to QuizPro. The token must have Repository access to QuizPro and Contents: Read and write.";
+    return "This token can identify your GitHub account, but it cannot write to the QuizPro GitHub repository. The token must have Repository access to QuizPro and Contents: Read and write.";
   }
   return text;
 }
@@ -75,7 +75,7 @@ export default function GitHubLibraryStatus({ library }) {
           <div>
             <strong>One-time GitHub editing setup</strong>
             <p>The setup link now pre-fills <b>ChipButt</b> and <b>Contents: write</b>. On GitHub, under <b>Repository access</b>, you must also choose <b>Only select repositories</b> and select <b>QuizPro</b>. Then generate the token and paste it below.</p>
-            <a href={TOKEN_SETUP_URL} target="_blank" rel="noreferrer">Create the correct QuizPro token <ExternalLink size={12} /></a>
+            <a href={TOKEN_SETUP_URL} target="_blank" rel="noreferrer">Create the correct Quiz In GitHub token <ExternalLink size={12} /></a>
           </div>
           <label>Token<input type="password" autoComplete="off" value={token} onChange={(event) => setToken(event.target.value)} placeholder="github_pat_…" /></label>
           <button className="primary-button" onClick={connect} disabled={!token.trim() || connecting}>{connecting ? "Connecting…" : "Connect"}</button>
