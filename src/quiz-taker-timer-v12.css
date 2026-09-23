@@ -9,8 +9,8 @@
 .live-team-page .team-timer-overlay.team-timer-clock-wrap{
   position:fixed !important;
   top:78px !important;
-  right:18px !important;
-  left:auto !important;
+  left:18px !important;
+  right:auto !important;
   width:98px;
   height:104px;
   min-height:0 !important;
@@ -148,13 +148,13 @@
 @media(max-width:979px){
   /* Approved timer layout from the 390 × 844 editor export. */
   .live-team-page .team-timer-overlay.team-timer-clock-wrap{
-    top:auto !important;
-    bottom:49px !important;
-    left:50% !important;
+    top:78px !important;
+    bottom:auto !important;
+    left:12px !important;
     right:auto !important;
     width:min(168px,calc(100vw - 24px));
     height:154px;
-    transform:translateX(-50%);
+    transform:none !important;
   }
 
   .live-team-page .team-timer-clock strong{
