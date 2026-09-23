@@ -86,6 +86,26 @@ function TeamPreview({ stage }) {
     sendEditor("update-selected", { values: { [field]: value } });
   };
 
+  const updateSelectedValue = (field, value) => {
+    if (!selectedElement || selectedElement.locked) return;
+    const next = { ...selectedElement, [field]: value };
+    setSelectedElement(next);
+    sendEditor("update-selected", { values: { [field]: value } });
+  };
+
+  const colorInputValue = (value, fallback = "#000000") => {
+    const text = String(value || "").trim();
+    if (/^#[0-9a-f]{6}$/i.test(text)) return text;
+    if (/^#[0-9a-f]{3}$/i.test(text)) {
+      return `#${text[1]}${text[1]}${text[2]}${text[2]}${text[3]}${text[3]}`;
+    }
+    const match = text.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+    if (match) {
+      return `#${[match[1], match[2], match[3]].map((part) => Math.max(0, Math.min(255, Number(part))).toString(16).padStart(2, "0")).join("")}`;
+    }
+    return fallback;
+  };
+
   useEffect(() => {
     const updateScale = () => {
       const sidebarWidth = window.innerWidth >= 760 ? 220 : 0;
@@ -121,6 +141,15 @@ function TeamPreview({ stage }) {
           fontSize: Number(message.fontSize || 16),
           zIndex: Number(message.zIndex || 0),
           locked: Boolean(message.locked),
+          kind: message.kind || "element",
+          textAlign: message.textAlign || "center",
+          color: message.color || "#000000",
+          headline: message.headline || "",
+          subtext: message.subtext || "",
+          headlineFontSize: Number(message.headlineFontSize || 11),
+          subtextFontSize: Number(message.subtextFontSize || 9),
+          headlineColor: message.headlineColor || "#031b3c",
+          subtextColor: message.subtextColor || "#41506a",
         });
         return;
       }
@@ -255,7 +284,7 @@ function TeamPreview({ stage }) {
                   ["y", "Y"],
                   ["width", "Width"],
                   ["height", "Height"],
-                  ["fontSize", "Text size"],
+                  ...(selectedElement.kind === "timer-message" ? [] : [["fontSize", selectedElement.kind === "timer-clock" ? "Clock number size" : "Text size"]]),
                   ["zIndex", "Layer"],
                 ].map(([field, label]) => (
                   <label key={field} style={{
@@ -287,6 +316,111 @@ function TeamPreview({ stage }) {
                   </label>
                 ))}
               </div>
+
+              {selectedElement.kind === "timer-message" ? (
+                <div style={{ display: "grid", gap: 8, paddingTop: 2 }}>
+                  <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
+                    <span>Headline text</span>
+                    <textarea
+                      value={selectedElement.headline}
+                      disabled={selectedElement.locked}
+                      onChange={(event) => updateSelectedValue("headline", event.target.value)}
+                      rows={2}
+                      style={{ width: "100%", resize: "vertical", boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: selectedElement.locked ? "#1f2937" : "#0f172a", color: "#fff", padding: "6px 7px", font: "600 10px/1.25 system-ui" }}
+                    />
+                  </label>
+
+                  <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
+                    <span>Subtext</span>
+                    <textarea
+                      value={selectedElement.subtext}
+                      disabled={selectedElement.locked}
+                      onChange={(event) => updateSelectedValue("subtext", event.target.value)}
+                      rows={2}
+                      style={{ width: "100%", resize: "vertical", boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: selectedElement.locked ? "#1f2937" : "#0f172a", color: "#fff", padding: "6px 7px", font: "600 10px/1.25 system-ui" }}
+                    />
+                  </label>
+
+                  <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
+                    <span>Text alignment</span>
+                    <select
+                      value={selectedElement.textAlign}
+                      disabled={selectedElement.locked}
+                      onChange={(event) => updateSelectedValue("textAlign", event.target.value)}
+                      style={{ width: "100%", boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: selectedElement.locked ? "#1f2937" : "#0f172a", color: "#fff", padding: "6px 7px", font: "600 10px system-ui" }}
+                    >
+                      <option value="left">Left</option>
+                      <option value="center">Centre</option>
+                      <option value="right">Right</option>
+                    </select>
+                  </label>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 }}>
+                    <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
+                      <span>Headline size</span>
+                      <input
+                        type="number"
+                        min="6"
+                        max="60"
+                        step="0.5"
+                        value={selectedElement.headlineFontSize}
+                        disabled={selectedElement.locked}
+                        onChange={(event) => updateSelectedField("headlineFontSize", event.target.value)}
+                        style={{ width: "100%", minWidth: 0, boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: selectedElement.locked ? "#1f2937" : "#0f172a", color: "#fff", padding: "6px 7px", font: "600 10px system-ui" }}
+                      />
+                    </label>
+                    <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
+                      <span>Subtext size</span>
+                      <input
+                        type="number"
+                        min="6"
+                        max="60"
+                        step="0.5"
+                        value={selectedElement.subtextFontSize}
+                        disabled={selectedElement.locked}
+                        onChange={(event) => updateSelectedField("subtextFontSize", event.target.value)}
+                        style={{ width: "100%", minWidth: 0, boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: selectedElement.locked ? "#1f2937" : "#0f172a", color: "#fff", padding: "6px 7px", font: "600 10px system-ui" }}
+                      />
+                    </label>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 }}>
+                    <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
+                      <span>Headline colour</span>
+                      <input
+                        type="color"
+                        value={colorInputValue(selectedElement.headlineColor, "#031b3c")}
+                        disabled={selectedElement.locked}
+                        onChange={(event) => updateSelectedValue("headlineColor", event.target.value)}
+                        style={{ width: "100%", height: 32, boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: "#0f172a", padding: 3 }}
+                      />
+                    </label>
+                    <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
+                      <span>Subtext colour</span>
+                      <input
+                        type="color"
+                        value={colorInputValue(selectedElement.subtextColor, "#41506a")}
+                        disabled={selectedElement.locked}
+                        onChange={(event) => updateSelectedValue("subtextColor", event.target.value)}
+                        style={{ width: "100%", height: 32, boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: "#0f172a", padding: 3 }}
+                      />
+                    </label>
+                  </div>
+                </div>
+              ) : null}
+
+              {selectedElement.kind === "timer-clock" ? (
+                <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
+                  <span>Clock number colour</span>
+                  <input
+                    type="color"
+                    value={colorInputValue(selectedElement.color, "#000000")}
+                    disabled={selectedElement.locked}
+                    onChange={(event) => updateSelectedValue("color", event.target.value)}
+                    style={{ width: "100%", height: 32, boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: "#0f172a", padding: 3 }}
+                  />
+                </label>
+              ) : null}
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
                 <button
