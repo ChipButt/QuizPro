@@ -665,3 +665,14 @@
     transform:translateX(-50%) !important;
   }
 }
+
+
+/* Between-rounds / round-complete screens must not show fun facts, so they
+   cannot accidentally hint at answers in the next round. */
+.live-team-page .waiting-team-card.waiting-no-fun-fact{
+  grid-template-rows:auto auto auto !important;
+}
+
+.live-team-page .waiting-team-card.waiting-no-fun-fact .waiting-fun-fact{
+  display:none !important;
+}
