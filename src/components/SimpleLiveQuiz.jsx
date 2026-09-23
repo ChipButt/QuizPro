@@ -158,6 +158,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
         revealMode: "round",
         revealedQuestions: {},
         revealedRounds: {},
+        askedQuestionIds: [],
         forceLockedRounds: {},
         timerActive: false,
         timerEndsAt: 0,
@@ -245,15 +246,26 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
 
   function pushReviewedQuestion() {
     if (!reviewRound || !reviewQuestion) return;
-    updateLive({
-      status: "Live",
-      teamScreen: "question",
-      roundIndex: reviewRoundIndex,
-      questionIndex: reviewQuestionIndex,
-      timerActive: false,
-      timerEndsAt: 0,
-      timerRoundId: "",
-      audio: { questionId: "", playNonce: Number(state.live?.audio?.playNonce ?? 0) },
+    updateState((current) => {
+      const askedQuestionIds = Array.from(new Set([
+        ...(current.live?.askedQuestionIds ?? []),
+        reviewQuestion.id,
+      ]));
+      return {
+        ...current,
+        live: {
+          ...current.live,
+          status: "Live",
+          teamScreen: "question",
+          roundIndex: reviewRoundIndex,
+          questionIndex: reviewQuestionIndex,
+          askedQuestionIds,
+          timerActive: false,
+          timerEndsAt: 0,
+          timerRoundId: "",
+          audio: { questionId: "", playNonce: Number(current.live?.audio?.playNonce ?? 0) },
+        },
+      };
     });
   }
 
@@ -483,20 +495,15 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   const liveLocked = liveRound ? isRoundForceLocked(state, liveRound.id) : false;
   const teamLocks = liveRound ? Object.values(state.teamRoundLocks?.[liveRound.id] ?? {}).filter(Boolean).length : 0;
   const reviewAnswers = reviewQuestion ? state.answers?.[reviewQuestion.id] ?? {} : {};
-  const askedReviewQuestions = (reviewRound?.questions ?? []).filter((item, index) => {
-    if (Object.keys(state.answers?.[item.id] ?? {}).length) return true;
-    if (reviewRoundIndex < liveRoundIndex) return true;
-    if (reviewRoundIndex > liveRoundIndex) return false;
-    return liveQuestionIndex >= 0 && index <= liveQuestionIndex;
-  });
-  const reviewQuestionAsked = Boolean(
-    reviewQuestion &&
-    (
-      Object.keys(state.answers?.[reviewQuestion.id] ?? {}).length ||
-      reviewRoundIndex < liveRoundIndex ||
-      (reviewRoundIndex === liveRoundIndex && liveQuestionIndex >= 0 && reviewQuestionIndex <= liveQuestionIndex)
-    )
-  );
+  const askedQuestionIds = new Set(state.live?.askedQuestionIds ?? []);
+  if (liveQuestion?.id) askedQuestionIds.add(liveQuestion.id);
+  for (const round of quiz?.rounds ?? []) {
+    for (const question of round.questions ?? []) {
+      if (Object.keys(state.answers?.[question.id] ?? {}).length) askedQuestionIds.add(question.id);
+    }
+  }
+  const askedReviewQuestions = (reviewRound?.questions ?? []).filter((item) => askedQuestionIds.has(item.id));
+  const reviewQuestionAsked = Boolean(reviewQuestion && askedQuestionIds.has(reviewQuestion.id));
   const questionExplicitlyRevealed = Boolean(liveQuestion && state.live?.revealedQuestions?.[liveQuestion.id]);
   const liveRoundRevealed = Boolean(liveRound && state.live?.revealedRounds?.[liveRound.id]);
   const liveQuestionRevealed = Boolean(liveQuestion && (questionExplicitlyRevealed || liveRoundRevealed));
