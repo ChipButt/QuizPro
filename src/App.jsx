@@ -160,8 +160,9 @@ function applyQuizmasterPreviewAction(current, action, values = {}, stage) {
   if (!current) return createPreviewHarnessState(stage);
   if (action === "reset-scenario") return createPreviewHarnessState(stage);
 
-  const liveQuestionIndex = Math.max(0, Number(current.live?.questionIndex ?? 0));
-  const hostQuestionIndex = Math.max(0, Number(current.hostQuestionIndex ?? liveQuestionIndex));
+  const rawLiveQuestionIndex = Number(current.live?.questionIndex ?? -1);
+  const liveQuestionIndex = rawLiveQuestionIndex >= 0 ? rawLiveQuestionIndex : -1;
+  const hostQuestionIndex = Math.max(0, Number(current.hostQuestionIndex ?? (liveQuestionIndex >= 0 ? liveQuestionIndex : 0)));
   const questions = current.round?.questions || [];
   const currentQuestion = questions[hostQuestionIndex];
 
@@ -239,13 +240,22 @@ function applyQuizmasterPreviewAction(current, action, values = {}, stage) {
   }
 
   if (action === "reveal-answer" && currentQuestion) {
+    const askedQuestionIds = Array.from(new Set([...(current.askedQuestionIds || []), currentQuestion.id]));
     return {
       ...current,
+      askedQuestionIds,
       round: {
         ...current.round,
         questions: questions.map((question, index) => index === hostQuestionIndex ? { ...question, revealed: true } : question),
       },
-      live: { ...current.live, teamScreen: "question" },
+      live: {
+        ...current.live,
+        teamScreen: "question",
+        questionIndex: hostQuestionIndex,
+        timerActive: false,
+        timerEndsAt: 0,
+        timerDurationSeconds: 0,
+      },
     };
   }
 
@@ -273,7 +283,7 @@ function applyQuizmasterPreviewAction(current, action, values = {}, stage) {
   }
 
   if (action === "start-timer") {
-    const seconds = Math.max(5, Number(values.seconds) || 45);
+    const seconds = Math.max(5, Number(values.seconds) || 30);
     return {
       ...current,
       team: { ...current.team, name: current.team.name || "The Quizzy Rascals", nameLocked: true },
