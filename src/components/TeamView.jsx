@@ -364,6 +364,9 @@ function WaitingScreen({ snapshot, status }) {
         ? "The Quiz Will Begin Soon"
         : "The Next Round Will Start Soon";
   const fact = facts.length ? facts[factIndex % facts.length] : "";
+  const upcomingRound = beforeFirstRound
+    ? { number: liveRoundIndex + 1, title: snapshot.round?.title || `Round ${liveRoundIndex + 1}` }
+    : snapshot.nextRound;
 
   return (
     <TeamChrome status={status}>
@@ -384,10 +387,10 @@ function WaitingScreen({ snapshot, status }) {
           <h1>{heading}</h1>
         </div>
 
-        {!afterFinalRound && !awaitingAnswerReview && snapshot.nextRound ? (
+        {!afterFinalRound && !awaitingAnswerReview && upcomingRound ? (
           <div className="waiting-next-round">
-            <span>NEXT UP · ROUND {snapshot.nextRound.number}</span>
-            <strong>{snapshot.nextRound.title}</strong>
+            <span>NEXT UP · ROUND {upcomingRound.number}</span>
+            <strong>{upcomingRound.title}</strong>
             <small>Get ready. The Quizmaster will start the round shortly.</small>
           </div>
         ) : null}
