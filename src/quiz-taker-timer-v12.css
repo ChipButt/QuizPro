@@ -324,3 +324,87 @@
 .quiz-preview-mode .live-team-page .team-timer-clock.quiz-layout-overridden strong{
   transition:none !important;
 }
+
+
+/* ---------- Definitive independent timer positioning ---------- */
+/* Keep the wrapper itself at zero size so it can never become a full-screen
+   editor selection. The message and clock are fixed viewport elements and are
+   the only draggable timer elements. */
+@media(max-width:979px){
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap{
+    position:fixed !important;
+    left:0 !important;
+    top:0 !important;
+    right:auto !important;
+    bottom:auto !important;
+    width:0 !important;
+    height:0 !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:0 !important;
+    max-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:visible !important;
+    pointer-events:none !important;
+    transform:none !important;
+    translate:none !important;
+  }
+
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-message{
+    position:fixed !important;
+    left:18px !important;
+    top:84px !important;
+    right:auto !important;
+    bottom:auto !important;
+    width:226px !important;
+    height:auto !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:none !important;
+    max-height:none !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:visible !important;
+    pointer-events:none !important;
+    transform:none !important;
+  }
+
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock{
+    position:fixed !important;
+    left:auto !important;
+    right:18px !important;
+    top:84px !important;
+    bottom:auto !important;
+    width:64px !important;
+    height:64px !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:none !important;
+    max-height:none !important;
+    margin:0 !important;
+    pointer-events:none !important;
+    transform:none !important;
+  }
+}
+
+.quiz-preview-mode.quiz-layout-editing .live-team-page .team-timer-overlay.team-timer-clock-wrap{
+  pointer-events:none !important;
+  width:0 !important;
+  height:0 !important;
+}
+
+.quiz-preview-mode.quiz-layout-editing .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-message,
+.quiz-preview-mode.quiz-layout-editing .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock{
+  pointer-events:auto !important;
+  touch-action:none !important;
+  cursor:grab !important;
+}
+
+/* Inline editor width/height values must win over the default timer sizes. */
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-message.quiz-layout-overridden,
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock.quiz-layout-overridden{
+  left:18px !important;
+  right:auto !important;
+  translate:var(--layout-editor-x,0px) var(--layout-editor-y,0px) !important;
+}
