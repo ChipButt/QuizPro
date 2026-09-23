@@ -831,17 +831,8 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
             </button>
 
             <div className="host-team-popup-details">
-              {selectedTeam.table ? <span>TABLE {selectedTeam.table}</span> : null}
+              <span>TEAM DETAILS</span>
               <h2>{selectedTeam.name || "No Team Name"}</h2>
-              <p>{Math.max(1, Number(selectedTeam.players) || 1)} Player{Number(selectedTeam.players) === 1 ? "" : "s"}</p>
-            </div>
-
-            <div className="host-team-popup-qr">
-              <QRCodeSVG
-                value={joinUrl(state.live.sessionCode, selectedTeam.token)}
-                size={512}
-                marginSize={2}
-              />
             </div>
 
             <div className="host-team-popup-edit">
@@ -884,6 +875,14 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
               <Check size={16} />
               {selectedTeam.paid ? "Paid" : "Mark as Paid"}
             </button>
+
+            <div className="host-team-popup-qr">
+              <QRCodeSVG
+                value={joinUrl(state.live.sessionCode, selectedTeam.token)}
+                size={512}
+                marginSize={2}
+              />
+            </div>
 
             <button
               type="button"
