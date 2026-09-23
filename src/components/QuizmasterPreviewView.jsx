@@ -758,42 +758,46 @@ export default function QuizmasterPreviewView({ stage }) {
                     })}
                   />
                 </label>
-                <label>
-                  <span>Table Number</span>
-                  <input
-                    value={selectedPreviewTeam.table || ""}
-                    placeholder="No table"
-                    onChange={(event) => sendAction("update-preview-team", {
-                      teamId: selectedPreviewTeam.id,
-                      patch: { table: event.target.value },
-                    })}
-                  />
-                </label>
-                <label>
-                  <span>Number of Players</span>
-                  <input
-                    type="number"
-                    min="1"
-                    max="30"
-                    value={selectedPreviewTeam.players || 1}
-                    onChange={(event) => sendAction("update-preview-team", {
-                      teamId: selectedPreviewTeam.id,
-                      patch: { players: Math.max(1, Number(event.target.value) || 1) },
-                    })}
-                  />
-                </label>
-              </div>
 
-              <button
-                type="button"
-                className={`qm-team-paid-toggle ${selectedPreviewTeam.paid ? "paid" : ""}`}
-                onClick={() => sendAction("update-preview-team", {
-                  teamId: selectedPreviewTeam.id,
-                  patch: { paid: !selectedPreviewTeam.paid },
-                })}
-              >
-                <Check size={14} /> {selectedPreviewTeam.paid ? "Paid" : "Mark as Paid"}
-              </button>
+                <div className="qm-team-popup-meta-row">
+                  <label>
+                    <span>Table Number</span>
+                    <input
+                      value={selectedPreviewTeam.table || ""}
+                      placeholder="No table"
+                      onChange={(event) => sendAction("update-preview-team", {
+                        teamId: selectedPreviewTeam.id,
+                        patch: { table: event.target.value },
+                      })}
+                    />
+                  </label>
+
+                  <label>
+                    <span>Number of Players</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="30"
+                      value={selectedPreviewTeam.players || 1}
+                      onChange={(event) => sendAction("update-preview-team", {
+                        teamId: selectedPreviewTeam.id,
+                        patch: { players: Math.max(1, Number(event.target.value) || 1) },
+                      })}
+                    />
+                  </label>
+
+                  <button
+                    type="button"
+                    className={`qm-team-paid-toggle ${selectedPreviewTeam.paid ? "paid" : ""}`}
+                    onClick={() => sendAction("update-preview-team", {
+                      teamId: selectedPreviewTeam.id,
+                      patch: { paid: !selectedPreviewTeam.paid },
+                    })}
+                  >
+                    <Check size={14} /> <span>Paid</span>
+                  </button>
+                </div>
+              </div>
 
               <div className="qm-team-popup-qr">
                 <QRCodeSVG
