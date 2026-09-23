@@ -406,3 +406,62 @@
 .quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock.quiz-layout-overridden{
   translate:var(--layout-editor-x,0px) var(--layout-editor-y,0px) !important;
 }
+
+
+/* ---------- Approved timer v13 bake from supplied 390×844 editor export ---------- */
+@media(max-width:979px){
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-message{
+    position:fixed !important;
+    left:117.5px !important;
+    top:737px !important;
+    right:auto !important;
+    bottom:auto !important;
+    width:155px !important;
+    height:54px !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:none !important;
+    max-height:none !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:visible !important;
+    transform:none !important;
+    translate:none !important;
+    text-align:center !important;
+    justify-items:center !important;
+  }
+
+  .live-team-page .team-timer-message strong{
+    white-space:pre-line !important;
+    text-align:center !important;
+  }
+
+  .live-team-page .team-timer-message span{
+    text-align:center !important;
+  }
+
+  .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock{
+    position:fixed !important;
+    left:284px !important;
+    right:auto !important;
+    top:733px !important;
+    bottom:auto !important;
+    width:64px !important;
+    height:64px !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:none !important;
+    max-height:none !important;
+    margin:0 !important;
+    aspect-ratio:1 / 1 !important;
+    transform:none !important;
+    translate:none !important;
+  }
+}
+
+/* Once either timer part is edited again, TeamView applies its updated
+   left/right/top anchors inline. Do not reintroduce generic translate movement. */
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-message.quiz-layout-overridden,
+.quiz-preview-mode .live-team-page .team-timer-overlay.team-timer-clock-wrap .team-timer-clock.quiz-layout-overridden{
+  translate:none !important;
+}
