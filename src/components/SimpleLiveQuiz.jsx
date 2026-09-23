@@ -790,7 +790,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                   disabled={reviewQuestionRevealed && !canReviewNext}
                   onClick={() => runAnswerFlow(reviewQuestionAsked, reviewQuestionRevealed)}
                 >
-                  {reviewQuestionRevealed ? <>Next <ArrowRight size={16} /></> : reviewQuestionAsked ? <><Eye size={16} /> Reveal Answer</> : <><Send size={16} /> Push Question</>}
+                  {reviewQuestionRevealed ? <>Next <ArrowRight size={16} /></> : reviewQuestionAsked ? <><Eye size={16} /> Push Answer</> : <><Send size={16} /> Push Question</>}
                 </button>
               )}
             </div>
