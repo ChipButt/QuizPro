@@ -11,7 +11,6 @@ const PREVIEW_STAGES = [
   ["multiple-choice", "Multiple choice"],
   ["timer", "Timer running"],
   ["answer-reveal", "Answer reveal"],
-  ["locked", "Round locked"],
   ["between-rounds", "Between rounds"],
   ["leaderboard", "Leaderboard"],
   ["final", "Final results"],
@@ -20,7 +19,8 @@ const PREVIEW_STAGES = [
 function getRoute() {
   const hash = window.location.hash || "#/host";
   if (hash.startsWith("#/preview/")) {
-    return { kind: "preview", stage: decodeURIComponent(hash.split("/")[2] || "team-name") };
+    const stage = decodeURIComponent(hash.split("/")[2] || "team-name");
+    return { kind: "preview", stage: stage === "locked" ? "between-rounds" : stage };
   }
   if (hash === "#/preview" || hash === "#/preview/") return { kind: "preview", stage: "team-name" };
   if (hash.startsWith("#/join/")) {
