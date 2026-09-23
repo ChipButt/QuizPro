@@ -721,7 +721,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     const root = document.querySelector(".live-phone-shell");
     if (!root) return undefined;
 
-    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v11" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
+    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v12" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
     const storageKey = `quiz-layout-${storageVersion}:${teamToken || "preview"}`;
     let editEnabled = false;
     let selectedPath = "";
@@ -750,6 +750,13 @@ export default function TeamView({ sessionCode, teamToken }) {
 
     const elementPath = (element) => {
       if (!element || element === root) return ":scope";
+
+      /* Timer parts need stable IDs. Generic nth-of-type paths can resolve to
+         the wrong div elsewhere in the phone, which is why the clock worked
+         while the text block appeared completely immovable/uneditable. */
+      if (element.classList?.contains("team-timer-message")) return "__timer_message__";
+      if (element.classList?.contains("team-timer-clock")) return "__timer_clock__";
+
       const parts = [];
       let node = element;
 
@@ -766,6 +773,8 @@ export default function TeamView({ sessionCode, teamToken }) {
 
     const findByPath = (path) => {
       if (!path || path === ":scope") return root;
+      if (path === "__timer_message__") return root.querySelector(".team-timer-message");
+      if (path === "__timer_clock__") return root.querySelector(".team-timer-clock");
       try {
         return root.querySelector(path);
       } catch {
@@ -859,8 +868,8 @@ export default function TeamView({ sessionCode, teamToken }) {
         const headline = element.querySelector("strong");
         const subtext = element.querySelector("span");
 
-        if (typeof record.headline === "string" && headline) headline.textContent = record.headline;
-        if (typeof record.subtext === "string" && subtext) subtext.textContent = record.subtext;
+        if (typeof record.headline === "string" && headline && headline.textContent !== record.headline) headline.textContent = record.headline;
+        if (typeof record.subtext === "string" && subtext && subtext.textContent !== record.subtext) subtext.textContent = record.subtext;
 
         const alignment = ["left", "center", "right"].includes(record.textAlign) ? record.textAlign : null;
         if (alignment) {
@@ -1402,7 +1411,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     window.addEventListener("message", onMessage);
 
     const observer = new MutationObserver(() => window.requestAnimationFrame(applyAll));
-    observer.observe(root, { childList: true, subtree: true });
+    observer.observe(root, { childList: true, characterData: true, subtree: true });
     applyAll();
 
     window.parent?.postMessage({ type: "quiz-preview-ready" }, window.location.origin);
