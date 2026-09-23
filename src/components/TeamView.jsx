@@ -721,7 +721,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     const root = document.querySelector(".live-phone-shell");
     if (!root) return undefined;
 
-    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v10" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
+    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v11" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
     const storageKey = `quiz-layout-${storageVersion}:${teamToken || "preview"}`;
     let editEnabled = false;
     let selectedPath = "";
@@ -1018,7 +1018,7 @@ export default function TeamView({ sessionCode, teamToken }) {
 
       if (element.closest(".team-timer-message")) element = element.closest(".team-timer-message");
       else if (element.closest(".team-timer-clock")) element = element.closest(".team-timer-clock");
-      else if (element.closest(".team-timer-clock-wrap")) element = element.closest(".team-timer-clock-wrap");
+      else if (element.closest(".team-timer-clock-wrap")) return;
       else if (element.closest("svg")) element = element.closest("svg");
       if (!root.contains(element) || element === root) return;
 
@@ -1028,6 +1028,13 @@ export default function TeamView({ sessionCode, teamToken }) {
       if (layout[selectedPath]?.locked) element.classList.add("quiz-layout-locked");
       sendSelection(element, selectedPath);
       updateOverlay();
+    };
+
+    const selectTimerPart = (kind) => {
+      const selector = kind === "message" ? ".team-timer-message" : ".team-timer-clock";
+      const element = root.querySelector(selector);
+      if (!element) return;
+      selectElement(element);
     };
 
     const beginDrag = (event, mode, path, element) => {
@@ -1054,17 +1061,35 @@ export default function TeamView({ sessionCode, teamToken }) {
       if (!editEnabled || event.button !== 0) return;
       let element = event.target instanceof Element ? event.target : null;
       if (!element || !root.contains(element) || element === root) return;
-      if (element.closest(".team-timer-message")) element = element.closest(".team-timer-message");
-      else if (element.closest(".team-timer-clock")) element = element.closest(".team-timer-clock");
-      else if (element.closest(".team-timer-clock-wrap")) element = element.closest(".team-timer-clock-wrap");
-      else if (element.closest("svg")) element = element.closest("svg");
+
+      /* Timer text and clock have dedicated drag handlers below. Do not let the
+         generic editor ever promote their zero-size wrapper to the selection. */
+      if (element.closest(".team-timer-message") || element.closest(".team-timer-clock")) return;
+      if (element.closest(".team-timer-clock-wrap")) return;
+      if (element.closest("svg")) element = element.closest("svg");
 
       selectElement(element);
-      if (layout[selectedPath]?.locked) {
+      if (!selectedPath || layout[selectedPath]?.locked) {
         event.preventDefault();
         event.stopPropagation();
         return;
       }
+      beginDrag(event, "move", selectedPath, element);
+    };
+
+    const onTimerPartPointerDown = (event) => {
+      if (!editEnabled || event.button !== 0) return;
+      const raw = event.currentTarget;
+      const element = raw instanceof Element ? raw : null;
+      if (!element) return;
+
+      selectElement(element);
+      if (!selectedPath || layout[selectedPath]?.locked) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+
       beginDrag(event, "move", selectedPath, element);
     };
 
@@ -1142,6 +1167,18 @@ export default function TeamView({ sessionCode, teamToken }) {
       }
 
       if (message.type !== "quiz-layout-editor") return;
+
+      if (message.action === "select-timer-message") {
+        if (!editEnabled) return;
+        selectTimerPart("message");
+        return;
+      }
+
+      if (message.action === "select-timer-clock") {
+        if (!editEnabled) return;
+        selectTimerPart("clock");
+        return;
+      }
 
       if (message.action === "set-enabled") {
         editEnabled = Boolean(message.enabled);
@@ -1351,6 +1388,10 @@ export default function TeamView({ sessionCode, teamToken }) {
 
     document.documentElement.classList.add("quiz-preview-mode");
     root.addEventListener("pointerdown", onEditorPointerDown, true);
+    const timerMessageElement = root.querySelector(".team-timer-message");
+    const timerClockElement = root.querySelector(".team-timer-clock");
+    timerMessageElement?.addEventListener("pointerdown", onTimerPartPointerDown);
+    timerClockElement?.addEventListener("pointerdown", onTimerPartPointerDown);
     window.addEventListener("pointermove", onPointerMove, true);
     window.addEventListener("pointerup", onPointerUp, true);
     window.addEventListener("resize", updateOverlay);
@@ -1369,6 +1410,8 @@ export default function TeamView({ sessionCode, teamToken }) {
     return () => {
       observer.disconnect();
       root.removeEventListener("pointerdown", onEditorPointerDown, true);
+      timerMessageElement?.removeEventListener("pointerdown", onTimerPartPointerDown);
+      timerClockElement?.removeEventListener("pointerdown", onTimerPartPointerDown);
       window.removeEventListener("pointermove", onPointerMove, true);
       window.removeEventListener("pointerup", onPointerUp, true);
       window.removeEventListener("resize", updateOverlay);
