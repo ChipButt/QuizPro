@@ -629,4 +629,34 @@
   .live-team-page .waiting-fact-bulb{
     translate:-1px -2px;
   }
+
+  /* Keep the bulb and its fact copy anchored to the exact Waiting-page
+     coordinates, even when score/round panels above them are taller. */
+  .live-team-page .waiting-team-card{
+    position:relative !important;
+  }
+
+  .live-team-page .waiting-fact-bulb-stage{
+    position:static !important;
+  }
+
+  .live-team-page .waiting-fact-bulb{
+    left:50% !important;
+    top:377.6px !important;
+    width:360px !important;
+    height:360px !important;
+    max-width:none !important;
+    max-height:none !important;
+    transform:translateX(-50%) !important;
+    translate:-1px -2px !important;
+  }
+
+  .live-team-page .waiting-fact-copy{
+    left:50% !important;
+    top:438.1px !important;
+    width:158px !important;
+    height:120px !important;
+    max-width:none !important;
+    transform:translateX(-50%) !important;
+  }
 }
