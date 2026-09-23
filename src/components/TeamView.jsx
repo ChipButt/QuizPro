@@ -721,7 +721,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     const root = document.querySelector(".live-phone-shell");
     if (!root) return undefined;
 
-    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v9" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
+    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v10" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
     const storageKey = `quiz-layout-${storageVersion}:${teamToken || "preview"}`;
     let editEnabled = false;
     let selectedPath = "";
@@ -838,6 +838,23 @@ export default function TeamView({ sessionCode, teamToken }) {
       const isTimerMessage = element.classList?.contains("team-timer-message");
       const isTimerClock = element.classList?.contains("team-timer-clock");
 
+      /* Timer children are fixed-position elements. Move them by changing their
+         physical anchors directly instead of relying on CSS translate, so no
+         !important timer rule can block dragging. */
+      if (isTimerMessage) {
+        element.style.setProperty("left", `calc(18px + ${Number(record.x || 0)}px)`, "important");
+        element.style.setProperty("right", "auto", "important");
+        element.style.setProperty("top", `calc(84px + ${Number(record.y || 0)}px)`, "important");
+        element.style.setProperty("bottom", "auto", "important");
+        element.style.setProperty("translate", "none", "important");
+      } else if (isTimerClock) {
+        element.style.setProperty("left", "auto", "important");
+        element.style.setProperty("right", `calc(18px - ${Number(record.x || 0)}px)`, "important");
+        element.style.setProperty("top", `calc(84px + ${Number(record.y || 0)}px)`, "important");
+        element.style.setProperty("bottom", "auto", "important");
+        element.style.setProperty("translate", "none", "important");
+      }
+
       if (isTimerMessage) {
         const headline = element.querySelector("strong");
         const subtext = element.querySelector("span");
@@ -907,6 +924,14 @@ export default function TeamView({ sessionCode, teamToken }) {
       element.style.removeProperty("color");
       element.style.removeProperty("text-align");
       element.style.removeProperty("justify-items");
+
+      if (element.classList?.contains("team-timer-message") || element.classList?.contains("team-timer-clock")) {
+        element.style.removeProperty("left");
+        element.style.removeProperty("right");
+        element.style.removeProperty("top");
+        element.style.removeProperty("bottom");
+        element.style.removeProperty("translate");
+      }
 
       if (element.classList?.contains("team-timer-message")) {
         const headline = element.querySelector("strong");
