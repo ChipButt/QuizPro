@@ -721,7 +721,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     const root = document.querySelector(".live-phone-shell");
     if (!root) return undefined;
 
-    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v7" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
+    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v8" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
     const storageKey = `quiz-layout-${storageVersion}:${teamToken || "preview"}`;
     let editEnabled = false;
     let selectedPath = "";
@@ -834,9 +834,56 @@ export default function TeamView({ sessionCode, teamToken }) {
         element.style.setProperty("min-height", "0", "important");
         element.style.setProperty("max-height", "none", "important");
       }
-      if (Number.isFinite(Number(record.fontSize)) && Number(record.fontSize) > 0) {
-        element.style.fontSize = `${Number(record.fontSize)}px`;
+
+      const isTimerMessage = element.classList?.contains("team-timer-message");
+      const isTimerClock = element.classList?.contains("team-timer-clock");
+
+      if (isTimerMessage) {
+        const headline = element.querySelector("strong");
+        const subtext = element.querySelector("span");
+
+        if (typeof record.headline === "string" && headline) headline.textContent = record.headline;
+        if (typeof record.subtext === "string" && subtext) subtext.textContent = record.subtext;
+
+        const alignment = ["left", "center", "right"].includes(record.textAlign) ? record.textAlign : null;
+        if (alignment) {
+          element.style.setProperty("text-align", alignment, "important");
+          element.style.setProperty("justify-items", alignment === "left" ? "start" : alignment === "right" ? "end" : "center", "important");
+          headline?.style.setProperty("text-align", alignment, "important");
+          subtext?.style.setProperty("text-align", alignment, "important");
+        }
+
+        if (Number.isFinite(Number(record.headlineFontSize)) && Number(record.headlineFontSize) > 0) {
+          headline?.style.setProperty("font-size", `${Number(record.headlineFontSize)}px`, "important");
+        }
+        if (Number.isFinite(Number(record.subtextFontSize)) && Number(record.subtextFontSize) > 0) {
+          subtext?.style.setProperty("font-size", `${Number(record.subtextFontSize)}px`, "important");
+        }
+        if (typeof record.headlineColor === "string" && record.headlineColor) {
+          headline?.style.setProperty("color", record.headlineColor, "important");
+        }
+        if (typeof record.subtextColor === "string" && record.subtextColor) {
+          subtext?.style.setProperty("color", record.subtextColor, "important");
+        }
+      } else if (isTimerClock) {
+        const number = element.querySelector("strong");
+        if (Number.isFinite(Number(record.fontSize)) && Number(record.fontSize) > 0) {
+          number?.style.setProperty("font-size", `${Number(record.fontSize)}px`, "important");
+        }
+        if (typeof record.color === "string" && record.color) {
+          number?.style.setProperty("color", record.color, "important");
+        }
+      } else if (Number.isFinite(Number(record.fontSize)) && Number(record.fontSize) > 0) {
+        element.style.setProperty("font-size", `${Number(record.fontSize)}px`, "important");
       }
+
+      if (typeof record.color === "string" && record.color && !isTimerClock) {
+        element.style.setProperty("color", record.color, "important");
+      }
+      if (["left", "center", "right"].includes(record.textAlign) && !isTimerMessage) {
+        element.style.setProperty("text-align", record.textAlign, "important");
+      }
+
       if (Number.isFinite(Number(record.zIndex))) {
         const computedPosition = window.getComputedStyle(element).position;
         if (computedPosition === "static") element.classList.add("quiz-layout-layered");
@@ -857,6 +904,27 @@ export default function TeamView({ sessionCode, teamToken }) {
       element.style.removeProperty("max-height");
       element.style.removeProperty("font-size");
       element.style.removeProperty("z-index");
+      element.style.removeProperty("color");
+      element.style.removeProperty("text-align");
+      element.style.removeProperty("justify-items");
+
+      if (element.classList?.contains("team-timer-message")) {
+        const headline = element.querySelector("strong");
+        const subtext = element.querySelector("span");
+        [headline, subtext].forEach((child) => {
+          child?.style.removeProperty("font-size");
+          child?.style.removeProperty("color");
+          child?.style.removeProperty("text-align");
+        });
+        if (headline?.dataset?.defaultText) headline.textContent = headline.dataset.defaultText;
+        if (subtext?.dataset?.defaultText) subtext.textContent = subtext.dataset.defaultText;
+      }
+
+      if (element.classList?.contains("team-timer-clock")) {
+        const number = element.querySelector("strong");
+        number?.style.removeProperty("font-size");
+        number?.style.removeProperty("color");
+      }
     };
 
     const applyAll = () => {
@@ -879,16 +947,33 @@ export default function TeamView({ sessionCode, teamToken }) {
       const rect = element.getBoundingClientRect();
       const styles = window.getComputedStyle(element);
       const record = layout[path] || {};
+      const isTimerMessage = element.classList?.contains("team-timer-message");
+      const isTimerClock = element.classList?.contains("team-timer-clock");
+      const headline = isTimerMessage ? element.querySelector("strong") : null;
+      const subtext = isTimerMessage ? element.querySelector("span") : null;
+      const clockNumber = isTimerClock ? element.querySelector("strong") : null;
+      const headlineStyles = headline ? window.getComputedStyle(headline) : null;
+      const subtextStyles = subtext ? window.getComputedStyle(subtext) : null;
+      const clockStyles = clockNumber ? window.getComputedStyle(clockNumber) : null;
       return {
         x: Number(record.x || 0),
         y: Number(record.y || 0),
         width: Math.round(Number(record.width || rect.width)),
         height: Math.round(Number(record.height || rect.height)),
-        fontSize: Math.round((Number(record.fontSize || parseFloat(styles.fontSize) || 16)) * 10) / 10,
+        fontSize: Math.round((Number(record.fontSize || parseFloat(clockStyles?.fontSize || styles.fontSize) || 16)) * 10) / 10,
         zIndex: Number.isFinite(Number(record.zIndex))
           ? Math.round(Number(record.zIndex))
           : (styles.zIndex === "auto" ? 0 : Math.round(Number(styles.zIndex) || 0)),
         locked: Boolean(record.locked),
+        kind: isTimerMessage ? "timer-message" : isTimerClock ? "timer-clock" : "element",
+        textAlign: record.textAlign || styles.textAlign || "center",
+        color: record.color || clockStyles?.color || styles.color || "#000000",
+        headline: typeof record.headline === "string" ? record.headline : (headline?.textContent || ""),
+        subtext: typeof record.subtext === "string" ? record.subtext : (subtext?.textContent || ""),
+        headlineFontSize: Math.round((Number(record.headlineFontSize || parseFloat(headlineStyles?.fontSize) || 11)) * 10) / 10,
+        subtextFontSize: Math.round((Number(record.subtextFontSize || parseFloat(subtextStyles?.fontSize) || 9)) * 10) / 10,
+        headlineColor: record.headlineColor || headlineStyles?.color || "#031b3c",
+        subtextColor: record.subtextColor || subtextStyles?.color || "#41506a",
       };
     };
 
@@ -1051,14 +1136,23 @@ export default function TeamView({ sessionCode, teamToken }) {
       if (message.action === "update-selected" && selectedPath) {
         const current = layout[selectedPath] || {};
         if (current.locked) return;
+        const values = message.values || {};
         layout[selectedPath] = {
           ...current,
-          x: Number.isFinite(Number(message.values?.x)) ? Number(message.values.x) : Number(current.x || 0),
-          y: Number.isFinite(Number(message.values?.y)) ? Number(message.values.y) : Number(current.y || 0),
-          width: Number.isFinite(Number(message.values?.width)) ? Number(message.values.width) : current.width,
-          height: Number.isFinite(Number(message.values?.height)) ? Number(message.values.height) : current.height,
-          fontSize: Number.isFinite(Number(message.values?.fontSize)) ? Number(message.values.fontSize) : current.fontSize,
-          zIndex: Number.isFinite(Number(message.values?.zIndex)) ? Math.round(Number(message.values.zIndex)) : current.zIndex,
+          x: Number.isFinite(Number(values.x)) ? Number(values.x) : Number(current.x || 0),
+          y: Number.isFinite(Number(values.y)) ? Number(values.y) : Number(current.y || 0),
+          width: Number.isFinite(Number(values.width)) ? Number(values.width) : current.width,
+          height: Number.isFinite(Number(values.height)) ? Number(values.height) : current.height,
+          fontSize: Number.isFinite(Number(values.fontSize)) ? Number(values.fontSize) : current.fontSize,
+          zIndex: Number.isFinite(Number(values.zIndex)) ? Math.round(Number(values.zIndex)) : current.zIndex,
+          headlineFontSize: Number.isFinite(Number(values.headlineFontSize)) ? Number(values.headlineFontSize) : current.headlineFontSize,
+          subtextFontSize: Number.isFinite(Number(values.subtextFontSize)) ? Number(values.subtextFontSize) : current.subtextFontSize,
+          textAlign: typeof values.textAlign === "string" ? values.textAlign : current.textAlign,
+          color: typeof values.color === "string" ? values.color : current.color,
+          headlineColor: typeof values.headlineColor === "string" ? values.headlineColor : current.headlineColor,
+          subtextColor: typeof values.subtextColor === "string" ? values.subtextColor : current.subtextColor,
+          headline: typeof values.headline === "string" ? values.headline : current.headline,
+          subtext: typeof values.subtext === "string" ? values.subtext : current.subtext,
         };
         saveLayout();
         const element = findByPath(selectedPath);
@@ -1445,8 +1539,8 @@ export default function TeamView({ sessionCode, teamToken }) {
           aria-label={`${countdown} seconds remaining before the round ends`}
         >
           <div className="team-timer-message">
-            <strong>LAST CHANCE FOR YOUR ANSWERS!</strong>
-            <span>Pop in any final changes before time’s up</span>
+            <strong data-default-text="LAST CHANCE FOR YOUR ANSWERS!">LAST CHANCE FOR YOUR ANSWERS!</strong>
+            <span data-default-text="Pop in any final changes before time’s up">Pop in any final changes before time’s up</span>
           </div>
           <div className="team-timer-clock" aria-hidden="true">
             <i className="team-timer-clock-knob" />
