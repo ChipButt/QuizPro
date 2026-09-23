@@ -1882,3 +1882,88 @@
     grid-template-columns:minmax(0,1fr);
   }
 }
+
+
+/* ---------- Compact 10-team live answer grid ---------- */
+@media(max-width:640px){
+  .simple-host-app .host-answer-matrix-scroll{
+    max-height:508px;
+    overflow:auto;
+    overscroll-behavior:contain;
+    padding-bottom:4px;
+  }
+
+  .simple-host-app .host-answer-matrix-corner,
+  .simple-host-app .host-answer-matrix-question{
+    min-height:32px;
+    height:32px;
+    padding-block:3px;
+  }
+
+  .simple-host-app .host-answer-matrix-correct,
+  .simple-host-app .host-answer-matrix-row-label.correct-label{
+    min-height:36px;
+    height:36px;
+  }
+
+  .simple-host-app .host-answer-matrix-correct{
+    padding:4px 6px;
+    font-size:9px;
+    line-height:1.05;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .simple-host-app .host-answer-matrix-row-label{
+    min-height:44px;
+    height:44px;
+    padding:3px 6px;
+    align-content:center;
+    gap:1px;
+  }
+
+  .simple-host-app .host-answer-matrix-row-label strong{
+    display:block;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:9px;
+    line-height:1.05;
+  }
+
+  .simple-host-app .host-answer-matrix-row-label small{
+    font-size:7px;
+    line-height:1;
+  }
+
+  .simple-host-app .host-answer-matrix-cell{
+    min-height:44px;
+    height:44px;
+    grid-template-rows:minmax(14px,1fr) 18px;
+    gap:2px;
+    padding:3px 4px;
+  }
+
+  .simple-host-app .host-answer-matrix-text{
+    display:block;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    font-size:9px;
+    line-height:1.05;
+  }
+
+  .simple-host-app .host-answer-matrix-marks{
+    gap:2px;
+  }
+
+  .simple-host-app .host-answer-matrix-marks button{
+    min-height:18px;
+    height:18px;
+    padding:0 2px !important;
+    border-radius:5px !important;
+    font-size:9px;
+    line-height:1;
+  }
+}
