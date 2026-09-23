@@ -481,146 +481,142 @@ function FinalTrophy({ place }) {
   const rankLabel = place === 1 ? "1st" : place === 2 ? "2nd" : "3rd";
   const metalId = `trophy-metal-${place}`;
   const bodyId = `trophy-body-${place}`;
-  const rimId = `trophy-rim-${place}`;
+  const baseId = `trophy-base-${place}`;
   const shadowId = `trophy-shadow-${place}`;
 
   return (
     <svg
       className="final-trophy-art"
-      viewBox="0 0 200 220"
+      viewBox="0 0 200 230"
       role="img"
       aria-label={`${place === 1 ? "Gold" : place === 2 ? "Silver" : "Bronze"} trophy`}
     >
       <defs>
         <linearGradient id={metalId} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="var(--trophy-metal-dark)" />
-          <stop offset="20%" stopColor="var(--trophy-metal)" />
-          <stop offset="42%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="62%" stopColor="var(--trophy-metal)" />
-          <stop offset="82%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="0%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="42%" stopColor="var(--trophy-metal)" />
           <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
         <linearGradient id={bodyId} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="var(--trophy-metal-dark)" />
-          <stop offset="17%" stopColor="var(--trophy-metal)" />
-          <stop offset="36%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="53%" stopColor="var(--trophy-metal)" />
-          <stop offset="72%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="0%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="38%" stopColor="var(--trophy-metal)" />
+          <stop offset="72%" stopColor="var(--trophy-metal)" />
           <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
-        <linearGradient id={rimId} x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={baseId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="48%" stopColor="var(--trophy-metal)" />
+          <stop offset="52%" stopColor="var(--trophy-metal)" />
           <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
         <filter id={shadowId} x="-35%" y="-25%" width="170%" height="190%">
-          <feDropShadow dx="0" dy="6" stdDeviation="5" floodColor="rgba(0,0,0,.26)" />
+          <feDropShadow dx="0" dy="5" stdDeviation="4" floodColor="rgba(0,0,0,.24)" />
         </filter>
       </defs>
 
       <g filter={`url(#${shadowId})`}>
-        {/* Slim, single-piece handles inspired by the supplied reference. */}
+        {/* Slender handles copied from the visual language of the new reference. */}
         <path
-          d="M62 59
-             C48 50 32 51 23 62
-             C14 73 15 93 26 106
-             C35 117 48 122 63 119
-             L66 108
-             C55 111 46 108 40 101
-             C33 93 32 81 37 74
-             C42 68 50 68 61 74
-             Z
-             M55 65
-             C47 62 41 64 38 69
-             C34 76 35 87 41 94
-             C45 99 50 101 57 100
-             L59 91
-             C54 92 50 90 47 87
-             C44 83 43 78 45 75
-             C47 72 50 71 54 73
-             Z"
-          fill={`url(#${metalId})`}
-          fillRule="evenodd"
-          clipRule="evenodd"
+          d="M67 63
+             C53 49 36 48 28 59
+             C19 71 23 90 36 106
+             L66 140
+             C72 147 75 155 71 162
+             C68 168 62 171 57 168"
+          fill="none"
+          stroke={`url(#${metalId})`}
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
-          d="M138 59
-             C152 50 168 51 177 62
-             C186 73 185 93 174 106
-             C165 117 152 122 137 119
-             L134 108
-             C145 111 154 108 160 101
-             C167 93 168 81 163 74
-             C158 68 150 68 139 74
-             Z
-             M145 65
-             C153 62 159 64 162 69
-             C166 76 165 87 159 94
-             C155 99 150 101 143 100
-             L141 91
-             C146 92 150 90 153 87
-             C156 83 157 78 155 75
-             C153 72 150 71 146 73
-             Z"
-          fill={`url(#${metalId})`}
-          fillRule="evenodd"
-          clipRule="evenodd"
+          d="M133 63
+             C147 49 164 48 172 59
+             C181 71 177 90 164 106
+             L134 140
+             C128 147 125 155 129 162
+             C132 168 138 171 143 168"
+          fill="none"
+          stroke={`url(#${metalId})`}
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
 
-        {/* Handle accents keep the tubes sleek instead of flat. */}
-        <path d="M28 66C21 77 23 92 32 102C39 110 49 114 59 112" fill="none" stroke="rgba(255,255,255,.34)" strokeWidth="2.2" strokeLinecap="round" />
-        <path d="M172 66C179 77 177 92 168 102C161 110 151 114 141 112" fill="none" stroke="rgba(255,255,255,.28)" strokeWidth="2.2" strokeLinecap="round" />
-        <path d="M31 103C39 114 51 118 62 115" fill="none" stroke="rgba(0,0,0,.12)" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M169 103C161 114 149 118 138 115" fill="none" stroke="rgba(0,0,0,.12)" strokeWidth="1.5" strokeLinecap="round" />
-
-        {/* Rounded cup body - intentionally softer than the previous pointed bowl. */}
+        {/* Small highlight accents on the handles, as in the reference. */}
         <path
-          d="M61 52
-             C63 81 67 108 78 126
-             C85 138 92 144 100 144
-             C108 144 115 138 122 126
-             C133 108 137 81 139 52
-             C126 60 74 60 61 52Z"
+          d="M35 62C29 72 32 84 40 95"
+          fill="none"
+          stroke="rgba(255,255,255,.34)"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M165 62C171 72 168 84 160 95"
+          fill="none"
+          stroke="rgba(255,255,255,.26)"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+        />
+
+        {/* Simple flat cup body with a softly rounded lower profile. */}
+        <path
+          d="M62 52
+             H138
+             C136 83 132 112 122 135
+             C115 151 108 160 100 160
+             C92 160 85 151 78 135
+             C68 112 64 83 62 52Z"
           fill={`url(#${bodyId})`}
         />
 
-        {/* Body shading / accent panels like the reference illustration. */}
+        {/* Reference-style side accents instead of glossy realism. */}
         <path
           d="M73 61
-             C74 84 78 108 87 126
-             C90 132 94 136 97 139
-             C88 126 84 107 83 88
-             C82 77 82 68 83 59Z"
-          fill="rgba(255,255,255,.40)"
+             C75 87 79 112 87 131
+             C90 138 93 144 96 149"
+          fill="none"
+          stroke="rgba(255,255,255,.32)"
+          strokeWidth="4"
+          strokeLinecap="round"
         />
         <path
           d="M128 61
-             C126 82 122 103 115 120
-             C122 111 128 91 131 67Z"
-          fill="rgba(0,0,0,.08)"
+             C126 88 121 117 111 139
+             C108 145 105 150 101 154"
+          fill="none"
+          stroke="rgba(0,0,0,.10)"
+          strokeWidth="4"
+          strokeLinecap="round"
         />
-        <path d="M69 63C82 68 118 68 131 63" fill="none" stroke="rgba(255,255,255,.30)" strokeWidth="1.8" strokeLinecap="round" />
 
-        {/* Sleek rolled rim with a small highlight line. */}
-        <rect x="57" y="42" width="86" height="18" rx="9" fill={`url(#${rimId})`} />
-        <path d="M68 48h64" stroke="rgba(255,255,255,.62)" strokeWidth="2.4" strokeLinecap="round" />
+        {/* Flat rolled rim from the new reference. */}
+        <rect
+          x="57"
+          y="42"
+          width="86"
+          height="18"
+          rx="5"
+          fill={`url(#${metalId})`}
+        />
 
-        {/* Engraved place. */}
+        {/* Engraved ordinal on the cup body. */}
         <text
           className="final-trophy-rank-engraving"
           x="100"
-          y="98"
+          y="105"
           textAnchor="middle"
           dominantBaseline="middle"
         >
           {rankLabel}
         </text>
 
-        {/* Slim stem and compact metallic base. */}
-        <path d="M92 143h16l2 23H90Z" fill={`url(#${bodyId})`} />
-        <path d="M80 165h40l10 12H70Z" fill={`url(#${rimId})`} />
-        <rect x="65" y="175" width="70" height="17" rx="4" fill={`url(#${rimId})`} />
-        <path d="M74 181h52" stroke="rgba(255,255,255,.42)" strokeWidth="1.8" strokeLinecap="round" />
+        {/* Compact neck and pedestal, matching the reference trophy proportions. */}
+        <rect x="95" y="159" width="10" height="20" rx="2" fill={`url(#${metalId})`} />
+        <rect x="91" y="176" width="18" height="9" rx="4.5" fill={`url(#${metalId})`} />
+        <path d="M91 184H109L116 195H84Z" fill={`url(#${baseId})`} />
+        <path d="M76 194H124L132 207H68Z" fill={`url(#${baseId})`} />
+        <rect x="64" y="204" width="72" height="14" rx="3" fill={`url(#${baseId})`} />
+        <path d="M72 208H128" stroke="rgba(255,255,255,.28)" strokeWidth="2" strokeLinecap="round" />
       </g>
     </svg>
   );
