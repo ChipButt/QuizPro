@@ -172,3 +172,23 @@
     translate:5px 0;
   }
 }
+
+
+/* Answer reveal can be positioned below the normal answer field in the layout
+   editor. Do not clip the revealed-answer pill when it extends beyond the
+   question-stage box. */
+.live-team-page .team-question-stage.is-revealed{
+  overflow:visible !important;
+}
+
+.live-team-page .team-question-stage.is-revealed .team-answer-zone,
+.live-team-page .team-question-stage.is-revealed .answer-input-shell{
+  overflow:visible !important;
+}
+
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill{
+  position:relative;
+  z-index:12;
+  visibility:visible !important;
+  opacity:1 !important;
+}
