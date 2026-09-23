@@ -490,6 +490,7 @@ export default function QuizmasterPreviewView({ stage }) {
   const [timerChoice, setTimerChoice] = useState(30);
   const [liveTab, setLiveTab] = useState("questions");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [screenPreview, setScreenPreview] = useState(null);
   const [now, setNow] = useState(Date.now());
 
   useQuizmasterLayoutEditor(rootRef, stage);
@@ -565,6 +566,22 @@ export default function QuizmasterPreviewView({ stage }) {
     }
     sendAction("send-question");
   };
+
+  const previewTeamScreen = (screen) => {
+    setScreenPreview(screen);
+    setMenuOpen(false);
+  };
+
+  const pushPreviewedScreen = () => {
+    if (screenPreview === "waiting") sendAction("show-waiting");
+    if (screenPreview === "round_locked") sendAction("lock-round");
+    if (screenPreview === "leaderboard") sendAction("show-leaderboard");
+    if (screenPreview === "final") sendAction("show-final");
+  };
+
+  const playingIds = new Set(teams.map((team) => team.id));
+  const playingLeaderboard = (previewState.leaderboard || []).filter((team) => playingIds.has(team.id));
+  const finalRevealCount = Number(previewState.live?.finalRevealCount ?? 0);
 
   const renderTeamResponses = (compact = false) => (
     <section className={`qm-preview-control-card qm-team-response-card ${compact ? "compact" : ""}`}>
@@ -680,24 +697,46 @@ export default function QuizmasterPreviewView({ stage }) {
   }
 
   if (stage === "results") {
-    const playingIds = new Set(teams.map((team) => team.id));
-    const playingLeaderboard = (previewState.leaderboard || []).filter((team) => playingIds.has(team.id));
     return (
       <main className="qm-preview-phone" ref={rootRef}>
         <header className="qm-preview-header">
           <div>
             <span>QUIZMASTER</span>
-            <strong>Results</strong>
+            <strong>Final Results</strong>
           </div>
           <b>{formatScreen(currentScreen)}</b>
         </header>
 
-        <section className="qm-preview-round-card">
-          <div className="qm-preview-round-top">
-            <span>FIVE TEAM TEST</span>
-            <small>ROUND 1</small>
+        <div className="qm-screen-preview-top">
+          <div>
+            <span>FULL QUIZMASTER LEADERBOARD</span>
+            <strong>{playingLeaderboard.length} teams</strong>
           </div>
-          <h1>Leaderboard preview</h1>
+          <button type="button" className="primary" onClick={() => sendAction("show-final")}>
+            <Play size={15} /> Push To Teams
+          </button>
+        </div>
+
+        <section className="qm-preview-round-card qm-final-preview-card">
+          <div className="qm-final-preview-heading">
+            <div>
+              <span>FINAL LEADERBOARD</span>
+              <h1>Final Results</h1>
+            </div>
+            <button
+              type="button"
+              className="primary"
+              disabled={currentScreen !== "final" || finalRevealCount >= teams.length}
+              onClick={() => sendAction("reveal-next-final")}
+            >
+              <Eye size={15} /> Reveal Next
+            </button>
+          </div>
+
+          <div className="qm-final-reveal-status">
+            {currentScreen === "final" ? `${finalRevealCount}/${teams.length} revealed to teams` : "Final not pushed to teams yet"}
+          </div>
+
           <div className="qm-results-list">
             {playingLeaderboard.map((team, index) => (
               <div key={team.id} className="qm-result-row">
@@ -709,18 +748,8 @@ export default function QuizmasterPreviewView({ stage }) {
           </div>
         </section>
 
-        <section className="qm-preview-control-card compact">
-          <div className="qm-preview-section-title">Result screens</div>
-          <div className="qm-preview-action-grid">
-            <button type="button" onClick={() => sendAction("show-leaderboard")}><Trophy size={15} /> Show leaderboard</button>
-            <button type="button" onClick={() => sendAction("show-final")}><Trophy size={15} /> Start final reveal</button>
-            <button type="button" onClick={() => sendAction("reveal-next-final")}><Eye size={15} /> Reveal next team</button>
-            <button type="button" onClick={() => sendAction("show-waiting")}><Unlock size={15} /> Back to waiting</button>
-          </div>
-        </section>
-
         <footer className="qm-preview-footer">
-          <span>Results controls affect the Quiz Taker display</span>
+          <span>Quizmaster always sees the full final order</span>
           <strong>{teams.length} teams</strong>
         </footer>
       </main>
@@ -774,23 +803,97 @@ export default function QuizmasterPreviewView({ stage }) {
             </select>
           </label>
 
-          <div className="qm-preview-action-grid three qm-live-screen-controls">
-            <button type="button" onClick={() => sendAction("show-waiting")}><Unlock size={15} /> Waiting</button>
-            <button type="button" onClick={() => sendAction("lock-round")}><Lock size={15} /> Lock round</button>
-            <button type="button" onClick={() => sendAction("show-leaderboard")}><Trophy size={15} /> Leaderboard</button>
-            <button type="button" onClick={() => sendAction("show-final")}><Trophy size={15} /> Final</button>
-            <button type="button" onClick={() => sendAction("reveal-next-final")}><Eye size={15} /> Reveal next</button>
-            <button type="button" onClick={() => sendAction("reset-scenario")}><RotateCcw size={15} /> Reset</button>
+          <div className="qm-preview-section-title">Screens</div>
+          <div className="qm-preview-action-grid two qm-live-screen-controls">
+            <button type="button" onClick={() => previewTeamScreen("waiting")}><Unlock size={15} /> Waiting</button>
+            <button type="button" onClick={() => previewTeamScreen("round_locked")}><Lock size={15} /> Round Locked</button>
+            <button type="button" onClick={() => previewTeamScreen("leaderboard")}><Trophy size={15} /> Leaderboard</button>
+            <button type="button" onClick={() => previewTeamScreen("final")}><Trophy size={15} /> Final</button>
           </div>
+          <button type="button" className="qm-reset-preview-button" onClick={() => sendAction("reset-scenario")}><RotateCcw size={15} /> Reset Preview</button>
         </section>
       ) : null}
 
       <nav className="qm-live-tabs" aria-label="Live quiz views">
-        <button type="button" className={liveTab === "questions" ? "active" : ""} onClick={() => setLiveTab("questions")}>Questions</button>
-        <button type="button" className={liveTab === "answers" ? "active" : ""} onClick={() => setLiveTab("answers")}>Answers</button>
+        <button type="button" className={!screenPreview && liveTab === "questions" ? "active" : ""} onClick={() => { setScreenPreview(null); setLiveTab("questions"); }}>Questions</button>
+        <button type="button" className={!screenPreview && liveTab === "answers" ? "active" : ""} onClick={() => { setScreenPreview(null); setLiveTab("answers"); }}>Answers</button>
       </nav>
 
-      {liveTab === "questions" ? (
+      {screenPreview ? (
+        <section className={`qm-screen-preview qm-screen-preview-${screenPreview}`}>
+          <div className="qm-screen-preview-top">
+            <div>
+              <span>PRIVATE QUIZMASTER PREVIEW</span>
+              <strong>
+                {screenPreview === "waiting" ? "Waiting Screen" :
+                 screenPreview === "round_locked" ? "Round Locked" :
+                 screenPreview === "leaderboard" ? "Leaderboard" : "Final"}
+              </strong>
+            </div>
+            <button type="button" className="primary" onClick={pushPreviewedScreen}>
+              <Play size={15} /> Push To Teams
+            </button>
+          </div>
+
+          {screenPreview === "waiting" ? (
+            <div className="qm-screen-preview-card waiting">
+              <Unlock size={30} />
+              <span>GET READY</span>
+              <h2>The Quiz Will Begin Soon</h2>
+              <p>Round 1 · {previewState.round?.title || "General Knowledge"}</p>
+            </div>
+          ) : null}
+
+          {screenPreview === "round_locked" ? (
+            <div className="qm-screen-preview-card locked">
+              <Lock size={30} />
+              <span>ROUND COMPLETE</span>
+              <h2>Answers Locked</h2>
+              <p>Teams can no longer change their answers.</p>
+            </div>
+          ) : null}
+
+          {screenPreview === "leaderboard" ? (
+            <div className="qm-screen-preview-card leaderboard">
+              <span>LEADERBOARD</span>
+              <h2>Current Standings</h2>
+              <div className="qm-results-list">
+                {playingLeaderboard.map((team, index) => (
+                  <div key={team.id} className="qm-result-row">
+                    <span>{index + 1}</span><strong>{team.name}</strong><b>{team.score}</b>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {screenPreview === "final" ? (
+            <div className="qm-screen-preview-card final">
+              <div className="qm-final-preview-heading">
+                <div><span>FINAL LEADERBOARD</span><h2>Final Results</h2></div>
+                <button
+                  type="button"
+                  className="primary"
+                  disabled={currentScreen !== "final" || finalRevealCount >= teams.length}
+                  onClick={() => sendAction("reveal-next-final")}
+                >
+                  <Eye size={15} /> Reveal Next
+                </button>
+              </div>
+              <div className="qm-final-reveal-status">
+                {currentScreen === "final" ? `${finalRevealCount}/${teams.length} revealed to teams` : "Final not pushed to teams yet"}
+              </div>
+              <div className="qm-results-list">
+                {playingLeaderboard.map((team, index) => (
+                  <div key={team.id} className="qm-result-row">
+                    <span>{index + 1}</span><strong>{team.name}</strong><b>{team.score}</b>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </section>
+      ) : liveTab === "questions" ? (
         <>
           <div className="qm-live-top-navigation">
             <button type="button" onClick={() => sendAction("previous-question")} disabled={hostQuestionIndex <= 0}>
