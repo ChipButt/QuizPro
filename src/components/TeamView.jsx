@@ -478,6 +478,7 @@ function LeaderboardScreen({ snapshot, status }) {
 }
 
 function FinalTrophy({ place }) {
+  const rankLabel = place === 1 ? "1st" : place === 2 ? "2nd" : "3rd";
   const metalId = `trophy-metal-${place}`;
   const bowlId = `trophy-bowl-${place}`;
   const edgeId = `trophy-edge-${place}`;
@@ -487,88 +488,111 @@ function FinalTrophy({ place }) {
   return (
     <svg
       className="final-trophy-art"
-      viewBox="0 0 180 190"
+      viewBox="0 0 220 220"
       role="img"
       aria-label={`${place === 1 ? "Gold" : place === 2 ? "Silver" : "Bronze"} trophy`}
     >
       <defs>
         <linearGradient id={metalId} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="24%" stopColor="var(--trophy-metal)" />
-          <stop offset="51%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="22%" stopColor="var(--trophy-metal)" />
+          <stop offset="50%" stopColor="var(--trophy-metal-light)" />
           <stop offset="76%" stopColor="var(--trophy-metal)" />
           <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
         <linearGradient id={bowlId} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="var(--trophy-metal-dark)" />
-          <stop offset="16%" stopColor="var(--trophy-metal)" />
-          <stop offset="33%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="18%" stopColor="var(--trophy-metal)" />
+          <stop offset="36%" stopColor="var(--trophy-metal-light)" />
           <stop offset="52%" stopColor="var(--trophy-metal)" />
-          <stop offset="73%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="74%" stopColor="var(--trophy-metal-light)" />
           <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
         <linearGradient id={edgeId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="55%" stopColor="var(--trophy-metal)" />
+          <stop offset="54%" stopColor="var(--trophy-metal)" />
           <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
         <linearGradient id={shineId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="rgba(255,255,255,.72)" />
-          <stop offset="45%" stopColor="rgba(255,255,255,.16)" />
+          <stop offset="0%" stopColor="rgba(255,255,255,.78)" />
+          <stop offset="42%" stopColor="rgba(255,255,255,.18)" />
           <stop offset="100%" stopColor="rgba(255,255,255,0)" />
         </linearGradient>
         <filter id={shadowId} x="-35%" y="-25%" width="170%" height="190%">
-          <feDropShadow dx="0" dy="8" stdDeviation="6" floodColor="rgba(0,0,0,.30)" />
+          <feDropShadow dx="0" dy="8" stdDeviation="6" floodColor="rgba(0,0,0,.28)" />
         </filter>
       </defs>
 
       <g filter={`url(#${shadowId})`}>
-        {/* Handles are closed metal forms that join the cup at both ends. */}
+        {/* Closed, filled handles joined cleanly into the bowl at both ends. */}
         <path
-          d="M51 51C37 47 25 48 18 57C9 68 12 89 22 102C31 114 45 120 61 121L67 108C53 108 41 103 34 94C27 85 24 71 30 64C34 59 41 59 52 63Z"
+          d="M77 67
+             C56 57 37 58 25 72
+             C14 85 14 108 24 124
+             C34 140 52 150 76 150
+             L84 132
+             C67 132 55 126 48 116
+             C41 106 40 92 46 84
+             C52 77 62 77 75 84
+             Z"
           fill={`url(#${metalId})`}
         />
         <path
-          d="M129 51c14-4 26-3 33 6 9 11 6 32-4 45-9 12-23 18-39 19l-6-13c14 0 26-5 33-14 7-9 10-23 4-30-4-5-11-5-22-1Z"
+          d="M143 67
+             C164 57 183 58 195 72
+             C206 85 206 108 196 124
+             C186 140 168 150 144 150
+             L136 132
+             C153 132 165 126 172 116
+             C179 106 180 92 174 84
+             C168 77 158 77 145 84
+             Z"
           fill={`url(#${metalId})`}
         />
 
-        {/* Main cup */}
+        {/* Cup body */}
         <path
-          d="M45 40h90c-2 27-5 52-16 70-9 15-18 22-29 22s-20-7-29-22C50 92 47 67 45 40Z"
+          d="M72 58h76
+             c-2 31-7 61-19 82
+             c-7 13-13 19-19 19
+             s-12-6-19-19
+             C79 119 74 89 72 58Z"
           fill={`url(#${bowlId})`}
         />
         <path
-          d="M57 47h24c-8 22-8 49 0 70-14-8-20-25-23-45Z"
+          d="M85 66h22
+             c-8 27-7 55 2 77
+             c-12-8-18-28-21-50
+             c-1-9-2-18-3-27Z"
           fill={`url(#${shineId})`}
-          opacity=".72"
+          opacity=".78"
         />
         <path
-          d="M123 47h-11c5 18 4 38-1 56 8-9 11-21 13-35Z"
+          d="M137 66h-12c5 20 4 41-1 59 8-10 11-24 13-42Z"
           fill="rgba(0,0,0,.08)"
         />
 
-        {/* Heavy rolled rim */}
-        <rect x="41" y="29" width="98" height="19" rx="9.5" fill={`url(#${edgeId})`} />
-        <path d="M51 35h78" stroke="rgba(255,255,255,.58)" strokeWidth="2.5" strokeLinecap="round" />
-        <path d="M49 45c13 7 69 7 82 0" fill="none" stroke="rgba(255,255,255,.22)" strokeWidth="2" strokeLinecap="round" />
+        {/* Rolled rim */}
+        <rect x="66" y="45" width="88" height="20" rx="10" fill={`url(#${edgeId})`} />
+        <path d="M77 51h66" stroke="rgba(255,255,255,.58)" strokeWidth="2.6" strokeLinecap="round" />
+        <path d="M76 61c13 7 55 7 68 0" fill="none" stroke="rgba(255,255,255,.20)" strokeWidth="2" strokeLinecap="round" />
 
         {/* Engraved finishing position */}
         <text
           className="final-trophy-rank-engraving"
-          x="90"
-          y="85"
+          x="110"
+          y="108"
           textAnchor="middle"
           dominantBaseline="middle"
         >
-          {place}
+          {rankLabel}
         </text>
 
         {/* Stem and weighted base */}
-        <path d="M80 130h20l-1 20H81Z" fill={`url(#${bowlId})`} />
-        <path d="M66 149h48l12 14H54Z" fill={`url(#${edgeId})`} />
-        <rect x="48" y="161" width="84" height="20" rx="4" fill={`url(#${edgeId})`} />
-        <path d="M57 167h66" stroke="rgba(255,255,255,.40)" strokeWidth="2" strokeLinecap="round" />
+        <path d="M101 158h18l-2 23h-14Z" fill={`url(#${bowlId})`} />
+        <path d="M88 180h44l12 13H76Z" fill={`url(#${edgeId})`} />
+        <rect x="70" y="191" width="80" height="18" rx="4" fill={`url(#${edgeId})`} />
+        <path d="M80 197h60" stroke="rgba(255,255,255,.38)" strokeWidth="2" strokeLinecap="round" />
       </g>
     </svg>
   );
