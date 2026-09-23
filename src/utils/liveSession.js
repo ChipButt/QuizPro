@@ -26,6 +26,7 @@ export function createTeamSlot({ players = 1, table = "", name = "" } = {}) {
     registeredAt: "",
     nameLocked: Boolean(name),
     approved: true,
+    paid: false,
     scoreAdjustment: 0,
   };
 }
