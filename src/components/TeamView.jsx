@@ -479,91 +479,93 @@ function LeaderboardScreen({ snapshot, status }) {
 
 function FinalTrophy({ place }) {
   const metalId = `trophy-metal-${place}`;
+  const bodyId = `trophy-body-${place}`;
   const shineId = `trophy-shine-${place}`;
+  const baseId = `trophy-base-${place}`;
   const shadowId = `trophy-shadow-${place}`;
 
   return (
     <svg
       className="final-trophy-art"
-      viewBox="0 0 180 180"
+      viewBox="0 0 180 190"
       role="img"
       aria-label={`${place === 1 ? "Gold" : place === 2 ? "Silver" : "Bronze"} trophy`}
     >
       <defs>
         <linearGradient id={metalId} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="18%" stopColor="var(--trophy-metal)" />
-          <stop offset="45%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="72%" stopColor="var(--trophy-metal)" />
+          <stop offset="24%" stopColor="var(--trophy-metal)" />
+          <stop offset="52%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="78%" stopColor="var(--trophy-metal)" />
           <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
-
-        <linearGradient id={shineId} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="rgba(0,0,0,.16)" />
-          <stop offset="16%" stopColor="rgba(255,255,255,.34)" />
-          <stop offset="34%" stopColor="rgba(255,255,255,.08)" />
-          <stop offset="66%" stopColor="rgba(255,255,255,.02)" />
-          <stop offset="100%" stopColor="rgba(0,0,0,.18)" />
+        <linearGradient id={bodyId} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="var(--trophy-metal-dark)" />
+          <stop offset="16%" stopColor="var(--trophy-metal)" />
+          <stop offset="34%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="55%" stopColor="var(--trophy-metal)" />
+          <stop offset="74%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
-
-        <filter id={shadowId} x="-30%" y="-30%" width="170%" height="190%">
-          <feDropShadow dx="0" dy="7" stdDeviation="5" floodColor="rgba(0,0,0,.28)" />
+        <linearGradient id={shineId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="rgba(255,255,255,.68)" />
+          <stop offset="42%" stopColor="rgba(255,255,255,.16)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </linearGradient>
+        <linearGradient id={baseId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="45%" stopColor="var(--trophy-metal)" />
+          <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
+        </linearGradient>
+        <filter id={shadowId} x="-35%" y="-25%" width="170%" height="190%">
+          <feDropShadow dx="0" dy="8" stdDeviation="6" floodColor="rgba(0,0,0,.30)" />
         </filter>
       </defs>
 
       <g filter={`url(#${shadowId})`}>
         <path
-          d="M50 48H30c-11 0-17 8-17 18 0 25 17 42 43 47"
-          fill="none"
-          stroke={`url(#${metalId})`}
-          strokeWidth="10"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          d="M52 48C28 44 17 51 18 68c2 24 16 42 43 49l6-14C47 98 36 86 34 69c-1-8 4-11 18-10Z"
+          fill={`url(#${metalId})`}
         />
         <path
-          d="M130 48h20c11 0 17 8 17 18 0 25-17 42-43 47"
-          fill="none"
-          stroke={`url(#${metalId})`}
-          strokeWidth="10"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-
-        <rect
-          x="42"
-          y="30"
-          width="96"
-          height="14"
-          rx="7"
+          d="M128 48c24-4 35 3 34 20-2 24-16 42-43 49l-6-14c20-5 31-17 33-34 1-8-4-11-18-10Z"
           fill={`url(#${metalId})`}
         />
 
         <path
-          d="M45 40h90l-8 42c-5 28-19 45-37 45S58 110 53 82Z"
-          fill={`url(#${metalId})`}
+          d="M48 42h84l-7 46c-4 28-18 45-35 45S59 116 55 88Z"
+          fill={`url(#${bodyId})`}
         />
         <path
-          d="M58 44h64l-5 31c-4 20-13 32-27 36-14-4-23-16-27-36Z"
+          d="M60 49h21c-8 24-7 49 1 69-14-7-21-21-24-42Z"
           fill={`url(#${shineId})`}
           opacity=".72"
         />
+        <path
+          d="M48 45c12 7 72 7 84 0"
+          fill="none"
+          stroke="rgba(255,255,255,.28)"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+
+        <rect x="43" y="31" width="94" height="18" rx="9" fill={`url(#${metalId})`} />
+        <path d="M53 36h74" stroke="rgba(255,255,255,.58)" strokeWidth="2.4" strokeLinecap="round" />
 
         <text
           className="final-trophy-rank-engraving"
           x="90"
-          y="82"
+          y="88"
           textAnchor="middle"
           dominantBaseline="middle"
         >
           {place}
         </text>
 
-        <rect x="82" y="126" width="16" height="18" rx="3" fill={`url(#${metalId})`} />
-        <path
-          d="M70 145h40l10 12H60Z"
-          fill={`url(#${metalId})`}
-        />
-        <rect x="54" y="156" width="72" height="14" rx="4" fill={`url(#${metalId})`} />
+        <rect x="82" y="132" width="16" height="20" rx="3" fill={`url(#${bodyId})`} />
+        <path d="M66 151h48l11 13H55Z" fill={`url(#${baseId})`} />
+        <rect x="49" y="162" width="82" height="19" rx="4" fill={`url(#${baseId})`} />
+        <path d="M58 167h64" stroke="rgba(255,255,255,.38)" strokeWidth="2" strokeLinecap="round" />
       </g>
     </svg>
   );
