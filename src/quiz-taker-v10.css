@@ -3185,3 +3185,35 @@
     height:126px;
   }
 }
+
+
+/* Trophy art polish only: preserve the approved positioning, but make the
+   team details read like engraving in the metal rather than a stuck-on badge. */
+.live-team-page .final-trophy-engraving{
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  padding:3px 4px !important;
+}
+
+.live-team-page .final-trophy-engraving strong,
+.live-team-page .final-trophy-engraving b,
+.live-team-page .final-trophy-engraving b small{
+  color:var(--trophy-engrave) !important;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.32),
+    0 -1px 0 rgba(0,0,0,.22) !important;
+}
+
+.live-team-page .final-trophy-engraving strong{
+  letter-spacing:-.02em !important;
+}
+
+.live-team-page .final-trophy-engraving b{
+  margin-top:1px !important;
+}
+
+.live-team-page .final-podium-slot.ours .final-trophy-engraving{
+  outline:0 !important;
+}
