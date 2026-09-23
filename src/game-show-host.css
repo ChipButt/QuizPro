@@ -1677,3 +1677,208 @@
     font-size:13px;
   }
 }
+
+
+/* ---------- Tabbed mobile Live Quiz controls ---------- */
+.simple-host-app .host-control-deck{
+  position:relative;
+}
+
+.simple-host-app .host-live-mobile-banner{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) minmax(0,.8fr) auto;
+  align-items:stretch;
+  gap:8px;
+}
+
+.simple-host-app .host-live-menu-toggle,
+.simple-host-app .host-live-banner-timer{
+  border:0 !important;
+  border-radius:12px !important;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-weight:950;
+}
+
+.simple-host-app .host-live-menu-toggle{
+  width:44px;
+  min-width:44px;
+  min-height:44px;
+  padding:0 !important;
+  background:#113b72 !important;
+  color:#dceaff !important;
+  box-shadow:none !important;
+}
+
+.simple-host-app .host-live-menu-toggle.active{
+  background:#1a579e !important;
+  color:var(--gs-yellow) !important;
+  box-shadow:inset 0 0 0 2px rgba(255,212,41,.7) !important;
+}
+
+.simple-host-app .host-live-banner-timer{
+  min-width:126px;
+  min-height:44px;
+  padding:7px 11px !important;
+  background:var(--gs-yellow) !important;
+  color:var(--gs-violet) !important;
+  box-shadow:0 4px 0 var(--gs-yellow-deep) !important;
+}
+
+.simple-host-app .host-live-banner-timer.active{
+  background:#b42345 !important;
+  color:#fff !important;
+  box-shadow:0 4px 0 #76152c !important;
+}
+
+.simple-host-app .host-live-controls-popout{
+  position:absolute;
+  z-index:35;
+  top:64px;
+  left:10px;
+  right:10px;
+  padding:12px;
+  border:2px solid #a9c8f4;
+  border-radius:17px;
+  background:#f8fbff;
+  box-shadow:0 18px 36px rgba(27,55,99,.3);
+}
+
+.simple-host-app .host-live-timer-setting{
+  display:grid;
+  grid-template-columns:1fr minmax(130px,180px);
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+  color:#617faa;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.simple-host-app .host-live-timer-setting select{
+  width:100%;
+  min-height:40px;
+  border:1px solid #b9cce8;
+  border-radius:10px;
+  background:#fff;
+  color:var(--gs-text);
+  padding:7px 9px;
+  font-weight:850;
+}
+
+.simple-host-app .host-live-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin:0 0 10px;
+  padding:4px;
+  border:2px solid #c7d7ff;
+  border-radius:16px;
+  background:#eef5ff;
+}
+
+.simple-host-app .host-live-tabs button{
+  min-height:44px;
+  border:0 !important;
+  border-radius:11px !important;
+  background:transparent !important;
+  color:#607da8 !important;
+  box-shadow:none !important;
+  font-weight:1000;
+}
+
+.simple-host-app .host-live-tabs button.active{
+  background:var(--gs-yellow) !important;
+  color:var(--gs-violet) !important;
+  box-shadow:0 3px 0 var(--gs-yellow-deep) !important;
+}
+
+.simple-host-app .host-live-top-navigation{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin:2px 0 10px;
+}
+
+.simple-host-app .host-live-top-navigation>button{
+  width:100%;
+  min-width:0;
+  min-height:48px;
+}
+
+.simple-host-app .host-answer-flow-button{
+  border:0 !important;
+  border-radius:12px !important;
+  background:var(--gs-yellow) !important;
+  color:var(--gs-violet) !important;
+  box-shadow:0 4px 0 var(--gs-yellow-deep) !important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-weight:1000;
+}
+
+.simple-host-app .host-question-title-row.answers-mode{
+  grid-template-columns:minmax(0,1fr);
+}
+
+@media(max-width:640px){
+  .simple-host-app .host-live-mobile-banner{
+    grid-template-columns:44px minmax(0,1fr) auto;
+    gap:6px;
+  }
+
+  .simple-host-app .host-live-mobile-banner>div:nth-of-type(2){
+    display:none;
+  }
+
+  .simple-host-app .host-live-mobile-banner>div{
+    min-width:0;
+  }
+
+  .simple-host-app .host-live-banner-timer{
+    min-width:104px;
+    min-height:44px;
+    padding-inline:8px !important;
+    font-size:10px;
+  }
+
+  .simple-host-app .host-live-controls-popout{
+    top:60px;
+    left:6px;
+    right:6px;
+    padding:10px;
+  }
+
+  .simple-host-app .host-live-timer-setting{
+    grid-template-columns:1fr 128px;
+  }
+
+  .simple-host-app .host-live-tabs{
+    margin-bottom:8px;
+  }
+
+  .simple-host-app .host-live-tabs button{
+    min-height:42px;
+  }
+
+  .simple-host-app .host-live-top-navigation{
+    gap:7px;
+    margin-bottom:8px;
+  }
+
+  .simple-host-app .host-live-top-navigation>button{
+    min-height:48px;
+    font-size:11px;
+    touch-action:manipulation;
+  }
+
+  .simple-host-app .host-question-title-row.answers-mode{
+    grid-template-columns:minmax(0,1fr);
+  }
+}
