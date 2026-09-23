@@ -798,6 +798,10 @@
   color:var(--gs-violet) !important;
 }
 
+.simple-host-app .host-answer-key strong{
+  margin-left:8px;
+}
+
 .simple-host-app .icon-step-button,
 .simple-host-app .reveal-toggle{
   border:2px solid #b8d8ff !important;
