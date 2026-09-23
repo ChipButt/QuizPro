@@ -514,3 +514,64 @@
     max-height:48px !important;
   }
 }
+
+
+/* ---------- Answer-field result colour + Your Answer section ---------- */
+/* Result colour belongs to the team's submitted answer field, not the whole
+   question panel. Keep the surrounding reveal panel neutral. */
+.live-team-page .team-question-stage.is-revealed.answer-correct,
+.live-team-page .team-question-stage.is-revealed.answer-incorrect{
+  background:#fff !important;
+  border-color:#c7d7ff !important;
+  box-shadow:
+    0 8px 0 rgba(10,86,216,.08),
+    0 18px 40px rgba(3,27,60,.10) !important;
+}
+
+.live-team-page .team-question-stage.is-revealed.answer-correct::before,
+.live-team-page .team-question-stage.is-revealed.answer-incorrect::before{
+  background:linear-gradient(90deg,#168cff,#8fc8ff,#168cff) border-box !important;
+}
+
+/* YOUR ANSWER and its field read as one connected section. */
+.live-team-page .team-question-stage.is-revealed .your-answer-section{
+  box-sizing:border-box;
+  width:100%;
+  padding:10px 10px 11px;
+  border:2px solid #c7d7ff;
+  border-radius:16px;
+  background:#f7faff;
+  box-shadow:0 4px 0 rgba(10,86,216,.10);
+}
+
+.live-team-page .team-question-stage.is-revealed .your-answer-section .your-answer-label{
+  display:block;
+  margin:0 0 7px 2px !important;
+  color:#41506a !important;
+}
+
+/* Correct submitted answer: green field. */
+.live-team-page .team-question-stage.is-revealed.answer-correct .your-answer-section textarea:disabled{
+  opacity:1 !important;
+  filter:none !important;
+  background:#e8f7ef !important;
+  color:#075f3c !important;
+  -webkit-text-fill-color:#075f3c !important;
+  border:2px solid #54ad84 !important;
+  box-shadow:
+    inset 0 1px 2px rgba(15,157,95,.08),
+    0 4px 0 rgba(15,157,95,.18) !important;
+}
+
+/* Incorrect submitted answer: red field. */
+.live-team-page .team-question-stage.is-revealed.answer-incorrect .your-answer-section textarea:disabled{
+  opacity:1 !important;
+  filter:none !important;
+  background:#fff0f1 !important;
+  color:#8f1830 !important;
+  -webkit-text-fill-color:#8f1830 !important;
+  border:2px solid #e36a76 !important;
+  box-shadow:
+    inset 0 1px 2px rgba(190,24,93,.08),
+    0 4px 0 rgba(190,24,93,.18) !important;
+}
