@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import HostShell from "./components/HostShell.jsx";
+import QuizmasterPreviewView from "./components/QuizmasterPreviewView.jsx";
 import TeamView from "./components/TeamView.jsx";
 import { useGitHubQuizLibrary } from "./hooks/useGitHubQuizLibrary.js";
 import { useQuizState } from "./hooks/useQuizState.js";
@@ -16,8 +17,332 @@ const PREVIEW_STAGES = [
   ["final", "Final results"],
 ];
 
+const PREVIEW_LEADERBOARD = [
+  { id: "team-2", name: "Universally Challenged", score: 38 },
+  { id: "preview-team", name: "The Quizzy Rascals", score: 35 },
+  { id: "team-3", name: "Agatha Quiztie", score: 31 },
+  { id: "team-4", name: "No Eye Deer", score: 28 },
+  { id: "team-5", name: "The Smartinis", score: 27 },
+  { id: "team-6", name: "Risky Quizness", score: 25 },
+  { id: "team-7", name: "Norfolk 'n' Chance", score: 24 },
+  { id: "team-8", name: "The Know It Ales", score: 22 },
+  { id: "team-9", name: "Victorious Secret", score: 20 },
+  { id: "team-10", name: "Google Wasn't Invited", score: 19 },
+  { id: "team-11", name: "Les Quizerables", score: 17 },
+  { id: "team-12", name: "Let's Get Quizzical", score: 15 },
+  { id: "team-13", name: "The Guessing Game", score: 13 },
+  { id: "team-14", name: "Table Trouble", score: 11 },
+];
+
+function createPreviewHarnessState(stage) {
+  const firstIsMultipleChoice = ["multiple-choice", "timer"].includes(stage);
+  const questions = [
+    firstIsMultipleChoice
+      ? {
+          id: "q1",
+          number: 1,
+          type: "Multiple choice",
+          text: "Which planet is known as the Red Planet?",
+          answer: "Mars",
+          options: ["Venus", "Mars", "Jupiter", "Mercury"],
+          revealed: stage === "answer-reveal",
+        }
+      : {
+          id: "q1",
+          number: 1,
+          type: "Text",
+          text: "What is the capital city of Australia?",
+          answer: "Canberra",
+          options: [],
+          revealed: stage === "answer-reveal",
+        },
+    {
+      id: "q2",
+      number: 2,
+      type: "Multiple choice",
+      text: "Which element has the chemical symbol Au?",
+      answer: "Gold",
+      options: ["Silver", "Gold", "Argon", "Copper"],
+      revealed: false,
+    },
+    {
+      id: "q3",
+      number: 3,
+      type: "Text",
+      text: "Who painted The Starry Night?",
+      answer: "Vincent van Gogh",
+      options: [],
+      revealed: false,
+    },
+    {
+      id: "q4",
+      number: 4,
+      type: "Multiple choice",
+      text: "Which ocean is the largest?",
+      answer: "Pacific Ocean",
+      options: ["Atlantic", "Indian", "Arctic", "Pacific"],
+      revealed: false,
+    },
+  ];
+
+  let teamScreen = "question";
+  let questionIndex = 0;
+  let timerActive = false;
+  let timerEndsAt = 0;
+  let timerDurationSeconds = 0;
+  let nameLocked = true;
+  let finalRevealCount = 0;
+
+  if (stage === "team-name") {
+    teamScreen = "lobby";
+    questionIndex = -1;
+    nameLocked = false;
+  } else if (stage === "waiting") {
+    teamScreen = "lobby";
+    questionIndex = -1;
+  } else if (stage === "timer") {
+    teamScreen = "question";
+    timerActive = true;
+    timerDurationSeconds = 45;
+    timerEndsAt = Date.now() + 45000;
+  } else if (stage === "between-rounds") {
+    teamScreen = "round_locked";
+    questionIndex = -1;
+  } else if (stage === "leaderboard") {
+    teamScreen = "leaderboard";
+  } else if (stage === "final") {
+    teamScreen = "final";
+    finalRevealCount = PREVIEW_LEADERBOARD.length;
+  }
+
+  return {
+    type: "snapshot",
+    team: {
+      id: "preview-team",
+      name: nameLocked ? "The Quizzy Rascals" : "",
+      nameLocked,
+      table: 7,
+      players: 4,
+    },
+    quiz: { totalRounds: 5 },
+    waitingFacts: [
+      "The word quiz may have been popularised in Dublin in the 18th century.",
+      "Octopuses have three hearts.",
+      "A group of flamingos is called a flamboyance.",
+    ],
+    roundScores: [{ id: "r1", number: 1, title: "General Knowledge", score: 8, max: 10 }],
+    leaderboard: PREVIEW_LEADERBOARD,
+    teamAnswers: {},
+    teamAnswersCount: 0,
+    live: {
+      teamScreen,
+      roundIndex: 0,
+      questionIndex,
+      timerActive,
+      timerEndsAt,
+      timerDurationSeconds,
+      finalRevealCount,
+    },
+    nextRound: { number: 2, title: "Music" },
+    round: {
+      id: "preview-round",
+      title: "General Knowledge",
+      totalQuestions: 10,
+      teamLocked: false,
+      forceLocked: teamScreen === "round_locked",
+      questions,
+    },
+  };
+}
+
+function applyQuizmasterPreviewAction(current, action, values = {}, stage) {
+  if (!current) return createPreviewHarnessState(stage);
+  if (action === "reset-scenario") return createPreviewHarnessState(stage);
+
+  const questionIndex = Math.max(0, Number(current.live?.questionIndex ?? 0));
+  const questions = current.round?.questions || [];
+  const currentQuestion = questions[questionIndex];
+
+  const withLive = (patch) => ({
+    ...current,
+    live: { ...current.live, ...patch },
+  });
+
+  if (action === "previous-question" || action === "next-question") {
+    const delta = action === "next-question" ? 1 : -1;
+    const nextIndex = Math.max(0, Math.min(Math.max(0, questions.length - 1), questionIndex + delta));
+    return {
+      ...current,
+      team: { ...current.team, name: current.team.name || "The Quizzy Rascals", nameLocked: true },
+      live: {
+        ...current.live,
+        teamScreen: "question",
+        questionIndex: nextIndex,
+        timerActive: false,
+        timerEndsAt: 0,
+        timerDurationSeconds: 0,
+      },
+    };
+  }
+
+  if (action === "send-question") {
+    return {
+      ...current,
+      team: { ...current.team, name: current.team.name || "The Quizzy Rascals", nameLocked: true },
+      round: {
+        ...current.round,
+        forceLocked: false,
+        questions: questions.map((question, index) => index === questionIndex ? { ...question, revealed: false } : question),
+      },
+      live: {
+        ...current.live,
+        teamScreen: "question",
+        questionIndex,
+        timerActive: false,
+        timerEndsAt: 0,
+        timerDurationSeconds: 0,
+      },
+    };
+  }
+
+  if (action === "toggle-question-type" && currentQuestion) {
+    const makeMultipleChoice = currentQuestion.type !== "Multiple choice";
+    const replacement = makeMultipleChoice
+      ? {
+          ...currentQuestion,
+          type: "Multiple choice",
+          text: "Which planet is known as the Red Planet?",
+          answer: "Mars",
+          options: ["Venus", "Mars", "Jupiter", "Mercury"],
+          revealed: false,
+        }
+      : {
+          ...currentQuestion,
+          type: "Text",
+          text: "What is the capital city of Australia?",
+          answer: "Canberra",
+          options: [],
+          revealed: false,
+        };
+    return {
+      ...current,
+      round: {
+        ...current.round,
+        questions: questions.map((question, index) => index === questionIndex ? replacement : question),
+      },
+      live: { ...current.live, teamScreen: "question", timerActive: false, timerEndsAt: 0, timerDurationSeconds: 0 },
+    };
+  }
+
+  if (action === "reveal-answer" && currentQuestion) {
+    return {
+      ...current,
+      round: {
+        ...current.round,
+        questions: questions.map((question, index) => index === questionIndex ? { ...question, revealed: true } : question),
+      },
+      live: { ...current.live, teamScreen: "question" },
+    };
+  }
+
+  if (action === "start-timer") {
+    const seconds = Math.max(5, Number(values.seconds) || 45);
+    return {
+      ...current,
+      team: { ...current.team, name: current.team.name || "The Quizzy Rascals", nameLocked: true },
+      live: {
+        ...current.live,
+        teamScreen: "question",
+        timerActive: true,
+        timerEndsAt: Date.now() + seconds * 1000,
+        timerDurationSeconds: seconds,
+      },
+    };
+  }
+
+  if (action === "cancel-timer") {
+    return withLive({ timerActive: false, timerEndsAt: 0, timerDurationSeconds: 0 });
+  }
+
+  if (action === "show-waiting") {
+    return {
+      ...current,
+      team: { ...current.team, name: current.team.name || "The Quizzy Rascals", nameLocked: true },
+      round: { ...current.round, forceLocked: false },
+      live: {
+        ...current.live,
+        teamScreen: "lobby",
+        questionIndex: -1,
+        timerActive: false,
+        timerEndsAt: 0,
+        timerDurationSeconds: 0,
+      },
+    };
+  }
+
+  if (action === "lock-round") {
+    return {
+      ...current,
+      round: { ...current.round, forceLocked: true },
+      live: {
+        ...current.live,
+        teamScreen: "round_locked",
+        timerActive: false,
+        timerEndsAt: 0,
+        timerDurationSeconds: 0,
+      },
+    };
+  }
+
+  if (action === "show-leaderboard") {
+    return withLive({ teamScreen: "leaderboard", timerActive: false, timerEndsAt: 0, timerDurationSeconds: 0 });
+  }
+
+  if (action === "show-final") {
+    return withLive({ teamScreen: "final", finalRevealCount: 0, timerActive: false, timerEndsAt: 0, timerDurationSeconds: 0 });
+  }
+
+  if (action === "reveal-next-final") {
+    return withLive({
+      teamScreen: "final",
+      finalRevealCount: Math.min(PREVIEW_LEADERBOARD.length, Number(current.live?.finalRevealCount ?? 0) + 1),
+      timerActive: false,
+      timerEndsAt: 0,
+      timerDurationSeconds: 0,
+    });
+  }
+
+  return current;
+}
+
+function applyQuizTakerPreviewAction(current, message) {
+  if (!current || !message) return current;
+  if (message.type === "set-team-name") {
+    return {
+      ...current,
+      team: { ...current.team, name: message.name, nameLocked: true },
+    };
+  }
+  if (message.type === "save-answer") {
+    const teamAnswers = {
+      ...current.teamAnswers,
+      [message.questionId]: { text: message.text },
+    };
+    return {
+      ...current,
+      teamAnswers,
+      teamAnswersCount: Object.keys(teamAnswers).length,
+    };
+  }
+  return current;
+}
+
 function getRoute() {
   const hash = window.location.hash || "#/host";
+  if (hash.startsWith("#/host-preview/")) {
+    const stage = decodeURIComponent(hash.split("/")[2] || "question");
+    return { kind: "host-preview", stage };
+  }
   if (hash.startsWith("#/preview/")) {
     const stage = decodeURIComponent(hash.split("/")[2] || "team-name");
     return { kind: "preview", stage: stage === "locked" ? "between-rounds" : stage };
@@ -49,8 +374,12 @@ function TeamPreview({ stage }) {
   const FRAME_BORDER = 8;
   const FRAME_WIDTH = PHONE_WIDTH + FRAME_BORDER * 2;
   const FRAME_HEIGHT = PHONE_HEIGHT + FRAME_BORDER * 2;
-  const iframeRef = useRef(null);
+  const PHONE_GAP = 24;
+
+  const hostIframeRef = useRef(null);
+  const teamIframeRef = useRef(null);
   const [previewScale, setPreviewScale] = useState(1);
+  const [simState, setSimState] = useState(() => createPreviewHarnessState(stage));
   const [bulbSize, setBulbSize] = useState(360);
   const [factBoxWidth, setFactBoxWidth] = useState(158);
   const [factBoxX, setFactBoxX] = useState(50);
@@ -60,7 +389,7 @@ function TeamPreview({ stage }) {
   const [layoutExport, setLayoutExport] = useState("");
 
   const sendPreviewStyle = () => {
-    iframeRef.current?.contentWindow?.postMessage({
+    teamIframeRef.current?.contentWindow?.postMessage({
       type: "quiz-preview-style",
       bulbSize,
       factBoxWidth,
@@ -70,10 +399,21 @@ function TeamPreview({ stage }) {
   };
 
   const sendEditor = (action, values = {}) => {
-    iframeRef.current?.contentWindow?.postMessage({
+    hostIframeRef.current?.contentWindow?.postMessage({
       type: "quiz-layout-editor",
       action,
       ...values,
+    }, window.location.origin);
+  };
+
+  const sendSimulation = (state = simState) => {
+    hostIframeRef.current?.contentWindow?.postMessage({
+      type: "quizmaster-preview-state",
+      state,
+    }, window.location.origin);
+    teamIframeRef.current?.contentWindow?.postMessage({
+      type: "quiz-preview-snapshot",
+      snapshot: state,
     }, window.location.origin);
   };
 
@@ -86,25 +426,12 @@ function TeamPreview({ stage }) {
     sendEditor("update-selected", { values: { [field]: value } });
   };
 
-  const updateSelectedValue = (field, value) => {
-    if (!selectedElement || selectedElement.locked) return;
-    const next = { ...selectedElement, [field]: value };
-    setSelectedElement(next);
-    sendEditor("update-selected", { values: { [field]: value } });
-  };
-
-  const colorInputValue = (value, fallback = "#000000") => {
-    const text = String(value || "").trim();
-    if (/^#[0-9a-f]{6}$/i.test(text)) return text;
-    if (/^#[0-9a-f]{3}$/i.test(text)) {
-      return `#${text[1]}${text[1]}${text[2]}${text[2]}${text[3]}${text[3]}`;
-    }
-    const match = text.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
-    if (match) {
-      return `#${[match[1], match[2], match[3]].map((part) => Math.max(0, Math.min(255, Number(part))).toString(16).padStart(2, "0")).join("")}`;
-    }
-    return fallback;
-  };
+  useEffect(() => {
+    const next = createPreviewHarnessState(stage);
+    setSimState(next);
+    setSelectedElement(null);
+    setLayoutExport("");
+  }, [stage]);
 
   useEffect(() => {
     const updateScale = () => {
@@ -113,7 +440,8 @@ function TeamPreview({ stage }) {
       const verticalChrome = window.innerWidth >= 760 ? 56 : 160;
       const availableWidth = Math.max(260, window.innerWidth - sidebarWidth - horizontalChrome);
       const availableHeight = Math.max(420, window.innerHeight - verticalChrome);
-      setPreviewScale(Math.min(1, availableWidth / FRAME_WIDTH, availableHeight / FRAME_HEIGHT));
+      const pairWidth = FRAME_WIDTH * 2 + PHONE_GAP;
+      setPreviewScale(Math.min(1, availableWidth / pairWidth, availableHeight / FRAME_HEIGHT));
     };
 
     updateScale();
@@ -126,9 +454,58 @@ function TeamPreview({ stage }) {
   }, [bulbSize, factBoxWidth, factBoxX, factBoxY, stage]);
 
   useEffect(() => {
+    sendSimulation(simState);
+  }, [simState]);
+
+  useEffect(() => {
+    if (!simState.live?.timerActive || !simState.live?.timerEndsAt) return undefined;
+    const delay = Math.max(0, Number(simState.live.timerEndsAt) - Date.now()) + 80;
+    const timer = window.setTimeout(() => {
+      setSimState((current) => {
+        if (!current.live?.timerActive) return current;
+        if (Number(current.live.timerEndsAt || 0) > Date.now()) return current;
+        return {
+          ...current,
+          round: { ...current.round, forceLocked: true },
+          live: {
+            ...current.live,
+            teamScreen: "round_locked",
+            timerActive: false,
+            timerEndsAt: 0,
+            timerDurationSeconds: 0,
+          },
+        };
+      });
+    }, delay);
+    return () => window.clearTimeout(timer);
+  }, [simState.live?.timerActive, simState.live?.timerEndsAt]);
+
+  useEffect(() => {
     const onMessage = (event) => {
       if (event.origin !== window.location.origin) return;
       const message = event.data || {};
+
+      if (message.type === "quizmaster-preview-action") {
+        setSimState((current) => applyQuizmasterPreviewAction(current, message.action, message, stage));
+        return;
+      }
+
+      if (message.type === "quiz-taker-preview-action") {
+        setSimState((current) => applyQuizTakerPreviewAction(current, message.message));
+        return;
+      }
+
+      if (message.type === "quizmaster-preview-ready") {
+        sendSimulation();
+        sendEditor("set-enabled", { enabled: editorEnabled });
+        return;
+      }
+
+      if (message.type === "quiz-taker-preview-ready") {
+        sendSimulation();
+        sendPreviewStyle();
+        return;
+      }
 
       if (message.type === "quiz-layout-selection") {
         setSelectedElement({
@@ -141,15 +518,6 @@ function TeamPreview({ stage }) {
           fontSize: Number(message.fontSize || 16),
           zIndex: Number(message.zIndex || 0),
           locked: Boolean(message.locked),
-          kind: message.kind || "element",
-          textAlign: message.textAlign || "center",
-          color: message.color || "#000000",
-          headline: message.headline || "",
-          subtext: message.subtext || "",
-          headlineFontSize: Number(message.headlineFontSize || 11),
-          subtextFontSize: Number(message.subtextFontSize || 9),
-          headlineColor: message.headlineColor || "#031b3c",
-          subtextColor: message.subtextColor || "#41506a",
         });
         return;
       }
@@ -161,7 +529,7 @@ function TeamPreview({ stage }) {
 
       if (message.type === "quiz-layout-export") {
         setLayoutExport(JSON.stringify({
-          version: message.version || 2,
+          version: message.version || 1,
           stage: message.stage,
           viewport: message.viewport,
           modified: message.modified || {},
@@ -170,20 +538,15 @@ function TeamPreview({ stage }) {
         return;
       }
 
-      if (message.type === "quiz-preview-ready") {
-        sendPreviewStyle();
+      if (message.type === "quiz-preview-ready" && message.target === "quizmaster") {
+        sendSimulation();
         sendEditor("set-enabled", { enabled: editorEnabled });
       }
     };
 
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [editorEnabled, bulbSize, factBoxWidth, factBoxX, factBoxY, stage]);
-
-  useEffect(() => {
-    setSelectedElement(null);
-    setLayoutExport("");
-  }, [stage]);
+  }, [editorEnabled, bulbSize, factBoxWidth, factBoxX, factBoxY, stage, simState]);
 
   return (
     <div style={{
@@ -208,7 +571,11 @@ function TeamPreview({ stage }) {
         boxShadow: "0 8px 30px rgba(0,0,0,.35)",
         boxSizing: "border-box"
       }}>
-        <div style={{ color: "#fff", font: "700 14px system-ui", margin: "2px 4px 12px" }}>Quiz-taker testing</div>
+        <div style={{ color: "#fff", font: "800 14px system-ui", margin: "2px 4px 4px" }}>Dual UI testing</div>
+        <div style={{ color: "#94a3b8", font: "600 9px/1.35 system-ui", margin: "0 4px 12px" }}>
+          Edit the Quizmaster phone. The Quiz Taker phone reacts to its controls.
+        </div>
+
         <div style={{ display: "grid", gap: 6, gridTemplateColumns: window.innerWidth >= 760 ? "1fr" : "repeat(2, minmax(0, 1fr))" }}>
           {PREVIEW_STAGES.map(([id, label]) => (
             <a key={id} href={`#/preview/${id}`} style={{
@@ -232,7 +599,7 @@ function TeamPreview({ stage }) {
           display: "grid",
           gap: 10
         }}>
-          <div style={{ color: "#fff", font: "800 12px system-ui" }}>Layout editor</div>
+          <div style={{ color: "#fff", font: "800 12px system-ui" }}>Quizmaster layout editor</div>
 
           <button
             type="button"
@@ -257,52 +624,9 @@ function TeamPreview({ stage }) {
 
           <div style={{ color: "#9ca3af", font: "500 10px/1.35 system-ui" }}>
             {editorEnabled
-              ? "Click any item. Drag it to move. Use the right, bottom or corner handle to resize."
-              : "Enable editing to move and resize anything on this page."}
+              ? "Click anything on the Quizmaster phone. Drag to move; use handles to resize."
+              : "The Quiz Taker phone remains functional but is not editable in this view."}
           </div>
-
-          {editorEnabled && stage === "timer" ? (
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 6,
-              padding: 8,
-              borderRadius: 9,
-              background: "#0f172a",
-              border: "1px solid #334155"
-            }}>
-              <button
-                type="button"
-                onClick={() => sendEditor("select-timer-message")}
-                style={{
-                  border: 0,
-                  borderRadius: 7,
-                  padding: "8px 7px",
-                  background: selectedElement?.kind === "timer-message" ? "#0891b2" : "#26324a",
-                  color: "#fff",
-                  font: "800 9px system-ui",
-                  cursor: "pointer"
-                }}
-              >
-                Edit timer text
-              </button>
-              <button
-                type="button"
-                onClick={() => sendEditor("select-timer-clock")}
-                style={{
-                  border: 0,
-                  borderRadius: 7,
-                  padding: "8px 7px",
-                  background: selectedElement?.kind === "timer-clock" ? "#0891b2" : "#26324a",
-                  color: "#fff",
-                  font: "800 9px system-ui",
-                  cursor: "pointer"
-                }}
-              >
-                Edit timer clock
-              </button>
-            </div>
-          ) : null}
 
           {editorEnabled && selectedElement ? (
             <div style={{
@@ -327,7 +651,7 @@ function TeamPreview({ stage }) {
                   ["y", "Y"],
                   ["width", "Width"],
                   ["height", "Height"],
-                  ...(selectedElement.kind === "timer-message" ? [] : [["fontSize", selectedElement.kind === "timer-clock" ? "Clock number size" : "Text size"]]),
+                  ["fontSize", "Text size"],
                   ["zIndex", "Layer"],
                 ].map(([field, label]) => (
                   <label key={field} style={{
@@ -360,277 +684,36 @@ function TeamPreview({ stage }) {
                 ))}
               </div>
 
-              {selectedElement.kind === "timer-message" ? (
-                <div style={{ display: "grid", gap: 8, paddingTop: 2 }}>
-                  <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
-                    <span>Headline text</span>
-                    <textarea
-                      value={selectedElement.headline}
-                      disabled={selectedElement.locked}
-                      onChange={(event) => updateSelectedValue("headline", event.target.value)}
-                      rows={2}
-                      style={{ width: "100%", resize: "vertical", boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: selectedElement.locked ? "#1f2937" : "#0f172a", color: "#fff", padding: "6px 7px", font: "600 10px/1.25 system-ui" }}
-                    />
-                  </label>
-
-                  <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
-                    <span>Subtext</span>
-                    <textarea
-                      value={selectedElement.subtext}
-                      disabled={selectedElement.locked}
-                      onChange={(event) => updateSelectedValue("subtext", event.target.value)}
-                      rows={2}
-                      style={{ width: "100%", resize: "vertical", boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: selectedElement.locked ? "#1f2937" : "#0f172a", color: "#fff", padding: "6px 7px", font: "600 10px/1.25 system-ui" }}
-                    />
-                  </label>
-
-                  <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
-                    <span>Text alignment</span>
-                    <select
-                      value={selectedElement.textAlign}
-                      disabled={selectedElement.locked}
-                      onChange={(event) => updateSelectedValue("textAlign", event.target.value)}
-                      style={{ width: "100%", boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: selectedElement.locked ? "#1f2937" : "#0f172a", color: "#fff", padding: "6px 7px", font: "600 10px system-ui" }}
-                    >
-                      <option value="left">Left</option>
-                      <option value="center">Centre</option>
-                      <option value="right">Right</option>
-                    </select>
-                  </label>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 }}>
-                    <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
-                      <span>Headline size</span>
-                      <input
-                        type="number"
-                        min="6"
-                        max="60"
-                        step="0.5"
-                        value={selectedElement.headlineFontSize}
-                        disabled={selectedElement.locked}
-                        onChange={(event) => updateSelectedField("headlineFontSize", event.target.value)}
-                        style={{ width: "100%", minWidth: 0, boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: selectedElement.locked ? "#1f2937" : "#0f172a", color: "#fff", padding: "6px 7px", font: "600 10px system-ui" }}
-                      />
-                    </label>
-                    <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
-                      <span>Subtext size</span>
-                      <input
-                        type="number"
-                        min="6"
-                        max="60"
-                        step="0.5"
-                        value={selectedElement.subtextFontSize}
-                        disabled={selectedElement.locked}
-                        onChange={(event) => updateSelectedField("subtextFontSize", event.target.value)}
-                        style={{ width: "100%", minWidth: 0, boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: selectedElement.locked ? "#1f2937" : "#0f172a", color: "#fff", padding: "6px 7px", font: "600 10px system-ui" }}
-                      />
-                    </label>
-                  </div>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 }}>
-                    <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
-                      <span>Headline colour</span>
-                      <input
-                        type="color"
-                        value={colorInputValue(selectedElement.headlineColor, "#031b3c")}
-                        disabled={selectedElement.locked}
-                        onChange={(event) => updateSelectedValue("headlineColor", event.target.value)}
-                        style={{ width: "100%", height: 32, boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: "#0f172a", padding: 3 }}
-                      />
-                    </label>
-                    <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
-                      <span>Subtext colour</span>
-                      <input
-                        type="color"
-                        value={colorInputValue(selectedElement.subtextColor, "#41506a")}
-                        disabled={selectedElement.locked}
-                        onChange={(event) => updateSelectedValue("subtextColor", event.target.value)}
-                        style={{ width: "100%", height: 32, boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: "#0f172a", padding: 3 }}
-                      />
-                    </label>
-                  </div>
-                </div>
-              ) : null}
-
-              {selectedElement.kind === "timer-clock" ? (
-                <label style={{ display: "grid", gap: 3, color: "#9ca3af", font: "600 9px system-ui" }}>
-                  <span>Clock number colour</span>
-                  <input
-                    type="color"
-                    value={colorInputValue(selectedElement.color, "#000000")}
-                    disabled={selectedElement.locked}
-                    onChange={(event) => updateSelectedValue("color", event.target.value)}
-                    style={{ width: "100%", height: 32, boxSizing: "border-box", border: "1px solid #334155", borderRadius: 6, background: "#0f172a", padding: 3 }}
-                  />
-                </label>
-              ) : null}
-
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-                <button
-                  type="button"
-                  disabled={selectedElement.locked}
-                  onClick={() => sendEditor("layer-backward")}
-                  style={{
-                    border: 0,
-                    borderRadius: 7,
-                    padding: "8px 7px",
-                    background: selectedElement.locked ? "#1f2937" : "#334155",
-                    color: selectedElement.locked ? "#6b7280" : "#fff",
-                    font: "800 9px system-ui",
-                    cursor: selectedElement.locked ? "not-allowed" : "pointer"
-                  }}
-                >
-                  ← Back 1 layer
-                </button>
-                <button
-                  type="button"
-                  disabled={selectedElement.locked}
-                  onClick={() => sendEditor("layer-forward")}
-                  style={{
-                    border: 0,
-                    borderRadius: 7,
-                    padding: "8px 7px",
-                    background: selectedElement.locked ? "#1f2937" : "#0c4a6e",
-                    color: selectedElement.locked ? "#6b7280" : "#fff",
-                    font: "800 9px system-ui",
-                    cursor: selectedElement.locked ? "not-allowed" : "pointer"
-                  }}
-                >
-                  Forward 1 layer →
-                </button>
+                <button type="button" disabled={selectedElement.locked} onClick={() => sendEditor("layer-backward")} style={{ border: 0, borderRadius: 7, padding: "8px 7px", background: "#334155", color: "#fff", font: "800 9px system-ui" }}>← Back layer</button>
+                <button type="button" disabled={selectedElement.locked} onClick={() => sendEditor("layer-forward")} style={{ border: 0, borderRadius: 7, padding: "8px 7px", background: "#0c4a6e", color: "#fff", font: "800 9px system-ui" }}>Forward layer →</button>
               </div>
 
-              <button
-                type="button"
-                disabled={selectedElement.locked}
-                onClick={() => sendEditor("center-selected")}
-                style={{
-                  border: 0,
-                  borderRadius: 7,
-                  padding: "8px 9px",
-                  background: selectedElement.locked ? "#1f2937" : "#1d4ed8",
-                  color: selectedElement.locked ? "#6b7280" : "#fff",
-                  font: "800 10px system-ui",
-                  cursor: selectedElement.locked ? "not-allowed" : "pointer"
-                }}
-              >
-                Center align
-              </button>
-              <button
-                type="button"
-                onClick={() => sendEditor(selectedElement.locked ? "unlock-selected" : "lock-selected")}
-                style={{
-                  border: 0,
-                  borderRadius: 7,
-                  padding: "8px 9px",
-                  background: selectedElement.locked ? "#92400e" : "#0f766e",
-                  color: "#fff",
-                  font: "800 10px system-ui",
-                  cursor: "pointer"
-                }}
-              >
-                {selectedElement.locked ? "Unlock element" : "Lock element"}
-              </button>
-
-              <button
-                type="button"
-                disabled={selectedElement.locked}
-                onClick={() => sendEditor("reset-selected")}
-                style={{
-                  border: 0,
-                  borderRadius: 7,
-                  padding: "7px 9px",
-                  background: "#26324a",
-                  color: selectedElement.locked ? "#6b7280" : "#fff",
-                  font: "700 10px system-ui",
-                  cursor: selectedElement.locked ? "not-allowed" : "pointer"
-                }}
-              >
-                Reset selected
-              </button>
+              <button type="button" disabled={selectedElement.locked} onClick={() => sendEditor("center-selected")} style={{ border: 0, borderRadius: 7, padding: "8px 9px", background: "#1d4ed8", color: "#fff", font: "800 10px system-ui" }}>Center align</button>
+              <button type="button" onClick={() => sendEditor(selectedElement.locked ? "unlock-selected" : "lock-selected")} style={{ border: 0, borderRadius: 7, padding: "8px 9px", background: selectedElement.locked ? "#92400e" : "#0f766e", color: "#fff", font: "800 10px system-ui" }}>{selectedElement.locked ? "Unlock element" : "Lock element"}</button>
+              <button type="button" disabled={selectedElement.locked} onClick={() => sendEditor("reset-selected")} style={{ border: 0, borderRadius: 7, padding: "7px 9px", background: "#26324a", color: "#fff", font: "700 10px system-ui" }}>Reset selected</button>
             </div>
           ) : null}
 
           {editorEnabled && !selectedElement ? (
             <div style={{ color: "#94a3b8", font: "600 10px/1.35 system-ui" }}>
-              Click an element inside the phone to select it.
+              Click an element on the Quizmaster phone to select it.
             </div>
           ) : null}
 
           {editorEnabled ? (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-              <button
-                type="button"
-                onClick={() => sendEditor("lock-all")}
-                style={{ border: 0, borderRadius: 7, padding: "7px", background: "#78350f", color: "#fff", font: "700 9px system-ui", cursor: "pointer" }}
-              >
-                Lock all
-              </button>
-              <button
-                type="button"
-                onClick={() => sendEditor("unlock-all")}
-                style={{ border: 0, borderRadius: 7, padding: "7px", background: "#26324a", color: "#fff", font: "700 9px system-ui", cursor: "pointer" }}
-              >
-                Unlock all
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (window.confirm("Reset every layout edit on this preview page?")) sendEditor("reset-page");
-                }}
-                style={{ gridColumn: "1 / -1", border: 0, borderRadius: 7, padding: "7px", background: "#7f1d1d", color: "#fff", font: "700 9px system-ui", cursor: "pointer" }}
-              >
-                Reset this page
-              </button>
-              <button
-                type="button"
-                onClick={() => sendEditor("export")}
-                style={{ gridColumn: "1 / -1", border: 0, borderRadius: 7, padding: "7px", background: "#312e81", color: "#fff", font: "700 9px system-ui", cursor: "pointer" }}
-              >
-                Generate full page JSON
-              </button>
+              <button type="button" onClick={() => sendEditor("lock-all")} style={{ border: 0, borderRadius: 7, padding: "7px", background: "#78350f", color: "#fff", font: "700 9px system-ui" }}>Lock all</button>
+              <button type="button" onClick={() => sendEditor("unlock-all")} style={{ border: 0, borderRadius: 7, padding: "7px", background: "#26324a", color: "#fff", font: "700 9px system-ui" }}>Unlock all</button>
+              <button type="button" onClick={() => { if (window.confirm("Reset every Quizmaster layout edit on this preview page?")) sendEditor("reset-page"); }} style={{ gridColumn: "1 / -1", border: 0, borderRadius: 7, padding: "7px", background: "#7f1d1d", color: "#fff", font: "700 9px system-ui" }}>Reset Quizmaster page</button>
+              <button type="button" onClick={() => sendEditor("export")} style={{ gridColumn: "1 / -1", border: 0, borderRadius: 7, padding: "7px", background: "#312e81", color: "#fff", font: "700 9px system-ui" }}>Generate Quizmaster JSON</button>
             </div>
           ) : null}
 
           {layoutExport ? (
             <div style={{ display: "grid", gap: 7 }}>
-              <button
-                type="button"
-                onClick={async () => {
-                  try {
-                    await navigator.clipboard.writeText(layoutExport);
-                  } catch {
-                    // The textarea remains available for manual copy if clipboard permission is blocked.
-                  }
-                }}
-                style={{
-                  border: 0,
-                  borderRadius: 7,
-                  padding: "8px 9px",
-                  background: "#0f766e",
-                  color: "#fff",
-                  font: "800 10px system-ui",
-                  cursor: "pointer"
-                }}
-              >
-                Copy full page JSON
-              </button>
-              <textarea
-                readOnly
-                value={layoutExport}
-                style={{
-                  width: "100%",
-                  minHeight: 150,
-                  boxSizing: "border-box",
-                  resize: "vertical",
-                  border: "1px solid #334155",
-                  borderRadius: 7,
-                  background: "#020617",
-                  color: "#cbd5e1",
-                  padding: 7,
-                  font: "500 8px/1.3 monospace"
-                }}
-              />
+              <button type="button" onClick={async () => { try { await navigator.clipboard.writeText(layoutExport); } catch { /* manual copy remains */ } }} style={{ border: 0, borderRadius: 7, padding: "8px 9px", background: "#0f766e", color: "#fff", font: "800 10px system-ui" }}>Copy Quizmaster JSON</button>
+              <textarea readOnly value={layoutExport} style={{ width: "100%", minHeight: 150, boxSizing: "border-box", resize: "vertical", border: "1px solid #334155", borderRadius: 7, background: "#020617", color: "#cbd5e1", padding: 7, font: "500 8px/1.3 monospace" }} />
             </div>
           ) : null}
         </div>
@@ -641,146 +724,108 @@ function TeamPreview({ stage }) {
             paddingTop: 14,
             borderTop: "1px solid #26324a",
             display: "grid",
-            gap: 14
+            gap: 10
           }}>
-            <div style={{ color: "#fff", font: "700 12px system-ui" }}>Waiting-page sizing</div>
-
-            <label style={{ display: "grid", gap: 6, color: "#d1d5db", font: "600 11px system-ui" }}>
-              <span style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-                <span>Light bulb</span><strong style={{ color: "#f3c94b" }}>{bulbSize}px</strong>
-              </span>
-              <input
-                type="range"
-                min="240"
-                max="430"
-                step="5"
-                value={bulbSize}
-                onChange={(event) => setBulbSize(Number(event.target.value))}
-                style={{ width: "100%" }}
-              />
+            <div style={{ color: "#fff", font: "700 11px system-ui" }}>Quiz Taker waiting-page sizing</div>
+            <label style={{ display: "grid", gap: 4, color: "#d1d5db", font: "600 10px system-ui" }}>
+              <span>Light bulb · {bulbSize}px</span>
+              <input type="range" min="240" max="430" step="5" value={bulbSize} onChange={(event) => setBulbSize(Number(event.target.value))} />
             </label>
-
-            <label style={{ display: "grid", gap: 6, color: "#d1d5db", font: "600 11px system-ui" }}>
-              <span style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-                <span>Fact box width</span><strong style={{ color: "#f3c94b" }}>{factBoxWidth}px</strong>
-              </span>
-              <input
-                type="range"
-                min="105"
-                max="230"
-                step="5"
-                value={factBoxWidth}
-                onChange={(event) => setFactBoxWidth(Number(event.target.value))}
-                style={{ width: "100%" }}
-              />
+            <label style={{ display: "grid", gap: 4, color: "#d1d5db", font: "600 10px system-ui" }}>
+              <span>Fact box width · {factBoxWidth}px</span>
+              <input type="range" min="105" max="230" step="5" value={factBoxWidth} onChange={(event) => setFactBoxWidth(Number(event.target.value))} />
             </label>
-
-            <label style={{ display: "grid", gap: 6, color: "#d1d5db", font: "600 11px system-ui" }}>
-              <span style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-                <span>Fact box horizontal</span><strong style={{ color: "#f3c94b" }}>{factBoxX}%</strong>
-              </span>
-              <input
-                type="range"
-                min="20"
-                max="80"
-                step="1"
-                value={factBoxX}
-                onChange={(event) => setFactBoxX(Number(event.target.value))}
-                style={{ width: "100%" }}
-              />
-            </label>
-
-            <label style={{ display: "grid", gap: 6, color: "#d1d5db", font: "600 11px system-ui" }}>
-              <span style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-                <span>Fact box vertical</span><strong style={{ color: "#f3c94b" }}>{factBoxY}%</strong>
-              </span>
-              <input
-                type="range"
-                min="18"
-                max="72"
-                step="1"
-                value={factBoxY}
-                onChange={(event) => setFactBoxY(Number(event.target.value))}
-                style={{ width: "100%" }}
-              />
-            </label>
-
-            <button
-              type="button"
-              onClick={() => {
-                setBulbSize(360);
-                setFactBoxWidth(158);
-                setFactBoxX(50);
-                setFactBoxY(39);
-              }}
-              style={{
-                border: 0,
-                borderRadius: 8,
-                padding: "8px 10px",
-                background: "#26324a",
-                color: "#fff",
-                font: "700 11px system-ui",
-                cursor: "pointer"
-              }}
-            >
-              Reset sizes
-            </button>
           </div>
         ) : null}
       </aside>
 
-      <div style={{
-        minWidth: 0,
-        display: "grid",
-        justifyItems: "center",
-        alignItems: "start"
-      }}>
+      <div style={{ minWidth: 0, display: "grid", justifyItems: "center", alignItems: "start" }}>
         <div style={{
-          width: FRAME_WIDTH * previewScale,
+          width: (FRAME_WIDTH * 2 + PHONE_GAP) * previewScale,
           height: FRAME_HEIGHT * previewScale,
           position: "relative"
         }}>
           <div style={{
-            width: FRAME_WIDTH,
+            width: FRAME_WIDTH * 2 + PHONE_GAP,
             height: FRAME_HEIGHT,
             position: "absolute",
             inset: 0,
             transform: `scale(${previewScale})`,
             transformOrigin: "top left",
-            borderRadius: 28,
-            background: "#05070b",
-            boxShadow: "0 14px 50px rgba(0,0,0,.5)",
-            padding: FRAME_BORDER,
-            boxSizing: "border-box",
-            overflow: "hidden"
+            display: "grid",
+            gridTemplateColumns: `${FRAME_WIDTH}px ${FRAME_WIDTH}px`,
+            gap: PHONE_GAP
           }}>
-            <iframe
-              ref={iframeRef}
-              key={stage}
-              title={`Quiz-taker preview: ${stage}`}
-              src={`#/join/__PREVIEW__/${encodeURIComponent(stage)}`}
-              onLoad={() => {
-                sendPreviewStyle();
-                sendEditor("set-enabled", { enabled: editorEnabled });
-              }}
-              style={{
-                display: "block",
-                width: PHONE_WIDTH,
-                height: PHONE_HEIGHT,
-                border: 0,
-                borderRadius: 20,
-                background: "#fff"
-              }}
-            />
+            <div style={{ display: "grid", gap: 8 }}>
+              <div style={{ color: "#f3c94b", font: "900 11px system-ui", letterSpacing: ".08em", textAlign: "center" }}>QUIZMASTER · EDITABLE</div>
+              <div style={{
+                width: FRAME_WIDTH,
+                height: FRAME_HEIGHT - 20,
+                borderRadius: 28,
+                background: "#05070b",
+                boxShadow: "0 14px 50px rgba(0,0,0,.5)",
+                padding: FRAME_BORDER,
+                boxSizing: "border-box",
+                overflow: "hidden"
+              }}>
+                <iframe
+                  ref={hostIframeRef}
+                  key={`host-${stage}`}
+                  title={`Quizmaster preview: ${stage}`}
+                  src={`#/host-preview/${encodeURIComponent(stage)}`}
+                  onLoad={() => {
+                    sendSimulation();
+                    sendEditor("set-enabled", { enabled: editorEnabled });
+                  }}
+                  style={{
+                    display: "block",
+                    width: PHONE_WIDTH,
+                    height: PHONE_HEIGHT,
+                    border: 0,
+                    borderRadius: 20,
+                    background: "#061b38"
+                  }}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gap: 8 }}>
+              <div style={{ color: "#67e8f9", font: "900 11px system-ui", letterSpacing: ".08em", textAlign: "center" }}>QUIZ TAKER · LIVE RESPONSE</div>
+              <div style={{
+                width: FRAME_WIDTH,
+                height: FRAME_HEIGHT - 20,
+                borderRadius: 28,
+                background: "#05070b",
+                boxShadow: "0 14px 50px rgba(0,0,0,.5)",
+                padding: FRAME_BORDER,
+                boxSizing: "border-box",
+                overflow: "hidden"
+              }}>
+                <iframe
+                  ref={teamIframeRef}
+                  key={`team-${stage}`}
+                  title={`Quiz-taker response preview: ${stage}`}
+                  src={`#/join/__PREVIEW__/${encodeURIComponent(stage)}`}
+                  onLoad={() => {
+                    sendSimulation();
+                    sendPreviewStyle();
+                  }}
+                  style={{
+                    display: "block",
+                    width: PHONE_WIDTH,
+                    height: PHONE_HEIGHT,
+                    border: 0,
+                    borderRadius: 20,
+                    background: "#fff"
+                  }}
+                />
+              </div>
+            </div>
           </div>
         </div>
-        <div style={{
-          marginTop: 12,
-          color: "#9ca3af",
-          font: "600 11px system-ui",
-          letterSpacing: ".02em"
-        }}>
-          390 × 844 phone viewport · scaled to fit your browser
+
+        <div style={{ marginTop: 12, color: "#9ca3af", font: "600 11px system-ui", letterSpacing: ".02em" }}>
+          Two linked 390 × 844 phone viewports · Quizmaster actions update the Quiz Taker preview
         </div>
       </div>
     </div>
@@ -797,6 +842,7 @@ export default function App() {
   }, []);
 
   if (route.kind === "preview") return <TeamPreview stage={route.stage} />;
+  if (route.kind === "host-preview") return <QuizmasterPreviewView stage={route.stage} />;
   if (route.kind === "join") return <TeamView sessionCode={route.sessionCode} teamToken={route.teamToken} />;
   return <HostApp />;
 }
