@@ -742,17 +742,8 @@ export default function QuizmasterPreviewView({ stage }) {
               </button>
 
               <div className="qm-team-popup-details">
-                {selectedPreviewTeam.table ? <span>TABLE {selectedPreviewTeam.table}</span> : null}
+                <span>TEAM DETAILS</span>
                 <h2>{selectedPreviewTeam.name || "No Team Name"}</h2>
-                <p>{selectedPreviewTeam.players} Player{selectedPreviewTeam.players === 1 ? "" : "s"}</p>
-              </div>
-
-              <div className="qm-team-popup-qr">
-                <QRCodeSVG
-                  value={`${window.location.origin}${window.location.pathname}#/join/PREVIEW/${selectedPreviewTeam.id}`}
-                  size={512}
-                  marginSize={2}
-                />
               </div>
 
               <div className="qm-team-popup-edit">
@@ -803,6 +794,14 @@ export default function QuizmasterPreviewView({ stage }) {
               >
                 <Check size={14} /> {selectedPreviewTeam.paid ? "Paid" : "Mark as Paid"}
               </button>
+
+              <div className="qm-team-popup-qr">
+                <QRCodeSVG
+                  value={`${window.location.origin}${window.location.pathname}#/join/PREVIEW/${selectedPreviewTeam.id}`}
+                  size={512}
+                  marginSize={2}
+                />
+              </div>
 
               {selectedPreviewTeam.id !== "preview-team" ? (
                 <button
