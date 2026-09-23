@@ -4366,3 +4366,64 @@
     font-size:15px !important;
   }
 }
+
+
+/* ---------- Trophy-only correction: preserve podium design ---------- */
+.live-team-page .final-podium-slot{
+  justify-items:center !important;
+}
+
+.live-team-page .final-trophy-wrap{
+  width:100% !important;
+  display:grid !important;
+  place-items:end center !important;
+}
+
+.live-team-page .final-trophy-shell{
+  width:100% !important;
+  display:grid !important;
+  place-items:end center !important;
+  justify-items:center !important;
+}
+
+/* Neutralise earlier absolute/translated trophy positioning so each cup is
+   geometrically centred over its own podium column. */
+.live-team-page .final-trophy-art{
+  position:relative !important;
+  left:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  margin:0 auto !important;
+  transform:none !important;
+  display:block !important;
+}
+
+/* Ordinal engravings need a little less type size than single digits. */
+.live-team-page .final-trophy-rank-engraving{
+  font-size:24px !important;
+  letter-spacing:-.055em !important;
+}
+
+.live-team-page .final-podium-slot.first .final-trophy-rank-engraving{
+  font-size:28px !important;
+}
+
+@media(max-height:760px){
+  .live-team-page .final-trophy-rank-engraving{
+    font-size:21px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-rank-engraving{
+    font-size:24px !important;
+  }
+}
+
+@media(min-width:980px){
+  .live-team-page .final-trophy-rank-engraving{
+    font-size:27px !important;
+  }
+
+  .live-team-page .final-podium-slot.first .final-trophy-rank-engraving{
+    font-size:31px !important;
+  }
+}
