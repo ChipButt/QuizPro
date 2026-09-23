@@ -80,6 +80,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   const [openPanel, setOpenPanel] = useState(null);
   const [liveTab, setLiveTab] = useState("questions");
   const [controlsOpen, setControlsOpen] = useState(false);
+  const [screenPreview, setScreenPreview] = useState(null);
   const reviewRound = quiz?.rounds?.[reviewRoundIndex] ?? null;
   const reviewQuestion = reviewRound?.questions?.[reviewQuestionIndex] ?? null;
   const reviewingLiveQuestion = Boolean(
@@ -175,6 +176,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
     setOpenPanel(null);
     setLiveTab("questions");
     setControlsOpen(false);
+    setScreenPreview(null);
   }
 
   function stopSession() {
@@ -515,6 +517,63 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
     });
   }
 
+  function previewTeamScreen(screen) {
+    setScreenPreview(screen);
+    setControlsOpen(false);
+    setOpenPanel(null);
+  }
+
+  function pushPreviewedScreen() {
+    if (!screenPreview) return;
+
+    if (screenPreview === "waiting") {
+      updateLive({
+        teamScreen: "lobby",
+        questionIndex: -1,
+        timerActive: false,
+        timerEndsAt: 0,
+        timerDurationSeconds: 0,
+        timerRoundId: "",
+      });
+      return;
+    }
+
+    if (screenPreview === "round_locked") {
+      if (!liveRound) return;
+      updateState((current) => ({
+        ...current,
+        live: {
+          ...current.live,
+          teamScreen: "round_locked",
+          timerActive: false,
+          timerEndsAt: 0,
+          timerDurationSeconds: 0,
+          timerRoundId: "",
+          forceLockedRounds: {
+            ...(current.live?.forceLockedRounds ?? {}),
+            [liveRound.id]: true,
+          },
+        },
+      }));
+      return;
+    }
+
+    if (screenPreview === "leaderboard") {
+      updateLive({
+        teamScreen: "leaderboard",
+        timerActive: false,
+        timerEndsAt: 0,
+        timerDurationSeconds: 0,
+        timerRoundId: "",
+      });
+      return;
+    }
+
+    if (screenPreview === "final") {
+      beginFinalReveal();
+    }
+  }
+
   if (!state.live?.sessionActive || !quiz) {
     return (
       <main className="simple-page simple-live-page planuf-live-page">
@@ -562,9 +621,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   const questionExplicitlyRevealed = Boolean(liveQuestion && state.live?.revealedQuestions?.[liveQuestion.id]);
   const liveRoundRevealed = Boolean(liveRound && state.live?.revealedRounds?.[liveRound.id]);
   const liveQuestionRevealed = Boolean(liveQuestion && (questionExplicitlyRevealed || liveRoundRevealed));
-  const leaderboardVisible = state.live?.teamScreen === "leaderboard";
   const finalRevealCount = Number(state.live.finalRevealCount ?? 0);
-  const finalRevealOrder = leaderboard.slice().reverse().slice(0, finalRevealCount);
 
   return (
     <main className="simple-page simple-live-page planuf-live-page">
@@ -621,7 +678,16 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
               <button className={openPanel === "teams" ? "active" : ""} onClick={() => togglePanel("teams")}><Users size={16} /> Teams <b>{state.teams.length}</b></button>
               <button className={openPanel === "answers" ? "active" : ""} onClick={() => togglePanel("answers")}><Check size={16} /> Round answers <b>{reviewRound?.questions?.reduce((count, item) => count + Object.keys(state.answers?.[item.id] ?? {}).length, 0) ?? 0}</b></button>
               <button className={`${openPanel === "round" ? "active" : ""} ${liveLocked ? "locked" : ""}`} onClick={() => togglePanel("round")}><Settings2 size={16} /> Round</button>
-              <button className={`${openPanel === "leaderboard" ? "active" : ""} ${leaderboardVisible ? "shown" : ""}`} onClick={() => togglePanel("leaderboard")}><Trophy size={16} /> Leaderboard</button>
+            </div>
+
+            <div className="host-screen-menu">
+              <span>SCREENS</span>
+              <div className="host-screen-menu-grid">
+                <button type="button" onClick={() => previewTeamScreen("waiting")}><Unlock size={15} /> Waiting</button>
+                <button type="button" onClick={() => previewTeamScreen("round_locked")}><Lock size={15} /> Round Locked</button>
+                <button type="button" onClick={() => previewTeamScreen("leaderboard")}><Trophy size={15} /> Leaderboard</button>
+                <button type="button" onClick={() => previewTeamScreen("final")}><Trophy size={15} /> Final</button>
+              </div>
             </div>
 
             <div className="host-reveal-mode-row">
@@ -737,28 +803,90 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
               </>
             ) : null}
 
-            {openPanel === "leaderboard" ? (
-              <>
-                <div className="host-drawer-title"><div><h3>Leaderboard</h3><p>Keep it private or put it on every team screen.</p></div></div>
-                <div className="host-drawer-actions">
-                  <button className={`reveal-toggle ${leaderboardVisible ? "active" : ""}`} onClick={() => updateLive({ teamScreen: leaderboardVisible ? (liveQuestion ? "question" : "lobby") : "leaderboard" })}>
-                    {leaderboardVisible ? <EyeOff size={15} /> : <Eye size={15} />}
-                    {leaderboardVisible ? "Hide from teams" : "Show to teams"}
-                  </button>
-                  {liveRoundIndex >= quiz.rounds.length - 1 ? <button className="primary-button" onClick={beginFinalReveal}><Trophy size={15} /> Final results</button> : null}
-                </div>
-                {leaderboard.length ? <ol className="simple-leaderboard compact-leaderboard">{leaderboard.map((team, index) => <li key={team.id}><span>{index + 1}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score}</b></li>)}</ol> : <p className="simple-empty-copy">Scores will appear here as answers are marked.</p>}
-              </>
-            ) : null}
           </div>
         ) : null}
       </section>
 
       <nav className="host-live-tabs" aria-label="Live quiz views">
-        <button type="button" className={liveTab === "questions" ? "active" : ""} onClick={() => setLiveTab("questions")}>Questions</button>
-        <button type="button" className={liveTab === "answers" ? "active" : ""} onClick={() => setLiveTab("answers")}>Answers</button>
+        <button type="button" className={!screenPreview && liveTab === "questions" ? "active" : ""} onClick={() => { setScreenPreview(null); setLiveTab("questions"); }}>Questions</button>
+        <button type="button" className={!screenPreview && liveTab === "answers" ? "active" : ""} onClick={() => { setScreenPreview(null); setLiveTab("answers"); }}>Answers</button>
       </nav>
 
+      {screenPreview ? (
+        <section className={`host-screen-preview host-screen-preview-${screenPreview}`}>
+          <div className="host-screen-preview-top">
+            <div>
+              <span>PRIVATE QUIZMASTER PREVIEW</span>
+              <strong>
+                {screenPreview === "waiting" ? "Waiting Screen" :
+                 screenPreview === "round_locked" ? "Round Locked" :
+                 screenPreview === "leaderboard" ? "Leaderboard" : "Final"}
+              </strong>
+            </div>
+            <button type="button" className="primary-button host-push-screen-button" onClick={pushPreviewedScreen}>
+              <Send size={16} /> Push To Teams
+            </button>
+          </div>
+
+          {screenPreview === "waiting" ? (
+            <div className="host-screen-preview-card waiting">
+              <Unlock size={30} />
+              <span>GET READY</span>
+              <h2>The Quiz Will Begin Soon</h2>
+              <p>Round {liveRoundIndex + 1} · {liveRound?.title || "Next round"}</p>
+            </div>
+          ) : null}
+
+          {screenPreview === "round_locked" ? (
+            <div className="host-screen-preview-card locked">
+              <Lock size={30} />
+              <span>ROUND COMPLETE</span>
+              <h2>Answers Locked</h2>
+              <p>Teams can no longer change their answers for this round.</p>
+            </div>
+          ) : null}
+
+          {screenPreview === "leaderboard" ? (
+            <div className="host-screen-preview-card leaderboard">
+              <span>LEADERBOARD</span>
+              <h2>Current Standings</h2>
+              {leaderboard.length ? (
+                <ol className="simple-leaderboard compact-leaderboard host-screen-leaderboard">
+                  {leaderboard.map((team, index) => (
+                    <li key={team.id}><span>{index + 1}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score}</b></li>
+                  ))}
+                </ol>
+              ) : <p className="simple-empty-copy">Scores will appear here as answers are marked.</p>}
+            </div>
+          ) : null}
+
+          {screenPreview === "final" ? (
+            <div className="host-screen-preview-card final">
+              <div className="host-final-preview-heading">
+                <div><span>FINAL LEADERBOARD</span><h2>Final Results</h2></div>
+                <button
+                  type="button"
+                  className="primary-button"
+                  disabled={state.live?.teamScreen !== "final" || finalRevealCount >= state.teams.length}
+                  onClick={revealNextFinalTeam}
+                >
+                  <Eye size={15} /> Reveal Next
+                </button>
+              </div>
+              <div className="host-final-reveal-status">
+                Teams: {state.live?.teamScreen === "final" ? `${finalRevealCount}/${state.teams.length} revealed` : "Final not pushed yet"}
+              </div>
+              {leaderboard.length ? (
+                <ol className="simple-leaderboard compact-leaderboard host-screen-leaderboard host-final-full-leaderboard">
+                  {leaderboard.map((team, index) => (
+                    <li key={team.id}><span>{index + 1}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score}</b></li>
+                  ))}
+                </ol>
+              ) : <p className="simple-empty-copy">Final standings will appear here once scores are available.</p>}
+            </div>
+          ) : null}
+        </section>
+      ) : (
       <section className="host-question-workspace">
         <div className="host-round-carousel">
           {quiz.rounds.map((item, index) => (
@@ -900,13 +1028,8 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
         ) : <p className="simple-empty-copy">This round has no questions.</p>}
       </section>
 
-      {state.live.teamScreen === "final" ? (
-        <section className="host-final-float">
-          <div><strong>Final results</strong><span>{finalRevealCount}/{state.teams.length} revealed</span></div>
-          <button className="primary-button" disabled={finalRevealCount >= state.teams.length} onClick={revealNextFinalTeam}><Trophy size={15} /> Reveal next place</button>
-          <div className="simple-final-list">{finalRevealOrder.map((team) => { const place = leaderboard.findIndex((item) => item.id === team.id) + 1; return <div className={place === 1 ? "winner" : ""} key={team.id}><span>{place}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score} pts</b></div>; })}</div>
-        </section>
-      ) : null}
+      )}
+
     </main>
   );
 }
