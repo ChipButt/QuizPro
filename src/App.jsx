@@ -5,16 +5,10 @@ import TeamView from "./components/TeamView.jsx";
 import { useGitHubQuizLibrary } from "./hooks/useGitHubQuizLibrary.js";
 import { useQuizState } from "./hooks/useQuizState.js";
 
-const PREVIEW_STAGES = [
-  ["team-name", "Team name"],
-  ["waiting", "Pre-quiz waiting"],
-  ["question", "Text question"],
-  ["multiple-choice", "Multiple choice"],
-  ["timer", "Timer running"],
-  ["answer-reveal", "Answer reveal"],
-  ["between-rounds", "Between rounds"],
-  ["leaderboard", "Leaderboard"],
-  ["final", "Final results"],
+const QUIZMASTER_PREVIEW_PAGES = [
+  ["live", "Live Quiz"],
+  ["teams", "Teams & Answers"],
+  ["results", "Results"],
 ];
 
 const PREVIEW_LEADERBOARD = [
@@ -35,7 +29,7 @@ const PREVIEW_LEADERBOARD = [
 ];
 
 function createPreviewHarnessState(stage) {
-  const firstIsMultipleChoice = ["multiple-choice", "timer"].includes(stage);
+  const firstIsMultipleChoice = false;
   const questions = [
     firstIsMultipleChoice
       ? {
@@ -93,28 +87,6 @@ function createPreviewHarnessState(stage) {
   let nameLocked = true;
   let finalRevealCount = 0;
 
-  if (stage === "team-name") {
-    teamScreen = "lobby";
-    questionIndex = -1;
-    nameLocked = false;
-  } else if (stage === "waiting") {
-    teamScreen = "lobby";
-    questionIndex = -1;
-  } else if (stage === "timer") {
-    teamScreen = "question";
-    timerActive = true;
-    timerDurationSeconds = 45;
-    timerEndsAt = Date.now() + 45000;
-  } else if (stage === "between-rounds") {
-    teamScreen = "round_locked";
-    questionIndex = -1;
-  } else if (stage === "leaderboard") {
-    teamScreen = "leaderboard";
-  } else if (stage === "final") {
-    teamScreen = "final";
-    finalRevealCount = PREVIEW_LEADERBOARD.length;
-  }
-
   return {
     type: "snapshot",
     team: {
@@ -124,6 +96,14 @@ function createPreviewHarnessState(stage) {
       table: 7,
       players: 4,
     },
+    teams: [
+      { id: "preview-team", name: "The Quizzy Rascals", table: 7, players: 4 },
+      { id: "team-2", name: "Universally Challenged", table: 2, players: 5 },
+      { id: "team-3", name: "Agatha Quiztie", table: 11, players: 3 },
+      { id: "team-4", name: "No Eye Deer", table: 5, players: 6 },
+      { id: "team-5", name: "The Smartinis", table: 9, players: 4 },
+    ],
+    teamResponses: {},
     quiz: { totalRounds: 5 },
     waitingFacts: [
       "The word quiz may have been popularised in Dublin in the 18th century.",
@@ -328,9 +308,21 @@ function applyQuizTakerPreviewAction(current, message) {
       ...current.teamAnswers,
       [message.questionId]: { text: message.text },
     };
+    const currentQuestionId = current.round?.questions?.[Math.max(0, Number(current.live?.questionIndex ?? 0))]?.id;
+    const teamResponses = currentQuestionId === message.questionId
+      ? {
+          ...(current.teamResponses || {}),
+          "preview-team": {
+            teamId: "preview-team",
+            answer: message.text,
+            receivedAt: Date.now(),
+          },
+        }
+      : (current.teamResponses || {});
     return {
       ...current,
       teamAnswers,
+      teamResponses,
       teamAnswersCount: Object.keys(teamAnswers).length,
     };
   }
@@ -340,14 +332,14 @@ function applyQuizTakerPreviewAction(current, message) {
 function getRoute() {
   const hash = window.location.hash || "#/host";
   if (hash.startsWith("#/host-preview/")) {
-    const stage = decodeURIComponent(hash.split("/")[2] || "question");
+    const stage = decodeURIComponent(hash.split("/")[2] || "live");
     return { kind: "host-preview", stage };
   }
   if (hash.startsWith("#/preview/")) {
     const stage = decodeURIComponent(hash.split("/")[2] || "team-name");
     return { kind: "preview", stage: stage === "locked" ? "between-rounds" : stage };
   }
-  if (hash === "#/preview" || hash === "#/preview/") return { kind: "preview", stage: "team-name" };
+  if (hash === "#/preview" || hash === "#/preview/") return { kind: "preview", stage: "live" };
   if (hash.startsWith("#/join/")) {
     const parts = hash.replace(/^#\//, "").split("/");
     return {
@@ -576,8 +568,9 @@ function TeamPreview({ stage }) {
           Edit the Quizmaster phone. The Quiz Taker phone reacts to its controls.
         </div>
 
+        <div style={{ color: "#fff", font: "800 11px system-ui", margin: "8px 4px 7px" }}>Quizmaster pages</div>
         <div style={{ display: "grid", gap: 6, gridTemplateColumns: window.innerWidth >= 760 ? "1fr" : "repeat(2, minmax(0, 1fr))" }}>
-          {PREVIEW_STAGES.map(([id, label]) => (
+          {QUIZMASTER_PREVIEW_PAGES.map(([id, label]) => (
             <a key={id} href={`#/preview/${id}`} style={{
               color: id === stage ? "#111" : "#fff",
               background: id === stage ? "#f3c94b" : "#26324a",
@@ -718,25 +711,7 @@ function TeamPreview({ stage }) {
           ) : null}
         </div>
 
-        {stage === "waiting" ? (
-          <div style={{
-            marginTop: 14,
-            paddingTop: 14,
-            borderTop: "1px solid #26324a",
-            display: "grid",
-            gap: 10
-          }}>
-            <div style={{ color: "#fff", font: "700 11px system-ui" }}>Quiz Taker waiting-page sizing</div>
-            <label style={{ display: "grid", gap: 4, color: "#d1d5db", font: "600 10px system-ui" }}>
-              <span>Light bulb · {bulbSize}px</span>
-              <input type="range" min="240" max="430" step="5" value={bulbSize} onChange={(event) => setBulbSize(Number(event.target.value))} />
-            </label>
-            <label style={{ display: "grid", gap: 4, color: "#d1d5db", font: "600 10px system-ui" }}>
-              <span>Fact box width · {factBoxWidth}px</span>
-              <input type="range" min="105" max="230" step="5" value={factBoxWidth} onChange={(event) => setFactBoxWidth(Number(event.target.value))} />
-            </label>
-          </div>
-        ) : null}
+
       </aside>
 
       <div style={{ minWidth: 0, display: "grid", justifyItems: "center", alignItems: "start" }}>
