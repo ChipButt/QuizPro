@@ -1,4 +1,4 @@
-import { CalendarDays, Crown, Home, Radio } from "lucide-react";
+import { CalendarDays, Home, Radio } from "lucide-react";
 import { useMemo, useState } from "react";
 import { navItems } from "../data/seed.js";
 import { useLiveHostNetwork } from "../hooks/useLiveHostNetwork.js";
@@ -19,8 +19,7 @@ function Sidebar({ activePage, setActivePage }) {
   return (
     <aside className="sidebar simple-sidebar">
       <div className="brand-lockup sidebar-brand">
-        <span className="brand-mark"><Crown size={23} /></span>
-        <strong>Quizmaster<span>Pro</span></strong>
+        <img className="quiz-in-sidebar-logo" src="/QuizPro/quiz-in-logo-transparent.png" alt="Quiz In" />
       </div>
       <nav className="side-nav" aria-label="Host navigation">
         {navItems.map((item) => {
@@ -41,7 +40,7 @@ function TopBar({ state }) {
   return (
     <header className="topbar simple-topbar">
       <div className="topbar-title">
-        <strong>{quiz?.title?.trim() || "Quizmaster"}</strong>
+        <strong>{quiz?.title?.trim() || "Quiz In"}</strong>
         {state.live?.sessionActive ? <span className="live-pill">LIVE</span> : null}
       </div>
     </header>
