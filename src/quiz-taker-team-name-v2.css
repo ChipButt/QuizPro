@@ -536,7 +536,8 @@
 .team-name-screen .team-name-form-v2 .team-name-input-shell input{
   position:relative;
   translate:0 -3px;
-  z-index:-5;
+  z-index:1;
+  pointer-events:auto;
 }
 
 .team-name-screen .team-name-lock-button{
