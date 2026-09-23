@@ -4,6 +4,7 @@ import {
   Check,
   Eye,
   Lock,
+  Menu,
   Play,
   RotateCcw,
   TimerReset,
@@ -486,7 +487,9 @@ function useQuizmasterLayoutEditor(rootRef, stage) {
 export default function QuizmasterPreviewView({ stage }) {
   const rootRef = useRef(null);
   const [previewState, setPreviewState] = useState(null);
-  const [timerChoice, setTimerChoice] = useState(45);
+  const [timerChoice, setTimerChoice] = useState(30);
+  const [liveTab, setLiveTab] = useState("questions");
+  const [menuOpen, setMenuOpen] = useState(false);
   const [now, setNow] = useState(Date.now());
 
   useQuizmasterLayoutEditor(rootRef, stage);
@@ -542,6 +545,26 @@ export default function QuizmasterPreviewView({ stage }) {
     : 0;
   const reviewingLiveQuestion = liveQuestionIndex >= 0 && hostQuestionIndex === liveQuestionIndex;
   const selectedQuestionAsked = Boolean(currentQuestion && askedQuestionIds.includes(currentQuestion.id));
+  const selectedQuestionRevealed = Boolean(currentQuestion?.revealed);
+  const canMoveNext = hostQuestionIndex < questions.length - 1;
+  const answerFlowLabel = selectedQuestionRevealed
+    ? "Next"
+    : selectedQuestionAsked
+      ? "Reveal Answer"
+      : "Push Question";
+
+  const runAnswerFlow = () => {
+    if (!currentQuestion) return;
+    if (selectedQuestionRevealed) {
+      if (canMoveNext) sendAction("next-question");
+      return;
+    }
+    if (selectedQuestionAsked) {
+      sendAction("reveal-answer");
+      return;
+    }
+    sendAction("send-question");
+  };
 
   const renderTeamResponses = (compact = false) => (
     <section className={`qm-preview-control-card qm-team-response-card ${compact ? "compact" : ""}`}>
@@ -706,97 +729,127 @@ export default function QuizmasterPreviewView({ stage }) {
 
   return (
     <main className="qm-preview-phone" ref={rootRef}>
-      <header className="qm-preview-header">
-        <div>
+      <header className="qm-preview-header qm-live-header">
+        <button
+          type="button"
+          className={`qm-header-menu-button ${menuOpen ? "active" : ""}`}
+          aria-label="Open screen controls"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <Menu size={19} />
+        </button>
+
+        <div className="qm-live-header-title">
           <span>QUIZMASTER</span>
-          <strong>Quiz In Control</strong>
+          <strong>Live Quiz</strong>
         </div>
-        <b className={previewState.live?.timerActive ? "timer-live" : ""}>
-          {previewState.live?.timerActive ? `${countdown}s` : formatScreen(currentScreen)}
-        </b>
+
+        <button
+          type="button"
+          className={`qm-header-timer-button ${previewState.live?.timerActive ? "timer-live" : ""}`}
+          onClick={() => previewState.live?.timerActive
+            ? sendAction("cancel-timer")
+            : sendAction("start-timer", { seconds: timerChoice })}
+        >
+          <TimerReset size={15} />
+          {previewState.live?.timerActive ? `${countdown}s · Stop` : "Start Timer"}
+        </button>
       </header>
 
-      <section className="qm-preview-round-card qm-question-led-card">
-        <div className="qm-preview-round-top">
-          <span>ROUND 1 · SELECTED Q{hostQuestionIndex + 1}</span>
-          <small>{reviewingLiveQuestion ? "LIVE" : liveQuestion ? `LIVE Q${liveQuestionIndex + 1}` : "NOT SENT"}</small>
-        </div>
-        <h1>{previewState.round?.title || "General Knowledge"}</h1>
-        <div className="qm-question-send-row">
-          <p>{currentQuestion?.text || "No question currently selected."}</p>
-          <button
-            type="button"
-            className={reviewingLiveQuestion || selectedQuestionAsked ? "question-live" : "primary"}
-            disabled={reviewingLiveQuestion || selectedQuestionAsked}
-            onClick={() => sendAction("send-question")}
-          >
-            {reviewingLiveQuestion ? <><Check size={15} /> Question Live</> : selectedQuestionAsked ? <><Check size={15} /> Question Asked</> : <><Play size={15} /> Send Question</>}
-          </button>
-        </div>
-        {currentQuestion?.type === "Multiple choice" ? (
-          <div className="qm-preview-options">
-            {(currentQuestion.options || []).map((option, index) => (
-              <span key={option}>{String.fromCharCode(65 + index)} · {option}</span>
-            ))}
+      {menuOpen ? (
+        <section className="qm-live-menu-popout">
+          <div className="qm-live-menu-title">
+            <strong>Screen controls</strong>
+            <span>{formatScreen(currentScreen)}</span>
           </div>
-        ) : null}
-        <div className="qm-preview-answer qm-answer-key-always">CORRECT ANSWER · {currentQuestion?.answer || "Not set"}</div>
-      </section>
 
-      <section className="qm-preview-control-card qm-question-navigation-card">
-        <div className="qm-preview-section-title">Question navigation</div>
-        <div className="qm-preview-nav-row two">
-          <button type="button" onClick={() => sendAction("previous-question")} disabled={hostQuestionIndex <= 0}>
-            <ArrowLeft size={17} /> Previous
-          </button>
-          <button type="button" onClick={() => sendAction("next-question")} disabled={hostQuestionIndex >= questions.length - 1}>
-            Next <ArrowRight size={17} />
-          </button>
-        </div>
-        <div className="qm-preview-action-grid">
-          <button type="button" onClick={() => sendAction("toggle-question-type")}>
-            <RotateCcw size={16} /> {currentQuestion?.type === "Multiple choice" ? "Use text answer" : "Use multiple choice"}
-          </button>
-          <button type="button" onClick={() => sendAction("reveal-answer")}>
-            <Eye size={16} /> Reveal answer
-          </button>
-        </div>
-      </section>
+          <label className="qm-live-timer-setting">
+            <span>Timer length</span>
+            <select value={timerChoice} onChange={(event) => setTimerChoice(Number(event.target.value))}>
+              <option value={30}>30 seconds</option>
+              <option value={45}>45 seconds</option>
+              <option value={60}>60 seconds</option>
+              <option value={90}>90 seconds</option>
+            </select>
+          </label>
 
-      {renderAnswerGrid()}
+          <div className="qm-preview-action-grid three qm-live-screen-controls">
+            <button type="button" onClick={() => sendAction("show-waiting")}><Unlock size={15} /> Waiting</button>
+            <button type="button" onClick={() => sendAction("lock-round")}><Lock size={15} /> Lock round</button>
+            <button type="button" onClick={() => sendAction("show-leaderboard")}><Trophy size={15} /> Leaderboard</button>
+            <button type="button" onClick={() => sendAction("show-final")}><Trophy size={15} /> Final</button>
+            <button type="button" onClick={() => sendAction("reveal-next-final")}><Eye size={15} /> Reveal next</button>
+            <button type="button" onClick={() => sendAction("reset-scenario")}><RotateCcw size={15} /> Reset</button>
+          </div>
+        </section>
+      ) : null}
 
-      <section className="qm-preview-control-card">
-        <div className="qm-preview-section-title">Round timer</div>
-        <div className="qm-preview-timer-row">
-          <select value={timerChoice} onChange={(event) => setTimerChoice(Number(event.target.value))}>
-            <option value={30}>30 seconds</option>
-            <option value={45}>45 seconds</option>
-            <option value={60}>60 seconds</option>
-            <option value={90}>90 seconds</option>
-          </select>
-          {previewState.live?.timerActive ? (
-            <button type="button" className="danger" onClick={() => sendAction("cancel-timer")}>
-              <TimerReset size={16} /> Cancel timer
+      <nav className="qm-live-tabs" aria-label="Live quiz views">
+        <button type="button" className={liveTab === "questions" ? "active" : ""} onClick={() => setLiveTab("questions")}>Questions</button>
+        <button type="button" className={liveTab === "answers" ? "active" : ""} onClick={() => setLiveTab("answers")}>Answers</button>
+      </nav>
+
+      {liveTab === "questions" ? (
+        <>
+          <div className="qm-live-top-navigation">
+            <button type="button" onClick={() => sendAction("previous-question")} disabled={hostQuestionIndex <= 0}>
+              <ArrowLeft size={17} /> Previous
             </button>
-          ) : (
-            <button type="button" className="primary" onClick={() => sendAction("start-timer", { seconds: timerChoice })}>
-              <TimerReset size={16} /> Start timer
+            <button type="button" onClick={() => sendAction("next-question")} disabled={!canMoveNext}>
+              Next <ArrowRight size={17} />
             </button>
-          )}
-        </div>
-      </section>
+          </div>
 
-      <section className="qm-preview-control-card compact">
-        <div className="qm-preview-section-title">Screen control</div>
-        <div className="qm-preview-action-grid three">
-          <button type="button" onClick={() => sendAction("show-waiting")}><Unlock size={15} /> Waiting</button>
-          <button type="button" onClick={() => sendAction("lock-round")}><Lock size={15} /> Lock round</button>
-          <button type="button" onClick={() => sendAction("show-leaderboard")}><Trophy size={15} /> Leaderboard</button>
-          <button type="button" onClick={() => sendAction("show-final")}><Trophy size={15} /> Final</button>
-          <button type="button" onClick={() => sendAction("reveal-next-final")}><Eye size={15} /> Reveal next</button>
-          <button type="button" onClick={() => sendAction("reset-scenario")}><RotateCcw size={15} /> Reset</button>
-        </div>
-      </section>
+          <section className="qm-preview-round-card qm-question-led-card">
+            <div className="qm-preview-round-top">
+              <span>ROUND 1 · SELECTED Q{hostQuestionIndex + 1}</span>
+              <small>{reviewingLiveQuestion ? "LIVE" : liveQuestion ? `LIVE Q${liveQuestionIndex + 1}` : "NOT SENT"}</small>
+            </div>
+            <h1>{previewState.round?.title || "General Knowledge"}</h1>
+            <div className="qm-question-send-row">
+              <p>{currentQuestion?.text || "No question currently selected."}</p>
+              <button
+                type="button"
+                className={reviewingLiveQuestion || selectedQuestionAsked ? "question-live" : "primary"}
+                disabled={reviewingLiveQuestion || selectedQuestionAsked}
+                onClick={() => sendAction("send-question")}
+              >
+                {reviewingLiveQuestion ? <><Check size={15} /> Question Live</> : selectedQuestionAsked ? <><Check size={15} /> Question Asked</> : <><Play size={15} /> Send Question</>}
+              </button>
+            </div>
+            <div className="qm-preview-answer qm-answer-key-always">CORRECT ANSWER · {currentQuestion?.answer || "Not set"}</div>
+          </section>
+        </>
+      ) : (
+        <>
+          <div className="qm-live-top-navigation">
+            <button type="button" onClick={() => sendAction("previous-question")} disabled={hostQuestionIndex <= 0}>
+              <ArrowLeft size={17} /> Previous
+            </button>
+            <button
+              type="button"
+              className={selectedQuestionRevealed ? "" : "primary"}
+              onClick={runAnswerFlow}
+              disabled={selectedQuestionRevealed && !canMoveNext}
+            >
+              {selectedQuestionRevealed ? <>Next <ArrowRight size={17} /></> : selectedQuestionAsked ? <><Eye size={16} /> Reveal Answer</> : <><Play size={15} /> Push Question</>}
+            </button>
+          </div>
+
+          <section className="qm-preview-round-card qm-question-led-card qm-answer-review-question">
+            <div className="qm-preview-round-top">
+              <span>ROUND 1 · Q{hostQuestionIndex + 1}</span>
+              <small>{selectedQuestionRevealed ? "ANSWER REVEALED" : reviewingLiveQuestion ? "LIVE" : selectedQuestionAsked ? "ASKED" : "NOT SENT"}</small>
+            </div>
+            <h1>{previewState.round?.title || "General Knowledge"}</h1>
+            <p>{currentQuestion?.text || "No question currently selected."}</p>
+            <div className="qm-preview-answer qm-answer-key-always">CORRECT ANSWER · {currentQuestion?.answer || "Not set"}</div>
+          </section>
+
+          {renderAnswerGrid()}
+        </>
+      )}
 
       <footer className="qm-preview-footer">
         <span>{teams.length} teams connected</span>
