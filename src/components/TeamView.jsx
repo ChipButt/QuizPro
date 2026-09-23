@@ -494,7 +494,6 @@ function FinalScreen({ snapshot, status }) {
     return (
       <div className={`final-podium-slot ${className} ${team?.id === ownId && isRevealed ? "ours" : ""} ${isRevealed ? "revealed" : "pending"}`}>
         <div className="final-podium-team">
-          <span className="final-podium-medal">{place}</span>
           {isRevealed ? (
             <>
               <strong>{team.name || "Unnamed team"}</strong>
@@ -507,7 +506,9 @@ function FinalScreen({ snapshot, status }) {
             </>
           )}
         </div>
-        <div className="final-podium-block"><span>{place}</span></div>
+        <div className="final-podium-block">
+          <span>{place}</span>
+        </div>
       </div>
     );
   };
