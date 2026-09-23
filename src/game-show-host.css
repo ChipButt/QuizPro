@@ -2521,3 +2521,70 @@
     gap:8px;
   }
 }
+
+
+/* ---------- Paid team states ---------- */
+.simple-host-app .host-team-tile.paid{
+  border-color:#77d8ac !important;
+  background:linear-gradient(180deg,#ecfff6 0%,#dff9ed 100%) !important;
+  box-shadow:0 5px 0 #aee8cd !important;
+}
+
+.simple-host-app .host-team-tile.paid .host-team-tile-table{
+  color:#08794d;
+}
+
+.simple-host-app .host-team-tile.paid .host-team-tile-players{
+  color:#39765d;
+}
+
+.simple-host-app .host-team-tile.paid strong{
+  color:#075f3c;
+}
+
+.simple-host-app .host-team-popup-edit{
+  grid-template-columns:1fr 1fr;
+}
+
+.simple-host-app .host-team-popup-name-field{
+  grid-column:1 / -1;
+}
+
+.simple-host-app .host-team-paid-toggle{
+  min-width:180px;
+  min-height:44px;
+  margin:18px auto 0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  padding:8px 16px;
+  border:2px solid #9fb5d7 !important;
+  border-radius:12px !important;
+  background:#fff !important;
+  color:#17365f !important;
+  box-shadow:0 4px 0 #d9e9ff !important;
+  font-weight:1000;
+}
+
+.simple-host-app .host-team-paid-toggle.paid{
+  border-color:#15925d !important;
+  background:#0f9d5f !important;
+  color:#fff !important;
+  box-shadow:0 4px 0 #087447 !important;
+}
+
+@media(max-width:640px){
+  .simple-host-app .host-team-popup-edit{
+    grid-template-columns:1fr;
+  }
+
+  .simple-host-app .host-team-popup-name-field{
+    grid-column:auto;
+  }
+
+  .simple-host-app .host-team-paid-toggle{
+    width:100%;
+    max-width:420px;
+  }
+}
