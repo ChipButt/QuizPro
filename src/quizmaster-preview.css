@@ -1344,3 +1344,73 @@
   border:1px solid #7b2d49 !important;
   box-shadow:none !important;
 }
+
+
+/* ---------- Preview team meta row + header offset ---------- */
+.qm-team-popup-backdrop{
+  --qm-team-popup-top:88px;
+  top:88px;
+  right:0;
+  bottom:0;
+  left:0;
+}
+
+.qm-team-popup{
+  height:100%;
+  min-height:100%;
+  padding-top:16px;
+}
+
+.qm-team-popup-close{
+  top:calc(var(--qm-team-popup-top) + 10px) !important;
+  right:10px !important;
+}
+
+.qm-team-popup-edit{
+  width:100%;
+  max-width:350px;
+  display:block;
+  margin-top:10px;
+}
+
+.qm-team-popup-edit label.name{
+  display:grid;
+  width:100%;
+}
+
+.qm-team-popup-meta-row{
+  width:100%;
+  margin-top:6px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) 64px;
+  gap:5px;
+  align-items:end;
+}
+
+.qm-team-popup-meta-row label{
+  min-width:0;
+}
+
+.qm-team-popup-meta-row label>span{
+  font-size:6px;
+  letter-spacing:.035em;
+}
+
+.qm-team-popup-meta-row input{
+  min-height:32px;
+  height:32px;
+  padding:4px 5px;
+  font-size:9px;
+}
+
+.qm-team-popup-meta-row .qm-team-paid-toggle{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:32px !important;
+  height:32px;
+  margin:0;
+  padding:3px 4px !important;
+  font-size:8px !important;
+  white-space:nowrap;
+}
