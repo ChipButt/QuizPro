@@ -407,7 +407,7 @@
   position:absolute;
   left:50%;
   top:50%;
-  width:min(var(--preview-waiting-bulb-size,355px),96vw);
+  width:min(var(--preview-waiting-bulb-size,360px),96vw);
   height:min(var(--preview-waiting-bulb-size,360px),96vw);
   transform:translate(-50%,calc(-50% - 9px));
   color:#8d8795;
@@ -701,44 +701,6 @@
 
   .live-team-page .waiting-team-card.waiting-state-initial .waiting-next-round>small{
     translate:0 -14px !important;
-  }
-
-  .live-team-page .waiting-team-card.waiting-state-initial .waiting-fact-bulb-stage{
-    position:relative !important;
-    width:100% !important;
-    height:100% !important;
-  }
-
-  /* Approved JSON geometry, expressed relative to the approved fun-fact
-     container (left 34, top 439.3) so the animated card cannot rebase it. */
-  .live-team-page .waiting-team-card.waiting-state-initial .waiting-fact-bulb{
-    position:absolute !important;
-    left:-20px !important;
-    top:.3px !important;
-    width:360px !important;
-    height:360px !important;
-    min-width:0 !important;
-    min-height:0 !important;
-    max-width:none !important;
-    max-height:none !important;
-    transform:none !important;
-    translate:none !important;
-    z-index:1 !important;
-  }
-
-  .live-team-page .waiting-team-card.waiting-state-initial .waiting-fact-copy{
-    position:absolute !important;
-    left:82px !important;
-    top:62.8px !important;
-    width:158px !important;
-    height:120px !important;
-    min-width:0 !important;
-    min-height:0 !important;
-    max-width:none !important;
-    max-height:none !important;
-    transform:none !important;
-    translate:none !important;
-    z-index:2 !important;
   }
 
   /* Do NOT override the original Waiting-page bulb/fact positioning.
