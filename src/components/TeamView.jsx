@@ -1446,6 +1446,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   const [drafts, setDrafts] = useState({});
   const [audioBlocked, setAudioBlocked] = useState(false);
   const [newQuestionWaiting, setNewQuestionWaiting] = useState(false);
+  const [keyboardActive, setKeyboardActive] = useState(false);
   const teamAudioRef = useRef(null);
   const lastPlayNonceRef = useRef(0);
   const viewIndexRef = useRef(0);
@@ -1573,6 +1574,12 @@ export default function TeamView({ sessionCode, teamToken }) {
   const draftMatchesSaved = draft.trim() === savedText.trim() && (Boolean(savedAnswer) || !draft.trim());
   const answerSaving = Boolean(question && !questionLocked && draft.trim() !== savedText.trim());
   const submitted = Boolean(savedAnswer && draftMatchesSaved);
+  const revealedAnswerStatus = question?.revealed ? String(savedAnswer?.status ?? "") : "";
+  const answerResultClass = revealedAnswerStatus === "correct"
+    ? "answer-correct"
+    : revealedAnswerStatus === "incorrect"
+      ? "answer-incorrect"
+      : "";
 
   const answeredCount = useMemo(
     () => questions.filter((item) => String(drafts[item.id] ?? snapshot?.teamAnswers?.[item.id]?.text ?? "").trim()).length,
@@ -1615,7 +1622,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   const showNewQuestionAlert = Boolean(newQuestionWaiting && viewIndex < hostQuestionIndex && canGoForward);
 
   return (
-    <TeamChrome status={status} rail={<LeaderboardRail leaderboard={snapshot.leaderboard} ownId={snapshot.team?.id} />}>
+    <TeamChrome status={status} keyboardActive={keyboardActive} rail={<LeaderboardRail leaderboard={snapshot.leaderboard} ownId={snapshot.team?.id} />}>
       {snapshot.live?.timerActive ? (
         <div
           className={`team-timer-overlay team-timer-clock-wrap ${countdown <= 10 ? "urgent" : ""}`}
@@ -1634,7 +1641,7 @@ export default function TeamView({ sessionCode, teamToken }) {
         </div>
       ) : null}
 
-      <section className={`team-card live-team-card question-team-card ${snapshot.live?.timerActive ? "timer-running" : ""}`}>
+      <section className={`team-card live-team-card question-team-card ${snapshot.live?.timerActive ? "timer-running" : ""} ${keyboardActive ? "keyboard-active" : ""}`}>
         <div className="team-question-topline">
           <div className="team-question-team-name"><span>TEAM</span><strong>{snapshot.team.name}</strong></div>
           <div className="team-question-progress">{answeredCount}/{totalRoundQuestions || questions.length} answered</div>
@@ -1655,7 +1662,7 @@ export default function TeamView({ sessionCode, teamToken }) {
           </button>
         </div>
 
-        <div className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""}`}>
+        <div className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""} ${answerResultClass}`}>
           {questionLocked && !question.revealed ? <span className="question-lock-key" aria-label="Question locked"><KeyRound size={18} /></span> : null}
 
           <div className="team-question-core lockable-zone">
@@ -1707,6 +1714,14 @@ export default function TeamView({ sessionCode, teamToken }) {
                   className={`${draft.trim() ? "has-answer" : ""} ${submitted ? "submitted-answer" : ""}`}
                   value={draft}
                   onChange={(event) => setDraft(event.target.value)}
+                  onFocus={() => setKeyboardActive(true)}
+                  onBlur={() => setKeyboardActive(false)}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter") return;
+                    event.preventDefault();
+                    event.currentTarget.blur();
+                  }}
+                  enterKeyHint="done"
                   disabled={questionLocked}
                   maxLength={500}
                   placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"}
