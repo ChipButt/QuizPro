@@ -723,7 +723,7 @@ export default function QuizmasterPreviewView({ stage }) {
               >
                 {team.table ? <span>Table {team.table}</span> : null}
                 <small>{team.players} Player{team.players === 1 ? "" : "s"}</small>
-                <strong>{team.name || "Waiting"}</strong>
+                <strong>{team.name || "No Team Name"}</strong>
               </button>
             ))}
           </div>
@@ -743,7 +743,7 @@ export default function QuizmasterPreviewView({ stage }) {
 
               <div className="qm-team-popup-details">
                 {selectedPreviewTeam.table ? <span>TABLE {selectedPreviewTeam.table}</span> : null}
-                <h2>{selectedPreviewTeam.name || "Waiting"}</h2>
+                <h2>{selectedPreviewTeam.name || "No Team Name"}</h2>
                 <p>{selectedPreviewTeam.players} Player{selectedPreviewTeam.players === 1 ? "" : "s"}</p>
               </div>
 
@@ -760,7 +760,7 @@ export default function QuizmasterPreviewView({ stage }) {
                   <span>Team Name</span>
                   <input
                     value={selectedPreviewTeam.name || ""}
-                    placeholder="Waiting"
+                    placeholder="No Team Name"
                     onChange={(event) => sendAction("update-preview-team", {
                       teamId: selectedPreviewTeam.id,
                       patch: { name: event.target.value },
