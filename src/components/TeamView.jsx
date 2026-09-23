@@ -477,6 +477,78 @@ function LeaderboardScreen({ snapshot, status }) {
   );
 }
 
+function FinalTrophy({ place }) {
+  return (
+    <svg
+      className="final-trophy-art"
+      viewBox="0 0 160 170"
+      role="img"
+      aria-label={`${place === 1 ? "Gold" : place === 2 ? "Silver" : "Bronze"} trophy`}
+    >
+      <defs>
+        <linearGradient id={`trophy-metal-${place}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="42%" stopColor="var(--trophy-metal)" />
+          <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
+        </linearGradient>
+        <linearGradient id={`trophy-shine-${place}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="rgba(255,255,255,.72)" />
+          <stop offset="38%" stopColor="rgba(255,255,255,.18)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </linearGradient>
+        <filter id={`trophy-shadow-${place}`} x="-30%" y="-20%" width="160%" height="180%">
+          <feDropShadow dx="0" dy="7" stdDeviation="5" floodColor="rgba(0,0,0,.34)" />
+        </filter>
+      </defs>
+
+      <g filter={`url(#trophy-shadow-${place})`}>
+        <path
+          d="M44 31H25c-8 0-12 6-11 14 2 23 14 39 38 45l5-15C41 71 33 61 31 48h13Z"
+          fill={`url(#trophy-metal-${place})`}
+        />
+        <path
+          d="M116 31h19c8 0 12 6 11 14-2 23-14 39-38 45l-5-15c16-4 24-14 26-27h-13Z"
+          fill={`url(#trophy-metal-${place})`}
+        />
+        <path
+          d="M41 25h78l-8 51c-3 21-15 34-31 34S52 97 49 76Z"
+          fill={`url(#trophy-metal-${place})`}
+          stroke="var(--trophy-metal-dark)"
+          strokeWidth="2.5"
+        />
+        <path
+          d="M51 34h58l-3 20H54Z"
+          fill={`url(#trophy-shine-${place})`}
+          opacity=".72"
+        />
+        <path
+          d="M72 108h16v18H72Z"
+          fill={`url(#trophy-metal-${place})`}
+          stroke="var(--trophy-metal-dark)"
+          strokeWidth="2"
+        />
+        <path
+          d="M60 124h40l7 12H53Z"
+          fill={`url(#trophy-metal-${place})`}
+          stroke="var(--trophy-metal-dark)"
+          strokeWidth="2"
+        />
+        <rect
+          x="45"
+          y="135"
+          width="70"
+          height="20"
+          rx="5"
+          fill={`url(#trophy-metal-${place})`}
+          stroke="var(--trophy-metal-dark)"
+          strokeWidth="2"
+        />
+        <path d="M53 141h54" stroke="rgba(255,255,255,.42)" strokeWidth="2" strokeLinecap="round" />
+      </g>
+    </svg>
+  );
+}
+
 function FinalScreen({ snapshot, status }) {
   const ownId = snapshot.team?.id;
   const full = snapshot.leaderboard ?? [];
@@ -495,7 +567,7 @@ function FinalScreen({ snapshot, status }) {
       <div className={`final-podium-slot ${className} ${team?.id === ownId && isRevealed ? "ours" : ""} ${isRevealed ? "revealed" : "pending"}`}>
         <div className="final-trophy-wrap">
           <div className="final-trophy-shell">
-            <Trophy className="final-trophy-icon" aria-hidden="true" />
+            <FinalTrophy place={place} />
             <div className="final-trophy-engraving">
               {isRevealed ? (
                 <>
