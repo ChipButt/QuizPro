@@ -576,3 +576,179 @@
     font-size:9px;
   }
 }
+
+
+/* ---------- Live Quiz tabs + mobile control banner ---------- */
+.qm-preview-phone{
+  position:relative;
+}
+
+.qm-live-header{
+  min-height:66px;
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px;
+  padding:0 2px 8px;
+}
+
+.qm-live-header .qm-live-header-title{
+  min-width:0;
+  display:grid;
+  gap:2px;
+}
+
+.qm-live-header .qm-live-header-title strong{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:21px;
+}
+
+.qm-preview-phone .qm-header-menu-button{
+  width:42px;
+  min-width:42px;
+  min-height:42px;
+  padding:0;
+  border-color:rgba(96,181,255,.42);
+  background:#0b2d60;
+}
+
+.qm-preview-phone .qm-header-menu-button.active{
+  border-color:#ffd429;
+  background:#174783;
+  color:#ffd429;
+}
+
+.qm-preview-phone .qm-header-timer-button{
+  min-width:104px;
+  min-height:42px;
+  padding:6px 9px;
+  border-color:#ffdf5b;
+  background:linear-gradient(180deg,#ffd429,#e3ad00);
+  color:#10264d;
+  box-shadow:0 3px 0 #9f7600;
+  white-space:nowrap;
+}
+
+.qm-preview-phone .qm-header-timer-button.timer-live{
+  border-color:#ff9a9a;
+  background:#b91c1c;
+  color:#fff;
+  box-shadow:0 3px 0 #741010;
+}
+
+.qm-live-menu-popout{
+  position:absolute;
+  z-index:40;
+  top:67px;
+  left:14px;
+  right:14px;
+  padding:12px;
+  border:1px solid rgba(106,184,255,.5);
+  border-radius:16px;
+  background:linear-gradient(180deg,#0a2d60,#061d42);
+  box-shadow:0 18px 45px rgba(0,0,0,.48);
+}
+
+.qm-live-menu-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.qm-live-menu-title strong{
+  color:#fff;
+  font-size:13px;
+  font-weight:1000;
+}
+
+.qm-live-menu-title span{
+  padding:4px 7px;
+  border-radius:999px;
+  background:#123467;
+  color:#8edcff;
+  font-size:8px;
+  font-weight:950;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.qm-live-timer-setting{
+  display:grid;
+  grid-template-columns:1fr 132px;
+  align-items:center;
+  gap:8px;
+  margin-bottom:9px;
+}
+
+.qm-live-timer-setting>span{
+  color:#bcd3fb;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.qm-live-timer-setting select{
+  width:100%;
+}
+
+.qm-live-screen-controls{
+  margin-top:0 !important;
+}
+
+.qm-live-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin:0 0 10px;
+  padding:4px;
+  border:1px solid rgba(80,169,255,.25);
+  border-radius:14px;
+  background:rgba(4,24,53,.88);
+}
+
+.qm-preview-phone .qm-live-tabs button{
+  min-height:42px;
+  border-color:transparent;
+  background:transparent;
+  color:#91a9d0;
+  box-shadow:none;
+  font-size:11px;
+}
+
+.qm-preview-phone .qm-live-tabs button.active{
+  border-color:#ffe46a;
+  background:linear-gradient(180deg,#ffd429,#e3ad00);
+  color:#10264d;
+  box-shadow:0 3px 0 #947000;
+}
+
+.qm-live-top-navigation{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-bottom:9px;
+}
+
+.qm-preview-phone .qm-live-top-navigation button{
+  min-width:0;
+  min-height:46px;
+  font-size:11px;
+}
+
+.qm-answer-review-question>p{
+  margin-top:9px;
+}
+
+.qm-preview-phone .qm-answer-review-question .qm-answer-key-always{
+  margin-top:12px;
+}
+
+.qm-live-tabs + .qm-live-top-navigation,
+.qm-live-tabs + * .qm-live-top-navigation{
+  width:100%;
+}
