@@ -1,0 +1,626 @@
+import {
+  ArrowLeft,
+  ArrowRight,
+  Eye,
+  Lock,
+  Play,
+  RotateCcw,
+  TimerReset,
+  Trophy,
+  Unlock,
+} from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+function formatScreen(screen) {
+  return String(screen || "lobby")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function useQuizmasterLayoutEditor(rootRef, stage) {
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return undefined;
+
+    const storageKey = `quizmaster-layout-v1:${stage || "preview"}`;
+    let editEnabled = false;
+    let selectedPath = "";
+    let layout = {};
+    let dragState = null;
+
+    const overlay = document.createElement("div");
+    overlay.className = "quiz-layout-overlay";
+    overlay.innerHTML = `
+      <div class="quiz-layout-overlay-label"></div>
+      <button type="button" class="quiz-layout-handle quiz-layout-handle-x" data-resize="x" aria-label="Resize width"></button>
+      <button type="button" class="quiz-layout-handle quiz-layout-handle-y" data-resize="y" aria-label="Resize height"></button>
+      <button type="button" class="quiz-layout-handle quiz-layout-handle-both" data-resize="both" aria-label="Resize width and height"></button>
+    `;
+    document.body.appendChild(overlay);
+
+    try {
+      layout = JSON.parse(window.localStorage.getItem(storageKey) || "{}") || {};
+    } catch {
+      layout = {};
+    }
+
+    const saveLayout = () => window.localStorage.setItem(storageKey, JSON.stringify(layout));
+
+    const elementPath = (element) => {
+      if (!element || element === root) return ":scope";
+      const parts = [];
+      let node = element;
+      while (node && node !== root) {
+        const parent = node.parentElement;
+        if (!parent) break;
+        const siblings = Array.from(parent.children).filter((item) => item.tagName === node.tagName);
+        const index = siblings.indexOf(node) + 1;
+        parts.unshift(`${node.tagName.toLowerCase()}:nth-of-type(${Math.max(1, index)})`);
+        node = parent;
+      }
+      return parts.join(" > ");
+    };
+
+    const findByPath = (path) => {
+      if (!path || path === ":scope") return root;
+      try {
+        return root.querySelector(path);
+      } catch {
+        return null;
+      }
+    };
+
+    const describeElement = (element) => {
+      const className = String(element?.className?.baseVal ?? element?.className ?? "")
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .join(".");
+      const text = String(element?.innerText ?? element?.textContent ?? "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 40);
+      const name = element?.tagName?.toLowerCase() || "element";
+      return text ? `${name}${className ? `.${className}` : ""} · ${text}` : `${name}${className ? `.${className}` : ""}`;
+    };
+
+    const clearSelection = () => {
+      root.querySelectorAll(".quiz-layout-selected,.quiz-layout-locked").forEach((element) => {
+        element.classList.remove("quiz-layout-selected", "quiz-layout-locked");
+      });
+    };
+
+    const applyRecord = (element, record = {}) => {
+      if (!element) return;
+      element.style.setProperty("--layout-editor-x", `${Number(record.x || 0)}px`);
+      element.style.setProperty("--layout-editor-y", `${Number(record.y || 0)}px`);
+      element.classList.add("quiz-layout-overridden");
+
+      if (Number.isFinite(Number(record.width)) && Number(record.width) > 0) {
+        element.style.setProperty("width", `${Number(record.width)}px`, "important");
+        element.style.setProperty("min-width", "0", "important");
+        element.style.setProperty("max-width", "none", "important");
+      }
+      if (Number.isFinite(Number(record.height)) && Number(record.height) > 0) {
+        element.style.setProperty("height", `${Number(record.height)}px`, "important");
+        element.style.setProperty("min-height", "0", "important");
+        element.style.setProperty("max-height", "none", "important");
+      }
+      if (Number.isFinite(Number(record.fontSize)) && Number(record.fontSize) > 0) {
+        element.style.setProperty("font-size", `${Number(record.fontSize)}px`, "important");
+      }
+      if (Number.isFinite(Number(record.zIndex))) {
+        if (window.getComputedStyle(element).position === "static") element.classList.add("quiz-layout-layered");
+        element.style.zIndex = String(Math.round(Number(record.zIndex)));
+      }
+    };
+
+    const clearRecordStyles = (element) => {
+      if (!element) return;
+      element.classList.remove("quiz-layout-overridden", "quiz-layout-selected", "quiz-layout-locked", "quiz-layout-layered");
+      [
+        "--layout-editor-x", "--layout-editor-y", "width", "height", "min-width", "min-height",
+        "max-width", "max-height", "font-size", "z-index",
+      ].forEach((property) => element.style.removeProperty(property));
+    };
+
+    const readValues = (element, path) => {
+      const rect = element.getBoundingClientRect();
+      const styles = window.getComputedStyle(element);
+      const record = layout[path] || {};
+      return {
+        x: Number(record.x || 0),
+        y: Number(record.y || 0),
+        width: Math.round(Number(record.width || rect.width)),
+        height: Math.round(Number(record.height || rect.height)),
+        fontSize: Math.round((Number(record.fontSize || parseFloat(styles.fontSize) || 16)) * 10) / 10,
+        zIndex: Number.isFinite(Number(record.zIndex))
+          ? Math.round(Number(record.zIndex))
+          : (styles.zIndex === "auto" ? 0 : Math.round(Number(styles.zIndex) || 0)),
+        locked: Boolean(record.locked),
+      };
+    };
+
+    const updateOverlay = () => {
+      if (!editEnabled || !selectedPath) {
+        overlay.classList.remove("visible", "locked");
+        return;
+      }
+      const element = findByPath(selectedPath);
+      if (!element) {
+        overlay.classList.remove("visible", "locked");
+        return;
+      }
+      const rect = element.getBoundingClientRect();
+      const locked = Boolean(layout[selectedPath]?.locked);
+      overlay.style.left = `${rect.left}px`;
+      overlay.style.top = `${rect.top}px`;
+      overlay.style.width = `${Math.max(1, rect.width)}px`;
+      overlay.style.height = `${Math.max(1, rect.height)}px`;
+      overlay.classList.add("visible");
+      overlay.classList.toggle("locked", locked);
+      const label = overlay.querySelector(".quiz-layout-overlay-label");
+      if (label) label.textContent = locked ? "LOCKED" : "DRAG TO MOVE";
+    };
+
+    const sendSelection = (element, path) => {
+      window.parent?.postMessage({
+        type: "quiz-layout-selection",
+        path,
+        label: describeElement(element),
+        ...readValues(element, path),
+      }, window.location.origin);
+    };
+
+    const selectElement = (rawTarget) => {
+      let element = rawTarget instanceof Element ? rawTarget : null;
+      if (!element || !root.contains(element) || element === root) return;
+      if (element.closest("svg")) element = element.closest("svg");
+      clearSelection();
+      selectedPath = elementPath(element);
+      element.classList.add("quiz-layout-selected");
+      if (layout[selectedPath]?.locked) element.classList.add("quiz-layout-locked");
+      sendSelection(element, selectedPath);
+      updateOverlay();
+    };
+
+    const applyAll = () => {
+      Object.entries(layout).forEach(([path, record]) => {
+        const element = findByPath(path);
+        if (element) applyRecord(element, record);
+      });
+      if (selectedPath) {
+        const selected = findByPath(selectedPath);
+        if (selected) {
+          selected.classList.add("quiz-layout-selected");
+          if (layout[selectedPath]?.locked) selected.classList.add("quiz-layout-locked");
+        }
+      }
+      updateOverlay();
+    };
+
+    const beginDrag = (event, mode, path, element) => {
+      const current = layout[path] || {};
+      if (current.locked) return;
+      const values = readValues(element, path);
+      dragState = {
+        mode,
+        path,
+        startX: event.clientX,
+        startY: event.clientY,
+        x: values.x,
+        y: values.y,
+        width: values.width,
+        height: values.height,
+      };
+      document.documentElement.classList.add("quiz-layout-dragging");
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    const onPointerDown = (event) => {
+      if (!editEnabled || event.button !== 0) return;
+      let element = event.target instanceof Element ? event.target : null;
+      if (!element || !root.contains(element) || element === root) return;
+      if (element.closest("svg")) element = element.closest("svg");
+      selectElement(element);
+      if (!selectedPath || layout[selectedPath]?.locked) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      beginDrag(event, "move", selectedPath, element);
+    };
+
+    const onPointerMove = (event) => {
+      if (!dragState) return;
+      const element = findByPath(dragState.path);
+      if (!element) return;
+      const dx = event.clientX - dragState.startX;
+      const dy = event.clientY - dragState.startY;
+      const current = layout[dragState.path] || {};
+
+      if (dragState.mode === "move") {
+        layout[dragState.path] = { ...current, x: Math.round(dragState.x + dx), y: Math.round(dragState.y + dy) };
+      } else if (dragState.mode === "x") {
+        layout[dragState.path] = { ...current, width: Math.max(18, Math.round(dragState.width + dx)) };
+      } else if (dragState.mode === "y") {
+        layout[dragState.path] = { ...current, height: Math.max(12, Math.round(dragState.height + dy)) };
+      } else {
+        layout[dragState.path] = {
+          ...current,
+          width: Math.max(18, Math.round(dragState.width + dx)),
+          height: Math.max(12, Math.round(dragState.height + dy)),
+        };
+      }
+      applyRecord(element, layout[dragState.path]);
+      updateOverlay();
+      sendSelection(element, dragState.path);
+      event.preventDefault();
+    };
+
+    const onPointerUp = () => {
+      if (!dragState) return;
+      saveLayout();
+      const element = findByPath(dragState.path);
+      if (element) sendSelection(element, dragState.path);
+      dragState = null;
+      document.documentElement.classList.remove("quiz-layout-dragging");
+      updateOverlay();
+    };
+
+    const onHandlePointerDown = (event) => {
+      if (!editEnabled || !selectedPath || event.button !== 0) return;
+      const element = findByPath(selectedPath);
+      if (!element || layout[selectedPath]?.locked) return;
+      beginDrag(event, event.currentTarget?.dataset?.resize || "both", selectedPath, element);
+    };
+
+    const onMessage = (event) => {
+      if (event.origin !== window.location.origin) return;
+      const message = event.data || {};
+      if (message.type !== "quiz-layout-editor") return;
+
+      if (message.action === "set-enabled") {
+        editEnabled = Boolean(message.enabled);
+        document.documentElement.classList.toggle("quiz-layout-editing", editEnabled);
+        if (!editEnabled) {
+          clearSelection();
+          selectedPath = "";
+          dragState = null;
+          overlay.classList.remove("visible", "locked");
+          window.parent?.postMessage({ type: "quiz-layout-selection-cleared" }, window.location.origin);
+        } else {
+          updateOverlay();
+        }
+        return;
+      }
+
+      if (message.action === "update-selected" && selectedPath) {
+        const current = layout[selectedPath] || {};
+        if (current.locked) return;
+        const values = message.values || {};
+        layout[selectedPath] = {
+          ...current,
+          x: Number.isFinite(Number(values.x)) ? Number(values.x) : Number(current.x || 0),
+          y: Number.isFinite(Number(values.y)) ? Number(values.y) : Number(current.y || 0),
+          width: Number.isFinite(Number(values.width)) ? Number(values.width) : current.width,
+          height: Number.isFinite(Number(values.height)) ? Number(values.height) : current.height,
+          fontSize: Number.isFinite(Number(values.fontSize)) ? Number(values.fontSize) : current.fontSize,
+          zIndex: Number.isFinite(Number(values.zIndex)) ? Math.round(Number(values.zIndex)) : current.zIndex,
+        };
+        saveLayout();
+        const element = findByPath(selectedPath);
+        applyRecord(element, layout[selectedPath]);
+        updateOverlay();
+        if (element) sendSelection(element, selectedPath);
+        return;
+      }
+
+      if (message.action === "center-selected" && selectedPath) {
+        const current = layout[selectedPath] || {};
+        if (current.locked) return;
+        const element = findByPath(selectedPath);
+        if (!element) return;
+        const rootRect = root.getBoundingClientRect();
+        const elementRect = element.getBoundingClientRect();
+        const deltaX = (rootRect.left + rootRect.width / 2) - (elementRect.left + elementRect.width / 2);
+        layout[selectedPath] = { ...current, x: Math.round((Number(current.x || 0) + deltaX) * 10) / 10 };
+        saveLayout();
+        applyRecord(element, layout[selectedPath]);
+        updateOverlay();
+        sendSelection(element, selectedPath);
+        return;
+      }
+
+      if ((message.action === "layer-forward" || message.action === "layer-backward") && selectedPath) {
+        const current = layout[selectedPath] || {};
+        if (current.locked) return;
+        const element = findByPath(selectedPath);
+        const styles = element ? window.getComputedStyle(element) : null;
+        const currentLayer = Number.isFinite(Number(current.zIndex))
+          ? Number(current.zIndex)
+          : (styles?.zIndex === "auto" ? 0 : Number(styles?.zIndex) || 0);
+        layout[selectedPath] = { ...current, zIndex: Math.round(currentLayer + (message.action === "layer-forward" ? 1 : -1)) };
+        saveLayout();
+        if (element) {
+          applyRecord(element, layout[selectedPath]);
+          updateOverlay();
+          sendSelection(element, selectedPath);
+        }
+        return;
+      }
+
+      if (message.action === "lock-selected" && selectedPath) {
+        layout[selectedPath] = { ...(layout[selectedPath] || {}), locked: true };
+        saveLayout();
+        const element = findByPath(selectedPath);
+        element?.classList.add("quiz-layout-locked");
+        updateOverlay();
+        if (element) sendSelection(element, selectedPath);
+        return;
+      }
+
+      if (message.action === "unlock-selected" && selectedPath) {
+        layout[selectedPath] = { ...(layout[selectedPath] || {}), locked: false };
+        saveLayout();
+        const element = findByPath(selectedPath);
+        element?.classList.remove("quiz-layout-locked");
+        updateOverlay();
+        if (element) sendSelection(element, selectedPath);
+        return;
+      }
+
+      if (message.action === "lock-all") {
+        Object.keys(layout).forEach((path) => { layout[path] = { ...layout[path], locked: true }; });
+        saveLayout();
+        applyAll();
+        return;
+      }
+
+      if (message.action === "unlock-all") {
+        Object.keys(layout).forEach((path) => { layout[path] = { ...layout[path], locked: false }; });
+        saveLayout();
+        applyAll();
+        return;
+      }
+
+      if (message.action === "reset-selected" && selectedPath) {
+        const element = findByPath(selectedPath);
+        clearRecordStyles(element);
+        delete layout[selectedPath];
+        saveLayout();
+        if (element) {
+          selectElement(element);
+        } else {
+          selectedPath = "";
+          window.parent?.postMessage({ type: "quiz-layout-selection-cleared" }, window.location.origin);
+        }
+        return;
+      }
+
+      if (message.action === "reset-page") {
+        Object.keys(layout).forEach((path) => clearRecordStyles(findByPath(path)));
+        layout = {};
+        selectedPath = "";
+        saveLayout();
+        clearSelection();
+        overlay.classList.remove("visible", "locked");
+        window.parent?.postMessage({ type: "quiz-layout-selection-cleared" }, window.location.origin);
+        return;
+      }
+
+      if (message.action === "export") {
+        const rootRect = root.getBoundingClientRect();
+        const elements = Array.from(root.querySelectorAll("*"))
+          .filter((element) => {
+            if (!(element instanceof HTMLElement || element instanceof SVGElement)) return false;
+            if (element instanceof SVGElement && element.tagName.toLowerCase() !== "svg") return false;
+            const styles = window.getComputedStyle(element);
+            const rect = element.getBoundingClientRect();
+            return styles.display !== "none" && styles.visibility !== "hidden" && rect.width > 2 && rect.height > 2;
+          })
+          .map((element) => {
+            const path = elementPath(element);
+            const rect = element.getBoundingClientRect();
+            const styles = window.getComputedStyle(element);
+            const record = layout[path] || {};
+            return {
+              path,
+              label: describeElement(element),
+              left: Math.round((rect.left - rootRect.left) * 10) / 10,
+              top: Math.round((rect.top - rootRect.top) * 10) / 10,
+              width: Math.round(rect.width * 10) / 10,
+              height: Math.round(rect.height * 10) / 10,
+              fontSize: Math.round((parseFloat(styles.fontSize) || 0) * 10) / 10,
+              zIndex: Number.isFinite(Number(record.zIndex)) ? Math.round(Number(record.zIndex)) : 0,
+              x: Number(record.x || 0),
+              y: Number(record.y || 0),
+              locked: Boolean(record.locked),
+              edited: Boolean(layout[path]),
+            };
+          });
+        window.parent?.postMessage({
+          type: "quiz-layout-export",
+          version: 1,
+          stage: `quizmaster-${stage || "preview"}`,
+          viewport: { width: Math.round(rootRect.width), height: Math.round(rootRect.height) },
+          modified: layout,
+          elements,
+        }, window.location.origin);
+      }
+    };
+
+    document.documentElement.classList.add("quiz-preview-mode");
+    root.addEventListener("pointerdown", onPointerDown, true);
+    window.addEventListener("pointermove", onPointerMove, true);
+    window.addEventListener("pointerup", onPointerUp, true);
+    window.addEventListener("resize", updateOverlay);
+    window.addEventListener("scroll", updateOverlay, true);
+    overlay.querySelectorAll(".quiz-layout-handle").forEach((handle) => handle.addEventListener("pointerdown", onHandlePointerDown));
+    window.addEventListener("message", onMessage);
+
+    const observer = new MutationObserver(() => window.requestAnimationFrame(applyAll));
+    observer.observe(root, { childList: true, subtree: true });
+    applyAll();
+
+    window.parent?.postMessage({ type: "quiz-preview-ready", target: "quizmaster" }, window.location.origin);
+
+    return () => {
+      observer.disconnect();
+      root.removeEventListener("pointerdown", onPointerDown, true);
+      window.removeEventListener("pointermove", onPointerMove, true);
+      window.removeEventListener("pointerup", onPointerUp, true);
+      window.removeEventListener("resize", updateOverlay);
+      window.removeEventListener("scroll", updateOverlay, true);
+      overlay.querySelectorAll(".quiz-layout-handle").forEach((handle) => handle.removeEventListener("pointerdown", onHandlePointerDown));
+      window.removeEventListener("message", onMessage);
+      overlay.remove();
+      document.documentElement.classList.remove("quiz-preview-mode", "quiz-layout-editing", "quiz-layout-dragging");
+      clearSelection();
+    };
+  }, [rootRef, stage]);
+}
+
+export default function QuizmasterPreviewView({ stage }) {
+  const rootRef = useRef(null);
+  const [previewState, setPreviewState] = useState(null);
+  const [timerChoice, setTimerChoice] = useState(45);
+  const [now, setNow] = useState(Date.now());
+
+  useQuizmasterLayoutEditor(rootRef, stage);
+
+  useEffect(() => {
+    const onMessage = (event) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type === "quizmaster-preview-state") setPreviewState(event.data.state || null);
+    };
+    window.addEventListener("message", onMessage);
+    window.parent?.postMessage({ type: "quizmaster-preview-ready" }, window.location.origin);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 250);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const sendAction = (action, values = {}) => {
+    window.parent?.postMessage({ type: "quizmaster-preview-action", action, ...values }, window.location.origin);
+  };
+
+  const currentQuestion = useMemo(() => {
+    const questions = previewState?.round?.questions || [];
+    const index = Math.max(0, Number(previewState?.live?.questionIndex ?? 0));
+    return questions[index] || questions[0] || null;
+  }, [previewState]);
+
+  const countdown = previewState?.live?.timerActive
+    ? Math.max(0, Math.ceil((Number(previewState.live.timerEndsAt || 0) - now) / 1000))
+    : 0;
+
+  if (!previewState) {
+    return (
+      <main className="qm-preview-phone" ref={rootRef}>
+        <div className="qm-preview-loading">Loading Quizmaster preview…</div>
+      </main>
+    );
+  }
+
+  const questionIndex = Math.max(0, Number(previewState.live?.questionIndex ?? 0));
+  const questions = previewState.round?.questions || [];
+  const currentScreen = previewState.live?.teamScreen || "lobby";
+  const revealed = Boolean(currentQuestion?.revealed);
+
+  return (
+    <main className="qm-preview-phone" ref={rootRef}>
+      <header className="qm-preview-header">
+        <div>
+          <span>QUIZMASTER</span>
+          <strong>Quiz In Control</strong>
+        </div>
+        <b className={previewState.live?.timerActive ? "timer-live" : ""}>
+          {previewState.live?.timerActive ? `${countdown}s` : formatScreen(currentScreen)}
+        </b>
+      </header>
+
+      <section className="qm-preview-round-card">
+        <div className="qm-preview-round-top">
+          <span>ROUND 1</span>
+          <small>{questionIndex + 1}/{Math.max(1, questions.length)}</small>
+        </div>
+        <h1>{previewState.round?.title || "General Knowledge"}</h1>
+        <p>{currentQuestion?.text || "No question currently selected."}</p>
+        {currentQuestion?.type === "Multiple choice" ? (
+          <div className="qm-preview-options">
+            {(currentQuestion.options || []).map((option, index) => (
+              <span key={option}>{String.fromCharCode(65 + index)} · {option}</span>
+            ))}
+          </div>
+        ) : null}
+        {revealed ? <div className="qm-preview-answer">ANSWER · {currentQuestion?.answer}</div> : null}
+      </section>
+
+      <section className="qm-preview-control-card">
+        <div className="qm-preview-section-title">Question control</div>
+        <div className="qm-preview-nav-row">
+          <button type="button" onClick={() => sendAction("previous-question")} disabled={questionIndex <= 0}>
+            <ArrowLeft size={17} /> Previous
+          </button>
+          <button type="button" className="primary" onClick={() => sendAction("send-question")}>
+            <Play size={17} /> Send question
+          </button>
+          <button type="button" onClick={() => sendAction("next-question")} disabled={questionIndex >= questions.length - 1}>
+            Next <ArrowRight size={17} />
+          </button>
+        </div>
+        <div className="qm-preview-action-grid">
+          <button type="button" onClick={() => sendAction("toggle-question-type")}>
+            <RotateCcw size={16} /> {currentQuestion?.type === "Multiple choice" ? "Use text answer" : "Use multiple choice"}
+          </button>
+          <button type="button" onClick={() => sendAction("reveal-answer")}>
+            <Eye size={16} /> Reveal answer
+          </button>
+        </div>
+      </section>
+
+      <section className="qm-preview-control-card">
+        <div className="qm-preview-section-title">Round timer</div>
+        <div className="qm-preview-timer-row">
+          <select value={timerChoice} onChange={(event) => setTimerChoice(Number(event.target.value))}>
+            <option value={30}>30 seconds</option>
+            <option value={45}>45 seconds</option>
+            <option value={60}>60 seconds</option>
+            <option value={90}>90 seconds</option>
+          </select>
+          {previewState.live?.timerActive ? (
+            <button type="button" className="danger" onClick={() => sendAction("cancel-timer")}>
+              <TimerReset size={16} /> Cancel timer
+            </button>
+          ) : (
+            <button type="button" className="primary" onClick={() => sendAction("start-timer", { seconds: timerChoice })}>
+              <TimerReset size={16} /> Start timer
+            </button>
+          )}
+        </div>
+      </section>
+
+      <section className="qm-preview-control-card compact">
+        <div className="qm-preview-section-title">Screen control</div>
+        <div className="qm-preview-action-grid three">
+          <button type="button" onClick={() => sendAction("show-waiting")}><Unlock size={15} /> Waiting</button>
+          <button type="button" onClick={() => sendAction("lock-round")}><Lock size={15} /> Lock round</button>
+          <button type="button" onClick={() => sendAction("show-leaderboard")}><Trophy size={15} /> Leaderboard</button>
+          <button type="button" onClick={() => sendAction("show-final")}><Trophy size={15} /> Final</button>
+          <button type="button" onClick={() => sendAction("reveal-next-final")}><Eye size={15} /> Reveal next</button>
+          <button type="button" onClick={() => sendAction("reset-scenario")}><RotateCcw size={15} /> Reset</button>
+        </div>
+      </section>
+
+      <footer className="qm-preview-footer">
+        <span>Team: The Quizzy Rascals</span>
+        <strong>{previewState.teamAnswersCount || 0} answers saved</strong>
+      </footer>
+    </main>
+  );
+}
