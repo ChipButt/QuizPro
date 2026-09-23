@@ -131,7 +131,7 @@ function createPreviewHarnessState(stage) {
       "Octopuses have three hearts.",
       "A group of flamingos is called a flamboyance.",
     ],
-    roundScores: [{ id: "r1", number: 1, title: "General Knowledge", score: 8, max: 10 }],
+    roundScores: [],
     leaderboard: PREVIEW_LEADERBOARD,
     teamAnswers: {},
     teamAnswersCount: 0,
@@ -355,7 +355,10 @@ function applyQuizTakerPreviewAction(current, message) {
       ...current.teamAnswers,
       [message.questionId]: { text: message.text },
     };
-    const currentQuestionId = current.round?.questions?.[Math.max(0, Number(current.live?.questionIndex ?? 0))]?.id;
+    const rawCurrentQuestionIndex = Number(current.live?.questionIndex ?? -1);
+    const currentQuestionId = rawCurrentQuestionIndex >= 0
+      ? current.round?.questions?.[rawCurrentQuestionIndex]?.id
+      : undefined;
     const question = current.round?.questions?.find((item) => item.id === message.questionId);
     const response = {
       teamId: "preview-team",
