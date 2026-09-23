@@ -630,23 +630,87 @@
     translate:-1px -2px;
   }
 
-  /* APPROVED WAITING PAGE — exact positions from the supplied 390×844 JSON.
-     Keep these coordinates fixed so later shared-page changes cannot move them. */
+  /* APPROVED WAITING PAGE — literal bake from the user's 390×844 JSON.
+     Do not alter these values from changes made to other waiting-style pages. */
   .live-team-page .waiting-team-card.waiting-state-initial{
     position:relative !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-team-banner{
+    width:285px !important;
+    height:145px !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:none !important;
+    max-height:none !important;
+    translate:18.5px -23px !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-team-name>span,
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-team-name>strong{
+    translate:0 12px !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-team-meta>div:nth-child(1){
+    translate:1px 1px !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-team-meta>div:nth-child(1)>span{
+    translate:-7px -2px !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-team-meta>div:nth-child(1)>strong{
+    translate:-7px -4px !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-team-meta>div:nth-child(2){
+    translate:-1px 10px !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-team-meta>div:nth-child(2)>span{
+    translate:1px -11px !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-team-meta>div:nth-child(2)>strong{
+    translate:0 -14px !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-headline>span{
+    translate:0 -34px !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-headline>h1{
+    translate:0 -30px !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-next-round{
+    height:97px !important;
+    min-height:0 !important;
+    max-height:none !important;
+    translate:-1px -31px !important;
+    transform:none !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-next-round>span{
+    translate:0 -8px !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-next-round>strong{
+    translate:0 -11px !important;
+  }
+
+  .live-team-page .waiting-team-card.waiting-state-initial .waiting-next-round>small{
+    translate:0 -14px !important;
   }
 
   .live-team-page .waiting-team-card.waiting-state-initial .waiting-fact-bulb-stage{
     position:static !important;
   }
 
-  /* Exact approved 390×844 Waiting-page coordinates:
-     bulb = left 14, top 439.6, 360×360;
-     fact copy = left 116, top 502.1, 158×120.
-     Fixed positioning makes these independent of any card/grid changes. */
+  /* JSON rendered geometry: left 14, top 439.6, width 360, height 360. */
   .live-team-page .waiting-team-card.waiting-state-initial .waiting-fact-bulb{
     position:fixed !important;
-    left:calc(50% - 1px) !important;
+    left:14px !important;
     top:439.6px !important;
     width:360px !important;
     height:360px !important;
@@ -654,13 +718,14 @@
     min-height:0 !important;
     max-width:none !important;
     max-height:none !important;
-    transform:translateX(-50%) !important;
+    transform:none !important;
     translate:none !important;
   }
 
+  /* JSON rendered geometry: left 116, top 502.1, width 158, height 120. */
   .live-team-page .waiting-team-card.waiting-state-initial .waiting-fact-copy{
     position:fixed !important;
-    left:50% !important;
+    left:116px !important;
     top:502.1px !important;
     width:158px !important;
     height:120px !important;
@@ -668,7 +733,7 @@
     min-height:0 !important;
     max-width:none !important;
     max-height:none !important;
-    transform:translateX(-50%) !important;
+    transform:none !important;
     translate:none !important;
     z-index:2 !important;
   }
