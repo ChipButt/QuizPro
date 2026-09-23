@@ -2593,7 +2593,11 @@
 
 /* ---------- Team popup meta row + top-banner offset ---------- */
 .simple-host-app .host-team-popup-backdrop{
-  --host-team-popup-top:0px;
+  --host-team-popup-top:66px;
+  top:66px;
+  right:0;
+  bottom:0;
+  left:0;
 }
 
 .simple-host-app .host-team-popup{
