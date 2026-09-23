@@ -62,7 +62,6 @@ function previewSnapshot(stage) {
 
   const multipleChoice = stage === "multiple-choice";
   const revealed = stage === "answer-reveal";
-  const locked = stage === "locked";
   base.live = {
     ...base.live,
     teamScreen: "question",
@@ -76,7 +75,7 @@ function previewSnapshot(stage) {
     id: "preview-round",
     title: "General Knowledge",
     totalQuestions: 10,
-    teamLocked: locked,
+    teamLocked: false,
     forceLocked: false,
     questions: [{
       id: "q1",
@@ -212,9 +211,6 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
         }
         if (message?.type === "save-answer") {
           return { ...current, teamAnswers: { ...current.teamAnswers, [message.questionId]: { text: message.text } } };
-        }
-        if (message?.type === "lock-round") {
-          return { ...current, round: { ...current.round, teamLocked: true }, live: { ...current.live, teamScreen: "round_locked" } };
         }
         return current;
       });
