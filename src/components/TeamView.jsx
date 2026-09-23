@@ -478,7 +478,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     const root = document.querySelector(".live-phone-shell");
     if (!root) return undefined;
 
-    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v6" : ["waiting", "team-name", "multiple-choice", "answer-reveal", "locked"].includes(teamToken) ? "v2" : "v1";
+    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v6" : ["waiting", "between-rounds"].includes(teamToken) ? "v3" : ["team-name", "multiple-choice", "answer-reveal", "locked"].includes(teamToken) ? "v2" : "v1";
     const storageKey = `quiz-layout-${storageVersion}:${teamToken || "preview"}`;
     let editEnabled = false;
     let selectedPath = "";
@@ -1202,8 +1202,8 @@ export default function TeamView({ sessionCode, teamToken }) {
           aria-label={`${countdown} seconds remaining before the round ends`}
         >
           <div className="team-timer-message">
-            <strong>ROUND ENDS AT 0</strong>
-            <span>Make any final changes before time runs out</span>
+            <strong>LAST CHANCE FOR YOUR ANSWERS!</strong>
+            <span>Pop in any final changes before time’s up</span>
           </div>
           <div className="team-timer-clock" aria-hidden="true">
             <i className="team-timer-clock-knob" />
