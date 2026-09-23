@@ -494,116 +494,109 @@ function FinalTrophy({ place }) {
       <defs>
         <linearGradient id={metalId} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="28%" stopColor="var(--trophy-metal)" />
-          <stop offset="62%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="24%" stopColor="var(--trophy-metal)" />
+          <stop offset="48%" stopColor="var(--trophy-metal-light)" />
+          <stop offset="72%" stopColor="var(--trophy-metal)" />
           <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
         <linearGradient id={rimId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="var(--trophy-metal-light)" />
-          <stop offset="48%" stopColor="var(--trophy-metal)" />
+          <stop offset="52%" stopColor="var(--trophy-metal)" />
           <stop offset="100%" stopColor="var(--trophy-metal-dark)" />
         </linearGradient>
         <linearGradient id={shadeId} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="rgba(0,0,0,.20)" />
-          <stop offset="23%" stopColor="rgba(255,255,255,.34)" />
-          <stop offset="52%" stopColor="rgba(255,255,255,.08)" />
-          <stop offset="79%" stopColor="rgba(0,0,0,.08)" />
-          <stop offset="100%" stopColor="rgba(0,0,0,.24)" />
+          <stop offset="0%" stopColor="rgba(0,0,0,.24)" />
+          <stop offset="20%" stopColor="rgba(255,255,255,.34)" />
+          <stop offset="48%" stopColor="rgba(255,255,255,.08)" />
+          <stop offset="78%" stopColor="rgba(0,0,0,.06)" />
+          <stop offset="100%" stopColor="rgba(0,0,0,.27)" />
         </linearGradient>
-        <radialGradient id={glowId} cx="38%" cy="18%" r="72%">
-          <stop offset="0%" stopColor="rgba(255,255,255,.55)" />
-          <stop offset="45%" stopColor="rgba(255,255,255,.08)" />
+        <radialGradient id={glowId} cx="34%" cy="20%" r="78%">
+          <stop offset="0%" stopColor="rgba(255,255,255,.62)" />
+          <stop offset="42%" stopColor="rgba(255,255,255,.10)" />
           <stop offset="100%" stopColor="rgba(255,255,255,0)" />
         </radialGradient>
         <filter id={shadowId} x="-35%" y="-25%" width="170%" height="190%">
-          <feDropShadow dx="0" dy="7" stdDeviation="5" floodColor="rgba(0,0,0,.34)" />
+          <feDropShadow dx="0" dy="7" stdDeviation="5" floodColor="rgba(0,0,0,.32)" />
         </filter>
       </defs>
 
       <g filter={`url(#${shadowId})`}>
         <path
-          d="M48 37H27c-9 0-14 7-13 17 2 21 13 37 36 44l6-14c-17-5-25-16-27-31h19"
-          fill="none"
-          stroke={`url(#${metalId})`}
-          strokeWidth="11"
-          strokeLinecap="round"
+          d="M46 38H28c-10 0-16 7-15 18 2 22 15 38 39 45l6-15c-18-5-27-16-29-31-1-5 2-8 8-8h10Z"
+          fill={`url(#${metalId})`}
+          stroke="var(--trophy-metal-dark)"
+          strokeWidth="2.2"
           strokeLinejoin="round"
         />
         <path
-          d="M112 37h21c9 0 14 7 13 17-2 21-13 37-36 44l-6-14c17-5 25-16 27-31h-19"
-          fill="none"
-          stroke={`url(#${metalId})`}
-          strokeWidth="11"
-          strokeLinecap="round"
+          d="M114 38h18c10 0 16 7 15 18-2 22-15 38-39 45l-6-15c18-5 27-16 29-31 1-5-2-8-8-8h-10Z"
+          fill={`url(#${metalId})`}
+          stroke="var(--trophy-metal-dark)"
+          strokeWidth="2.2"
           strokeLinejoin="round"
         />
 
         <path
-          d="M43 29h74l-6 46c-3 24-15 38-31 38S52 99 49 75Z"
+          d="M42 29h76l-7 44c-4 25-16 40-31 40S53 98 49 73Z"
           fill={`url(#${metalId})`}
           stroke="var(--trophy-metal-dark)"
           strokeWidth="2.6"
           strokeLinejoin="round"
         />
         <path
-          d="M50 36h60l-5 36c-2 17-11 29-25 32-14-3-23-15-25-32Z"
+          d="M49 35h62l-5 34c-3 20-12 32-26 36-14-4-23-16-26-36Z"
           fill={`url(#${shadeId})`}
-          opacity=".55"
+          opacity=".54"
         />
         <path
-          d="M50 34c10 6 50 6 60 0"
-          fill="none"
-          stroke="rgba(255,255,255,.28)"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M56 36c4 0 10 0 15 0-7 14-8 34-4 54-8-10-12-25-11-54Z"
+          d="M54 35c5 0 10 0 15 0-7 18-7 39-2 57-8-11-12-30-13-57Z"
           fill={`url(#${glowId})`}
-          opacity=".8"
+          opacity=".88"
         />
 
         <rect
-          x="39"
-          y="21"
-          width="82"
-          height="16"
-          rx="8"
+          x="37"
+          y="20"
+          width="86"
+          height="17"
+          rx="8.5"
           fill={`url(#${rimId})`}
           stroke="var(--trophy-metal-dark)"
           strokeWidth="2.4"
         />
-        <path d="M48 26h64" stroke="rgba(255,255,255,.55)" strokeWidth="2.2" strokeLinecap="round" />
+        <path d="M47 25h66" stroke="rgba(255,255,255,.58)" strokeWidth="2.2" strokeLinecap="round" />
+        <path d="M48 34c12 5 52 5 64 0" fill="none" stroke="rgba(255,255,255,.25)" strokeWidth="2" strokeLinecap="round" />
 
         <path
-          d="M71 111h18v18H71Z"
+          d="M70 111h20v17H70Z"
           fill={`url(#${metalId})`}
           stroke="var(--trophy-metal-dark)"
           strokeWidth="2"
         />
         <path
-          d="M61 127h38l10 13H51Z"
+          d="M61 126h38l11 13H50Z"
           fill={`url(#${rimId})`}
           stroke="var(--trophy-metal-dark)"
           strokeWidth="2.2"
           strokeLinejoin="round"
         />
         <rect
-          x="43"
-          y="138"
-          width="74"
-          height="18"
+          x="42"
+          y="137"
+          width="76"
+          height="19"
           rx="4"
           fill={`url(#${rimId})`}
           stroke="var(--trophy-metal-dark)"
           strokeWidth="2.2"
         />
-        <path d="M50 143h60" stroke="rgba(255,255,255,.42)" strokeWidth="2" strokeLinecap="round" />
+        <path d="M49 142h62" stroke="rgba(255,255,255,.42)" strokeWidth="2" strokeLinecap="round" />
 
         <text
           className="final-trophy-rank-engraving"
           x="80"
-          y="78"
+          y="75"
           textAnchor="middle"
           dominantBaseline="middle"
         >
