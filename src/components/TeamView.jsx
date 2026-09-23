@@ -721,7 +721,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     const root = document.querySelector(".live-phone-shell");
     if (!root) return undefined;
 
-    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v12" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
+    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v13" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
     const storageKey = `quiz-layout-${storageVersion}:${teamToken || "preview"}`;
     let editEnabled = false;
     let selectedPath = "";
@@ -851,15 +851,15 @@ export default function TeamView({ sessionCode, teamToken }) {
          physical anchors directly instead of relying on CSS translate, so no
          !important timer rule can block dragging. */
       if (isTimerMessage) {
-        element.style.setProperty("left", `calc(18px + ${Number(record.x || 0)}px)`, "important");
+        element.style.setProperty("left", `calc(117.5px + ${Number(record.x || 0)}px)`, "important");
         element.style.setProperty("right", "auto", "important");
-        element.style.setProperty("top", `calc(84px + ${Number(record.y || 0)}px)`, "important");
+        element.style.setProperty("top", `calc(737px + ${Number(record.y || 0)}px)`, "important");
         element.style.setProperty("bottom", "auto", "important");
         element.style.setProperty("translate", "none", "important");
       } else if (isTimerClock) {
         element.style.setProperty("left", "auto", "important");
-        element.style.setProperty("right", `calc(18px - ${Number(record.x || 0)}px)`, "important");
-        element.style.setProperty("top", `calc(84px + ${Number(record.y || 0)}px)`, "important");
+        element.style.setProperty("right", `calc(42px - ${Number(record.x || 0)}px)`, "important");
+        element.style.setProperty("top", `calc(733px + ${Number(record.y || 0)}px)`, "important");
         element.style.setProperty("bottom", "auto", "important");
         element.style.setProperty("translate", "none", "important");
       }
@@ -1616,8 +1616,8 @@ export default function TeamView({ sessionCode, teamToken }) {
           aria-label={`${countdown} seconds remaining before the round ends`}
         >
           <div className="team-timer-message">
-            <strong data-default-text="LAST CHANCE FOR YOUR ANSWERS!">LAST CHANCE FOR YOUR ANSWERS!</strong>
-            <span data-default-text="Pop in any final changes before time’s up">Pop in any final changes before time’s up</span>
+            <strong data-default-text={"LAST CHANCE \nTO INPUT YOUR ANSWERS!"}>{"LAST CHANCE \nTO INPUT YOUR ANSWERS!"}</strong>
+            <span data-default-text="When the timer runs out, your answers will be locked!">When the timer runs out, your answers will be locked!</span>
           </div>
           <div className="team-timer-clock" aria-hidden="true">
             <i className="team-timer-clock-knob" />
