@@ -370,6 +370,15 @@
 /* Approved waiting-page editor position. */
 .live-team-page .waiting-next-round{
   transform:translateY(-15px) !important;
+  text-align:center !important;
+  justify-items:center !important;
+}
+
+.live-team-page .waiting-next-round>span,
+.live-team-page .waiting-next-round>strong,
+.live-team-page .waiting-next-round>small{
+  width:100% !important;
+  text-align:center !important;
 }
 
 /* The pre-quiz card keeps the fact area as the whole remaining white section. */
