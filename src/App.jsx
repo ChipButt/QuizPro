@@ -121,7 +121,9 @@ function createPreviewHarnessState(stage) {
       { id: "team-5", name: "The Smartinis", table: 9, players: 4 },
     ],
     teamResponses: {},
-    answerWave: 0,
+    teamResponseHistory: {},
+    askedQuestionIds: [],
+    answerWave: null,
     hostQuestionIndex: 0,
     quiz: { totalRounds: 5 },
     waitingFacts: [
@@ -181,12 +183,16 @@ function applyQuizmasterPreviewAction(current, action, values = {}, stage) {
     const sentQuestion = questions[hostQuestionIndex];
     const nextTeamAnswers = { ...(current.teamAnswers || {}) };
     if (sentQuestion?.id) delete nextTeamAnswers[sentQuestion.id];
+    const askedQuestionIds = sentQuestion?.id
+      ? Array.from(new Set([...(current.askedQuestionIds || []), sentQuestion.id]))
+      : (current.askedQuestionIds || []);
     return {
       ...current,
       team: { ...current.team, name: current.team.name || "The Quizzy Rascals", nameLocked: true },
       teamAnswers: nextTeamAnswers,
       teamResponses: {},
-      answerWave: Date.now(),
+      askedQuestionIds,
+      answerWave: sentQuestion?.id ? { questionId: sentQuestion.id, nonce: Date.now() } : null,
       round: {
         ...current.round,
         forceLocked: false,
@@ -327,20 +333,29 @@ function applyQuizTakerPreviewAction(current, message) {
       [message.questionId]: { text: message.text },
     };
     const currentQuestionId = current.round?.questions?.[Math.max(0, Number(current.live?.questionIndex ?? 0))]?.id;
+    const response = {
+      teamId: "preview-team",
+      answer: message.text,
+      receivedAt: Date.now(),
+    };
     const teamResponses = currentQuestionId === message.questionId
       ? {
           ...(current.teamResponses || {}),
-          "preview-team": {
-            teamId: "preview-team",
-            answer: message.text,
-            receivedAt: Date.now(),
-          },
+          "preview-team": response,
         }
       : (current.teamResponses || {});
+    const teamResponseHistory = {
+      ...(current.teamResponseHistory || {}),
+      [message.questionId]: {
+        ...(current.teamResponseHistory?.[message.questionId] || {}),
+        "preview-team": response,
+      },
+    };
     return {
       ...current,
       teamAnswers,
       teamResponses,
+      teamResponseHistory,
       teamAnswersCount: Object.keys(teamAnswers).length,
     };
   }
@@ -466,23 +481,30 @@ function TeamPreview({ stage }) {
   }, [simState]);
 
   useEffect(() => {
-    if (!simState.answerWave) return undefined;
+    if (!simState.answerWave?.questionId) return undefined;
     const wave = simState.answerWave;
     const timers = [650, 1450, 2350, 3450].map((delay, index) => window.setTimeout(() => {
       setSimState((current) => {
-        if (current.answerWave !== wave) return current;
-        const liveIndex = Math.max(0, Number(current.live?.questionIndex ?? 0));
-        const question = current.round?.questions?.[liveIndex];
+        if (current.answerWave?.nonce !== wave.nonce || current.answerWave?.questionId !== wave.questionId) return current;
+        const question = current.round?.questions?.find((item) => item.id === wave.questionId);
         const team = current.teams?.[index + 1];
-        if (!question || !team || current.teamResponses?.[team.id]) return current;
+        if (!question || !team || current.teamResponseHistory?.[question.id]?.[team.id]) return current;
+        const response = {
+          teamId: team.id,
+          answer: simulatedTeamAnswer(question, team.id, index + 1),
+          receivedAt: Date.now(),
+        };
         return {
           ...current,
           teamResponses: {
             ...(current.teamResponses || {}),
-            [team.id]: {
-              teamId: team.id,
-              answer: simulatedTeamAnswer(question, team.id, index + 1),
-              receivedAt: Date.now(),
+            [team.id]: response,
+          },
+          teamResponseHistory: {
+            ...(current.teamResponseHistory || {}),
+            [question.id]: {
+              ...(current.teamResponseHistory?.[question.id] || {}),
+              [team.id]: response,
             },
           },
         };
