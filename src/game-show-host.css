@@ -1972,3 +1972,233 @@
     line-height:1;
   }
 }
+
+
+/* ---------- Private screen previews ---------- */
+.simple-host-app .host-screen-menu{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid #d8e5f7;
+}
+
+.simple-host-app .host-screen-menu>span{
+  display:block;
+  margin-bottom:7px;
+  color:#617faa;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.11em;
+}
+
+.simple-host-app .host-screen-menu-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px;
+}
+
+.simple-host-app .host-screen-menu-grid button{
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  border:1px solid #bcd0ec !important;
+  border-radius:11px !important;
+  background:#eef5ff !important;
+  color:#17365f !important;
+  box-shadow:none !important;
+  font-weight:950;
+}
+
+.simple-host-app .host-screen-preview{
+  margin-bottom:12px;
+  padding:12px;
+  border:2px solid #bcd0ec;
+  border-radius:18px;
+  background:#f8fbff;
+  box-shadow:0 9px 24px rgba(31,66,112,.12);
+}
+
+.simple-host-app .host-screen-preview-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:11px;
+}
+
+.simple-host-app .host-screen-preview-top>div{
+  min-width:0;
+  display:grid;
+  gap:2px;
+}
+
+.simple-host-app .host-screen-preview-top span{
+  color:#168cff;
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.12em;
+}
+
+.simple-host-app .host-screen-preview-top strong{
+  color:var(--gs-violet);
+  font-size:18px;
+  font-weight:1000;
+}
+
+.simple-host-app .host-push-screen-button{
+  flex:0 0 auto;
+  min-height:44px;
+  padding-inline:14px;
+}
+
+.simple-host-app .host-screen-preview-card{
+  min-height:250px;
+  display:grid;
+  justify-items:center;
+  align-content:center;
+  gap:8px;
+  padding:24px 18px;
+  border-radius:16px;
+  border:1px solid #c7d7ff;
+  background:linear-gradient(180deg,#ffffff 0%,#edf5ff 100%);
+  text-align:center;
+}
+
+.simple-host-app .host-screen-preview-card>svg{
+  color:#168cff;
+}
+
+.simple-host-app .host-screen-preview-card>span{
+  color:#168cff;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.12em;
+}
+
+.simple-host-app .host-screen-preview-card h2{
+  margin:0;
+  color:#1f1357;
+  font-size:26px;
+  line-height:1.05;
+}
+
+.simple-host-app .host-screen-preview-card p{
+  margin:0;
+  color:#617faa;
+  font-size:12px;
+  font-weight:800;
+}
+
+.simple-host-app .host-screen-preview-card.locked>svg{
+  color:#b42345;
+}
+
+.simple-host-app .host-screen-preview-card.leaderboard,
+.simple-host-app .host-screen-preview-card.final{
+  min-height:0;
+  display:block;
+  padding:14px;
+  text-align:left;
+}
+
+.simple-host-app .host-screen-preview-card.leaderboard>span{
+  display:block;
+  margin-bottom:3px;
+}
+
+.simple-host-app .host-screen-preview-card.leaderboard>h2{
+  margin-bottom:10px;
+  font-size:23px;
+}
+
+.simple-host-app .host-screen-leaderboard{
+  margin-top:10px;
+}
+
+.simple-host-app .host-final-preview-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+}
+
+.simple-host-app .host-final-preview-heading>div{
+  min-width:0;
+}
+
+.simple-host-app .host-final-preview-heading span{
+  display:block;
+  color:#168cff;
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.12em;
+}
+
+.simple-host-app .host-final-preview-heading h2{
+  margin:2px 0 0;
+  color:#1f1357;
+  font-size:24px;
+  line-height:1;
+}
+
+.simple-host-app .host-final-preview-heading button{
+  flex:0 0 auto;
+  min-height:42px;
+}
+
+.simple-host-app .host-final-reveal-status{
+  margin-bottom:9px;
+  padding:6px 8px;
+  border-radius:9px;
+  background:#eef5ff;
+  color:#617faa;
+  font-size:10px;
+  font-weight:900;
+  text-align:center;
+}
+
+.simple-host-app .host-final-full-leaderboard{
+  max-height:480px;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+
+@media(max-width:640px){
+  .simple-host-app .host-screen-preview{
+    padding:9px;
+    border-radius:15px;
+  }
+
+  .simple-host-app .host-screen-preview-top{
+    align-items:stretch;
+  }
+
+  .simple-host-app .host-screen-preview-top strong{
+    font-size:15px;
+  }
+
+  .simple-host-app .host-push-screen-button{
+    min-width:124px;
+    padding-inline:9px;
+    font-size:10px;
+  }
+
+  .simple-host-app .host-screen-preview-card{
+    min-height:210px;
+  }
+
+  .simple-host-app .host-final-preview-heading h2{
+    font-size:21px;
+  }
+
+  .simple-host-app .host-final-preview-heading button{
+    min-width:112px;
+    font-size:10px;
+  }
+
+  .simple-host-app .host-final-full-leaderboard{
+    max-height:470px;
+  }
+}
