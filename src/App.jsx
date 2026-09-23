@@ -96,8 +96,8 @@ function createPreviewHarnessState(stage) {
     },
   ];
 
-  let teamScreen = "question";
-  let questionIndex = 0;
+  let teamScreen = "lobby";
+  let questionIndex = -1;
   let timerActive = false;
   let timerEndsAt = 0;
   let timerDurationSeconds = 0;
