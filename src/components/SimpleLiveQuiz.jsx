@@ -7,6 +7,7 @@ import {
   Eye,
   EyeOff,
   Lock,
+  Menu,
   Play,
   Plus,
   RefreshCcw,
@@ -77,6 +78,8 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   const [reviewRoundIndex, setReviewRoundIndex] = useState(liveRoundIndex);
   const [reviewQuestionIndex, setReviewQuestionIndex] = useState(Math.max(0, liveQuestionIndex));
   const [openPanel, setOpenPanel] = useState(null);
+  const [liveTab, setLiveTab] = useState("questions");
+  const [controlsOpen, setControlsOpen] = useState(false);
   const reviewRound = quiz?.rounds?.[reviewRoundIndex] ?? null;
   const reviewQuestion = reviewRound?.questions?.[reviewQuestionIndex] ?? null;
   const reviewingLiveQuestion = Boolean(
@@ -88,7 +91,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   const leaderboard = useMemo(() => computeLeaderboard(state), [state]);
   const [table, setTable] = useState("");
   const [players, setPlayers] = useState(4);
-  const [timerChoice, setTimerChoice] = useState(60);
+  const [timerChoice, setTimerChoice] = useState(30);
   const timerSeconds = useCountdown(state.live?.timerEndsAt, state.live?.timerActive);
   const hostAudioRef = useRef(null);
 
@@ -170,6 +173,8 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
     setReviewRoundIndex(0);
     setReviewQuestionIndex(0);
     setOpenPanel(null);
+    setLiveTab("questions");
+    setControlsOpen(false);
   }
 
   function stopSession() {
@@ -279,6 +284,48 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
     });
   }
 
+  function revealReviewedAnswer() {
+    if (!reviewRound || !reviewQuestion) return;
+    updateState((current) => {
+      const askedQuestionIds = Array.from(new Set([
+        ...(current.live?.askedQuestionIds ?? []),
+        reviewQuestion.id,
+      ]));
+      return {
+        ...current,
+        live: {
+          ...current.live,
+          status: "Live",
+          teamScreen: "question",
+          roundIndex: reviewRoundIndex,
+          questionIndex: reviewQuestionIndex,
+          askedQuestionIds,
+          revealedQuestions: {
+            ...(current.live?.revealedQuestions ?? {}),
+            [reviewQuestion.id]: true,
+          },
+          timerActive: false,
+          timerEndsAt: 0,
+          timerDurationSeconds: 0,
+          timerRoundId: "",
+        },
+      };
+    });
+  }
+
+  function runAnswerFlow(reviewQuestionAsked, reviewQuestionRevealed) {
+    if (!reviewQuestion || !reviewRound) return;
+    if (reviewQuestionRevealed) {
+      setReviewQuestionIndex((index) => Math.min(reviewRound.questions.length - 1, index + 1));
+      return;
+    }
+    if (reviewQuestionAsked) {
+      revealReviewedAnswer();
+      return;
+    }
+    pushReviewedQuestion();
+  }
+
   function toggleLiveRoundAnswers() {
     if (!liveRound) return;
     updateState((current) => {
@@ -299,7 +346,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
 
   function startLockTimer() {
     if (!liveRound) return;
-    const duration = Math.max(5, Number(timerChoice) || 60);
+    const duration = Math.max(5, Number(timerChoice) || 30);
     updateLive({
       teamScreen: "round_review",
       timerActive: true,
@@ -504,6 +551,14 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   }
   const askedReviewQuestions = (reviewRound?.questions ?? []).filter((item) => askedQuestionIds.has(item.id));
   const reviewQuestionAsked = Boolean(reviewQuestion && askedQuestionIds.has(reviewQuestion.id));
+  const reviewQuestionRevealed = Boolean(
+    reviewQuestion &&
+    (
+      state.live?.revealedQuestions?.[reviewQuestion.id] ||
+      (reviewRound && state.live?.revealedRounds?.[reviewRound.id])
+    )
+  );
+  const canReviewNext = Boolean(reviewRound && reviewQuestionIndex < (reviewRound.questions?.length ?? 0) - 1);
   const questionExplicitlyRevealed = Boolean(liveQuestion && state.live?.revealedQuestions?.[liveQuestion.id]);
   const liveRoundRevealed = Boolean(liveRound && state.live?.revealedRounds?.[liveRound.id]);
   const liveQuestionRevealed = Boolean(liveQuestion && (questionExplicitlyRevealed || liveRoundRevealed));
@@ -526,27 +581,58 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
       {network?.status === "code-conflict" ? <div className="simple-warning"><WifiOff size={16} /> This live session code is already in use.</div> : null}
 
       <section className="host-control-deck">
-        <div className="host-live-status-strip">
+        <div className="host-live-status-strip host-live-mobile-banner">
+          <button
+            type="button"
+            className={`host-live-menu-toggle ${controlsOpen ? "active" : ""}`}
+            aria-label="Open live quiz controls"
+            aria-expanded={controlsOpen}
+            onClick={() => setControlsOpen((open) => !open)}
+          >
+            <Menu size={18} />
+          </button>
           <div><span>Teams see</span><strong>R{liveRoundIndex + 1}{liveQuestion ? ` · Q${liveQuestionIndex + 1}` : " · waiting"}</strong></div>
           <div><span>Session</span><strong>{state.live.sessionCode}</strong></div>
-          {state.live.timerActive ? <div className="host-timer-chip"><Clock3 size={16} /><strong>{timerSeconds}s</strong></div> : null}
+          <button
+            type="button"
+            className={`host-live-banner-timer ${state.live.timerActive ? "active" : ""}`}
+            disabled={liveLocked || !liveRound}
+            onClick={state.live.timerActive ? cancelTimer : startLockTimer}
+          >
+            <Clock3 size={15} />
+            {state.live.timerActive ? `${timerSeconds}s · Stop` : "Start Timer"}
+          </button>
         </div>
 
-        <div className="host-tool-row">
-          <button className={openPanel === "teams" ? "active" : ""} onClick={() => togglePanel("teams")}><Users size={16} /> Teams <b>{state.teams.length}</b></button>
-          <button className={openPanel === "answers" ? "active" : ""} onClick={() => togglePanel("answers")}><Check size={16} /> Round answers <b>{reviewRound?.questions?.reduce((count, item) => count + Object.keys(state.answers?.[item.id] ?? {}).length, 0) ?? 0}</b></button>
-          <button className={`${openPanel === "round" ? "active" : ""} ${liveLocked ? "locked" : ""}`} onClick={() => togglePanel("round")}><Settings2 size={16} /> Round</button>
-          <button className={`${openPanel === "timer" ? "active" : ""} ${state.live.timerActive ? "timer-active" : ""}`} onClick={() => togglePanel("timer")}><Clock3 size={16} /> Timer</button>
-          <button className={`${openPanel === "leaderboard" ? "active" : ""} ${leaderboardVisible ? "shown" : ""}`} onClick={() => togglePanel("leaderboard")}><Trophy size={16} /> Leaderboard</button>
-        </div>
+        {controlsOpen ? (
+          <div className="host-live-controls-popout">
+            <label className="host-live-timer-setting">
+              <span>Timer length</span>
+              <select value={timerChoice} onChange={(event) => setTimerChoice(Number(event.target.value))}>
+                <option value={30}>30 seconds</option>
+                <option value={60}>1 minute</option>
+                <option value={120}>2 minutes</option>
+                <option value={180}>3 minutes</option>
+                <option value={300}>5 minutes</option>
+              </select>
+            </label>
 
-        <div className="host-reveal-mode-row">
-          <span>Reveal answers</span>
-          <button className={state.live.revealMode === "question" ? "selected" : ""} onClick={() => updateLive({ revealMode: "question" })}>After each question</button>
-          <button className={state.live.revealMode === "round" ? "selected" : ""} onClick={() => updateLive({ revealMode: "round" })}>End of round</button>
-        </div>
+            <div className="host-tool-row">
+              <button className={openPanel === "teams" ? "active" : ""} onClick={() => togglePanel("teams")}><Users size={16} /> Teams <b>{state.teams.length}</b></button>
+              <button className={openPanel === "answers" ? "active" : ""} onClick={() => togglePanel("answers")}><Check size={16} /> Round answers <b>{reviewRound?.questions?.reduce((count, item) => count + Object.keys(state.answers?.[item.id] ?? {}).length, 0) ?? 0}</b></button>
+              <button className={`${openPanel === "round" ? "active" : ""} ${liveLocked ? "locked" : ""}`} onClick={() => togglePanel("round")}><Settings2 size={16} /> Round</button>
+              <button className={`${openPanel === "leaderboard" ? "active" : ""} ${leaderboardVisible ? "shown" : ""}`} onClick={() => togglePanel("leaderboard")}><Trophy size={16} /> Leaderboard</button>
+            </div>
 
-        {openPanel ? (
+            <div className="host-reveal-mode-row">
+              <span>Reveal answers</span>
+              <button className={state.live.revealMode === "question" ? "selected" : ""} onClick={() => updateLive({ revealMode: "question" })}>After each question</button>
+              <button className={state.live.revealMode === "round" ? "selected" : ""} onClick={() => updateLive({ revealMode: "round" })}>End of round</button>
+            </div>
+          </div>
+        ) : null}
+
+        {controlsOpen && openPanel ? (
           <div className={`host-tool-drawer ${openPanel}`}>
             <button className="host-drawer-close" aria-label="Close" onClick={() => setOpenPanel(null)}><X size={16} /></button>
 
@@ -668,6 +754,11 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
         ) : null}
       </section>
 
+      <nav className="host-live-tabs" aria-label="Live quiz views">
+        <button type="button" className={liveTab === "questions" ? "active" : ""} onClick={() => setLiveTab("questions")}>Questions</button>
+        <button type="button" className={liveTab === "answers" ? "active" : ""} onClick={() => setLiveTab("answers")}>Answers</button>
+      </nav>
+
       <section className="host-question-workspace">
         <div className="host-round-carousel">
           {quiz.rounds.map((item, index) => (
@@ -689,6 +780,21 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
               ))}
             </div>
 
+            <div className="host-live-top-navigation">
+              <button className="icon-step-button host-question-step previous" disabled={reviewQuestionIndex <= 0} onClick={() => setReviewQuestionIndex((index) => Math.max(0, index - 1))}><ArrowLeft size={16} /> Previous</button>
+              {liveTab === "questions" ? (
+                <button className="icon-step-button host-question-step next" disabled={!canReviewNext} onClick={() => setReviewQuestionIndex((index) => Math.min(reviewRound.questions.length - 1, index + 1))}>Next <ArrowRight size={16} /></button>
+              ) : (
+                <button
+                  className={reviewQuestionRevealed ? "icon-step-button host-question-step next" : "primary-button host-answer-flow-button"}
+                  disabled={reviewQuestionRevealed && !canReviewNext}
+                  onClick={() => runAnswerFlow(reviewQuestionAsked, reviewQuestionRevealed)}
+                >
+                  {reviewQuestionRevealed ? <>Next <ArrowRight size={16} /></> : reviewQuestionAsked ? <><Eye size={16} /> Reveal Answer</> : <><Send size={16} /> Push Question</>}
+                </button>
+              )}
+            </div>
+
             {reviewQuestion ? (
               <div className="host-focus-question-card">
                 <div className="host-review-kicker">
@@ -696,24 +802,18 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                   {reviewingLiveQuestion ? <b>ON TEAM SCREENS</b> : reviewQuestionAsked ? <em>Already asked</em> : <em>Private preview</em>}
                 </div>
                 {reviewQuestion.image ? <img src={reviewQuestion.image} alt={reviewQuestion.imageName || "Question"} /> : null}
-                <div className="host-question-title-row">
+                <div className={`host-question-title-row ${liveTab === "answers" ? "answers-mode" : ""}`}>
                   <h2>{reviewQuestion.text || "Untitled question"}</h2>
-                  <button
-                    className={`host-question-live-button ${reviewingLiveQuestion ? "is-live" : reviewQuestionAsked ? "was-asked" : ""}`}
-                    disabled={reviewingLiveQuestion || reviewQuestionAsked}
-                    onClick={pushReviewedQuestion}
-                  >
-                    {reviewingLiveQuestion ? <><Check size={16} /> Question Live</> : reviewQuestionAsked ? <><Check size={16} /> Question Asked</> : <><Send size={16} /> Send Question</>}
-                  </button>
+                  {liveTab === "questions" ? (
+                    <button
+                      className={`host-question-live-button ${reviewingLiveQuestion ? "is-live" : reviewQuestionAsked ? "was-asked" : ""}`}
+                      disabled={reviewingLiveQuestion || reviewQuestionAsked}
+                      onClick={pushReviewedQuestion}
+                    >
+                      {reviewingLiveQuestion ? <><Check size={16} /> Question Live</> : reviewQuestionAsked ? <><Check size={16} /> Question Asked</> : <><Send size={16} /> Send Question</>}
+                    </button>
+                  ) : null}
                 </div>
-
-                {reviewQuestion.type === "Multiple choice" && reviewQuestion.options?.length ? (
-                  <div className="simple-live-options host-soft-options">
-                    {reviewQuestion.options.filter(Boolean).map((option, index) => (
-                      <span key={index} className={String(option).trim() === String(reviewQuestion.answer ?? "").trim() ? "host-correct-option" : ""}><b>{String.fromCharCode(65 + index)}</b>{option}</span>
-                    ))}
-                  </div>
-                ) : null}
 
                 <div className="host-answer-key"><span>CORRECT ANSWER</span><strong>{reviewQuestion.answer || "No answer set"}</strong></div>
 
@@ -725,23 +825,10 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                   </div>
                 ) : null}
 
-                <div className="host-question-action-row">
-                  <button className="icon-step-button host-question-step previous" disabled={reviewQuestionIndex <= 0} onClick={() => setReviewQuestionIndex((index) => Math.max(0, index - 1))}><ArrowLeft size={16} /> Previous</button>
-                  <button className="icon-step-button host-question-step next" disabled={reviewQuestionIndex >= reviewRound.questions.length - 1} onClick={() => setReviewQuestionIndex((index) => Math.min(reviewRound.questions.length - 1, index + 1))}>Next <ArrowRight size={16} /></button>
-                  <button
-                    className={`reveal-toggle host-question-reveal ${reviewingLiveQuestion && liveQuestionRevealed ? "active" : ""}`}
-                    disabled={!reviewingLiveQuestion || liveRoundRevealed}
-                    onClick={toggleLiveAnswer}
-                    title={liveRoundRevealed ? "The whole round is currently revealed" : ""}
-                  >
-                    {reviewingLiveQuestion && liveQuestionRevealed ? <EyeOff size={16} /> : <Eye size={16} />}
-                    {liveRoundRevealed && reviewingLiveQuestion ? "Round revealed" : reviewingLiveQuestion && liveQuestionRevealed ? "Hide answer" : "Reveal to teams"}
-                  </button>
-                </div>
               </div>
             ) : null}
 
-            {askedReviewQuestions.length ? (
+            {liveTab === "answers" ? (askedReviewQuestions.length ? (
               <section className="host-answer-matrix-section">
                 <div className="host-answer-matrix-heading">
                   <div>
@@ -808,7 +895,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
               </section>
             ) : (
               <div className="host-answer-matrix-empty">Send the first question to start the live answer grid.</div>
-            )}
+            )) : null}
           </>
         ) : <p className="simple-empty-copy">This round has no questions.</p>}
       </section>
