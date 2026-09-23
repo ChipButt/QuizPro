@@ -1709,23 +1709,25 @@ export default function TeamView({ sessionCode, teamToken }) {
 
             {isTextEntry ? (
               <div className="answer-input-shell">
-                {question.revealed ? <span className="your-answer-label">YOUR ANSWER</span> : null}
-                <textarea
-                  className={`${draft.trim() ? "has-answer" : ""} ${submitted ? "submitted-answer" : ""}`}
-                  value={draft}
-                  onChange={(event) => setDraft(event.target.value)}
-                  onFocus={() => setKeyboardActive(true)}
-                  onBlur={() => setKeyboardActive(false)}
-                  onKeyDown={(event) => {
-                    if (event.key !== "Enter") return;
-                    event.preventDefault();
-                    event.currentTarget.blur();
-                  }}
-                  enterKeyHint="done"
-                  disabled={questionLocked}
-                  maxLength={500}
-                  placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"}
-                />
+                <div className={`your-answer-section ${question.revealed ? "is-revealed" : ""}`}>
+                  {question.revealed ? <span className="your-answer-label">YOUR ANSWER</span> : null}
+                  <textarea
+                    className={`${draft.trim() ? "has-answer" : ""} ${submitted ? "submitted-answer" : ""}`}
+                    value={draft}
+                    onChange={(event) => setDraft(event.target.value)}
+                    onFocus={() => setKeyboardActive(true)}
+                    onBlur={() => setKeyboardActive(false)}
+                    onKeyDown={(event) => {
+                      if (event.key !== "Enter") return;
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }}
+                    enterKeyHint="done"
+                    disabled={questionLocked}
+                    maxLength={500}
+                    placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"}
+                  />
+                </div>
                 {question.revealed ? (
                   <div className="revealed-answer-pill">
                     <CheckCircle2 aria-hidden="true" />
