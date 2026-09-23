@@ -13,6 +13,7 @@ import {
   Trophy,
   Unlock,
 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 
 function formatScreen(screen) {
@@ -495,6 +496,7 @@ export default function QuizmasterPreviewView({ stage }) {
   const [screenPreview, setScreenPreview] = useState(null);
   const [newTeamTable, setNewTeamTable] = useState("");
   const [newTeamPlayers, setNewTeamPlayers] = useState(4);
+  const [selectedPreviewTeamId, setSelectedPreviewTeamId] = useState(null);
   const [now, setNow] = useState(Date.now());
 
   useQuizmasterLayoutEditor(rootRef, stage);
@@ -541,6 +543,7 @@ export default function QuizmasterPreviewView({ stage }) {
   const currentScreen = previewState.live?.teamScreen || "lobby";
   const revealed = Boolean(currentQuestion?.revealed);
   const teams = previewState.teams || [];
+  const selectedPreviewTeam = teams.find((team) => team.id === selectedPreviewTeamId) || null;
   const responses = previewState.teamResponses || {};
   const responseHistory = previewState.teamResponseHistory || {};
   const askedQuestionIds = previewState.askedQuestionIds || [];
@@ -710,28 +713,112 @@ export default function QuizmasterPreviewView({ stage }) {
             </button>
           </div>
 
-          <div className="qm-team-manager-list">
-            {teams.map((team, index) => (
-              <div className="qm-team-manager-row" key={team.id}>
-                <div>
-                  <strong>{team.name}</strong>
-                  <span>Table {team.table} · {team.players} player{team.players === 1 ? "" : "s"}</span>
-                </div>
-                {team.id === "preview-team" ? (
-                  <small>TEST PHONE</small>
-                ) : (
-                  <button
-                    type="button"
-                    aria-label={`Remove ${team.name}`}
-                    onClick={() => sendAction("remove-preview-team", { teamId: team.id })}
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                )}
-              </div>
+          <div className="qm-team-tile-grid">
+            {teams.map((team) => (
+              <button
+                type="button"
+                key={team.id}
+                className={`qm-team-tile ${team.paid ? "paid" : ""}`}
+                onClick={() => setSelectedPreviewTeamId(team.id)}
+              >
+                {team.table ? <span>Table {team.table}</span> : null}
+                <small>{team.players} Player{team.players === 1 ? "" : "s"}</small>
+                <strong>{team.name || "Waiting"}</strong>
+              </button>
             ))}
           </div>
         </section>
+
+        {selectedPreviewTeam ? (
+          <div className="qm-team-popup-backdrop" onClick={() => setSelectedPreviewTeamId(null)}>
+            <section className="qm-team-popup" onClick={(event) => event.stopPropagation()}>
+              <button
+                type="button"
+                className="qm-team-popup-close"
+                onClick={() => setSelectedPreviewTeamId(null)}
+                aria-label="Close team details"
+              >
+                ×
+              </button>
+
+              <div className="qm-team-popup-details">
+                {selectedPreviewTeam.table ? <span>TABLE {selectedPreviewTeam.table}</span> : null}
+                <h2>{selectedPreviewTeam.name || "Waiting"}</h2>
+                <p>{selectedPreviewTeam.players} Player{selectedPreviewTeam.players === 1 ? "" : "s"}</p>
+              </div>
+
+              <div className="qm-team-popup-qr">
+                <QRCodeSVG
+                  value={`${window.location.origin}${window.location.pathname}#/join/PREVIEW/${selectedPreviewTeam.id}`}
+                  size={512}
+                  marginSize={2}
+                />
+              </div>
+
+              <div className="qm-team-popup-edit">
+                <label className="name">
+                  <span>Team Name</span>
+                  <input
+                    value={selectedPreviewTeam.name || ""}
+                    placeholder="Waiting"
+                    onChange={(event) => sendAction("update-preview-team", {
+                      teamId: selectedPreviewTeam.id,
+                      patch: { name: event.target.value },
+                    })}
+                  />
+                </label>
+                <label>
+                  <span>Table Number</span>
+                  <input
+                    value={selectedPreviewTeam.table || ""}
+                    placeholder="No table"
+                    onChange={(event) => sendAction("update-preview-team", {
+                      teamId: selectedPreviewTeam.id,
+                      patch: { table: event.target.value },
+                    })}
+                  />
+                </label>
+                <label>
+                  <span>Number of Players</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="30"
+                    value={selectedPreviewTeam.players || 1}
+                    onChange={(event) => sendAction("update-preview-team", {
+                      teamId: selectedPreviewTeam.id,
+                      patch: { players: Math.max(1, Number(event.target.value) || 1) },
+                    })}
+                  />
+                </label>
+              </div>
+
+              <button
+                type="button"
+                className={`qm-team-paid-toggle ${selectedPreviewTeam.paid ? "paid" : ""}`}
+                onClick={() => sendAction("update-preview-team", {
+                  teamId: selectedPreviewTeam.id,
+                  patch: { paid: !selectedPreviewTeam.paid },
+                })}
+              >
+                <Check size={14} /> {selectedPreviewTeam.paid ? "Paid" : "Mark as Paid"}
+              </button>
+
+              {selectedPreviewTeam.id !== "preview-team" ? (
+                <button
+                  type="button"
+                  className="qm-team-popup-remove"
+                  onClick={() => {
+                    sendAction("remove-preview-team", { teamId: selectedPreviewTeam.id });
+                    setSelectedPreviewTeamId(null);
+                  }}
+                >
+                  <Trash2 size={14} /> Remove Team
+                </button>
+              ) : null}
+            </section>
+          </div>
+        ) : null}
 
         <section className="qm-preview-round-card qm-live-question-strip">
           <div className="qm-preview-round-top">
