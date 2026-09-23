@@ -3,7 +3,6 @@ import {
   ArrowRight,
   Check,
   Clock3,
-  Copy,
   Eye,
   EyeOff,
   Lock,
@@ -28,7 +27,6 @@ import { autoScoreAnswer, computeLeaderboard } from "../utils/quiz.js";
 import {
   createSessionCode,
   createTeamSlot,
-  createTeamToken,
   getLiveQuiz,
   isRoundForceLocked,
 } from "../utils/liveSession.js";
@@ -92,6 +90,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   const leaderboard = useMemo(() => computeLeaderboard(state), [state]);
   const [table, setTable] = useState("");
   const [players, setPlayers] = useState(4);
+  const [selectedTeamId, setSelectedTeamId] = useState(null);
   const [timerChoice, setTimerChoice] = useState(30);
   const timerSeconds = useCountdown(state.live?.timerEndsAt, state.live?.timerActive);
   const hostAudioRef = useRef(null);
@@ -183,6 +182,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
     setLiveTab("questions");
     setControlsOpen(false);
     setScreenPreview(null);
+    setSelectedTeamId(null);
   }
 
   function stopSession() {
@@ -229,10 +229,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
         ]),
       ),
     }));
-  }
-
-  function regenerateTeamQr(teamId) {
-    updateTeam(teamId, { token: createTeamToken(), name: "", nameLocked: false, registeredAt: "" });
+    setSelectedTeamId((current) => current === teamId ? null : current);
   }
 
   function reviewRoundAt(index) {
@@ -628,6 +625,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   const liveRoundRevealed = Boolean(liveRound && state.live?.revealedRounds?.[liveRound.id]);
   const liveQuestionRevealed = Boolean(liveQuestion && (questionExplicitlyRevealed || liveRoundRevealed));
   const finalRevealCount = Number(state.live.finalRevealCount ?? 0);
+  const selectedTeam = state.teams.find((team) => team.id === selectedTeamId) ?? null;
 
   return (
     <main className="simple-page simple-live-page planuf-live-page">
@@ -722,24 +720,19 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                   <label>Players<input type="number" min="1" max="30" value={players} onChange={(event) => setPlayers(Number(event.target.value) || 1)} /></label>
                   <button className="primary-button" onClick={addTeam}><Plus size={15} /> Add team</button>
                 </div>
-                <div className="host-team-strip">
-                  {state.teams.map((team, index) => {
-                    const url = joinUrl(state.live.sessionCode, team.token);
-                    const connected = network?.connectedTokens?.includes(team.token);
-                    return (
-                      <article key={team.id} className="host-team-chip-card">
-                        <div><span>Team {index + 1}</span><strong>{team.name || `Table ${team.table || "?"}`}</strong><small>{connected ? "Connected" : "Waiting"}</small></div>
-                        <QRCodeSVG value={url} size={92} marginSize={1} />
-                        <label>Table<input value={team.table ?? ""} onChange={(event) => updateTeam(team.id, { table: event.target.value })} /></label>
-                        <label>Players<input type="number" min="1" value={team.players ?? 1} onChange={(event) => updateTeam(team.id, { players: Math.max(1, Number(event.target.value) || 1) })} /></label>
-                        <div className="host-team-chip-actions">
-                          <button onClick={() => navigator.clipboard?.writeText(url)} title="Copy team link"><Copy size={13} /></button>
-                          <button onClick={() => regenerateTeamQr(team.id)} title="New QR"><RefreshCcw size={13} /></button>
-                          <button onClick={() => removeTeam(team.id)} title="Remove team"><Trash2 size={13} /></button>
-                        </div>
-                      </article>
-                    );
-                  })}
+                <div className="host-team-tile-grid">
+                  {state.teams.map((team) => (
+                    <button
+                      type="button"
+                      key={team.id}
+                      className="host-team-tile"
+                      onClick={() => setSelectedTeamId(team.id)}
+                    >
+                      {team.table ? <span className="host-team-tile-table">Table {team.table}</span> : null}
+                      <span className="host-team-tile-players">{Math.max(1, Number(team.players) || 1)} Player{Number(team.players) === 1 ? "" : "s"}</span>
+                      <strong>{team.name || "Waiting"}</strong>
+                    </button>
+                  ))}
                   {!state.teams.length ? <p className="simple-empty-copy">No teams added yet.</p> : null}
                 </div>
               </>
@@ -818,6 +811,70 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
           </div>
         ) : null}
       </section>
+
+      {selectedTeam ? (
+        <div className="host-team-popup-backdrop" role="presentation" onClick={() => setSelectedTeamId(null)}>
+          <section
+            className="host-team-popup"
+            role="dialog"
+            aria-modal="true"
+            aria-label={selectedTeam.name ? `${selectedTeam.name} team details` : "Waiting team details"}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="host-team-popup-close"
+              aria-label="Close team details"
+              onClick={() => setSelectedTeamId(null)}
+            >
+              <X size={22} />
+            </button>
+
+            <div className="host-team-popup-details">
+              {selectedTeam.table ? <span>TABLE {selectedTeam.table}</span> : null}
+              <h2>{selectedTeam.name || "Waiting"}</h2>
+              <p>{Math.max(1, Number(selectedTeam.players) || 1)} Player{Number(selectedTeam.players) === 1 ? "" : "s"}</p>
+            </div>
+
+            <div className="host-team-popup-qr">
+              <QRCodeSVG
+                value={joinUrl(state.live.sessionCode, selectedTeam.token)}
+                size={512}
+                marginSize={2}
+              />
+            </div>
+
+            <div className="host-team-popup-edit">
+              <label>
+                <span>Table</span>
+                <input
+                  value={selectedTeam.table ?? ""}
+                  onChange={(event) => updateTeam(selectedTeam.id, { table: event.target.value })}
+                  placeholder="No table number"
+                />
+              </label>
+              <label>
+                <span>Players</span>
+                <input
+                  type="number"
+                  min="1"
+                  max="30"
+                  value={selectedTeam.players ?? 1}
+                  onChange={(event) => updateTeam(selectedTeam.id, { players: Math.max(1, Number(event.target.value) || 1) })}
+                />
+              </label>
+            </div>
+
+            <button
+              type="button"
+              className="danger-soft-button host-team-popup-remove"
+              onClick={() => removeTeam(selectedTeam.id)}
+            >
+              <Trash2 size={15} /> Remove Team
+            </button>
+          </section>
+        </div>
+      ) : null}
 
       <nav className="host-live-tabs" aria-label="Live quiz views">
         <button type="button" className={!screenPreview && liveTab === "questions" ? "active" : ""} onClick={() => { setScreenPreview(null); setLiveTab("questions"); }}>Questions</button>
