@@ -640,25 +640,37 @@
     position:static !important;
   }
 
+  /* Exact approved 390×844 Waiting-page coordinates:
+     bulb = left 14, top 439.6, 360×360;
+     fact copy = left 116, top 502.1, 158×120.
+     Fixed positioning makes these independent of any card/grid changes. */
   .live-team-page .waiting-team-card.waiting-state-initial .waiting-fact-bulb{
-    left:50% !important;
-    top:379.6px !important;
+    position:fixed !important;
+    left:calc(50% - 1px) !important;
+    top:439.6px !important;
     width:360px !important;
     height:360px !important;
+    min-width:0 !important;
+    min-height:0 !important;
     max-width:none !important;
     max-height:none !important;
     transform:translateX(-50%) !important;
-    translate:-1px -2px !important;
+    translate:none !important;
   }
 
   .live-team-page .waiting-team-card.waiting-state-initial .waiting-fact-copy{
+    position:fixed !important;
     left:50% !important;
-    top:440.1px !important;
+    top:502.1px !important;
     width:158px !important;
     height:120px !important;
+    min-width:0 !important;
+    min-height:0 !important;
     max-width:none !important;
     max-height:none !important;
     transform:translateX(-50%) !important;
+    translate:none !important;
+    z-index:2 !important;
   }
 
   /* Do NOT override the original Waiting-page bulb/fact positioning.
