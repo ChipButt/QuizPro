@@ -2355,21 +2355,22 @@
 }
 
 .simple-host-app .host-team-popup-close{
-  position:fixed;
-  top:18px;
-  right:18px;
-  z-index:2;
-  width:44px;
-  height:44px;
-  min-height:44px;
-  display:grid;
-  place-items:center;
+  position:fixed !important;
+  top:max(14px,env(safe-area-inset-top)) !important;
+  right:max(14px,env(safe-area-inset-right)) !important;
+  z-index:10000 !important;
+  width:48px !important;
+  height:48px !important;
+  min-height:48px !important;
+  display:grid !important;
+  place-items:center !important;
   padding:0 !important;
-  border:1px solid #b9cce8 !important;
+  border:3px solid #fff !important;
   border-radius:999px !important;
-  background:#fff !important;
-  color:var(--gs-violet) !important;
-  box-shadow:0 4px 0 #d9e9ff !important;
+  background:#c92f50 !important;
+  color:#fff !important;
+  box-shadow:0 4px 0 #861b36,0 8px 20px rgba(32,13,23,.28) !important;
+  cursor:pointer !important;
 }
 
 .simple-host-app .host-team-popup-details{
