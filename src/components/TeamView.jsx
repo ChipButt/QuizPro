@@ -478,24 +478,83 @@ function LeaderboardScreen({ snapshot, status }) {
 }
 
 function FinalScreen({ snapshot, status }) {
-  const count = Number(snapshot.live?.finalRevealCount ?? 0);
+  const ownId = snapshot.team?.id;
   const full = snapshot.leaderboard ?? [];
-  const revealed = full.slice().reverse().slice(0, count);
+  const count = Math.max(0, Math.min(full.length, Number(snapshot.live?.finalRevealCount ?? 0)));
+  const revealedTeams = full.slice().reverse().slice(0, count);
+  const revealedIds = new Set(revealedTeams.map((team) => team.id));
+  const topThree = full.slice(0, 3);
+  const lowerStandings = full
+    .slice(3)
+    .map((team, offset) => ({ ...team, place: offset + 4 }))
+    .filter((team) => revealedIds.has(team.id));
+
+  const podiumSlot = (team, place, className) => {
+    const isRevealed = team && revealedIds.has(team.id);
+    return (
+      <div className={`final-podium-slot ${className} ${team?.id === ownId && isRevealed ? "ours" : ""} ${isRevealed ? "revealed" : "pending"}`}>
+        <div className="final-podium-team">
+          <span className="final-podium-medal">{place}</span>
+          {isRevealed ? (
+            <>
+              <strong>{team.name || "Unnamed team"}</strong>
+              <b>{formatScore(team.score)}<small>PTS</small></b>
+            </>
+          ) : (
+            <>
+              <strong className="final-podium-mystery">?</strong>
+              <b className="final-podium-waiting">TO BE REVEALED</b>
+            </>
+          )}
+        </div>
+        <div className="final-podium-block"><span>{place}</span></div>
+      </div>
+    );
+  };
+
   return (
     <TeamChrome status={status}>
-      <section className="team-card live-team-card team-final-card">
-        <Trophy size={40} />
-        <h1>Final results</h1>
-        <div className="team-final-list">
-          {revealed.map((team) => {
-            const place = full.findIndex((item) => item.id === team.id) + 1;
-            return (
-              <div key={team.id} className={place === 1 ? "winner" : ""}>
-                <span>{place}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score} pts</b>
+      <section className="team-card live-team-card team-final-card final-results-card">
+        <header className="final-results-header">
+          <div className="final-results-crown" aria-hidden="true"><Crown size={30} /></div>
+          <span className="final-results-kicker">THE QUIZ IS COMPLETE</span>
+          <h1>Final Results</h1>
+          <div className="final-results-rule" aria-hidden="true"><i /><Trophy size={16} /><i /></div>
+          <p>OFFICIAL STANDINGS</p>
+        </header>
+
+        <section className="final-podium-stage" aria-label="Top three teams">
+          <div className="final-podium">
+            {podiumSlot(topThree[1], 2, "second")}
+            {podiumSlot(topThree[0], 1, "first")}
+            {podiumSlot(topThree[2], 3, "third")}
+          </div>
+        </section>
+
+        <section className="final-lower-standings">
+          <div className="final-lower-heading">
+            <span>FINAL STANDINGS</span>
+            <strong>{full.length} {full.length === 1 ? "TEAM" : "TEAMS"}</strong>
+          </div>
+          <div className="final-results-scroll">
+            {lowerStandings.length ? (
+              <ol className="final-results-list">
+                {lowerStandings.map((team) => (
+                  <li key={team.id} className={team.id === ownId ? "ours" : ""}>
+                    <span>{team.place}</span>
+                    <strong>{team.name || "Unnamed team"}</strong>
+                    <b>{formatScore(team.score)}<small>PTS</small></b>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <div className="final-results-pending">
+                <Trophy size={22} />
+                <span>Standings will appear as the quizmaster reveals them.</span>
               </div>
-            );
-          })}
-        </div>
+            )}
+          </div>
+        </section>
       </section>
     </TeamChrome>
   );
@@ -1334,7 +1393,7 @@ export default function TeamView({ sessionCode, teamToken }) {
               </div>
             ) : null}
 
-            {!questionLocked && draft.trim() && !answerSaving ? (
+            {!isMultipleChoice && !questionLocked && draft.trim() && !answerSaving ? (
               <div className="answer-save-status saved">
                 <CheckCircle2 size={15} />
                 <strong>Answer Updated</strong>
