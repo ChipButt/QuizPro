@@ -25,6 +25,8 @@ export default function GitHubLibraryStatus({ library }) {
   const [token, setToken] = useState("");
   const [connecting, setConnecting] = useState(false);
   const problem = ["error", "conflict"].includes(library.status);
+  const conflict = library.status === "conflict";
+  const accessError = library.status === "error";
   const working = ["saving", "local-changes", "loading"].includes(library.status);
 
   async function connect() {
@@ -45,6 +47,12 @@ export default function GitHubLibraryStatus({ library }) {
     await library.reload(true);
   }
 
+  async function keepThisDevice() {
+    const okay = window.confirm("Keep this device's quiz library and replace the newer shared GitHub version? Use this when the quiz on this screen is the version you want to keep.");
+    if (!okay) return;
+    await library.overwriteRemote();
+  }
+
   function fixAccess() {
     if (library.connected) library.disconnect();
     setToken("");
@@ -61,7 +69,9 @@ export default function GitHubLibraryStatus({ library }) {
       </div>
       <div className="simple-sync-actions">
         <button className="ghost-button compact" onClick={reload} disabled={!library.remoteLoaded || library.status === "loading"}><RefreshCcw size={13} /> Reload</button>
-        {problem ? (
+        {conflict ? (
+          <button className="primary-button compact" onClick={keepThisDevice} disabled={!library.connected}><Github size={13} /> Keep this device</button>
+        ) : accessError ? (
           <button className="ghost-button compact" onClick={fixAccess}><Github size={13} /> Fix editing access</button>
         ) : !library.connected ? (
           <button className="ghost-button compact" onClick={() => setShowSetup((value) => !value)}><Github size={13} /> Connect editing</button>
@@ -69,7 +79,7 @@ export default function GitHubLibraryStatus({ library }) {
           <span className="simple-sync-user">{library.login}</span>
         )}
       </div>
-      {showSetup && (!library.connected || problem) ? (
+      {showSetup && (!library.connected || accessError) ? (
         <div className="simple-sync-setup">
           <ShieldCheck size={18} />
           <div>
