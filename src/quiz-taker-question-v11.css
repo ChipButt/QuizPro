@@ -990,3 +990,104 @@
     margin:0 !important;
   }
 }
+
+
+/* ---------- Shared picture-round question/answer reveal ---------- */
+/* Picture rounds keep one fixed media frame for both states. The question
+   image remains mounted underneath the answer image so Push Answer can
+   cross-fade between them without changing any geometry. */
+
+@media(max-width:420px){
+  .live-team-page .team-question-stage.picture-round-question-layout .picture-shared-image-frame{
+    position:relative !important;
+    isolation:isolate;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout .picture-shared-image-frame>img{
+    grid-area:1 / 1 !important;
+    width:100% !important;
+    height:100% !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:100% !important;
+    max-height:100% !important;
+    margin:0 !important;
+    object-fit:contain !important;
+    object-position:center !important;
+    transition:opacity 420ms ease !important;
+    will-change:opacity;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout .picture-question-image{
+    opacity:1;
+    z-index:1;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout .picture-answer-image{
+    opacity:0;
+    z-index:2;
+    pointer-events:none;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-question-image{
+    opacity:0;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-answer-image{
+    opacity:1;
+  }
+
+  /* Until Push Answer, keep the picture-round review geometry identical to
+     the normal question page rather than reserving a hidden answer card. */
+  .live-team-page .team-question-stage.picture-round-question-layout.is-review .revealed-answer-slot{
+    display:none !important;
+  }
+
+  /* The picture-round Correct Answer card sits immediately below Your Answer.
+     It contains only centred text; the answer image now lives in the shared
+     picture frame above. */
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-correct-answer-panel{
+    box-sizing:border-box !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    min-height:76px !important;
+    height:auto !important;
+    margin:10px 0 0 !important;
+    padding:12px 14px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:5px !important;
+    text-align:center !important;
+    overflow:visible !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-correct-answer-panel>svg{
+    display:none !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-correct-answer-panel>span{
+    grid-area:auto !important;
+    width:100% !important;
+    margin:0 !important;
+    text-align:center !important;
+    justify-self:center !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-correct-answer-panel>.revealed-answer-text{
+    grid-area:auto !important;
+    width:100% !important;
+    max-width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    text-align:center !important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .live-team-page .team-question-stage.picture-round-question-layout .picture-shared-image-frame>img{
+    transition:none !important;
+  }
+}
