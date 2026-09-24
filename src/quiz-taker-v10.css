@@ -4754,3 +4754,14 @@
 .team-question-nav .question-nav-button.next > span{
   color:var(--gs-chip) !important;
 }
+
+
+/* ---------- Navigation arrow + matched shadow ---------- */
+.team-question-nav .question-nav-button.previous > svg{
+  color:var(--gs-pink) !important;
+  stroke:var(--gs-pink) !important;
+}
+
+.team-question-nav .question-nav-button.next{
+  box-shadow:0 6px 0 #8ec3ff !important;
+}
