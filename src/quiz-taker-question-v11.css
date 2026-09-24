@@ -380,18 +380,16 @@
 
 
 /* ---------- Viewport-aware keyboard slide ---------- */
-/* Keep the approved question layout intact. When the software keyboard reduces
-   the visual viewport, the complete phone UI slides upward only if the answer
-   field would otherwise be covered. keyboardAnswerFocus.js calculates the
-   required translation from the actual device visualViewport. */
+/* When a team focuses a text answer, keep the existing page geometry intact.
+   The only visual change is a vertical lift of the complete phone shell, sized
+   from the actual focused textarea against the current visualViewport. */
 .keyboard-active-page{
   position:fixed !important;
-  top:var(--team-visible-top,0px) !important;
-  left:var(--team-visible-left,0px) !important;
-  width:var(--team-visible-width,100vw) !important;
-  height:var(--team-visible-height,100dvh) !important;
-  min-height:0 !important;
-  max-height:none !important;
+  inset:0 !important;
+  width:100% !important;
+  height:var(--team-keyboard-layout-height,100dvh) !important;
+  min-height:var(--team-keyboard-layout-height,100dvh) !important;
+  max-height:var(--team-keyboard-layout-height,100dvh) !important;
   margin:0 !important;
   padding:0 !important;
   overflow:hidden !important;
@@ -399,28 +397,13 @@
 }
 
 .keyboard-active-page .live-phone-shell.keyboard-active{
-  width:100% !important;
-  max-width:none !important;
-  height:auto !important;
-  min-height:min(820px,calc(var(--team-keyboard-layout-height,100vh) - 48px)) !important;
-  max-height:none !important;
-  margin:0 !important;
-  overflow:visible !important;
   transform:translate3d(0,calc(-1 * var(--team-keyboard-slide,0px)),0) !important;
   transition:transform 180ms ease-out !important;
   will-change:transform;
 }
 
-.keyboard-active-page .live-phone-topbar{
-  display:flex !important;
-}
-
-.keyboard-active-page .team-connection-note{
-  display:block !important;
-}
-
-/* Do not resize, hide, reorder or restyle individual question elements when
-   the keyboard opens. The entire existing page moves as one unit. */
+/* Do not resize, hide, reorder or restyle anything when the keyboard opens.
+   The page is translated as one intact composition. */
 .keyboard-active-page .question-team-card,
 .keyboard-active-page .team-question-stage,
 .keyboard-active-page .team-question-core,
@@ -433,7 +416,7 @@
   transform:none;
 }
 
-/* Prevent the browser's own focus-scroll offset from adding a second jump. */
+/* Stop the browser from adding a second focus-scroll offset of its own. */
 .keyboard-active-page .answer-input-shell textarea{
   scroll-margin:0 !important;
 }
@@ -1354,4 +1337,25 @@
   .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-correct-answer-panel{
     translate:0 110px !important;
   }
+}
+
+
+/* ---------- Final keyboard lift override: never resize picture rounds ---------- */
+/* Picture-round viewport rules normally pin the page/shell to 100dvh. While
+   typing, freeze both at the pre-keyboard layout height so the keyboard cannot
+   cause a responsive re-layout; only --team-keyboard-slide moves the page. */
+.team-page.live-team-page.picture-round-team-page.keyboard-active-page{
+  height:var(--team-keyboard-layout-height,100dvh) !important;
+  min-height:var(--team-keyboard-layout-height,100dvh) !important;
+  max-height:var(--team-keyboard-layout-height,100dvh) !important;
+}
+
+.team-page.live-team-page.picture-round-team-page.keyboard-active-page .live-phone-shell.picture-round-team-page.keyboard-active{
+  height:var(--team-keyboard-layout-height,100dvh) !important;
+  min-height:var(--team-keyboard-layout-height,100dvh) !important;
+  max-height:var(--team-keyboard-layout-height,100dvh) !important;
+  width:100% !important;
+  max-width:100% !important;
+  margin:0 !important;
+  transform:translate3d(0,calc(-1 * var(--team-keyboard-slide,0px)),0) !important;
 }
