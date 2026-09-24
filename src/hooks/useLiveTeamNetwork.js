@@ -218,6 +218,14 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
           });
           conn.on("data", (message) => {
             if (message?.type === "snapshot") {
+              if (message.live?.teamScreen === "finished") {
+                finishedRef.current = true;
+                storeFinishedSnapshot(sessionCode, teamToken, message);
+                setSnapshot(message);
+                setStatus("finished");
+                setError("");
+                return;
+              }
               setSnapshot(message);
               setStatus("online");
               return;
