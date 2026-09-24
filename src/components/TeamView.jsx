@@ -708,7 +708,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     const root = document.querySelector(".live-phone-shell");
     if (!root) return undefined;
 
-    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v13" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
+    const storageVersion = teamToken === "question" ? "v5" : teamToken === "timer" ? "v14" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
     const storageKey = `quiz-layout-${storageVersion}:${teamToken || "preview"}`;
     let editEnabled = false;
     let selectedPath = "";
@@ -834,20 +834,17 @@ export default function TeamView({ sessionCode, teamToken }) {
       const isTimerMessage = element.classList?.contains("team-timer-message");
       const isTimerClock = element.classList?.contains("team-timer-clock");
 
-      /* Timer children are fixed-position elements. Move them by changing their
-         physical anchors directly instead of relying on CSS translate, so no
-         !important timer rule can block dragging. */
-      if (isTimerMessage) {
-        element.style.setProperty("left", `calc(117.5px + ${Number(record.x || 0)}px)`, "important");
-        element.style.setProperty("right", "auto", "important");
-        element.style.setProperty("top", `calc(737px + ${Number(record.y || 0)}px)`, "important");
-        element.style.setProperty("bottom", "auto", "important");
-        element.style.setProperty("translate", "none", "important");
-      } else if (isTimerClock) {
-        element.style.setProperty("left", "auto", "important");
-        element.style.setProperty("right", `calc(42px - ${Number(record.x || 0)}px)`, "important");
-        element.style.setProperty("top", `calc(733px + ${Number(record.y || 0)}px)`, "important");
-        element.style.setProperty("bottom", "auto", "important");
+      /* Timer parts use direct viewport coordinates. This makes the dedicated
+         timer editor WYSIWYG even after production timer positions change. */
+      if (isTimerMessage || isTimerClock) {
+        if (Number.isFinite(Number(record.x))) {
+          element.style.setProperty("left", `${Number(record.x)}px`, "important");
+          element.style.setProperty("right", "auto", "important");
+        }
+        if (Number.isFinite(Number(record.y))) {
+          element.style.setProperty("top", `${Number(record.y)}px`, "important");
+          element.style.setProperty("bottom", "auto", "important");
+        }
         element.style.setProperty("translate", "none", "important");
       }
 
@@ -976,9 +973,12 @@ export default function TeamView({ sessionCode, teamToken }) {
       const headlineStyles = headline ? window.getComputedStyle(headline) : null;
       const subtextStyles = subtext ? window.getComputedStyle(subtext) : null;
       const clockStyles = clockNumber ? window.getComputedStyle(clockNumber) : null;
+      const rootRect = root.getBoundingClientRect();
+      const defaultX = isTimerMessage || isTimerClock ? Math.round((rect.left - rootRect.left) * 10) / 10 : 0;
+      const defaultY = isTimerMessage || isTimerClock ? Math.round((rect.top - rootRect.top) * 10) / 10 : 0;
       return {
-        x: Number(record.x || 0),
-        y: Number(record.y || 0),
+        x: Number.isFinite(Number(record.x)) ? Number(record.x) : defaultX,
+        y: Number.isFinite(Number(record.y)) ? Number(record.y) : defaultY,
         width: Math.round(Number(record.width || rect.width)),
         height: Math.round(Number(record.height || rect.height)),
         fontSize: Math.round((Number(record.fontSize || parseFloat(clockStyles?.fontSize || styles.fontSize) || 16)) * 10) / 10,
