@@ -2728,3 +2728,27 @@
   max-height:58px;
   object-fit:contain;
 }
+
+
+/* ---------- Quizmaster menu foreground layer ---------- */
+.simple-host-app .host-control-deck.menu-open{
+  position:relative !important;
+  z-index:900 !important;
+  overflow:visible !important;
+  isolation:isolate;
+}
+
+.simple-host-app .host-control-deck.menu-open .host-live-mobile-banner{
+  position:relative;
+  z-index:910 !important;
+}
+
+.simple-host-app .host-control-deck.menu-open .host-live-menu-toggle{
+  position:relative;
+  z-index:930 !important;
+}
+
+.simple-host-app .host-control-deck.menu-open .host-live-controls-popout{
+  z-index:920 !important;
+  overflow:visible !important;
+}
