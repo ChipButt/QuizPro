@@ -891,13 +891,17 @@ export default function QuizmasterPreviewView({ stage }) {
           </div>
 
           <div className="qm-results-list">
-            {playingLeaderboard.map((team, index) => (
-              <div key={team.id} className="qm-result-row">
-                <span>{index + 1}</span>
-                <strong>{team.name}</strong>
-                <b>{team.score}</b>
-              </div>
-            ))}
+            {playingLeaderboard.map((team, index) => {
+              const revealedToTeams = currentScreen === "final"
+                && index >= Math.max(0, playingLeaderboard.length - finalRevealCount);
+              return (
+                <div key={team.id} className={`qm-result-row ${revealedToTeams ? "revealed-to-teams" : ""}`}>
+                  <span>{index + 1}</span>
+                  <strong>{team.name}</strong>
+                  <b>{team.score}</b>
+                </div>
+              );
+            })}
           </div>
         </section>
 
