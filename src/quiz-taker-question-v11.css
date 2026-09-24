@@ -1248,3 +1248,81 @@
     display:none !important;
   }
 }
+
+
+/* ---------- Picture answer editor: question clone + independent gold pill ---------- */
+/* The answer editor is deliberately NOT a revealed-answer layout. It inherits
+   the normal picture-question geometry unchanged. Only this extra pill is
+   appended beneath the existing answer field and may be moved independently. */
+
+@media(max-width:420px){
+  .live-team-page .team-question-stage.picture-round-question-layout.picture-answer-editor-preview{
+    height:398px !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+  }
+
+  .live-team-page .team-question-stage.picture-answer-editor-preview .picture-correct-answer-panel{
+    box-sizing:border-box !important;
+    position:relative !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    bottom:auto !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    height:76px !important;
+    min-height:76px !important;
+    margin:10px 0 0 !important;
+    padding:11px 14px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:5px !important;
+    translate:none;
+    transform:none;
+    border:2px solid #d6a700 !important;
+    border-radius:18px !important;
+    background:#ffd429 !important;
+    color:#031b3c !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.55),
+      0 5px 0 #b88900,
+      0 12px 24px rgba(184,137,0,.24) !important;
+    text-align:center !important;
+    overflow:visible !important;
+    z-index:12 !important;
+  }
+
+  .live-team-page .team-question-stage.picture-answer-editor-preview .picture-correct-answer-panel>svg{
+    display:none !important;
+  }
+
+  .live-team-page .team-question-stage.picture-answer-editor-preview .picture-correct-answer-panel>span{
+    grid-area:auto !important;
+    width:100% !important;
+    margin:0 !important;
+    color:#031b3c !important;
+    font-size:10px !important;
+    line-height:1.05 !important;
+    font-weight:950 !important;
+    letter-spacing:.13em !important;
+    text-transform:uppercase !important;
+    text-align:center !important;
+  }
+
+  .live-team-page .team-question-stage.picture-answer-editor-preview .picture-correct-answer-panel>.revealed-answer-text{
+    grid-area:auto !important;
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    color:#031b3c !important;
+    font-size:clamp(16px,4.8vw,21px) !important;
+    line-height:1.2 !important;
+    font-weight:950 !important;
+    text-align:center !important;
+  }
+}
