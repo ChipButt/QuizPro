@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-24T10:12:14.852Z",
+  "updatedAt": "2026-09-24T11:11:09.843Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -2667,7 +2667,7 @@
         {
           "id": "round-z7ez9vt",
           "title": "Round 1",
-          "type": "Music round",
+          "type": "Picture round",
           "answerMode": "text",
           "choiceCount": 4,
           "instructions": "",
@@ -2681,7 +2681,7 @@
               "answer": "",
               "alternatives": [],
               "points": 1,
-              "type": "Music",
+              "type": "Picture",
               "options": [],
               "category": "",
               "difficulty": "Medium",
