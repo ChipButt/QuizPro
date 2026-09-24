@@ -179,12 +179,19 @@ export function buildTeamSnapshot(state, teamToken) {
   const liveAudio = state.live?.audio ?? {};
   const liveRoundIndex = Number(state.live?.roundIndex ?? 0);
   const currentRoundComplete = Boolean(round && roundIsFullyRevealed(state, round));
+  const explicitWaitingRoundIndex = Number(state.live?.waitingRoundIndex);
+  const hasExplicitWaitingRound = state.live?.teamScreen === "lobby"
+    && Number.isInteger(explicitWaitingRoundIndex)
+    && explicitWaitingRoundIndex >= 0
+    && explicitWaitingRoundIndex < (quiz?.rounds?.length ?? 0);
   const firstIncompleteRoundIndex = (quiz?.rounds ?? []).findIndex(
     (item, index) => index >= liveRoundIndex && !roundIsFullyRevealed(state, item)
   );
-  const upcomingRoundIndex = firstIncompleteRoundIndex >= 0
-    ? firstIncompleteRoundIndex
-    : liveRoundIndex + (currentRoundComplete ? 1 : 0);
+  const upcomingRoundIndex = hasExplicitWaitingRound
+    ? explicitWaitingRoundIndex
+    : firstIncompleteRoundIndex >= 0
+      ? firstIncompleteRoundIndex
+      : liveRoundIndex + (currentRoundComplete ? 1 : 0);
   const upcomingRound = quiz?.rounds?.[upcomingRoundIndex] ?? null;
 
   return {
@@ -206,6 +213,7 @@ export function buildTeamSnapshot(state, teamToken) {
       status: state.live?.status ?? "Setup",
       teamScreen: state.live?.teamScreen ?? "lobby",
       roundIndex: state.live?.roundIndex ?? 0,
+      waitingRoundIndex: Number.isInteger(Number(state.live?.waitingRoundIndex)) ? Number(state.live?.waitingRoundIndex) : null,
       questionIndex: maxQuestionIndex,
       revealMode: state.live?.revealMode ?? "round",
       timerActive: Boolean(state.live?.timerActive),
