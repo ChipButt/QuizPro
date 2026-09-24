@@ -209,9 +209,6 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
         finishedAt: Date.now(),
         audio: { questionId: "", playNonce: Number(current.live?.audio?.playNonce ?? 0) },
       },
-      teams: [],
-      answers: {},
-      teamRoundLocks: {},
     }));
   }
 
