@@ -689,3 +689,170 @@
     max-height:22dvh;
   }
 }
+
+
+/* ---------- Picture round responsive media repair ---------- */
+/* Picture rounds are media-first. The image must use the available question
+   width instead of rendering at its small intrinsic thumbnail size. */
+.live-team-page .team-question-stage.has-question-image .team-question-core{
+  width:100% !important;
+  min-width:0 !important;
+  display:grid !important;
+  gap:10px !important;
+  justify-items:stretch !important;
+}
+
+.live-team-page .team-question-stage.has-question-image .live-team-image{
+  box-sizing:border-box !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  margin:0 !important;
+  padding:8px !important;
+  display:grid !important;
+  place-items:center !important;
+  overflow:hidden !important;
+}
+
+.live-team-page .team-question-stage.has-question-image .live-team-image>img{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  height:auto !important;
+  max-height:clamp(150px,25dvh,230px) !important;
+  object-fit:contain !important;
+  object-position:center !important;
+}
+
+.live-team-page .team-question-stage.image-only-question .live-team-image{
+  min-height:clamp(190px,31dvh,285px) !important;
+}
+
+.live-team-page .team-question-stage.image-only-question .live-team-image>img{
+  width:100% !important;
+  height:100% !important;
+  max-height:clamp(190px,31dvh,285px) !important;
+  object-fit:contain !important;
+}
+
+/* Media answer reveals use a full-width vertical stack. This prevents answer
+   text being squeezed into the narrow icon column and stops large images from
+   escaping below Safari's visible viewport. */
+.live-team-page .team-question-stage.is-revealed.has-answer-media{
+  max-height:calc(var(--team-visible-height,100dvh) - 335px) !important;
+  min-height:0 !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  overscroll-behavior:contain !important;
+  -webkit-overflow-scrolling:touch;
+}
+
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill.has-answer-image,
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill.has-answer-audio{
+  box-sizing:border-box !important;
+  width:100% !important;
+  min-width:0 !important;
+  display:grid !important;
+  grid-template-columns:38px minmax(0,1fr) !important;
+  grid-template-areas:
+    "icon label"
+    "answer answer"
+    "media media" !important;
+  align-items:center !important;
+  gap:9px 10px !important;
+  padding:14px !important;
+  border-radius:22px !important;
+  overflow:hidden !important;
+}
+
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill.has-answer-image>svg,
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill.has-answer-audio>svg{
+  grid-area:icon !important;
+}
+
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill.has-answer-image>span,
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill.has-answer-audio>span{
+  grid-area:label !important;
+  min-width:0 !important;
+}
+
+.live-team-page .revealed-answer-pill .revealed-answer-text{
+  grid-area:answer !important;
+  display:block !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:2px 2px 3px !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+  word-break:normal !important;
+  text-align:left !important;
+  font-size:clamp(19px,5.4vw,25px) !important;
+  line-height:1.08 !important;
+}
+
+.live-team-page .team-question-stage.is-revealed .revealed-answer-media{
+  grid-area:media !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  margin:0 !important;
+}
+
+.live-team-page .team-question-stage.is-revealed .revealed-answer-media>img{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  height:auto !important;
+  max-height:min(27dvh,230px) !important;
+  margin:0 auto !important;
+  object-fit:contain !important;
+  object-position:center !important;
+}
+
+/* Reserve a realistic media footprint during Push Question without forcing the
+   question screen taller than the viewport. */
+.live-team-page .team-question-stage.is-review .revealed-answer-slot.has-answer-image{
+  --answer-image-space:clamp(130px,20dvh,185px) !important;
+}
+
+@media(max-width:420px){
+  .live-team-page .team-question-stage.has-question-image .live-team-image>img{
+    max-height:clamp(145px,24dvh,215px) !important;
+  }
+
+  .live-team-page .team-question-stage.image-only-question .live-team-image{
+    min-height:clamp(185px,30dvh,260px) !important;
+  }
+
+  .live-team-page .team-question-stage.image-only-question .live-team-image>img{
+    max-height:clamp(185px,30dvh,260px) !important;
+  }
+
+  .live-team-page .team-question-stage.is-revealed.has-answer-media{
+    max-height:calc(var(--team-visible-height,100dvh) - 320px) !important;
+  }
+
+  .live-team-page .team-question-stage.is-revealed .revealed-answer-media>img{
+    max-height:min(25dvh,210px) !important;
+  }
+}
+
+@media(max-height:700px){
+  .live-team-page .team-question-stage.has-question-image .live-team-image>img{
+    max-height:155px !important;
+  }
+
+  .live-team-page .team-question-stage.image-only-question .live-team-image{
+    min-height:150px !important;
+  }
+
+  .live-team-page .team-question-stage.image-only-question .live-team-image>img{
+    max-height:150px !important;
+  }
+
+  .live-team-page .team-question-stage.is-revealed .revealed-answer-media>img{
+    max-height:155px !important;
+  }
+}
