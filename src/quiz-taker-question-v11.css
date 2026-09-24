@@ -856,3 +856,137 @@
     max-height:155px !important;
   }
 }
+
+
+/* ---------- Approved picture-round editor export: 390 × 844 ---------- */
+/* Baked from the dedicated Picture Round Team View Editor export.
+   Only values explicitly changed in the editor are fixed here. The edited
+   image boxes use the same constraint overrides as the editor itself so the
+   uploaded artwork scales inside each box rather than changing the layout. */
+
+@media(max-width:420px){
+  /* QUESTION PAGE */
+  .live-team-page .team-question-stage.picture-round-question-layout{
+    height:398px !important;
+    min-height:0 !important;
+    max-height:none !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout .live-team-image{
+    height:252px !important;
+    min-height:0 !important;
+    max-height:none !important;
+    translate:0 24px !important;
+    box-sizing:border-box !important;
+    display:grid !important;
+    place-items:center !important;
+    justify-self:start !important;
+    align-self:start !important;
+    overflow:hidden !important;
+    flex:none !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout .live-team-image>img{
+    display:block !important;
+    width:100% !important;
+    height:100% !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:100% !important;
+    max-height:100% !important;
+    object-fit:contain !important;
+    object-position:center !important;
+    margin:0 !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout .team-question-text{
+    translate:0 -266px !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout .answer-input-shell textarea{
+    height:79px !important;
+    min-height:0 !important;
+    max-height:none !important;
+  }
+
+  /* ANSWER PAGE */
+  .live-team-page .team-question-stage.picture-round-answer-layout{
+    height:547px !important;
+    min-height:0 !important;
+    max-height:none !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-answer-layout .live-team-image{
+    height:145px !important;
+    min-height:0 !important;
+    max-height:none !important;
+    translate:0 -3px !important;
+    box-sizing:border-box !important;
+    display:grid !important;
+    place-items:center !important;
+    justify-self:start !important;
+    align-self:start !important;
+    overflow:hidden !important;
+    flex:none !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-answer-layout .live-team-image>img{
+    display:block !important;
+    width:100% !important;
+    height:100% !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:100% !important;
+    max-height:100% !important;
+    object-fit:contain !important;
+    object-position:center !important;
+    margin:0 !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-answer-layout .team-question-text{
+    translate:2px -8px !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-answer-layout .answer-input-shell textarea{
+    height:47px !important;
+    min-height:0 !important;
+    max-height:none !important;
+    translate:0 -2px !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-answer-layout .your-answer-section{
+    height:82px !important;
+    min-height:0 !important;
+    max-height:none !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-answer-layout .revealed-answer-media{
+    width:154px !important;
+    min-width:0 !important;
+    max-width:none !important;
+    height:151px !important;
+    min-height:0 !important;
+    max-height:none !important;
+    translate:59px 4px !important;
+    box-sizing:border-box !important;
+    display:grid !important;
+    place-items:center !important;
+    justify-self:start !important;
+    align-self:start !important;
+    overflow:hidden !important;
+    flex:none !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-answer-layout .revealed-answer-media>img{
+    display:block !important;
+    width:100% !important;
+    height:100% !important;
+    min-width:0 !important;
+    min-height:0 !important;
+    max-width:100% !important;
+    max-height:100% !important;
+    object-fit:contain !important;
+    object-position:center !important;
+    margin:0 !important;
+  }
+}
