@@ -117,16 +117,17 @@ function previewSnapshot(stage) {
     return base;
   }
 
-  const multipleChoice = stage === "multiple-choice" || stage === "timer";
+  const timerPreview = stage === "timer" || stage === "timer-editor";
+  const multipleChoice = stage === "multiple-choice" || timerPreview;
   const revealed = stage === "answer-reveal";
   base.live = {
     ...base.live,
     teamScreen: "question",
     roundIndex: 0,
     questionIndex: 0,
-    timerActive: stage === "timer",
-    timerEndsAt: stage === "timer" ? Date.now() + 45000 : null,
-    timerDurationSeconds: stage === "timer" ? 45 : 0,
+    timerActive: timerPreview,
+    timerEndsAt: timerPreview ? Date.now() + 45000 : null,
+    timerDurationSeconds: timerPreview ? 45 : 0,
   };
   base.round = {
     id: "preview-round",
