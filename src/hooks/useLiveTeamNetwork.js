@@ -118,8 +118,19 @@ function previewSnapshot(stage) {
   }
 
   const timerPreview = stage === "timer" || stage === "timer-editor";
+  const pictureQuestionEditor = stage === "picture-question-editor";
+  const pictureAnswerEditor = stage === "picture-answer-editor";
+  const pictureEditor = pictureQuestionEditor || pictureAnswerEditor;
   const multipleChoice = stage === "multiple-choice" || timerPreview;
-  const revealed = stage === "answer-reveal";
+  const revealed = stage === "answer-reveal" || pictureAnswerEditor;
+
+  const questionImage = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#5a7f2b"/><stop offset="1" stop-color="#9ec75b"/></linearGradient></defs><rect width="800" height="800" fill="url(#g)"/><path d="M0 520 C190 330 330 610 800 270 L800 800 L0 800Z" fill="#315d24"/><path d="M90 720 C250 360 500 220 740 80" fill="none" stroke="#c7df8f" stroke-width="34" opacity=".5"/></svg>'
+  );
+  const answerImage = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800"><rect width="800" height="800" fill="#fff"/><g transform="translate(55 85)"><ellipse cx="325" cy="390" rx="250" ry="175" fill="#d9274e"/><ellipse cx="470" cy="435" rx="185" ry="145" fill="#ef315f"/><ellipse cx="245" cy="500" rx="165" ry="135" fill="#b91f43"/><path d="M360 260 C390 110 500 30 650 0 C545 115 520 190 505 290Z" fill="#4e8c34"/><path d="M415 255 C520 105 645 85 700 105 C570 175 525 235 500 305Z" fill="#6ca543"/></g></svg>'
+  );
+
   base.live = {
     ...base.live,
     teamScreen: "question",
@@ -131,21 +142,35 @@ function previewSnapshot(stage) {
   };
   base.round = {
     id: "preview-round",
-    title: "General Knowledge",
+    title: pictureEditor ? "Cropped Crops" : "General Knowledge",
     totalQuestions: 10,
     teamLocked: false,
     forceLocked: false,
     questions: [{
       id: "q1",
       number: 1,
-      type: multipleChoice ? "Multiple choice" : "Text",
-      text: multipleChoice ? "Which planet is known as the Red Planet?" : "What is the capital city of Australia?",
-      answer: multipleChoice ? "Mars" : "Canberra",
+      type: pictureEditor ? "Picture" : multipleChoice ? "Multiple choice" : "Text",
+      text: pictureEditor ? "What vegetable is this?" : multipleChoice ? "Which planet is known as the Red Planet?" : "What is the capital city of Australia?",
+      image: pictureEditor ? questionImage : "",
+      imageName: pictureEditor ? "Question image" : "",
+      answer: pictureEditor ? "Radish" : multipleChoice ? "Mars" : "Canberra",
+      answerImage: pictureEditor ? answerImage : "",
+      answerImageName: pictureEditor ? "Answer image" : "",
+      hasAnswerImage: pictureEditor,
+      hasAnswerText: true,
       options: multipleChoice ? ["Venus", "Mars", "Jupiter", "Mercury"] : [],
       revealed,
     }],
   };
-  if (revealed) base.teamAnswers = { q1: { text: multipleChoice ? "Mars" : "Canberra" } };
+  if (revealed) {
+    base.teamAnswers = {
+      q1: {
+        text: pictureEditor ? "Radish" : multipleChoice ? "Mars" : "Canberra",
+        status: "correct",
+        score: 1,
+      },
+    };
+  }
   return base;
 }
 
