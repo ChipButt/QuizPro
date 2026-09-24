@@ -708,7 +708,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     const root = document.querySelector(".live-phone-shell");
     if (!root) return undefined;
 
-    const storageVersion = teamToken === "question" ? "v5" : ["timer", "timer-editor"].includes(teamToken) ? "v14" : ["picture-question-editor", "picture-answer-editor"].includes(teamToken) ? "v2" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
+    const storageVersion = teamToken === "question" ? "v5" : ["timer", "timer-editor"].includes(teamToken) ? "v14" : ["picture-question-editor", "picture-answer-editor"].includes(teamToken) ? "v3" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
     const storageKey = `quiz-layout-${storageVersion}:${teamToken || "preview"}`;
     let editEnabled = false;
     let selectedPath = "";
@@ -1077,9 +1077,8 @@ export default function TeamView({ sessionCode, teamToken }) {
       selectElement(element);
     };
 
-    const selectPictureImageBox = (kind) => {
-      const selector = kind === "answer" ? ".revealed-answer-media" : ".live-team-image";
-      const element = root.querySelector(selector);
+    const selectPictureImageBox = () => {
+      const element = root.querySelector(".live-team-image");
       if (!element) return;
       selectElement(element);
     };
@@ -1672,15 +1671,15 @@ export default function TeamView({ sessionCode, teamToken }) {
   const hasQuestionImage = Boolean(question.image);
   const hasQuestionText = Boolean(questionText);
   const isPictureRound = question?.type === "Picture";
-  const pictureLayoutClass = isPictureRound
-    ? (question.revealed ? "picture-round-answer-layout" : "picture-round-question-layout")
-    : "";
+  const pictureLayoutClass = isPictureRound ? "picture-round-question-layout" : "";
   const hasAnswerImage = Boolean(question.hasAnswerImage || question.answerImage);
   const hasAnswerAudio = Boolean(question.hasAnswerAudio || question.answerAudio);
   const hasAnswerText = Boolean(question.hasAnswerText || correctAnswer);
+  const pictureAnswerInSharedFrame = Boolean(isPictureRound && question.answerImage);
+  const hasAnswerPanelMedia = Boolean((hasAnswerImage && !pictureAnswerInSharedFrame) || hasAnswerAudio);
   const hasAnswerReveal = hasAnswerImage || hasAnswerAudio || hasAnswerText;
   const answerRevealClasses = [
-    hasAnswerImage ? "has-answer-image" : "",
+    hasAnswerImage && !pictureAnswerInSharedFrame ? "has-answer-image" : "",
     hasAnswerAudio ? "has-answer-audio" : "",
     hasAnswerText ? "has-answer-text" : "",
   ].filter(Boolean).join(" ");
@@ -1729,12 +1728,27 @@ export default function TeamView({ sessionCode, teamToken }) {
           </button>
         </div>
 
-        <div data-layout-label="Question content area" className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${reviewQuestionMode ? "is-review" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""} ${hasQuestionImage ? "has-question-image" : ""} ${hasQuestionImage && !hasQuestionText ? "image-only-question" : ""} ${hasAnswerImage || hasAnswerAudio ? "has-answer-media" : ""} ${pictureLayoutClass} ${answerResultClass}`}>
+        <div data-layout-label="Question content area" className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${reviewQuestionMode ? "is-review" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""} ${hasQuestionImage ? "has-question-image" : ""} ${hasQuestionImage && !hasQuestionText ? "image-only-question" : ""} ${hasAnswerPanelMedia ? "has-answer-media" : ""} ${pictureLayoutClass} ${answerResultClass}`}>
 
           <div className="team-question-core lockable-zone">
             {question.image ? (
-              <div className="team-media-frame live-team-image" data-layout-label="Question image box">
-                <img src={question.image} alt={question.imageName || "Question"} />
+              <div
+                className={`team-media-frame live-team-image ${isPictureRound ? "picture-shared-image-frame" : ""}`}
+                data-layout-label="Question image box"
+              >
+                <img
+                  className={isPictureRound ? "picture-question-image" : ""}
+                  src={question.image}
+                  alt={question.imageName || "Question"}
+                />
+                {pictureAnswerInSharedFrame ? (
+                  <img
+                    className="picture-answer-image"
+                    src={question.answerImage}
+                    alt={question.answerImageName || "Answer"}
+                    aria-hidden={!question.revealed}
+                  />
+                ) : null}
               </div>
             ) : null}
 
@@ -1810,12 +1824,12 @@ export default function TeamView({ sessionCode, teamToken }) {
             {reviewQuestionMode && hasAnswerReveal ? (
               <div className={`revealed-answer-slot ${answerRevealClasses}`} aria-hidden="true" />
             ) : question.revealed && hasAnswerReveal ? (
-              <div data-layout-label="Correct answer panel" className={`revealed-answer-pill ${answerRevealClasses}`}>
-                <CheckCircle2 aria-hidden="true" />
+              <div data-layout-label="Correct answer panel" className={`revealed-answer-pill ${answerRevealClasses} ${isPictureRound ? "picture-correct-answer-panel" : ""}`}>
+                {!isPictureRound ? <CheckCircle2 aria-hidden="true" /> : null}
                 <span>CORRECT ANSWER</span>
-                {question.answerImage || question.answerAudio ? (
-                  <div className="revealed-answer-media" data-layout-label="Answer image box">
-                    {question.answerImage ? (
+                {((question.answerImage && !pictureAnswerInSharedFrame) || question.answerAudio) ? (
+                  <div className="revealed-answer-media" data-layout-label="Answer media box">
+                    {question.answerImage && !pictureAnswerInSharedFrame ? (
                       <img src={question.answerImage} alt={question.answerImageName || "Answer"} />
                     ) : null}
                     {question.answerAudio ? (
