@@ -743,6 +743,8 @@ export default function TeamView({ sessionCode, teamToken }) {
          while the text block appeared completely immovable/uneditable. */
       if (element.classList?.contains("team-timer-message")) return "__timer_message__";
       if (element.classList?.contains("team-timer-clock")) return "__timer_clock__";
+      if (element.classList?.contains("live-team-image")) return "__picture_question_image_box__";
+      if (element.classList?.contains("revealed-answer-media")) return "__picture_answer_image_box__";
 
       const parts = [];
       let node = element;
@@ -762,6 +764,8 @@ export default function TeamView({ sessionCode, teamToken }) {
       if (!path || path === ":scope") return root;
       if (path === "__timer_message__") return root.querySelector(".team-timer-message");
       if (path === "__timer_clock__") return root.querySelector(".team-timer-clock");
+      if (path === "__picture_question_image_box__") return root.querySelector(".live-team-image");
+      if (path === "__picture_answer_image_box__") return root.querySelector(".revealed-answer-media");
       try {
         return root.querySelector(path);
       } catch {
@@ -834,6 +838,33 @@ export default function TeamView({ sessionCode, teamToken }) {
 
       const isTimerMessage = element.classList?.contains("team-timer-message");
       const isTimerClock = element.classList?.contains("team-timer-clock");
+      const isPictureQuestionImageBox = element.classList?.contains("live-team-image");
+      const isPictureAnswerImageBox = element.classList?.contains("revealed-answer-media");
+      const isPictureImageBox = isPictureQuestionImageBox || isPictureAnswerImageBox;
+
+      if (isPictureImageBox) {
+        element.style.setProperty("box-sizing", "border-box", "important");
+        element.style.setProperty("display", "grid", "important");
+        element.style.setProperty("place-items", "center", "important");
+        element.style.setProperty("justify-self", "start", "important");
+        element.style.setProperty("align-self", "start", "important");
+        element.style.setProperty("overflow", "hidden", "important");
+        element.style.setProperty("flex", "none", "important");
+
+        const image = element.querySelector("img");
+        if (image) {
+          image.style.setProperty("display", "block", "important");
+          image.style.setProperty("width", "100%", "important");
+          image.style.setProperty("height", "100%", "important");
+          image.style.setProperty("min-width", "0", "important");
+          image.style.setProperty("min-height", "0", "important");
+          image.style.setProperty("max-width", "100%", "important");
+          image.style.setProperty("max-height", "100%", "important");
+          image.style.setProperty("object-fit", "contain", "important");
+          image.style.setProperty("object-position", "center", "important");
+          image.style.setProperty("margin", "0", "important");
+        }
+      }
 
       /* Timer parts use direct viewport coordinates. This makes the dedicated
          timer editor WYSIWYG even after production timer positions change. */
@@ -918,6 +949,14 @@ export default function TeamView({ sessionCode, teamToken }) {
       element.style.removeProperty("color");
       element.style.removeProperty("text-align");
       element.style.removeProperty("justify-items");
+
+      if (element.classList?.contains("live-team-image") || element.classList?.contains("revealed-answer-media")) {
+        ["box-sizing","display","place-items","justify-self","align-self","overflow","flex"].forEach((prop) => element.style.removeProperty(prop));
+        const image = element.querySelector("img");
+        if (image) {
+          ["display","width","height","min-width","min-height","max-width","max-height","object-fit","object-position","margin"].forEach((prop) => image.style.removeProperty(prop));
+        }
+      }
 
       if (element.classList?.contains("team-timer-message") || element.classList?.contains("team-timer-clock")) {
         element.style.removeProperty("left");
@@ -1033,6 +1072,13 @@ export default function TeamView({ sessionCode, teamToken }) {
 
     const selectTimerPart = (kind) => {
       const selector = kind === "message" ? ".team-timer-message" : ".team-timer-clock";
+      const element = root.querySelector(selector);
+      if (!element) return;
+      selectElement(element);
+    };
+
+    const selectPictureImageBox = (kind) => {
+      const selector = kind === "answer" ? ".revealed-answer-media" : ".live-team-image";
       const element = root.querySelector(selector);
       if (!element) return;
       selectElement(element);
@@ -1170,6 +1216,18 @@ export default function TeamView({ sessionCode, teamToken }) {
       }
 
       if (message.type !== "quiz-layout-editor") return;
+
+      if (message.action === "select-picture-question-image") {
+        if (!editEnabled) return;
+        selectPictureImageBox("question");
+        return;
+      }
+
+      if (message.action === "select-picture-answer-image") {
+        if (!editEnabled) return;
+        selectPictureImageBox("answer");
+        return;
+      }
 
       if (message.action === "select-timer-message") {
         if (!editEnabled) return;
