@@ -26,21 +26,21 @@ function normalizeStoredState(stored) {
   };
 }
 
+function stripEmbeddedDataUrls(value) {
+  if (typeof value === "string") return value.startsWith("data:") ? "" : value;
+  if (Array.isArray(value)) return value.map(stripEmbeddedDataUrls);
+  if (!value || typeof value !== "object") return value;
+
+  return Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [key, stripEmbeddedDataUrls(item)]),
+  );
+}
+
 function stateForLocalStorage(state) {
-  return {
-    ...state,
-    quizzes: (state.quizzes ?? []).map((quiz) => ({
-      ...quiz,
-      rounds: (quiz.rounds ?? []).map((round) => ({
-        ...round,
-        questions: (round.questions ?? []).map((question) => ({
-          ...question,
-          image: String(question.image || "").startsWith("data:") ? "" : question.image,
-          audio: String(question.audio || "").startsWith("data:") ? "" : question.audio,
-        })),
-      })),
-    })),
-  };
+  // localStorage is only an emergency lightweight cache. Media stays in the
+  // in-memory quiz and shared GitHub library, but every embedded data URL is
+  // removed here so picture/music rounds cannot exhaust Safari's small quota.
+  return stripEmbeddedDataUrls(state);
 }
 
 function readStoredState() {
@@ -58,9 +58,8 @@ export function useQuizState() {
 
   useEffect(() => {
     try {
-      // Embedded image/audio data can easily exceed the browser's localStorage quota.
-      // The shared GitHub library remains the source of truth for quiz media, so the
-      // local cache deliberately stores only lightweight quiz data.
+      // The local cache deliberately removes every embedded media data URL.
+      // The shared GitHub library remains the source of truth for full quiz media.
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(stateForLocalStorage(state)));
       setStorageError("");
     } catch (error) {
