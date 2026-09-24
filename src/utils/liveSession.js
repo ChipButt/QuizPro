@@ -71,9 +71,16 @@ function safeQuestion(state, roundId, question) {
     audio: question.audio ?? "",
     audioName: question.audioName ?? "",
     units: question.units ?? "",
+    hasAnswerImage: Boolean(question.answerImage),
+    hasAnswerAudio: Boolean(question.answerAudio),
+    hasAnswerText: Boolean(String(question.answer ?? "").trim()),
     revealed,
     answer: revealed ? question.answer : undefined,
     alternatives: revealed ? (question.alternatives ?? []) : undefined,
+    answerImage: revealed ? (question.answerImage ?? "") : undefined,
+    answerImageName: revealed ? (question.answerImageName ?? "") : undefined,
+    answerAudio: revealed ? (question.answerAudio ?? "") : undefined,
+    answerAudioName: revealed ? (question.answerAudioName ?? "") : undefined,
   };
 }
 
