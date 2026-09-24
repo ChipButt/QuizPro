@@ -476,6 +476,7 @@ function getRoute() {
     return { kind: "preview", stage: stage === "locked" ? "between-rounds" : stage };
   }
   if (hash === "#/preview" || hash === "#/preview/") return { kind: "preview", stage: "live" };
+  if (hash === "#/timer-editor" || hash === "#/timer-editor/") return { kind: "timer-editor" };
   if (hash.startsWith("#/join/")) {
     const parts = hash.replace(/^#\//, "").split("/");
     return {
@@ -978,6 +979,369 @@ function TeamPreview({ stage }) {
   );
 }
 
+
+function TimerLayoutEditor() {
+  const PHONE_WIDTH = 390;
+  const PHONE_HEIGHT = 844;
+  const FRAME_BORDER = 8;
+  const iframeRef = useRef(null);
+  const [selectedKind, setSelectedKind] = useState("timer-message");
+  const [records, setRecords] = useState({ "timer-message": null, "timer-clock": null });
+  const [copyText, setCopyText] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [scale, setScale] = useState(1);
+
+  const buildSnapshot = () => ({
+    type: "snapshot",
+    team: { id: "preview-team", name: "The Quizzy Rascals", nameLocked: true, table: 7, players: 4 },
+    quiz: { totalRounds: 5 },
+    waitingFacts: [],
+    roundScores: [],
+    leaderboard: [
+      { id: "team-2", name: "Universally Challenged", score: 38 },
+      { id: "preview-team", name: "The Quizzy Rascals", score: 35 },
+    ],
+    teamAnswers: {},
+    live: {
+      teamScreen: "question",
+      roundIndex: 0,
+      questionIndex: 0,
+      timerActive: true,
+      timerEndsAt: Date.now() + 45000,
+      timerDurationSeconds: 45,
+      finalRevealCount: 0,
+    },
+    round: {
+      id: "preview-round",
+      title: "General Knowledge",
+      totalQuestions: 10,
+      teamLocked: false,
+      forceLocked: false,
+      questions: [{
+        id: "q1",
+        number: 1,
+        type: "Multiple choice",
+        text: "Which planet is known as the Red Planet?",
+        answer: "Mars",
+        options: ["Venus", "Mars", "Jupiter", "Mercury"],
+        revealed: false,
+      }],
+    },
+  });
+
+  const sendSnapshot = () => {
+    iframeRef.current?.contentWindow?.postMessage({
+      type: "quiz-preview-snapshot",
+      snapshot: buildSnapshot(),
+    }, window.location.origin);
+  };
+
+  const sendEditor = (action, values = {}) => {
+    iframeRef.current?.contentWindow?.postMessage({
+      type: "quiz-layout-editor",
+      action,
+      ...values,
+    }, window.location.origin);
+  };
+
+  const selectPart = (kind) => {
+    setSelectedKind(kind);
+    sendEditor(kind === "timer-clock" ? "select-timer-clock" : "select-timer-message");
+  };
+
+  const updateSelected = (values) => {
+    setRecords((current) => ({
+      ...current,
+      [selectedKind]: { ...(current[selectedKind] || {}), ...values },
+    }));
+    sendEditor("update-selected", { values });
+  };
+
+  useEffect(() => {
+    const updateScale = () => {
+      const panelWidth = window.innerWidth >= 900 ? 360 : 0;
+      const availableWidth = Math.max(280, window.innerWidth - panelWidth - 72);
+      const availableHeight = Math.max(460, window.innerHeight - 70);
+      setScale(Math.min(1, availableWidth / (PHONE_WIDTH + FRAME_BORDER * 2), availableHeight / (PHONE_HEIGHT + FRAME_BORDER * 2)));
+    };
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setInterval(sendSnapshot, 20000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const onMessage = (event) => {
+      if (event.origin !== window.location.origin) return;
+      const message = event.data || {};
+
+      if (message.type === "quiz-taker-preview-ready" || message.type === "quiz-preview-ready") {
+        sendSnapshot();
+        sendEditor("set-enabled", { enabled: true });
+        window.setTimeout(() => sendEditor("select-timer-message"), 80);
+        window.setTimeout(() => sendEditor("select-timer-clock"), 180);
+        window.setTimeout(() => sendEditor("select-timer-message"), 280);
+        return;
+      }
+
+      if (message.type === "quiz-layout-selection") {
+        const kind = message.kind;
+        if (!["timer-message", "timer-clock"].includes(kind)) return;
+        const record = {
+          path: message.path,
+          kind,
+          x: Number(message.x || 0),
+          y: Number(message.y || 0),
+          width: Number(message.width || 0),
+          height: Number(message.height || 0),
+          fontSize: Number(message.fontSize || 16),
+          headline: String(message.headline || ""),
+          subtext: String(message.subtext || ""),
+          headlineFontSize: Number(message.headlineFontSize || 11),
+          subtextFontSize: Number(message.subtextFontSize || 9),
+          textAlign: message.textAlign || "center",
+        };
+        setRecords((current) => ({ ...current, [kind]: record }));
+        setSelectedKind(kind);
+      }
+    };
+
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
+
+  const selected = records[selectedKind];
+
+  const field = (label, key, step = 1) => (
+    <label style={{ display: "grid", gap: 4, color: "#cbd5e1", font: "700 10px system-ui" }}>
+      <span>{label}</span>
+      <input
+        type="number"
+        step={step}
+        value={selected?.[key] ?? ""}
+        onChange={(event) => updateSelected({ [key]: Number(event.target.value) })}
+        style={{
+          width: "100%", boxSizing: "border-box", border: "1px solid #334155",
+          borderRadius: 8, background: "#0f172a", color: "#fff", padding: "8px 9px",
+          font: "700 11px system-ui"
+        }}
+      />
+    </label>
+  );
+
+  const generateCopyText = async () => {
+    const message = records["timer-message"] || {};
+    const clock = records["timer-clock"] || {};
+    const payload = {
+      tool: "Quiz In Timer Layout Editor",
+      viewport: { width: PHONE_WIDTH, height: PHONE_HEIGHT, units: "px" },
+      timerMessage: {
+        left: Number(message.x || 0),
+        top: Number(message.y || 0),
+        width: Number(message.width || 0),
+        height: Number(message.height || 0),
+        headline: String(message.headline || ""),
+        subtext: String(message.subtext || ""),
+        headlineFontSize: Number(message.headlineFontSize || 0),
+        subtextFontSize: Number(message.subtextFontSize || 0),
+        textAlign: message.textAlign || "center",
+      },
+      timerClock: {
+        left: Number(clock.x || 0),
+        top: Number(clock.y || 0),
+        width: Number(clock.width || 0),
+        height: Number(clock.height || 0),
+        numberFontSize: Number(clock.fontSize || 0),
+      },
+    };
+    const output = JSON.stringify(payload, null, 2);
+    setCopyText(output);
+    try {
+      await navigator.clipboard.writeText(output);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  return (
+    <main style={{
+      minHeight: "100vh",
+      boxSizing: "border-box",
+      padding: 20,
+      background: "#0b1220",
+      color: "#fff",
+      display: "grid",
+      gridTemplateColumns: window.innerWidth >= 900 ? "340px minmax(0,1fr)" : "1fr",
+      gap: 24,
+      alignItems: "start",
+      overflow: "auto"
+    }}>
+      <aside style={{
+        position: window.innerWidth >= 900 ? "sticky" : "static",
+        top: 20,
+        display: "grid",
+        gap: 14,
+        padding: 16,
+        border: "1px solid #26324a",
+        borderRadius: 16,
+        background: "#111827",
+        boxShadow: "0 14px 38px rgba(0,0,0,.3)"
+      }}>
+        <div>
+          <div style={{ color: "#f3c94b", font: "900 11px system-ui", letterSpacing: ".09em" }}>QUIZ IN</div>
+          <h1 style={{ margin: "5px 0 3px", font: "900 22px system-ui" }}>Timer Layout Editor</h1>
+          <p style={{ margin: 0, color: "#94a3b8", font: "600 11px/1.45 system-ui" }}>
+            Drag the timer text or clock on the phone. Use the corner handles to resize.
+          </p>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+          <button type="button" onClick={() => selectPart("timer-message")} style={{
+            border: 0, borderRadius: 9, padding: "10px 8px",
+            background: selectedKind === "timer-message" ? "#0891b2" : "#26324a",
+            color: "#fff", font: "800 11px system-ui", cursor: "pointer"
+          }}>Timer text</button>
+          <button type="button" onClick={() => selectPart("timer-clock")} style={{
+            border: 0, borderRadius: 9, padding: "10px 8px",
+            background: selectedKind === "timer-clock" ? "#0891b2" : "#26324a",
+            color: "#fff", font: "800 11px system-ui", cursor: "pointer"
+          }}>Timer clock</button>
+        </div>
+
+        {selected ? (
+          <>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              {field("Left / X", "x")}
+              {field("Top / Y", "y")}
+              {field("Width", "width")}
+              {field("Height", "height")}
+            </div>
+
+            {selectedKind === "timer-message" ? (
+              <div style={{ display: "grid", gap: 9 }}>
+                <label style={{ display: "grid", gap: 4, color: "#cbd5e1", font: "700 10px system-ui" }}>
+                  <span>Headline text</span>
+                  <textarea
+                    value={selected.headline || ""}
+                    onChange={(event) => updateSelected({ headline: event.target.value })}
+                    style={{ minHeight: 58, resize: "vertical", border: "1px solid #334155", borderRadius: 8, background: "#0f172a", color: "#fff", padding: 9, font: "700 11px/1.3 system-ui" }}
+                  />
+                </label>
+                <label style={{ display: "grid", gap: 4, color: "#cbd5e1", font: "700 10px system-ui" }}>
+                  <span>Supporting text</span>
+                  <textarea
+                    value={selected.subtext || ""}
+                    onChange={(event) => updateSelected({ subtext: event.target.value })}
+                    style={{ minHeight: 58, resize: "vertical", border: "1px solid #334155", borderRadius: 8, background: "#0f172a", color: "#fff", padding: 9, font: "700 11px/1.3 system-ui" }}
+                  />
+                </label>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                  {field("Headline size", "headlineFontSize", 0.5)}
+                  {field("Supporting size", "subtextFontSize", 0.5)}
+                </div>
+                <label style={{ display: "grid", gap: 4, color: "#cbd5e1", font: "700 10px system-ui" }}>
+                  <span>Text alignment</span>
+                  <select
+                    value={selected.textAlign || "center"}
+                    onChange={(event) => updateSelected({ textAlign: event.target.value })}
+                    style={{ border: "1px solid #334155", borderRadius: 8, background: "#0f172a", color: "#fff", padding: 9, font: "700 11px system-ui" }}
+                  >
+                    <option value="left">Left</option>
+                    <option value="center">Centre</option>
+                    <option value="right">Right</option>
+                  </select>
+                </label>
+              </div>
+            ) : (
+              <div>{field("Timer number size", "fontSize", 0.5)}</div>
+            )}
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <button type="button" onClick={() => sendEditor("reset-selected")} style={{ border: 0, borderRadius: 8, padding: "9px", background: "#334155", color: "#fff", font: "800 10px system-ui" }}>Reset selected</button>
+              <button type="button" onClick={() => {
+                if (window.confirm("Reset both timer elements to their current app defaults?")) {
+                  sendEditor("reset-page");
+                  setRecords({ "timer-message": null, "timer-clock": null });
+                  window.setTimeout(() => selectPart("timer-message"), 120);
+                }
+              }} style={{ border: 0, borderRadius: 8, padding: "9px", background: "#7f1d1d", color: "#fff", font: "800 10px system-ui" }}>Reset both</button>
+            </div>
+          </>
+        ) : (
+          <div style={{ color: "#94a3b8", font: "600 11px/1.4 system-ui" }}>Loading timer controls…</div>
+        )}
+
+        <button type="button" onClick={generateCopyText} style={{
+          border: 0, borderRadius: 10, padding: "11px 12px",
+          background: "#f3c94b", color: "#111827", font: "900 12px system-ui", cursor: "pointer"
+        }}>{copied ? "Copied ✓" : "Copy settings for ChatGPT"}</button>
+
+        {copyText ? (
+          <textarea readOnly value={copyText} style={{
+            width: "100%", minHeight: 190, boxSizing: "border-box", resize: "vertical",
+            border: "1px solid #334155", borderRadius: 8, background: "#020617",
+            color: "#cbd5e1", padding: 9, font: "500 9px/1.35 monospace"
+          }} />
+        ) : null}
+
+        <a href="#/host" style={{ color: "#93c5fd", font: "700 11px system-ui", textDecoration: "none" }}>← Back to Quiz In</a>
+      </aside>
+
+      <section style={{ minWidth: 0, display: "grid", justifyItems: "center", gap: 10 }}>
+        <div style={{ color: "#67e8f9", font: "900 11px system-ui", letterSpacing: ".09em" }}>QUIZ TAKER · TIMER EDITOR · 390 × 844</div>
+        <div style={{
+          width: (PHONE_WIDTH + FRAME_BORDER * 2) * scale,
+          height: (PHONE_HEIGHT + FRAME_BORDER * 2) * scale,
+          position: "relative"
+        }}>
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            width: PHONE_WIDTH + FRAME_BORDER * 2,
+            height: PHONE_HEIGHT + FRAME_BORDER * 2,
+            transform: \`scale(\${scale})\`,
+            transformOrigin: "top left",
+            padding: FRAME_BORDER,
+            boxSizing: "border-box",
+            borderRadius: 28,
+            background: "#05070b",
+            boxShadow: "0 18px 55px rgba(0,0,0,.5)",
+            overflow: "hidden"
+          }}>
+            <iframe
+              ref={iframeRef}
+              title="Quiz Taker timer layout editor"
+              src="#/join/__PREVIEW__/timer-editor"
+              onLoad={() => {
+                sendSnapshot();
+                sendEditor("set-enabled", { enabled: true });
+                window.setTimeout(() => selectPart("timer-message"), 120);
+              }}
+              style={{
+                display: "block",
+                width: PHONE_WIDTH,
+                height: PHONE_HEIGHT,
+                border: 0,
+                borderRadius: 20,
+                background: "#fff"
+              }}
+            />
+          </div>
+        </div>
+        <div style={{ color: "#94a3b8", font: "600 10px/1.4 system-ui", textAlign: "center" }}>
+          Drag either timer asset directly on the phone. Resize with the handles around the selected asset.
+        </div>
+      </section>
+    </main>
+  );
+}
+
 export default function App() {
   const [route, setRoute] = useState(getRoute);
 
@@ -988,6 +1352,7 @@ export default function App() {
   }, []);
 
   if (route.kind === "preview") return <TeamPreview stage={route.stage} />;
+  if (route.kind === "timer-editor") return <TimerLayoutEditor />;
   if (route.kind === "host-preview") return <QuizmasterPreviewView stage={route.stage} />;
   if (route.kind === "join") return <TeamView sessionCode={route.sessionCode} teamToken={route.teamToken} />;
   return <HostApp />;
