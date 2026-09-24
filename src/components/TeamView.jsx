@@ -1604,6 +1604,9 @@ export default function TeamView({ sessionCode, teamToken }) {
   }
 
   const correctAnswer = String(question.answer ?? "").trim();
+  const questionText = String(question.text ?? "").trim();
+  const hasQuestionImage = Boolean(question.image);
+  const hasQuestionText = Boolean(questionText);
   const hasAnswerImage = Boolean(question.hasAnswerImage || question.answerImage);
   const hasAnswerAudio = Boolean(question.hasAnswerAudio || question.answerAudio);
   const hasAnswerText = Boolean(question.hasAnswerText || correctAnswer);
@@ -1658,7 +1661,7 @@ export default function TeamView({ sessionCode, teamToken }) {
           </button>
         </div>
 
-        <div className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${reviewQuestionMode ? "is-review" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""} ${answerResultClass}`}>
+        <div className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${reviewQuestionMode ? "is-review" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""} ${hasQuestionImage ? "has-question-image" : ""} ${hasQuestionImage && !hasQuestionText ? "image-only-question" : ""} ${hasAnswerImage || hasAnswerAudio ? "has-answer-media" : ""} ${answerResultClass}`}>
 
           <div className="team-question-core lockable-zone">
             {question.image ? (
@@ -1678,7 +1681,7 @@ export default function TeamView({ sessionCode, teamToken }) {
               </div>
             ) : null}
 
-            {String(question.text ?? "").trim() ? <h1 className="team-question-text">{question.text}</h1> : null}
+            {hasQuestionText ? <h1 className="team-question-text">{question.text}</h1> : null}
           </div>
 
           <div className="team-answer-zone lockable-zone">
