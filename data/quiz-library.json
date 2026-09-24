@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-24T12:45:31.041Z",
+  "updatedAt": "2026-09-24T12:45:34.109Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -2768,7 +2768,7 @@
               "id": "question-onlg3di",
               "number": 5,
               "text": "What vegetable is this?",
-              "answer": "",
+              "answer": "Garlic",
               "alternatives": [],
               "points": 1,
               "type": "Picture",
