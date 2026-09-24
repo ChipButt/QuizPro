@@ -158,6 +158,7 @@ export function useLiveHostNetwork(state, updateState) {
   }, [state.live?.sessionActive, state.live?.sessionCode]);
 
   useEffect(() => {
+    if (!state.live?.sessionActive) return;
     for (const [token, conn] of connectionsRef.current.entries()) {
       sendSnapshot(token, conn);
     }
