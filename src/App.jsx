@@ -1384,10 +1384,7 @@ function PictureRoundLayoutEditor() {
   };
 
   const selectImageBox = (page = mode) => {
-    const action = page === "answer"
-      ? "select-picture-answer-image"
-      : "select-picture-question-image";
-    sendEditor(page, action);
+    sendEditor(page, "select-picture-question-image");
   };
 
   useEffect(() => {
@@ -1456,7 +1453,6 @@ function PictureRoundLayoutEditor() {
       "Your answer box",
       "Correct answer panel",
       "Correct answer text",
-      "Answer image box",
     ]);
 
     const simplify = (page, data) => ({
@@ -1476,7 +1472,7 @@ function PictureRoundLayoutEditor() {
       viewport: { width: PHONE_WIDTH, height: PHONE_HEIGHT, units: "px" },
       questionPage: simplify("question", exports.question),
       answerPage: simplify("answer", exports.answer),
-      imageRule: "Question and answer images scale with object-fit: contain inside their edited image boxes.",
+      imageRule: "Question and answer images share the same edited image box and cross-fade in place with object-fit: contain.",
     }, null, 2));
   }, [exports]);
 
@@ -1529,7 +1525,7 @@ function PictureRoundLayoutEditor() {
           <div style={{ color:"#f3c94b", font:"900 11px system-ui", letterSpacing:".09em" }}>QUIZ IN</div>
           <h1 style={{ margin:"5px 0 3px", font:"900 21px system-ui" }}>Picture Round Editor</h1>
           <p style={{ margin:0, color:"#94a3b8", font:"600 11px/1.45 system-ui" }}>
-            Click a part on the phone, then drag or resize it. Images always scale inside the image boxes.
+            Click a part on the phone, then drag or resize it. The question and answer image share one image box.
           </p>
         </div>
 
@@ -1557,7 +1553,7 @@ function PictureRoundLayoutEditor() {
             cursor:"pointer"
           }}
         >
-          {mode === "question" ? "SELECT + RESIZE QUESTION IMAGE BOX" : "SELECT + RESIZE ANSWER IMAGE BOX"}
+          SELECT + RESIZE SHARED IMAGE BOX
         </button>
 
         {selected ? (
@@ -1594,7 +1590,7 @@ function PictureRoundLayoutEditor() {
           </>
         ) : (
           <div style={{ color:"#94a3b8", font:"600 11px/1.4 system-ui" }}>
-            Click any editable part of the {mode} page. Clicking an image selects its containing image box.
+            Click any editable part of the {mode} page. The displayed picture selects the shared question/answer image box.
           </div>
         )}
 
@@ -1663,7 +1659,7 @@ function PictureRoundLayoutEditor() {
         </div>
 
         <div style={{ color:"#94a3b8", font:"600 10px/1.4 system-ui", textAlign:"center", maxWidth:520 }}>
-          Resize the Question image box and Answer image box once; every uploaded picture will be scaled to fit inside those areas.
+          Resize the shared image box once; the question picture fades into the answer picture inside that exact same area.
         </div>
       </section>
     </main>
