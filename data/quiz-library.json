@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-24T12:43:11.422Z",
+  "updatedAt": "2026-09-24T12:43:36.504Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -2677,7 +2677,7 @@
             {
               "id": "question-dol15bt",
               "number": 1,
-              "text": "",
+              "text": "What vegetable is this?",
               "answer": "Raddish",
               "alternatives": [],
               "points": 1,
