@@ -73,6 +73,11 @@ export function autoScoreAnswer(question, answerText) {
     .map(normalizeAnswer)
     .filter(Boolean);
   const candidate = normalizeAnswer(answerText);
+
+  if (!accepted.length) {
+    return { score: null, status: "pending", reason: "No text answer set; manual check needed" };
+  }
+
   const correct = accepted.includes(candidate);
 
   if (question.type === "Multiple choice") {
