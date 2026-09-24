@@ -2862,3 +2862,75 @@
   grid-area:audio;
   width:100%;
 }
+
+
+/* ---------- Final screen mobile action sizing ---------- */
+/* Keep these controls compact. Some mobile button/layout rules can otherwise
+   stretch them to the full width/height of their flex containers. */
+.simple-host-app .host-screen-preview-top .host-push-screen-button{
+  width:auto !important;
+  min-width:0 !important;
+  max-width:max-content !important;
+  height:42px !important;
+  min-height:42px !important;
+  max-height:42px !important;
+  padding:0 14px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:7px !important;
+  align-self:center !important;
+  flex:0 0 auto !important;
+  white-space:nowrap !important;
+  line-height:1 !important;
+}
+
+.simple-host-app .host-final-preview-heading>button{
+  width:auto !important;
+  min-width:0 !important;
+  max-width:max-content !important;
+  height:40px !important;
+  min-height:40px !important;
+  max-height:40px !important;
+  padding:0 13px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:6px !important;
+  align-self:center !important;
+  flex:0 0 auto !important;
+  white-space:nowrap !important;
+  line-height:1 !important;
+}
+
+@media(max-width:640px){
+  .simple-host-app .host-screen-preview-top{
+    align-items:center !important;
+  }
+
+  .simple-host-app .host-screen-preview-top .host-push-screen-button{
+    width:auto !important;
+    min-width:0 !important;
+    height:38px !important;
+    min-height:38px !important;
+    max-height:38px !important;
+    padding:0 11px !important;
+    font-size:10px !important;
+    border-radius:11px !important;
+  }
+
+  .simple-host-app .host-final-preview-heading{
+    align-items:center !important;
+  }
+
+  .simple-host-app .host-final-preview-heading>button{
+    width:auto !important;
+    min-width:0 !important;
+    height:36px !important;
+    min-height:36px !important;
+    max-height:36px !important;
+    padding:0 10px !important;
+    font-size:10px !important;
+    border-radius:10px !important;
+  }
+}
