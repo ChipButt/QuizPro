@@ -1305,7 +1305,7 @@ function TimerLayoutEditor() {
             inset: 0,
             width: PHONE_WIDTH + FRAME_BORDER * 2,
             height: PHONE_HEIGHT + FRAME_BORDER * 2,
-            transform: \`scale(\${scale})\`,
+            transform: `scale(${scale})`,
             transformOrigin: "top left",
             padding: FRAME_BORDER,
             boxSizing: "border-box",
