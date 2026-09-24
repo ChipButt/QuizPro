@@ -1,7 +1,7 @@
 const ANSWER_SELECTOR = ".question-team-card .answer-input-shell textarea";
 const PAGE_SELECTOR = ".team-page.live-team-page";
 const SHELL_SELECTOR = ".live-phone-shell";
-const QUESTION_STAGE_KEYBOARD_GAP_PX = 20;
+const QUESTION_STAGE_KEYBOARD_GAP_PX = 100;
 const QUESTION_STAGE_SELECTOR = ".question-team-card .team-question-stage";
 const KEYBOARD_OPEN_THRESHOLD_PX = 100;
 
@@ -65,20 +65,25 @@ function restoreOriginalView() {
 }
 
 function finishKeyboardClose() {
+  const root = document.documentElement;
+
+  /*
+   * Return the translated page, the document scroll position and the header
+   * state in one synchronous frame. This prevents the content from snapping
+   * back first and the blue header/logo appearing a moment later.
+   */
+  root.style.setProperty("--team-keyboard-slide", "0px");
+  holdDocumentPosition();
+  root.style.setProperty("--team-visible-top", "0px");
+  root.style.setProperty("--team-visible-left", "0px");
+  root.style.removeProperty("--team-keyboard-layout-height");
   baselineHeight = 0;
-  document.documentElement.style.removeProperty("--team-keyboard-layout-height");
-  document.documentElement.style.setProperty("--team-visible-top", "0px");
-  document.documentElement.style.setProperty("--team-visible-left", "0px");
-
   forceKeyboardClasses(false);
+  holdDocumentPosition();
 
-  // Restore again after the fixed keyboard layout is released. This is the
-  // step that brings the real top of the page (including the logo) back into
-  // the visual viewport after Safari's focus-pan has finished.
-  restoreOriginalView();
   window.requestAnimationFrame(() => {
-    restoreOriginalView();
-    window.requestAnimationFrame(restoreOriginalView);
+    holdDocumentPosition();
+    window.requestAnimationFrame(holdDocumentPosition);
   });
 }
 
@@ -97,9 +102,13 @@ function settleKeyboardClose() {
   const tryRestore = (isLast = false) => {
     if (finished) return;
 
+    /*
+     * Keep the page in its keyboard-lifted position for the whole keyboard
+     * close animation. Do not reset the transform early: that was what made
+     * the main page return before the header/logo.
+     */
     forceKeyboardClasses(true);
-    resetKeyboardSlide();
-    restoreOriginalView();
+    holdDocumentPosition();
 
     const viewportHeight = Math.round(window.visualViewport?.height ?? window.innerHeight);
     const targetHeight = Math.max(1, Math.round(baselineHeight || window.innerHeight));
@@ -158,7 +167,7 @@ function updateKeyboardSlide() {
   /*
    * visualViewport.bottom is the top edge of the software keyboard. Lift the
    * WHOLE quiz screen until the bottom of .team-question-stage sits exactly
-   * 20px above that edge. If it is already at least 20px clear, do not move it.
+   * 100px above that edge. If it is already at least 100px clear, do not move it.
    */
   const requiredShift = Math.max(
     0,
@@ -259,10 +268,9 @@ document.addEventListener("focusout", (event) => {
 
   cleanupPending?.();
   cleanupPending = null;
-  resetKeyboardSlide();
 
-  // Hold keyboard mode through Safari's close animation. settleKeyboardClose
-  // releases it only once the visual viewport has expanded again.
+  // Keep the current keyboard lift in place while Safari closes. The complete
+  // page, including the header/logo, is restored together once it is closed.
   forceKeyboardClasses(true);
   settleKeyboardClose();
 });
