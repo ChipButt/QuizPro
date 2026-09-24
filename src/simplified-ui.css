@@ -1011,3 +1011,35 @@
     grid-template-columns:1fr;
   }
 }
+
+
+/* ---------- Media-capable answer options ---------- */
+.simple-choice-option-editor{
+  min-width:0;
+  padding:10px;
+  display:grid;
+  gap:8px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#f8fbff;
+}
+
+.simple-choice-option-editor label small{
+  color:#8796aa;
+  font-size:9px;
+  font-weight:850;
+}
+
+.simple-option-image-button{
+  width:max-content;
+  max-width:100%;
+}
+
+.simple-choice-option-image{
+  width:100%;
+  max-height:170px;
+  object-fit:contain;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+}
