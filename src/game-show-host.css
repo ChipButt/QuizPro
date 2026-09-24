@@ -2752,3 +2752,33 @@
   z-index:920 !important;
   overflow:visible !important;
 }
+
+
+/* ---------- Waiting screen round selector ---------- */
+.simple-host-app .host-waiting-round-selector{
+  width:min(520px,100%);
+  margin:0 auto 14px;
+  display:grid;
+  gap:6px;
+  text-align:left;
+}
+
+.simple-host-app .host-waiting-round-selector>span{
+  color:#5f7fae;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.simple-host-app .host-waiting-round-selector select{
+  width:100%;
+  min-height:46px;
+  padding:8px 12px;
+  border:2px solid #a9c8f4;
+  border-radius:12px;
+  background:#123467;
+  color:#fff;
+  font-weight:900;
+  font-size:14px;
+}
