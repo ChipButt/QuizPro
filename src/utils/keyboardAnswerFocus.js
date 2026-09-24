@@ -1,7 +1,7 @@
 const ANSWER_SELECTOR = ".question-team-card .answer-input-shell textarea";
 const PAGE_SELECTOR = ".team-page.live-team-page";
 const SHELL_SELECTOR = ".live-phone-shell";
-const QUESTION_STAGE_KEYBOARD_GAP_PX = 100;
+const QUESTION_STAGE_KEYBOARD_GAP_PX = 150;
 const QUESTION_STAGE_SELECTOR = ".question-team-card .team-question-stage";
 const KEYBOARD_OPEN_THRESHOLD_PX = 100;
 
@@ -167,7 +167,7 @@ function updateKeyboardSlide() {
   /*
    * visualViewport.bottom is the top edge of the software keyboard. Lift the
    * WHOLE quiz screen until the bottom of .team-question-stage sits exactly
-   * 100px above that edge. If it is already at least 100px clear, do not move it.
+   * 150px above that edge. If it is already at least 150px clear, do not move it.
    */
   const requiredShift = Math.max(
     0,
