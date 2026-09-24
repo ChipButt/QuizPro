@@ -1636,7 +1636,7 @@ export default function TeamView({ sessionCode, teamToken }) {
         </div>
       ) : null}
 
-      <section className={`team-card live-team-card question-team-card ${snapshot.live?.timerActive ? "timer-running" : ""} ${keyboardActive ? "keyboard-active" : ""}`}>
+      <section className={`team-card live-team-card question-team-card ${snapshot.live?.timerActive ? "timer-running" : ""}`}>
         <div className="team-question-topline">
           <div className="team-question-team-name"><span>TEAM</span><strong>{snapshot.team.name}</strong></div>
           <div className="team-question-progress">{answeredCount}/{totalRoundQuestions || questions.length} answered</div>
