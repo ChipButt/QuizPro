@@ -1383,6 +1383,13 @@ function PictureRoundLayoutEditor() {
     sendEditor(mode, "update-selected", { values });
   };
 
+  const selectImageBox = (page = mode) => {
+    const action = page === "answer"
+      ? "select-picture-answer-image"
+      : "select-picture-question-image";
+    sendEditor(page, action);
+  };
+
   useEffect(() => {
     const resize = () => {
       const side = window.innerWidth >= 900 ? 370 : 0;
@@ -1429,7 +1436,10 @@ function PictureRoundLayoutEditor() {
 
   useEffect(() => {
     setSelected(null);
-    window.setTimeout(() => sendEditor(mode, "set-enabled", { enabled: true }), 30);
+    window.setTimeout(() => {
+      sendEditor(mode, "set-enabled", { enabled: true });
+      selectImageBox(mode);
+    }, 60);
   }, [mode]);
 
   useEffect(() => {
@@ -1532,6 +1542,23 @@ function PictureRoundLayoutEditor() {
             }}>{page === "question" ? "Question page" : "Answer page"}</button>
           ))}
         </div>
+
+        <button
+          type="button"
+          onClick={() => selectImageBox(mode)}
+          style={{
+            border:"2px solid #fde68a",
+            borderRadius:10,
+            padding:"12px 10px",
+            background:"#f3c94b",
+            color:"#111827",
+            font:"950 11px system-ui",
+            letterSpacing:".02em",
+            cursor:"pointer"
+          }}
+        >
+          {mode === "question" ? "SELECT + RESIZE QUESTION IMAGE BOX" : "SELECT + RESIZE ANSWER IMAGE BOX"}
+        </button>
 
         {selected ? (
           <>
