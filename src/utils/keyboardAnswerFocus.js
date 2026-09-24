@@ -8,6 +8,9 @@ const QUESTION_TOP_GAP_PX = 6;
 
 let baselineHeight = 0;
 let cleanupPending = null;
+let originalScrollX = 0;
+let originalScrollY = 0;
+let restoreTimers = [];
 
 function syncVisualViewport() {
   const viewport = window.visualViewport;
@@ -29,6 +32,51 @@ function syncVisualViewport() {
 
 function resetKeyboardSlide() {
   document.documentElement.style.setProperty("--team-keyboard-slide", "0px");
+}
+
+function clearRestoreTimers() {
+  restoreTimers.forEach((timer) => window.clearTimeout(timer));
+  restoreTimers = [];
+}
+
+function restoreOriginalView() {
+  resetKeyboardSlide();
+
+  // Mobile Safari may keep its own focus-pan after the textarea blurs.
+  // Restore both the window and the scrolling element so the full original
+  // Quiz Taker screen, including the logo, comes back into view.
+  try {
+    window.scrollTo(originalScrollX, originalScrollY);
+  } catch {
+    window.scrollTo({ left: originalScrollX, top: originalScrollY, behavior: "auto" });
+  }
+
+  const scrollingElement = document.scrollingElement;
+  if (scrollingElement) {
+    scrollingElement.scrollLeft = originalScrollX;
+    scrollingElement.scrollTop = originalScrollY;
+  }
+}
+
+function settleKeyboardClose() {
+  clearRestoreTimers();
+
+  // iOS can continue changing visualViewport offset/height after blur. Reapply
+  // the original position across that settling period instead of trusting one
+  // immediate scrollTo call.
+  const delays = [0, 40, 100, 180, 300, 480, 700, 950, 1250];
+  restoreTimers = delays.map((delay) => window.setTimeout(() => {
+    restoreOriginalView();
+
+    const viewport = window.visualViewport;
+    const viewportHeight = Math.round(viewport?.height ?? window.innerHeight);
+    const layoutHeight = Math.round(window.innerHeight);
+
+    if (Math.abs(viewportHeight - layoutHeight) <= 4) {
+      document.documentElement.style.setProperty("--team-visible-top", "0px");
+      document.documentElement.style.setProperty("--team-visible-left", "0px");
+    }
+  }, delay));
 }
 
 function updateKeyboardSlide() {
@@ -95,6 +143,10 @@ document.addEventListener("focusin", (event) => {
   const target = event.target;
   if (!(target instanceof Element) || !target.matches(ANSWER_SELECTOR)) return;
 
+  clearRestoreTimers();
+  originalScrollX = window.scrollX;
+  originalScrollY = window.scrollY;
+
   const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
   baselineHeight = Math.max(window.innerHeight, viewportHeight);
   syncVisualViewport();
@@ -108,12 +160,18 @@ document.addEventListener("focusout", (event) => {
   const target = event.target;
   if (!(target instanceof Element) || !target.matches(ANSWER_SELECTOR)) return;
 
+  cleanupPending?.();
+  cleanupPending = null;
+  resetKeyboardSlide();
+
+  // Start restoring immediately, then keep correcting while the software
+  // keyboard finishes its close animation and Safari releases its focus-pan.
+  settleKeyboardClose();
+
   window.setTimeout(() => {
-    cleanupPending?.();
-    cleanupPending = null;
-    resetKeyboardSlide();
     baselineHeight = 0;
     document.documentElement.style.removeProperty("--team-keyboard-layout-height");
     syncVisualViewport();
-  }, 100);
+    restoreOriginalView();
+  }, 180);
 });
