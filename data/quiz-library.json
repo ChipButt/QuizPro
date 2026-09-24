@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-24T12:45:19.076Z",
+  "updatedAt": "2026-09-24T12:45:21.844Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -2745,7 +2745,7 @@
               "id": "question-vnos4vm",
               "number": 4,
               "text": "What vegetable is this?",
-              "answer": "",
+              "answer": "Onion",
               "alternatives": [],
               "points": 1,
               "type": "Picture",
