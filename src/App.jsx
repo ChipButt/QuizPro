@@ -1387,6 +1387,10 @@ function PictureRoundLayoutEditor() {
     sendEditor(page, "select-picture-question-image");
   };
 
+  const selectCorrectAnswerPill = () => {
+    sendEditor("answer", "select-picture-correct-answer");
+  };
+
   useEffect(() => {
     const resize = () => {
       const side = window.innerWidth >= 900 ? 370 : 0;
@@ -1435,7 +1439,8 @@ function PictureRoundLayoutEditor() {
     setSelected(null);
     window.setTimeout(() => {
       sendEditor(mode, "set-enabled", { enabled: true });
-      selectImageBox(mode);
+      if (mode === "answer") selectCorrectAnswerPill();
+      else selectImageBox(mode);
     }, 60);
   }, [mode]);
 
@@ -1525,7 +1530,7 @@ function PictureRoundLayoutEditor() {
           <div style={{ color:"#f3c94b", font:"900 11px system-ui", letterSpacing:".09em" }}>QUIZ IN</div>
           <h1 style={{ margin:"5px 0 3px", font:"900 21px system-ui" }}>Picture Round Editor</h1>
           <p style={{ margin:0, color:"#94a3b8", font:"600 11px/1.45 system-ui" }}>
-            Click a part on the phone, then drag or resize it. The question and answer image share one image box.
+            Question and Answer use the same base layout. On the Answer page, only the gold Correct Answer pill is positioned separately.
           </p>
         </div>
 
@@ -1555,6 +1560,25 @@ function PictureRoundLayoutEditor() {
         >
           SELECT + RESIZE SHARED IMAGE BOX
         </button>
+
+        {mode === "answer" ? (
+          <button
+            type="button"
+            onClick={selectCorrectAnswerPill}
+            style={{
+              border:"2px solid #d6a700",
+              borderRadius:10,
+              padding:"12px 10px",
+              background:"#ffd429",
+              color:"#031b3c",
+              font:"950 11px system-ui",
+              letterSpacing:".02em",
+              cursor:"pointer"
+            }}
+          >
+            SELECT + MOVE CORRECT ANSWER PILL
+          </button>
+        ) : null}
 
         {selected ? (
           <>
@@ -1590,7 +1614,9 @@ function PictureRoundLayoutEditor() {
           </>
         ) : (
           <div style={{ color:"#94a3b8", font:"600 11px/1.4 system-ui" }}>
-            Click any editable part of the {mode} page. The displayed picture selects the shared question/answer image box.
+            {mode === "answer"
+              ? "The Answer page matches the Question page. Select the gold pill to position it separately."
+              : "Click any editable part of the Question page. The displayed picture selects the shared image box."}
           </div>
         )}
 
@@ -1659,7 +1685,7 @@ function PictureRoundLayoutEditor() {
         </div>
 
         <div style={{ color:"#94a3b8", font:"600 10px/1.4 system-ui", textAlign:"center", maxWidth:520 }}>
-          Resize the shared image box once; the question picture fades into the answer picture inside that exact same area.
+          The Answer page is the Question page plus one movable gold Correct Answer pill. The image uses the same shared box in both states.
         </div>
       </section>
     </main>
