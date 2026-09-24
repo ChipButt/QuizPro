@@ -1326,3 +1326,32 @@
     text-align:center !important;
   }
 }
+
+
+/* ---------- Approved picture answer export: textarea +93, gold pill +110 ---------- */
+/* Baked from the user's Picture Round Editor export. These are the only two
+   Answer-page offsets from the otherwise-identical Question-page layout. */
+
+@media(max-width:420px){
+  /* Editor preview: align the visible answer field with the Question page. */
+  .live-team-page .team-question-stage.picture-answer-editor-preview .your-answer-section textarea{
+    translate:0 93px !important;
+  }
+
+  /* Real Push Answer state: use the exact same exported answer-field offset. */
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .your-answer-section textarea,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-correct .your-answer-section textarea:disabled,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-incorrect .your-answer-section textarea:disabled{
+    translate:0 93px !important;
+  }
+
+  /* Editor preview: gold Correct Answer pill at the approved position. */
+  .live-team-page .team-question-stage.picture-answer-editor-preview .picture-correct-answer-panel{
+    translate:0 110px !important;
+  }
+
+  /* Real Push Answer state: gold pill uses that same approved position. */
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-correct-answer-panel{
+    translate:0 110px !important;
+  }
+}
