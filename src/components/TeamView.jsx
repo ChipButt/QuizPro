@@ -1510,7 +1510,6 @@ export default function TeamView({ sessionCode, teamToken }) {
   const [drafts, setDrafts] = useState({});
   const [audioBlocked, setAudioBlocked] = useState(false);
   const [newQuestionWaiting, setNewQuestionWaiting] = useState(false);
-  const [keyboardActive, setKeyboardActive] = useState(false);
   const teamAudioRef = useRef(null);
   const lastPlayNonceRef = useRef(0);
   const viewIndexRef = useRef(0);
@@ -1707,7 +1706,6 @@ export default function TeamView({ sessionCode, teamToken }) {
   return (
     <TeamChrome
       status={status}
-      keyboardActive={keyboardActive}
       rail={<LeaderboardRail leaderboard={snapshot.leaderboard} ownId={snapshot.team?.id} />}
       pageClass={isPictureRound ? "picture-round-team-page" : ""}
     >
@@ -1827,8 +1825,6 @@ export default function TeamView({ sessionCode, teamToken }) {
                     className={`${draft.trim() ? "has-answer" : ""} ${submitted ? "submitted-answer" : ""}`}
                     value={draft}
                     onChange={(event) => setDraft(event.target.value)}
-                    onFocus={() => setKeyboardActive(true)}
-                    onBlur={() => setKeyboardActive(false)}
                     onKeyDown={(event) => {
                       if (event.key !== "Enter") return;
                       event.preventDefault();
