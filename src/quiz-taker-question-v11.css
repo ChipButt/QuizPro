@@ -1093,15 +1093,14 @@
 }
 
 
-/* ---------- Picture reveal must preserve question geometry ---------- */
-/* The Question page is the source of truth for picture rounds. Revealing the
-   answer must not move, shrink or restyle the question text, shared image
-   frame, or the team's answer field. The only layout addition is the gold
-   Correct Answer pill immediately below the existing answer field. */
+/* ---------- Picture reveal reuses the Question page flow exactly ---------- */
+/* Do not assign a second set of x/y coordinates on reveal. The question text,
+   shared image frame and answer field stay in their original Question-page
+   document flow. Only reveal styling is neutralised and the gold answer pill
+   is appended underneath. */
 
 @media(max-width:420px){
   .live-team-page .team-question-stage.picture-round-question-layout.is-revealed{
-    position:relative !important;
     height:398px !important;
     min-height:0 !important;
     max-height:none !important;
@@ -1118,79 +1117,31 @@
     animation:gsSweep 3.6s linear infinite !important;
   }
 
-  /* Remove the generic revealed-answer flow. Every child below is positioned
-     from the same coordinates as the approved Question page export. */
-  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed>.team-question-core,
-  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed>.team-answer-zone,
-  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .answer-input-shell{
-    position:static !important;
-    margin:0 !important;
-    padding:0 !important;
-    overflow:visible !important;
-  }
-
-  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .team-question-text{
-    position:absolute !important;
-    left:16px !important;
-    top:12px !important;
-    width:298px !important;
-    max-width:none !important;
-    margin:0 !important;
-    translate:none !important;
-    transform:none !important;
-    z-index:4;
-    text-align:center !important;
-    color:var(--gs-text) !important;
-    -webkit-text-fill-color:var(--gs-text) !important;
-  }
-
-  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-shared-image-frame{
-    position:absolute !important;
-    left:16px !important;
-    top:40px !important;
-    width:298px !important;
-    max-width:none !important;
-    height:252px !important;
-    min-height:0 !important;
-    max-height:none !important;
-    margin:0 !important;
-    translate:none !important;
-    transform:none !important;
-    box-sizing:border-box !important;
-    display:grid !important;
-    place-items:center !important;
-    overflow:hidden !important;
-    z-index:2;
-  }
-
+  /* Preserve the exact Question-page wrappers. Generic reveal styling adds
+     padding/borders around Your Answer; remove only those additions. */
   .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .your-answer-section{
-    position:absolute !important;
-    left:16px !important;
-    top:300px !important;
-    width:298px !important;
-    max-width:none !important;
-    height:82px !important;
+    box-sizing:border-box !important;
+    width:100% !important;
+    height:auto !important;
     min-height:0 !important;
     max-height:none !important;
     margin:0 !important;
     padding:0 !important;
-    translate:none !important;
-    transform:none !important;
     border:0 !important;
     border-radius:0 !important;
     background:transparent !important;
     box-shadow:none !important;
-    z-index:5;
   }
 
   .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .your-answer-label{
     display:none !important;
   }
 
+  /* Keep the field's Question-page dimensions. There is deliberately no
+     position/left/top/translate override here. */
   .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .your-answer-section textarea,
   .live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-correct .your-answer-section textarea:disabled,
   .live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-incorrect .your-answer-section textarea:disabled{
-    display:block !important;
     box-sizing:border-box !important;
     width:100% !important;
     height:79px !important;
@@ -1198,8 +1149,6 @@
     max-height:none !important;
     margin:0 !important;
     padding:12px 15px !important;
-    translate:none !important;
-    transform:none !important;
     opacity:1 !important;
     filter:none !important;
     border:2px solid #b8d8ff !important;
@@ -1211,18 +1160,21 @@
     cursor:default !important;
   }
 
+  /* This is the only new layout item on reveal. It remains in normal flow
+     immediately after the unchanged answer field and may overflow the fixed
+     398px stage without moving anything above it. */
   .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-correct-answer-panel{
-    position:absolute !important;
-    left:16px !important;
-    top:392px !important;
+    position:relative !important;
+    left:auto !important;
     right:auto !important;
+    top:auto !important;
     bottom:auto !important;
-    width:298px !important;
-    max-width:none !important;
+    width:100% !important;
+    max-width:100% !important;
     min-width:0 !important;
     height:76px !important;
     min-height:76px !important;
-    margin:0 !important;
+    margin:10px 0 0 !important;
     padding:11px 14px !important;
     translate:none !important;
     transform:none !important;
