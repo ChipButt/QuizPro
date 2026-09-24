@@ -708,7 +708,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     const root = document.querySelector(".live-phone-shell");
     if (!root) return undefined;
 
-    const storageVersion = teamToken === "question" ? "v5" : ["timer", "timer-editor"].includes(teamToken) ? "v14" : ["picture-question-editor", "picture-answer-editor"].includes(teamToken) ? "v5" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
+    const storageVersion = teamToken === "question" ? "v5" : ["timer", "timer-editor"].includes(teamToken) ? "v14" : ["picture-question-editor", "picture-answer-editor"].includes(teamToken) ? "v6" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
     const storageKey = `quiz-layout-${storageVersion}:${teamToken || "preview"}`;
     let editEnabled = false;
     let selectedPath = "";
@@ -744,6 +744,7 @@ export default function TeamView({ sessionCode, teamToken }) {
       if (element.classList?.contains("team-timer-message")) return "__timer_message__";
       if (element.classList?.contains("team-timer-clock")) return "__timer_clock__";
       if (element.classList?.contains("live-team-image")) return "__picture_question_image_box__";
+      if (element.classList?.contains("picture-correct-answer-panel")) return "__picture_correct_answer_panel__";
       if (element.classList?.contains("revealed-answer-media")) return "__picture_answer_image_box__";
 
       const parts = [];
@@ -765,6 +766,7 @@ export default function TeamView({ sessionCode, teamToken }) {
       if (path === "__timer_message__") return root.querySelector(".team-timer-message");
       if (path === "__timer_clock__") return root.querySelector(".team-timer-clock");
       if (path === "__picture_question_image_box__") return root.querySelector(".live-team-image");
+      if (path === "__picture_correct_answer_panel__") return root.querySelector(".picture-correct-answer-panel");
       if (path === "__picture_answer_image_box__") return root.querySelector(".revealed-answer-media");
       try {
         return root.querySelector(path);
@@ -1052,7 +1054,9 @@ export default function TeamView({ sessionCode, teamToken }) {
       let element = rawTarget instanceof Element ? rawTarget : null;
       if (!element) return;
 
-      if (["picture-question-editor", "picture-answer-editor"].includes(teamToken) && element.closest(".live-team-image")) {
+      if (teamToken === "picture-answer-editor" && element.closest(".picture-correct-answer-panel")) {
+        element = element.closest(".picture-correct-answer-panel");
+      } else if (["picture-question-editor", "picture-answer-editor"].includes(teamToken) && element.closest(".live-team-image")) {
         element = element.closest(".live-team-image");
       } else if (["picture-question-editor", "picture-answer-editor"].includes(teamToken) && element.closest(".revealed-answer-media")) {
         element = element.closest(".revealed-answer-media");
@@ -1079,6 +1083,12 @@ export default function TeamView({ sessionCode, teamToken }) {
 
     const selectPictureImageBox = () => {
       const element = root.querySelector(".live-team-image");
+      if (!element) return;
+      selectElement(element);
+    };
+
+    const selectPictureCorrectAnswer = () => {
+      const element = root.querySelector(".picture-correct-answer-panel");
       if (!element) return;
       selectElement(element);
     };
@@ -1225,6 +1235,12 @@ export default function TeamView({ sessionCode, teamToken }) {
       if (message.action === "select-picture-answer-image") {
         if (!editEnabled) return;
         selectPictureImageBox("answer");
+        return;
+      }
+
+      if (message.action === "select-picture-correct-answer") {
+        if (!editEnabled) return;
+        selectPictureCorrectAnswer();
         return;
       }
 
@@ -1671,6 +1687,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   const hasQuestionImage = Boolean(question.image);
   const hasQuestionText = Boolean(questionText);
   const isPictureRound = question?.type === "Picture";
+  const pictureAnswerEditorPreview = Boolean(isPictureRound && question.editorAnswerPreview);
   const pictureLayoutClass = isPictureRound ? "picture-round-question-layout" : "";
   const hasAnswerImage = Boolean(question.hasAnswerImage || question.answerImage);
   const hasAnswerAudio = Boolean(question.hasAnswerAudio || question.answerAudio);
@@ -1733,7 +1750,7 @@ export default function TeamView({ sessionCode, teamToken }) {
           </button>
         </div>
 
-        <div data-layout-label="Question content area" className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${reviewQuestionMode ? "is-review" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""} ${hasQuestionImage ? "has-question-image" : ""} ${hasQuestionImage && !hasQuestionText ? "image-only-question" : ""} ${hasAnswerPanelMedia ? "has-answer-media" : ""} ${pictureLayoutClass} ${answerResultClass}`}>
+        <div data-layout-label="Question content area" className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${reviewQuestionMode ? "is-review" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""} ${hasQuestionImage ? "has-question-image" : ""} ${hasQuestionImage && !hasQuestionText ? "image-only-question" : ""} ${hasAnswerPanelMedia ? "has-answer-media" : ""} ${pictureLayoutClass} ${pictureAnswerEditorPreview ? "picture-answer-editor-preview" : ""} ${answerResultClass}`}>
 
           <div className="team-question-core lockable-zone">
             {question.image ? (
@@ -1828,7 +1845,7 @@ export default function TeamView({ sessionCode, teamToken }) {
 
             {reviewQuestionMode && hasAnswerReveal ? (
               <div className={`revealed-answer-slot ${answerRevealClasses}`} aria-hidden="true" />
-            ) : question.revealed && hasAnswerReveal ? (
+            ) : (question.revealed || pictureAnswerEditorPreview) && hasAnswerReveal ? (
               <div data-layout-label="Correct answer panel" className={`revealed-answer-pill ${answerRevealClasses} ${isPictureRound ? "picture-correct-answer-panel" : ""}`}>
                 {!isPictureRound ? <CheckCircle2 aria-hidden="true" /> : null}
                 <span>CORRECT ANSWER</span>
