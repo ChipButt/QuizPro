@@ -4744,3 +4744,13 @@
   font-weight:850;
   overflow-wrap:anywhere;
 }
+
+
+/* ---------- Navigation label colour swap ---------- */
+.team-question-nav .question-nav-button.previous > span{
+  color:var(--gs-pink) !important;
+}
+
+.team-question-nav .question-nav-button.next > span{
+  color:var(--gs-chip) !important;
+}
