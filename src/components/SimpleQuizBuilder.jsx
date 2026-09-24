@@ -58,6 +58,10 @@ function createQuestionForRound(round, number) {
     imageName: "",
     audio: "",
     audioName: "",
+    answerImage: "",
+    answerImageName: "",
+    answerAudio: "",
+    answerAudioName: "",
     notes: "",
     timeLimit: 60,
     autoMark: true,
@@ -300,20 +304,27 @@ export default function SimpleQuizBuilder({ state, updateState }) {
   async function attachMedia(questionId, field, file) {
     if (!file) return;
     const key = `${questionId}:${field}`;
+    const isImage = field === "image" || field === "answerImage";
+    const nameField = field === "image"
+      ? "imageName"
+      : field === "audio"
+        ? "audioName"
+        : field === "answerImage"
+          ? "answerImageName"
+          : "answerAudioName";
     setMediaStatus((current) => ({ ...current, [key]: { busy: true, error: "" } }));
 
     try {
-      const src = field === "image"
+      const src = isImage
         ? await prepareQuizImage(file)
         : await readMediaAsDataUrl(file);
 
-      updateQuestion(questionId, field === "image"
-        ? { image: src, imageName: file.name }
-        : { audio: src, audioName: file.name });
+      updateQuestion(questionId, { [field]: src, [nameField]: file.name });
 
       setMediaStatus((current) => ({ ...current, [key]: { busy: false, error: "" } }));
     } catch (error) {
-      const message = error?.message || `Quiz In could not load that ${field} file.`;
+      const mediaType = isImage ? "image" : "audio";
+      const message = error?.message || `Quiz In could not load that ${mediaType} file.`;
       setMediaStatus((current) => ({ ...current, [key]: { busy: false, error: message } }));
     }
   }
@@ -410,11 +421,45 @@ export default function SimpleQuizBuilder({ state, updateState }) {
                           <label>Question<textarea value={question.text ?? ""} onChange={(event) => updateQuestion(question.id, { text: event.target.value })} placeholder="Type the question…" /></label>
 
                           {kind === "picture" ? (
-                            <div className="simple-media-field"><label className="file-button"><FileImage size={16} /> {mediaStatus[`${question.id}:image`]?.busy ? "Optimising…" : question.image ? "Replace image" : "Upload image"}<input type="file" accept="image/*" disabled={mediaStatus[`${question.id}:image`]?.busy} onChange={(event) => attachMedia(question.id, "image", event.target.files?.[0])} /></label>{mediaStatus[`${question.id}:image`]?.error ? <span className="media-upload-error">{mediaStatus[`${question.id}:image`].error}</span> : null}{question.image ? <img src={question.image} alt={question.imageName || "Question"} /> : null}</div>
+                            <div className="simple-media-pair">
+                              <div className="simple-media-block">
+                                <span className="simple-media-label">QUESTION IMAGE</span>
+                                <div className="simple-media-field">
+                                  <label className="file-button"><FileImage size={16} /> {mediaStatus[`${question.id}:image`]?.busy ? "Optimising…" : question.image ? "Replace question image" : "Upload question image"}<input type="file" accept="image/*" disabled={mediaStatus[`${question.id}:image`]?.busy} onChange={(event) => attachMedia(question.id, "image", event.target.files?.[0])} /></label>
+                                  {mediaStatus[`${question.id}:image`]?.error ? <span className="media-upload-error">{mediaStatus[`${question.id}:image`].error}</span> : null}
+                                  {question.image ? <img src={question.image} alt={question.imageName || "Question"} /> : null}
+                                </div>
+                              </div>
+                              <div className="simple-media-block answer-media-block">
+                                <span className="simple-media-label">ANSWER IMAGE <small>OPTIONAL</small></span>
+                                <div className="simple-media-field">
+                                  <label className="file-button"><FileImage size={16} /> {mediaStatus[`${question.id}:answerImage`]?.busy ? "Optimising…" : question.answerImage ? "Replace answer image" : "Upload answer image"}<input type="file" accept="image/*" disabled={mediaStatus[`${question.id}:answerImage`]?.busy} onChange={(event) => attachMedia(question.id, "answerImage", event.target.files?.[0])} /></label>
+                                  {mediaStatus[`${question.id}:answerImage`]?.error ? <span className="media-upload-error">{mediaStatus[`${question.id}:answerImage`].error}</span> : null}
+                                  {question.answerImage ? <img src={question.answerImage} alt={question.answerImageName || "Answer"} /> : null}
+                                </div>
+                              </div>
+                            </div>
                           ) : null}
 
                           {kind === "music" ? (
-                            <div className="simple-media-field"><label className="file-button"><FileAudio size={16} /> {mediaStatus[`${question.id}:audio`]?.busy ? "Loading…" : question.audio ? "Replace audio" : "Upload audio"}<input type="file" accept="audio/*" disabled={mediaStatus[`${question.id}:audio`]?.busy} onChange={(event) => attachMedia(question.id, "audio", event.target.files?.[0])} /></label>{mediaStatus[`${question.id}:audio`]?.error ? <span className="media-upload-error">{mediaStatus[`${question.id}:audio`].error}</span> : null}{question.audio ? <audio controls src={question.audio} /> : null}</div>
+                            <div className="simple-media-pair">
+                              <div className="simple-media-block">
+                                <span className="simple-media-label">QUESTION AUDIO</span>
+                                <div className="simple-media-field">
+                                  <label className="file-button"><FileAudio size={16} /> {mediaStatus[`${question.id}:audio`]?.busy ? "Loading…" : question.audio ? "Replace question audio" : "Upload question audio"}<input type="file" accept="audio/*" disabled={mediaStatus[`${question.id}:audio`]?.busy} onChange={(event) => attachMedia(question.id, "audio", event.target.files?.[0])} /></label>
+                                  {mediaStatus[`${question.id}:audio`]?.error ? <span className="media-upload-error">{mediaStatus[`${question.id}:audio`].error}</span> : null}
+                                  {question.audio ? <audio controls src={question.audio} /> : null}
+                                </div>
+                              </div>
+                              <div className="simple-media-block answer-media-block">
+                                <span className="simple-media-label">ANSWER AUDIO <small>OPTIONAL</small></span>
+                                <div className="simple-media-field">
+                                  <label className="file-button"><FileAudio size={16} /> {mediaStatus[`${question.id}:answerAudio`]?.busy ? "Loading…" : question.answerAudio ? "Replace answer audio" : "Upload answer audio"}<input type="file" accept="audio/*" disabled={mediaStatus[`${question.id}:answerAudio`]?.busy} onChange={(event) => attachMedia(question.id, "answerAudio", event.target.files?.[0])} /></label>
+                                  {mediaStatus[`${question.id}:answerAudio`]?.error ? <span className="media-upload-error">{mediaStatus[`${question.id}:answerAudio`].error}</span> : null}
+                                  {question.answerAudio ? <audio controls src={question.answerAudio} /> : null}
+                                </div>
+                              </div>
+                            </div>
                           ) : null}
 
                           {multiple ? (
@@ -423,7 +468,7 @@ export default function SimpleQuizBuilder({ state, updateState }) {
                               <label>Correct answer<select value={question.answer ?? ""} onChange={(event) => updateQuestion(question.id, { answer: event.target.value })}><option value="">Choose the correct answer</option>{options.map((option, optionIndex) => <option key={optionIndex} value={option} disabled={!option.trim()}>{option || `Option ${String.fromCharCode(65 + optionIndex)}`}</option>)}</select></label>
                             </div>
                           ) : (
-                            <label>Correct answer<input value={question.answer ?? ""} onChange={(event) => updateQuestion(question.id, { answer: event.target.value })} placeholder="Correct answer…" /></label>
+                            <label>{kind === "picture" || kind === "music" ? "Text answer (optional)" : "Correct answer"}<input value={question.answer ?? ""} onChange={(event) => updateQuestion(question.id, { answer: event.target.value })} placeholder={kind === "picture" || kind === "music" ? "Optional text answer…" : "Correct answer…"} /></label>
                           )}
                         </article>
                       );
