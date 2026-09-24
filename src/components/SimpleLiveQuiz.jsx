@@ -641,7 +641,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
 
       {network?.status === "code-conflict" ? <div className="simple-warning"><WifiOff size={16} /> This live session code is already in use.</div> : null}
 
-      <section className="host-control-deck">
+      <section className={`host-control-deck ${controlsOpen ? "menu-open" : ""}`}>
         <div className="host-live-status-strip host-live-mobile-banner">
           <button
             type="button"
