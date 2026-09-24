@@ -179,11 +179,12 @@ export function buildTeamSnapshot(state, teamToken) {
   const liveAudio = state.live?.audio ?? {};
   const liveRoundIndex = Number(state.live?.roundIndex ?? 0);
   const currentRoundComplete = Boolean(round && roundIsFullyRevealed(state, round));
-  const upcomingRoundIndex = currentRoundComplete || state.live?.teamScreen === "round_locked"
-    ? liveRoundIndex + 1
-    : maxQuestionIndex < 0
-      ? liveRoundIndex
-      : liveRoundIndex + 1;
+  const firstIncompleteRoundIndex = (quiz?.rounds ?? []).findIndex(
+    (item, index) => index >= liveRoundIndex && !roundIsFullyRevealed(state, item)
+  );
+  const upcomingRoundIndex = firstIncompleteRoundIndex >= 0
+    ? firstIncompleteRoundIndex
+    : liveRoundIndex + (currentRoundComplete ? 1 : 0);
   const upcomingRound = quiz?.rounds?.[upcomingRoundIndex] ?? null;
 
   return {
