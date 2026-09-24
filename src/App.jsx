@@ -1572,7 +1572,7 @@ function PictureRoundLayoutEditor() {
         )}
 
         <button type="button" onClick={() => {
-          if (window.confirm(\`Reset the whole \${mode} page layout?\`)) sendEditor(mode,"reset-page");
+          if (window.confirm(`Reset the whole ${mode} page layout?`)) sendEditor(mode,"reset-page");
         }} style={{ border:0,borderRadius:8,padding:9,background:"#7f1d1d",color:"#fff",font:"800 10px system-ui" }}>Reset {mode} page</button>
 
         <button type="button" onClick={requestExport} style={{ border:0,borderRadius:10,padding:"11px 12px",background:"#f3c94b",color:"#111827",font:"900 12px system-ui",cursor:"pointer" }}>
@@ -1601,7 +1601,7 @@ function PictureRoundLayoutEditor() {
             position:"absolute", inset:0,
             width:PHONE_WIDTH + FRAME_BORDER * 2,
             height:PHONE_HEIGHT + FRAME_BORDER * 2,
-            transform:\`scale(\${scale})\`,
+            transform:`scale(${scale})`,
             transformOrigin:"top left",
             padding:FRAME_BORDER,
             boxSizing:"border-box",
@@ -1614,8 +1614,8 @@ function PictureRoundLayoutEditor() {
               <iframe
                 key={page}
                 ref={page === "question" ? questionRef : answerRef}
-                title={\`Picture round \${page} layout editor\`}
-                src={\`#/join/__PREVIEW__/\${stages[page]}\`}
+                title={`Picture round ${page} layout editor`}
+                src={`#/join/__PREVIEW__/${stages[page]}`}
                 onLoad={() => window.setTimeout(() => sendEditor(page,"set-enabled",{enabled:true}), 80)}
                 style={{
                   position:"absolute",
