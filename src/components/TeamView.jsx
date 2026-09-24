@@ -175,6 +175,19 @@ function ConnectionScreen({ status, error }) {
   );
 }
 
+function SessionFinishedScreen({ status }) {
+  return (
+    <TeamChrome status={status}>
+      <section className="team-card live-team-card session-finished-card">
+        <QuizInLogo className="session-finished-logo" />
+        <div className="session-finished-trophy" aria-hidden="true"><Trophy size={42} /></div>
+        <h1>Thanks for playing!</h1>
+        <p>I hope you had fun! See you at the next one!</p>
+      </section>
+    </TeamChrome>
+  );
+}
+
 function TeamNameTableIcon() {
   return (
     <svg className="team-meta-svg" viewBox="0 0 72 72" aria-hidden="true">
@@ -1580,6 +1593,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   }
 
   if (!snapshot) return <ConnectionScreen status={status} error={error} />;
+  if (screen === "finished") return <SessionFinishedScreen status={status} />;
   if (!snapshot.team) return <ConnectionScreen status="error" error="This team QR code is no longer valid." />;
   if (!snapshot.team.nameLocked) return <TeamNameScreen snapshot={snapshot} send={send} status={status} />;
   if (screen === "leaderboard") return <LeaderboardScreen snapshot={snapshot} status={status} />;
