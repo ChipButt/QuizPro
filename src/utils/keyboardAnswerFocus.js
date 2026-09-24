@@ -14,6 +14,7 @@ let preFocusScrollY = 0;
 let restoreTimers = [];
 let keyboardAlignTimer = null;
 let keyboardFallbackTimers = [];
+let keyboardCloseCleanup = null;
 let currentKeyboardSlide = 0;
 
 function syncVisualViewport() {
@@ -56,6 +57,9 @@ function clearKeyboardAlignmentTimers() {
 function clearRestoreTimers() {
   restoreTimers.forEach((timer) => window.clearTimeout(timer));
   restoreTimers = [];
+
+  keyboardCloseCleanup?.();
+  keyboardCloseCleanup = null;
 }
 
 function forceKeyboardClasses(enabled) {
@@ -90,7 +94,7 @@ function finishKeyboardClose() {
    * state in one synchronous frame. This prevents the content from snapping
    * back first and the blue header/logo appearing a moment later.
    */
-  root.style.setProperty("--team-keyboard-slide", "0px");
+  setKeyboardSlide(0);
   holdDocumentPosition();
   root.style.setProperty("--team-visible-top", "0px");
   root.style.setProperty("--team-visible-left", "0px");
@@ -109,39 +113,61 @@ function settleKeyboardClose() {
   clearRestoreTimers();
 
   /*
-   * React's textarea onBlur removes its keyboard class immediately, but iOS
-   * Safari continues animating visualViewport for several hundred ms. Keep
-   * reasserting keyboard mode during that closing animation so Safari cannot
-   * leave the page panned above the logo.
+   * Restore as soon as iOS reports that the visual viewport has expanded back
+   * to the non-keyboard size. This avoids the old timer-driven pause after the
+   * keyboard had already visibly disappeared.
    */
-  const delays = [0, 30, 70, 120, 180, 260, 380, 520, 700, 900, 1200, 1500];
+  const viewport = window.visualViewport;
   let finished = false;
 
-  const tryRestore = (isLast = false) => {
+  const finish = () => {
+    if (finished) return;
+    finished = true;
+
+    keyboardCloseCleanup?.();
+    keyboardCloseCleanup = null;
+    restoreTimers.forEach((timer) => window.clearTimeout(timer));
+    restoreTimers = [];
+
+    finishKeyboardClose();
+  };
+
+  const checkKeyboardClosed = () => {
     if (finished) return;
 
-    /*
-     * Keep the page in its keyboard-lifted position for the whole keyboard
-     * close animation. Do not reset the transform early: that was what made
-     * the main page return before the header/logo.
-     */
     forceKeyboardClasses(true);
     holdDocumentPosition();
 
-    const viewportHeight = Math.round(window.visualViewport?.height ?? window.innerHeight);
+    const viewportHeight = Math.round(viewport?.height ?? window.innerHeight);
     const targetHeight = Math.max(1, Math.round(baselineHeight || window.innerHeight));
-    const keyboardStillOpen = targetHeight - viewportHeight >= 60;
+    const keyboardReduction = Math.max(0, targetHeight - viewportHeight);
 
-    if (!keyboardStillOpen || isLast) {
-      finished = true;
-      finishKeyboardClose();
+    if (keyboardReduction < KEYBOARD_OPEN_THRESHOLD_PX) {
+      finish();
     }
   };
 
-  restoreTimers = delays.map((delay, index) => window.setTimeout(
-    () => tryRestore(index === delays.length - 1),
-    delay,
-  ));
+  viewport?.addEventListener("resize", checkKeyboardClosed);
+  viewport?.addEventListener("scroll", checkKeyboardClosed);
+  window.addEventListener("resize", checkKeyboardClosed);
+
+  keyboardCloseCleanup = () => {
+    viewport?.removeEventListener("resize", checkKeyboardClosed);
+    viewport?.removeEventListener("scroll", checkKeyboardClosed);
+    window.removeEventListener("resize", checkKeyboardClosed);
+  };
+
+  // Check immediately in case Safari has already expanded the viewport by the
+  // time blur fires.
+  checkKeyboardClosed();
+
+  // Emergency fallback only. Normal restoration should happen from the first
+  // viewport event that reports the keyboard closed.
+  restoreTimers = [
+    window.setTimeout(checkKeyboardClosed, 120),
+    window.setTimeout(checkKeyboardClosed, 260),
+    window.setTimeout(finish, 700),
+  ];
 }
 
 function updateKeyboardSlide() {
