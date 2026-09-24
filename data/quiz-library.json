@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-24T12:43:41.617Z",
+  "updatedAt": "2026-09-24T12:43:43.886Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -2721,7 +2721,7 @@
             {
               "id": "question-h7xki6h",
               "number": 3,
-              "text": "",
+              "text": "What vegetable is this?",
               "answer": "",
               "alternatives": [],
               "points": 1,
