@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-24T12:42:56.686Z",
+  "updatedAt": "2026-09-24T12:43:08.427Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -2678,7 +2678,7 @@
               "id": "question-dol15bt",
               "number": 1,
               "text": "",
-              "answer": "",
+              "answer": "Raddish",
               "alternatives": [],
               "points": 1,
               "type": "Picture",
