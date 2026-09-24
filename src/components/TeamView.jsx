@@ -3,7 +3,6 @@ import {
   ArrowRight,
   CheckCircle2,
   Crown,
-  Lightbulb,
   Lock,
   RotateCcw,
   Trophy,
@@ -330,24 +329,6 @@ function TeamNameScreen({ snapshot, send, status }) {
 
 
 function WaitingScreen({ snapshot, status }) {
-  const facts = snapshot.waitingFacts ?? [];
-  const seed = String(snapshot.team?.id || snapshot.team?.name || "quiz")
-    .split("")
-    .reduce((total, char) => total + char.charCodeAt(0), 0);
-  const [factIndex, setFactIndex] = useState(facts.length ? seed % facts.length : 0);
-
-  useEffect(() => {
-    if (facts.length < 2) return undefined;
-    const timer = window.setInterval(() => {
-      setFactIndex((index) => (index + 1) % facts.length);
-    }, 8000);
-    return () => window.clearInterval(timer);
-  }, [facts.length]);
-
-  useEffect(() => {
-    if (facts.length && factIndex >= facts.length) setFactIndex(0);
-  }, [facts.length, factIndex]);
-
   const scores = snapshot.roundScores ?? [];
   const liveRoundIndex = Number(snapshot.live?.roundIndex ?? 0);
   const totalRounds = Number(snapshot.quiz?.totalRounds ?? 0);
@@ -366,7 +347,6 @@ function WaitingScreen({ snapshot, status }) {
       : beforeFirstRound
         ? "The Quiz Will Begin Soon"
         : "The Next Round Will Start Soon";
-  const fact = facts.length ? facts[factIndex % facts.length] : "";
   const upcomingRound = beforeFirstRound
     ? { number: liveRoundIndex + 1, title: snapshot.round?.title || `Round ${liveRoundIndex + 1}` }
     : snapshot.nextRound;
@@ -386,7 +366,7 @@ function WaitingScreen({ snapshot, status }) {
         </div>
 
         <div className="waiting-headline">
-          <span>{awaitingAnswerReview ? "ROUND COMPLETE" : afterFinalRound ? "QUIZ COMPLETE" : beforeFirstRound ? "GET READY" : "BETWEEN ROUNDS"}</span>
+          {awaitingAnswerReview ? <span>ROUND COMPLETE</span> : afterFinalRound ? <span>QUIZ COMPLETE</span> : beforeFirstRound ? <span>GET READY</span> : null}
           <h1>{heading}</h1>
         </div>
 
@@ -401,8 +381,7 @@ function WaitingScreen({ snapshot, status }) {
         {scores.length ? (
           <div className="waiting-score-panel">
             <div className="waiting-score-heading">
-              <div><span>UNREVIEWED SCORES</span><strong>Your score so far</strong></div>
-              <small>The Quizmaster can still adjust marks.</small>
+              <div><span>COMPLETED ROUNDS</span><strong>Your scores so far</strong></div>
             </div>
             <div className="waiting-round-scores">
               {scores.map((round) => (
@@ -415,17 +394,6 @@ function WaitingScreen({ snapshot, status }) {
           </div>
         ) : null}
 
-        {fact && screen !== "round_locked" ? (
-          <div className="waiting-fun-fact waiting-fun-fact-v2" key={`${factIndex}-${fact}`}>
-            <div className="waiting-fact-bulb-stage">
-              <Lightbulb className="waiting-fact-bulb" strokeWidth={2.15} />
-              <div className="waiting-fact-copy">
-                <span>FUN FACT</span>
-                <strong>{fact}</strong>
-              </div>
-            </div>
-          </div>
-        ) : null}
       </section>
     </TeamChrome>
   );
