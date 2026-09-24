@@ -40,3 +40,5 @@ http://127.0.0.1:5173/#/join/CAA824
 ```bash
 npm run build
 ```
+
+<!-- pages-redeploy: 2026-09-24T15:57Z -->
