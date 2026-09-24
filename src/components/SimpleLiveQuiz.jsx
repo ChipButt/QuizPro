@@ -5,6 +5,7 @@ import {
   Clock3,
   Eye,
   EyeOff,
+  FileAudio,
   Lock,
   Menu,
   Play,
@@ -1076,7 +1077,21 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                   ) : null}
                 </div>
 
-                <div className="host-answer-key"><span>CORRECT ANSWER</span><strong>{reviewQuestion.answer || "No answer set"}</strong></div>
+                <div className="host-answer-key"><span>CORRECT ANSWER</span><strong>{reviewQuestion.answer || (reviewQuestion.answerImage || reviewQuestion.answerAudio ? "Media answer" : "No answer set")}</strong></div>
+
+                {liveTab === "answers" && (reviewQuestion.answerImage || reviewQuestion.answerAudio) ? (
+                  <div className="host-answer-media-preview">
+                    <span>ANSWER MEDIA</span>
+                    {reviewQuestion.answerImage ? <img src={reviewQuestion.answerImage} alt={reviewQuestion.answerImageName || "Answer"} /> : null}
+                    {reviewQuestion.answerAudio ? (
+                      <div className="host-answer-audio-preview">
+                        <FileAudio size={16} />
+                        <strong>{reviewQuestion.answerAudioName || "Answer audio"}</strong>
+                        <audio controls preload="metadata" src={reviewQuestion.answerAudio} />
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
 
                 {reviewQuestion.audio ? (
                   <div className="simple-host-audio host-replay-audio">
