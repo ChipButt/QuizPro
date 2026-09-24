@@ -977,9 +977,15 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
               <h2>Current Standings</h2>
               {leaderboard.length ? (
                 <ol className="simple-leaderboard compact-leaderboard host-screen-leaderboard">
-                  {leaderboard.map((team, index) => (
-                    <li key={team.id}><span>{index + 1}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score}</b></li>
-                  ))}
+                  {leaderboard.map((team, index) => {
+                    const revealedToTeams = state.live?.teamScreen === "final"
+                      && index >= Math.max(0, leaderboard.length - finalRevealCount);
+                    return (
+                      <li key={team.id} className={revealedToTeams ? "revealed-to-teams" : ""}>
+                        <span>{index + 1}</span><strong>{team.name || "Unnamed team"}</strong><b>{team.score}</b>
+                      </li>
+                    );
+                  })}
                 </ol>
               ) : <p className="simple-empty-copy">Scores will appear here as answers are marked.</p>}
             </div>
