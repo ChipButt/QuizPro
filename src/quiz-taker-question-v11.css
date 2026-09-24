@@ -1245,3 +1245,54 @@
     justify-self:center !important;
   }
 }
+
+
+/* ---------- Picture-round viewport must never reflow on reveal ---------- */
+/* The Question and Answer previews are separate iframes. When the gold answer
+   pill appears, absolutely-positioned overflow can otherwise make only the
+   Answer iframe scrollable, changing its usable viewport by a few pixels.
+   Lock the entire picture-round viewport so both states share the exact same
+   top-left origin and available width. */
+
+@media(max-width:420px){
+  .team-page.live-team-page.picture-round-team-page{
+    box-sizing:border-box !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    max-height:100dvh !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+    overflow-anchor:none !important;
+    overscroll-behavior:none !important;
+    scrollbar-gutter:stable !important;
+  }
+
+  .team-page.live-team-page.picture-round-team-page .live-phone-shell.picture-round-team-page{
+    box-sizing:border-box !important;
+    width:100% !important;
+    max-width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    max-height:100dvh !important;
+    margin:0 !important;
+    overflow:hidden !important;
+    overflow-anchor:none !important;
+    overscroll-behavior:none !important;
+  }
+
+  .team-page.live-team-page.picture-round-team-page .question-team-card,
+  .team-page.live-team-page.picture-round-team-page .team-question-stage,
+  .team-page.live-team-page.picture-round-team-page .team-question-core,
+  .team-page.live-team-page.picture-round-team-page .team-answer-zone{
+    overflow-anchor:none !important;
+  }
+
+  .team-page.live-team-page.picture-round-team-page::-webkit-scrollbar,
+  .team-page.live-team-page.picture-round-team-page .live-phone-shell.picture-round-team-page::-webkit-scrollbar{
+    width:0 !important;
+    height:0 !important;
+    display:none !important;
+  }
+}
