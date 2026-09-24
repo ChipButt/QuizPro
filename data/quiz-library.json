@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-24T12:44:02.750Z",
+  "updatedAt": "2026-09-24T12:44:06.092Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -2859,6 +2859,29 @@
             {
               "id": "question-bpqdgbr",
               "number": 9,
+              "text": "What vegetable is this?",
+              "answer": "",
+              "alternatives": [],
+              "points": 1,
+              "type": "Picture",
+              "options": [],
+              "category": "",
+              "difficulty": "Medium",
+              "image": "",
+              "imageName": "",
+              "audio": "",
+              "audioName": "",
+              "answerImage": "",
+              "answerImageName": "",
+              "answerAudio": "",
+              "answerAudioName": "",
+              "notes": "",
+              "timeLimit": 60,
+              "autoMark": true
+            },
+            {
+              "id": "question-q38656i",
+              "number": 10,
               "text": "",
               "answer": "",
               "alternatives": [],
