@@ -177,6 +177,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
         askedQuestionIds: [],
         answerReviewPushedQuestionIds: [],
         answerReviewQuestionId: "",
+        answerReviewAnswerVisible: false,
         forceLockedRounds: {},
         timerActive: false,
         timerEndsAt: 0,
@@ -259,6 +260,8 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
       timerEndsAt: 0,
       timerRoundId: "",
       status: "Live",
+      answerReviewQuestionId: "",
+      answerReviewAnswerVisible: false,
       audio: { questionId: "", playNonce: Number(state.live?.audio?.playNonce ?? 0) },
     });
     setReviewRoundIndex(index);
@@ -279,16 +282,6 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
           ]))
         : (current.live?.answerReviewPushedQuestionIds ?? []);
 
-      const revealedQuestions = { ...(current.live?.revealedQuestions ?? {}) };
-      const revealedRounds = { ...(current.live?.revealedRounds ?? {}) };
-
-      // In the Answers tab, Push Question must always show the question only,
-      // even if this question/round had previously been revealed.
-      if (answerReview) {
-        delete revealedQuestions[reviewQuestion.id];
-        delete revealedRounds[reviewRound.id];
-      }
-
       return {
         ...current,
         live: {
@@ -300,8 +293,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
           askedQuestionIds,
           answerReviewPushedQuestionIds,
           answerReviewQuestionId: answerReview ? reviewQuestion.id : "",
-          revealedQuestions,
-          revealedRounds,
+          answerReviewAnswerVisible: false,
           timerActive: false,
           timerEndsAt: 0,
           timerDurationSeconds: 0,
@@ -339,6 +331,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
           questionIndex: reviewQuestionIndex,
           askedQuestionIds,
           answerReviewQuestionId: reviewQuestion.id,
+          answerReviewAnswerVisible: true,
           revealedQuestions: {
             ...(current.live?.revealedQuestions ?? {}),
             [reviewQuestion.id]: true,
@@ -660,9 +653,13 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   }
   const askedReviewQuestions = (reviewRound?.questions ?? []).filter((item) => askedQuestionIds.has(item.id));
   const reviewQuestionAsked = Boolean(reviewQuestion && askedQuestionIds.has(reviewQuestion.id));
-  const answerReviewPushedQuestionIds = new Set(state.live?.answerReviewPushedQuestionIds ?? []);
   const reviewQuestionPushedForAnswers = Boolean(
-    reviewQuestion && answerReviewPushedQuestionIds.has(reviewQuestion.id)
+    reviewQuestion &&
+    state.live?.teamScreen === "question" &&
+    state.live?.answerReviewQuestionId === reviewQuestion.id
+  );
+  const reviewQuestionAnswerVisible = Boolean(
+    reviewQuestionPushedForAnswers && state.live?.answerReviewAnswerVisible
   );
   const reviewQuestionRevealed = Boolean(
     reviewQuestion &&
@@ -1083,11 +1080,11 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                 <button className="icon-step-button host-question-step next" disabled={!canReviewNext} onClick={() => setReviewQuestionIndex((index) => Math.min(reviewRound.questions.length - 1, index + 1))}>Next <ArrowRight size={16} /></button>
               ) : (
                 <button
-                  className={reviewQuestionRevealed ? "icon-step-button host-question-step next" : "primary-button host-answer-flow-button"}
-                  disabled={reviewQuestionRevealed && !canReviewNext}
-                  onClick={() => runAnswerFlow(reviewQuestionPushedForAnswers, reviewQuestionRevealed)}
+                  className={reviewQuestionAnswerVisible ? "icon-step-button host-question-step next" : "primary-button host-answer-flow-button"}
+                  disabled={reviewQuestionAnswerVisible && !canReviewNext}
+                  onClick={() => runAnswerFlow(reviewQuestionPushedForAnswers, reviewQuestionAnswerVisible)}
                 >
-                  {reviewQuestionRevealed ? <>Next Question <ArrowRight size={16} /></> : reviewQuestionPushedForAnswers ? <><Eye size={16} /> Reveal Answer</> : <><Send size={16} /> Push Question</>}
+                  {reviewQuestionAnswerVisible ? <>Next Question <ArrowRight size={16} /></> : reviewQuestionPushedForAnswers ? <><Eye size={16} /> Reveal Answer</> : <><Send size={16} /> Push Question</>}
                 </button>
               )}
             </div>
