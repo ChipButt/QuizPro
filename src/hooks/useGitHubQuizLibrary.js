@@ -240,7 +240,7 @@ export function useGitHubQuizLibrary(state, updateState) {
     return user?.login || "GitHub user";
   }
 
-  async function saveLibrary(authToken = token) {
+  async function saveLibrary(authToken = token, { overwriteRemote = false } = {}) {
     const cleanToken = String(authToken || "").trim();
     if (!cleanToken || savingRef.current) return false;
     savingRef.current = true;
@@ -271,9 +271,9 @@ export function useGitHubQuizLibrary(state, updateState) {
 
       const remoteFingerprint = fingerprint(remoteLibrary);
       const baseline = baselineRef.current;
-      if (baseline && remoteFingerprint !== baseline && localFingerprint !== baseline) {
+      if (!overwriteRemote && baseline && remoteFingerprint !== baseline && localFingerprint !== baseline) {
         setStatus("conflict");
-        setMessage("Another device saved a newer quiz library first. Your local changes are still here; reload the shared library before saving again.");
+        setMessage("Another device saved a newer quiz library first. Your local changes are still here; choose Reload to use GitHub, or Keep this device to publish these local changes.");
         return false;
       }
 
@@ -441,5 +441,6 @@ export function useGitHubQuizLibrary(state, updateState) {
     disconnect,
     reload: (force = false) => loadRemote({ force }),
     saveNow: () => saveLibrary(token),
+    overwriteRemote: () => saveLibrary(token, { overwriteRemote: true }),
   };
 }
