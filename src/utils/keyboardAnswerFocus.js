@@ -12,6 +12,9 @@ let originalScrollY = 0;
 let preFocusScrollX = 0;
 let preFocusScrollY = 0;
 let restoreTimers = [];
+let keyboardAlignTimer = null;
+let keyboardFallbackTimers = [];
+let currentKeyboardSlide = 0;
 
 function syncVisualViewport() {
   const viewport = window.visualViewport;
@@ -31,8 +34,23 @@ function syncVisualViewport() {
   }
 }
 
+function setKeyboardSlide(value) {
+  const next = Math.max(0, Math.round(Number(value) || 0));
+  currentKeyboardSlide = next;
+  document.documentElement.style.setProperty("--team-keyboard-slide", `${next}px`);
+}
+
 function resetKeyboardSlide() {
-  document.documentElement.style.setProperty("--team-keyboard-slide", "0px");
+  setKeyboardSlide(0);
+}
+
+function clearKeyboardAlignmentTimers() {
+  if (keyboardAlignTimer !== null) {
+    window.clearTimeout(keyboardAlignTimer);
+    keyboardAlignTimer = null;
+  }
+  keyboardFallbackTimers.forEach((timer) => window.clearTimeout(timer));
+  keyboardFallbackTimers = [];
 }
 
 function clearRestoreTimers() {
@@ -134,7 +152,6 @@ function updateKeyboardSlide() {
 
   const active = document.activeElement;
   if (!(active instanceof HTMLTextAreaElement) || !active.matches(ANSWER_SELECTOR)) {
-    resetKeyboardSlide();
     return;
   }
 
@@ -146,52 +163,70 @@ function updateKeyboardSlide() {
   const keyboardReduction = Math.max(0, layoutHeight - viewportHeight);
   const keyboardOpen = keyboardReduction >= KEYBOARD_OPEN_THRESHOLD_PX;
 
-  if (!keyboardOpen) {
-    resetKeyboardSlide();
-    return;
-  }
+  if (!keyboardOpen) return;
 
-  /*
-   * Always measure from the intact, unshifted layout. The alignment target is
-   * the complete blue/yellow Question Content Area (.team-question-stage),
-   * not the textarea itself.
-   */
-  resetKeyboardSlide();
   const questionStage = document.querySelector(QUESTION_STAGE_SELECTOR);
-  if (!(questionStage instanceof Element)) {
-    resetKeyboardSlide();
-    return;
-  }
-  const stageRect = questionStage.getBoundingClientRect();
+  if (!(questionStage instanceof Element)) return;
 
   /*
-   * visualViewport.bottom is the top edge of the software keyboard. Lift the
-   * WHOLE quiz screen until the bottom of .team-question-stage sits exactly
-   * 150px above that edge. If it is already at least 150px clear, do not move it.
+   * Do NOT reset the page to zero before measuring. The stage rect already
+   * includes the current shell translation, so add currentKeyboardSlide back
+   * to recover its unshifted bottom without creating a visible jump.
+   */
+  const stageRect = questionStage.getBoundingClientRect();
+  const unshiftedStageBottom = stageRect.bottom + currentKeyboardSlide;
+
+  /*
+   * visualViewport.bottom is the top edge of the software keyboard. Make one
+   * move to the final target where .team-question-stage ends exactly 150px
+   * above the keyboard.
    */
   const requiredShift = Math.max(
     0,
-    stageRect.bottom + QUESTION_STAGE_KEYBOARD_GAP_PX - viewportBottom,
+    unshiftedStageBottom + QUESTION_STAGE_KEYBOARD_GAP_PX - viewportBottom,
   );
 
-  document.documentElement.style.setProperty(
-    "--team-keyboard-slide",
-    `${Math.ceil(requiredShift)}px`,
-  );
+  setKeyboardSlide(requiredShift);
 }
 
 function settleKeyboardLayout() {
-  const delays = [0, 24, 60, 100, 160, 240, 360, 520, 760, 1050, 1400];
-  const timers = delays.map((delay) => window.setTimeout(updateKeyboardSlide, delay));
-
   const viewport = window.visualViewport;
-  const onViewportChange = () => updateKeyboardSlide();
+
+  /*
+   * iOS emits a stream of visualViewport resize/scroll events while the
+   * keyboard animates. Debounce them so the page does not chase every
+   * intermediate keyboard position. Once the viewport has been quiet briefly,
+   * calculate one final alignment and move the page once.
+   */
+  const scheduleAlignment = (delay = 110) => {
+    if (keyboardAlignTimer !== null) window.clearTimeout(keyboardAlignTimer);
+    keyboardAlignTimer = window.setTimeout(() => {
+      keyboardAlignTimer = null;
+      updateKeyboardSlide();
+    }, delay);
+  };
+
+  const onViewportChange = () => {
+    holdDocumentPosition();
+    syncVisualViewport();
+    scheduleAlignment();
+  };
+
   viewport?.addEventListener("resize", onViewportChange);
   viewport?.addEventListener("scroll", onViewportChange);
   window.addEventListener("resize", onViewportChange);
 
+  scheduleAlignment(180);
+
+  // Fallback checks only correct the position if an iOS viewport event was
+  // missed. Because measurement accounts for the current translation, these
+  // do not create a reset/jump when the page is already aligned.
+  keyboardFallbackTimers = [650, 1100].map((delay) =>
+    window.setTimeout(updateKeyboardSlide, delay)
+  );
+
   return () => {
-    timers.forEach((timer) => window.clearTimeout(timer));
+    clearKeyboardAlignmentTimers();
     viewport?.removeEventListener("resize", onViewportChange);
     viewport?.removeEventListener("scroll", onViewportChange);
     window.removeEventListener("resize", onViewportChange);
@@ -242,6 +277,7 @@ document.addEventListener("focusin", (event) => {
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
   clearRestoreTimers();
+  clearKeyboardAlignmentTimers();
   originalScrollX = preFocusScrollX;
   originalScrollY = preFocusScrollY;
   holdDocumentPosition();
@@ -268,6 +304,7 @@ document.addEventListener("focusout", (event) => {
 
   cleanupPending?.();
   cleanupPending = null;
+  clearKeyboardAlignmentTimers();
 
   // Keep the current keyboard lift in place while Safari closes. The complete
   // page, including the header/logo, is restored together once it is closed.
