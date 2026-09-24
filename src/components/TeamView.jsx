@@ -1603,6 +1603,15 @@ export default function TeamView({ sessionCode, teamToken }) {
   }
 
   const correctAnswer = String(question.answer ?? "").trim();
+  const hasAnswerImage = Boolean(question.hasAnswerImage || question.answerImage);
+  const hasAnswerAudio = Boolean(question.hasAnswerAudio || question.answerAudio);
+  const hasAnswerText = Boolean(question.hasAnswerText || correctAnswer);
+  const hasAnswerReveal = hasAnswerImage || hasAnswerAudio || hasAnswerText;
+  const answerRevealClasses = [
+    hasAnswerImage ? "has-answer-image" : "",
+    hasAnswerAudio ? "has-answer-audio" : "",
+    hasAnswerText ? "has-answer-text" : "",
+  ].filter(Boolean).join(" ");
   const canGoBack = viewIndex > 0;
   const canGoForward = viewIndex < questions.length - 1;
   const showNewQuestionAlert = Boolean(newQuestionWaiting && viewIndex < hostQuestionIndex && canGoForward);
@@ -1713,15 +1722,30 @@ export default function TeamView({ sessionCode, teamToken }) {
                     placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"}
                   />
                 </div>
-                {reviewQuestionMode ? (
-                  <div className="revealed-answer-slot" aria-hidden="true" />
-                ) : question.revealed ? (
-                  <div className="revealed-answer-pill">
-                    <CheckCircle2 aria-hidden="true" />
-                    <span>CORRECT ANSWER</span>
-                    <strong>{question.answer}</strong>
+              </div>
+            ) : null}
+
+            {reviewQuestionMode && hasAnswerReveal ? (
+              <div className={`revealed-answer-slot ${answerRevealClasses}`} aria-hidden="true" />
+            ) : question.revealed && hasAnswerReveal ? (
+              <div className={`revealed-answer-pill ${answerRevealClasses}`}>
+                <CheckCircle2 aria-hidden="true" />
+                <span>CORRECT ANSWER</span>
+                {question.answerImage || question.answerAudio ? (
+                  <div className="revealed-answer-media">
+                    {question.answerImage ? (
+                      <img src={question.answerImage} alt={question.answerImageName || "Answer"} />
+                    ) : null}
+                    {question.answerAudio ? (
+                      <div className="revealed-answer-audio">
+                        <Volume2 size={16} aria-hidden="true" />
+                        <strong>{question.answerAudioName || "Answer audio"}</strong>
+                        <audio controls preload="metadata" src={question.answerAudio} />
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
+                {correctAnswer ? <strong className="revealed-answer-text">{correctAnswer}</strong> : null}
               </div>
             ) : null}
 
