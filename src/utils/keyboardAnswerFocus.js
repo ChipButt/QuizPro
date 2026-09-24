@@ -9,6 +9,8 @@ let baselineHeight = 0;
 let cleanupPending = null;
 let originalScrollX = 0;
 let originalScrollY = 0;
+let preFocusScrollX = 0;
+let preFocusScrollY = 0;
 let restoreTimers = [];
 
 function syncVisualViewport() {
@@ -59,22 +61,57 @@ function restoreOriginalView() {
   }
 }
 
+function finishKeyboardClose() {
+  baselineHeight = 0;
+  document.documentElement.style.removeProperty("--team-keyboard-layout-height");
+  document.documentElement.style.setProperty("--team-visible-top", "0px");
+  document.documentElement.style.setProperty("--team-visible-left", "0px");
+
+  forceKeyboardClasses(false);
+
+  // Restore again after the fixed keyboard layout is released. This is the
+  // step that brings the real top of the page (including the logo) back into
+  // the visual viewport after Safari's focus-pan has finished.
+  restoreOriginalView();
+  window.requestAnimationFrame(() => {
+    restoreOriginalView();
+    window.requestAnimationFrame(restoreOriginalView);
+  });
+}
+
 function settleKeyboardClose() {
   clearRestoreTimers();
 
-  const delays = [0, 40, 100, 180, 300, 480, 700, 950, 1250];
-  restoreTimers = delays.map((delay) => window.setTimeout(() => {
+  /*
+   * React's textarea onBlur removes its keyboard class immediately, but iOS
+   * Safari continues animating visualViewport for several hundred ms. Keep
+   * reasserting keyboard mode during that closing animation so Safari cannot
+   * leave the page panned above the logo.
+   */
+  const delays = [0, 30, 70, 120, 180, 260, 380, 520, 700, 900, 1200, 1500];
+  let finished = false;
+
+  const tryRestore = (isLast = false) => {
+    if (finished) return;
+
+    forceKeyboardClasses(true);
+    resetKeyboardSlide();
     restoreOriginalView();
 
-    const viewport = window.visualViewport;
-    const viewportHeight = Math.round(viewport?.height ?? window.innerHeight);
-    const layoutHeight = Math.round(window.innerHeight);
+    const viewportHeight = Math.round(window.visualViewport?.height ?? window.innerHeight);
+    const targetHeight = Math.max(1, Math.round(baselineHeight || window.innerHeight));
+    const keyboardStillOpen = targetHeight - viewportHeight >= 60;
 
-    if (Math.abs(viewportHeight - layoutHeight) <= 4) {
-      document.documentElement.style.setProperty("--team-visible-top", "0px");
-      document.documentElement.style.setProperty("--team-visible-left", "0px");
+    if (!keyboardStillOpen || isLast) {
+      finished = true;
+      finishKeyboardClose();
     }
-  }, delay));
+  };
+
+  restoreTimers = delays.map((delay, index) => window.setTimeout(
+    () => tryRestore(index === delays.length - 1),
+    delay,
+  ));
 }
 
 function updateKeyboardSlide() {
@@ -146,13 +183,22 @@ function settleKeyboardLayout() {
   };
 }
 
+document.addEventListener("pointerdown", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
+
+  // Capture before Safari performs any automatic focus scrolling.
+  preFocusScrollX = window.scrollX;
+  preFocusScrollY = window.scrollY;
+}, true);
+
 document.addEventListener("focusin", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
   clearRestoreTimers();
-  originalScrollX = window.scrollX;
-  originalScrollY = window.scrollY;
+  originalScrollX = preFocusScrollX;
+  originalScrollY = preFocusScrollY;
 
   const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
   baselineHeight = Math.max(window.innerHeight, viewportHeight);
@@ -178,13 +224,8 @@ document.addEventListener("focusout", (event) => {
   cleanupPending = null;
   resetKeyboardSlide();
 
+  // Hold keyboard mode through Safari's close animation. settleKeyboardClose
+  // releases it only once the visual viewport has expanded again.
+  forceKeyboardClasses(true);
   settleKeyboardClose();
-
-  window.setTimeout(() => {
-    baselineHeight = 0;
-    document.documentElement.style.removeProperty("--team-keyboard-layout-height");
-    syncVisualViewport();
-    restoreOriginalView();
-    forceKeyboardClasses(false);
-  }, 180);
 });
