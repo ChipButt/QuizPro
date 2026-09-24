@@ -1,12 +1,8 @@
 const ANSWER_SELECTOR = ".question-team-card .answer-input-shell textarea";
-const ANSWER_SECTION_SELECTOR = ".question-team-card .your-answer-section";
-const QUESTION_STAGE_SELECTOR = ".question-team-card .team-question-stage";
-const PAGE_SELECTOR = ".keyboard-active-page";
-const SHELL_SELECTOR = ".live-phone-shell.keyboard-active";
+const PAGE_SELECTOR = ".team-page.live-team-page";
+const SHELL_SELECTOR = ".live-phone-shell";
 const CLEARANCE_PX = 18;
-const KEYBOARD_ACCESSORY_RESERVE_PX = 72;
-const KEYBOARD_OPEN_THRESHOLD_PX = 120;
-const QUESTION_TOP_GAP_PX = 6;
+const KEYBOARD_OPEN_THRESHOLD_PX = 100;
 
 let baselineHeight = 0;
 let cleanupPending = null;
@@ -41,12 +37,14 @@ function clearRestoreTimers() {
   restoreTimers = [];
 }
 
+function forceKeyboardClasses(enabled) {
+  document.querySelector(PAGE_SELECTOR)?.classList.toggle("keyboard-active-page", enabled);
+  document.querySelector(SHELL_SELECTOR)?.classList.toggle("keyboard-active", enabled);
+}
+
 function restoreOriginalView() {
   resetKeyboardSlide();
 
-  // Mobile Safari may keep its own focus-pan after the textarea blurs.
-  // Restore both the window and the scrolling element so the full original
-  // Quiz Taker screen, including the logo, comes back into view.
   try {
     window.scrollTo(originalScrollX, originalScrollY);
   } catch {
@@ -63,9 +61,6 @@ function restoreOriginalView() {
 function settleKeyboardClose() {
   clearRestoreTimers();
 
-  // iOS can continue changing visualViewport offset/height after blur. Reapply
-  // the original position across that settling period instead of trusting one
-  // immediate scrollTo call.
   const delays = [0, 40, 100, 180, 300, 480, 700, 950, 1250];
   restoreTimers = delays.map((delay) => window.setTimeout(() => {
     restoreOriginalView();
@@ -85,53 +80,51 @@ function updateKeyboardSlide() {
   syncVisualViewport();
 
   const active = document.activeElement;
-  if (!(active instanceof Element) || !active.matches(ANSWER_SELECTOR)) {
+  if (!(active instanceof HTMLTextAreaElement) || !active.matches(ANSWER_SELECTOR)) {
     resetKeyboardSlide();
     return;
   }
 
-  const page = document.querySelector(PAGE_SELECTOR);
-  const shell = document.querySelector(SHELL_SELECTOR);
-  const stage = document.querySelector(QUESTION_STAGE_SELECTOR);
-  const answerSection = document.querySelector(ANSWER_SECTION_SELECTOR) || active;
-
-  if (!page || !shell || !stage || !answerSection) {
-    resetKeyboardSlide();
-    return;
-  }
-
-  const root = document.documentElement;
   const viewport = window.visualViewport;
-  const viewportTop = Math.max(0, viewport?.offsetTop ?? 0);
   const viewportHeight = Math.max(180, viewport?.height ?? window.innerHeight);
+  const viewportTop = Math.max(0, viewport?.offsetTop ?? 0);
   const viewportBottom = viewportTop + viewportHeight;
-  const keyboardReduction = Math.max(0, baselineHeight - viewportHeight);
+  const layoutHeight = Math.max(baselineHeight || 0, window.innerHeight);
+  const keyboardReduction = Math.max(0, layoutHeight - viewportHeight);
   const keyboardOpen = keyboardReduction >= KEYBOARD_OPEN_THRESHOLD_PX;
 
-  // iPhone Safari's visualViewport can extend behind the input accessory bar
-  // (the arrows / Done strip above the keyboard). Treat that strip as unusable
-  // space whenever a real software keyboard is open.
-  const safeViewportBottom = viewportBottom - (keyboardOpen ? KEYBOARD_ACCESSORY_RESERVE_PX : 0);
+  if (!keyboardOpen) {
+    resetKeyboardSlide();
+    return;
+  }
 
-  // Always measure from the intact, unshifted layout. This avoids accumulating
-  // translation across repeated visualViewport resize/scroll events.
-  root.style.setProperty("--team-keyboard-slide", "0px");
+  /*
+   * Measure the actual textarea, not its wrapper. This matters for layouts
+   * where the field itself has an editor translate. Always measure from an
+   * unshifted page so repeated visualViewport events never accumulate offset.
+   */
+  resetKeyboardSlide();
+  const answerRect = active.getBoundingClientRect();
 
-  const answerRect = answerSection.getBoundingClientRect();
-  const stageRect = stage.getBoundingClientRect();
+  /*
+   * visualViewport.bottom is the top edge of the software keyboard. Move the
+   * WHOLE existing page only as far as required to leave the textarea fully
+   * visible above it. There is deliberately no question-panel/top-of-screen
+   * cap: keeping the answer field visible is the priority while typing.
+   */
+  const requiredShift = Math.max(
+    0,
+    answerRect.bottom + CLEARANCE_PX - viewportBottom,
+  );
 
-  const overlap = Math.max(0, answerRect.bottom + CLEARANCE_PX - safeViewportBottom);
-
-  // Do not slide farther than the point where the question box itself reaches
-  // the top of the visible browser viewport.
-  const maxShift = Math.max(0, stageRect.top - viewportTop - QUESTION_TOP_GAP_PX);
-  const shift = Math.min(overlap, maxShift);
-
-  root.style.setProperty("--team-keyboard-slide", `${Math.round(shift)}px`);
+  document.documentElement.style.setProperty(
+    "--team-keyboard-slide",
+    `${Math.ceil(requiredShift)}px`,
+  );
 }
 
 function settleKeyboardLayout() {
-  const delays = [0, 24, 60, 100, 160, 240, 360, 520, 760, 1050];
+  const delays = [0, 24, 60, 100, 160, 240, 360, 520, 760, 1050, 1400];
   const timers = delays.map((delay) => window.setTimeout(updateKeyboardSlide, delay));
 
   const viewport = window.visualViewport;
@@ -150,7 +143,7 @@ function settleKeyboardLayout() {
 
 document.addEventListener("focusin", (event) => {
   const target = event.target;
-  if (!(target instanceof Element) || !target.matches(ANSWER_SELECTOR)) return;
+  if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
   clearRestoreTimers();
   originalScrollX = window.scrollX;
@@ -161,20 +154,25 @@ document.addEventListener("focusin", (event) => {
   syncVisualViewport();
   resetKeyboardSlide();
 
+  /*
+   * Apply the keyboard classes synchronously rather than waiting for React's
+   * focus state render. That prevents Safari's initial focus-pan from winning
+   * the race before our fixed-layout keyboard mode is active.
+   */
+  forceKeyboardClasses(true);
+
   cleanupPending?.();
   cleanupPending = settleKeyboardLayout();
 });
 
 document.addEventListener("focusout", (event) => {
   const target = event.target;
-  if (!(target instanceof Element) || !target.matches(ANSWER_SELECTOR)) return;
+  if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
   cleanupPending?.();
   cleanupPending = null;
   resetKeyboardSlide();
 
-  // Start restoring immediately, then keep correcting while the software
-  // keyboard finishes its close animation and Safari releases its focus-pan.
   settleKeyboardClose();
 
   window.setTimeout(() => {
@@ -182,5 +180,6 @@ document.addEventListener("focusout", (event) => {
     document.documentElement.style.removeProperty("--team-keyboard-layout-height");
     syncVisualViewport();
     restoreOriginalView();
+    forceKeyboardClasses(false);
   }, 180);
 });
