@@ -477,6 +477,7 @@ function getRoute() {
   }
   if (hash === "#/preview" || hash === "#/preview/") return { kind: "preview", stage: "live" };
   if (hash === "#/timer-editor" || hash === "#/timer-editor/") return { kind: "timer-editor" };
+  if (hash === "#/picture-editor" || hash === "#/picture-editor/") return { kind: "picture-editor" };
   if (hash.startsWith("#/join/")) {
     const parts = hash.replace(/^#\//, "").split("/");
     return {
@@ -1342,6 +1343,306 @@ function TimerLayoutEditor() {
   );
 }
 
+
+function PictureRoundLayoutEditor() {
+  const PHONE_WIDTH = 390;
+  const PHONE_HEIGHT = 844;
+  const FRAME_BORDER = 8;
+  const questionRef = useRef(null);
+  const answerRef = useRef(null);
+  const exportsRef = useRef({});
+  const [mode, setMode] = useState("question");
+  const [selected, setSelected] = useState(null);
+  const [exports, setExports] = useState({});
+  const [copyText, setCopyText] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [scale, setScale] = useState(1);
+
+  const stages = {
+    question: "picture-question-editor",
+    answer: "picture-answer-editor",
+  };
+
+  const refFor = (page) => page === "answer" ? answerRef : questionRef;
+  const pageForSource = (source) => {
+    if (source === questionRef.current?.contentWindow) return "question";
+    if (source === answerRef.current?.contentWindow) return "answer";
+    return "";
+  };
+
+  const sendEditor = (page, action, values = {}) => {
+    refFor(page).current?.contentWindow?.postMessage({
+      type: "quiz-layout-editor",
+      action,
+      ...values,
+    }, window.location.origin);
+  };
+
+  const updateSelected = (values) => {
+    setSelected((current) => current ? { ...current, ...values } : current);
+    sendEditor(mode, "update-selected", { values });
+  };
+
+  useEffect(() => {
+    const resize = () => {
+      const side = window.innerWidth >= 900 ? 370 : 0;
+      const aw = Math.max(285, window.innerWidth - side - 70);
+      const ah = Math.max(470, window.innerHeight - 72);
+      setScale(Math.min(1, aw / (PHONE_WIDTH + FRAME_BORDER * 2), ah / (PHONE_HEIGHT + FRAME_BORDER * 2)));
+    };
+    resize();
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
+  }, []);
+
+  useEffect(() => {
+    const onMessage = (event) => {
+      if (event.origin !== window.location.origin) return;
+      const page = pageForSource(event.source);
+      if (!page) return;
+      const message = event.data || {};
+
+      if (message.type === "quiz-taker-preview-ready" || message.type === "quiz-preview-ready") {
+        sendEditor(page, "set-enabled", { enabled: true });
+        return;
+      }
+
+      if (message.type === "quiz-layout-selection") {
+        if (page === mode) setSelected({ ...message, page });
+        return;
+      }
+
+      if (message.type === "quiz-layout-selection-cleared") {
+        if (page === mode) setSelected(null);
+        return;
+      }
+
+      if (message.type === "quiz-layout-export") {
+        const next = { ...exportsRef.current, [page]: message };
+        exportsRef.current = next;
+        setExports(next);
+      }
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [mode]);
+
+  useEffect(() => {
+    setSelected(null);
+    window.setTimeout(() => sendEditor(mode, "set-enabled", { enabled: true }), 30);
+  }, [mode]);
+
+  useEffect(() => {
+    if (!exports.question || !exports.answer) return;
+    const wanted = new Set([
+      "Team header",
+      "Round title",
+      "Previous button",
+      "Question number",
+      "Next button",
+      "Question content area",
+      "Question image box",
+      "Question text",
+      "Your answer box",
+      "Correct answer panel",
+      "Correct answer text",
+      "Answer image box",
+    ]);
+
+    const simplify = (page, data) => ({
+      page,
+      stage: data.stage,
+      viewport: data.viewport,
+      elements: (data.elements || [])
+        .filter((element) => wanted.has(element.label))
+        .map(({ path, label, left, top, width, height, fontSize, zIndex, x, y, edited }) => ({
+          path, label, left, top, width, height, fontSize, zIndex, x, y, edited,
+        })),
+      modified: data.modified || {},
+    });
+
+    setCopyText(JSON.stringify({
+      tool: "Quiz In Picture Round Team View Editor",
+      viewport: { width: PHONE_WIDTH, height: PHONE_HEIGHT, units: "px" },
+      questionPage: simplify("question", exports.question),
+      answerPage: simplify("answer", exports.answer),
+      imageRule: "Question and answer images scale with object-fit: contain inside their edited image boxes.",
+    }, null, 2));
+  }, [exports]);
+
+  const requestExport = () => {
+    setCopyText("");
+    exportsRef.current = {};
+    setExports({});
+    sendEditor("question", "export");
+    sendEditor("answer", "export");
+  };
+
+  const field = (label, key, step = 1) => (
+    <label style={{ display:"grid", gap:4, color:"#cbd5e1", font:"700 10px system-ui" }}>
+      <span>{label}</span>
+      <input
+        type="number"
+        step={step}
+        value={selected?.[key] ?? ""}
+        onChange={(event) => updateSelected({ [key]: Number(event.target.value) })}
+        style={{ width:"100%", boxSizing:"border-box", border:"1px solid #334155", borderRadius:8, background:"#0f172a", color:"#fff", padding:"8px 9px", font:"700 11px system-ui" }}
+      />
+    </label>
+  );
+
+  return (
+    <main style={{
+      minHeight:"100vh",
+      boxSizing:"border-box",
+      padding:20,
+      background:"#0b1220",
+      color:"#fff",
+      display:"grid",
+      gridTemplateColumns:window.innerWidth >= 900 ? "350px minmax(0,1fr)" : "1fr",
+      gap:24,
+      alignItems:"start",
+      overflow:"auto"
+    }}>
+      <aside style={{
+        position:window.innerWidth >= 900 ? "sticky" : "static",
+        top:20,
+        display:"grid",
+        gap:13,
+        padding:16,
+        border:"1px solid #26324a",
+        borderRadius:16,
+        background:"#111827",
+        boxShadow:"0 14px 38px rgba(0,0,0,.3)"
+      }}>
+        <div>
+          <div style={{ color:"#f3c94b", font:"900 11px system-ui", letterSpacing:".09em" }}>QUIZ IN</div>
+          <h1 style={{ margin:"5px 0 3px", font:"900 21px system-ui" }}>Picture Round Editor</h1>
+          <p style={{ margin:0, color:"#94a3b8", font:"600 11px/1.45 system-ui" }}>
+            Click a part on the phone, then drag or resize it. Images always scale inside the image boxes.
+          </p>
+        </div>
+
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+          {["question","answer"].map((page) => (
+            <button key={page} type="button" onClick={() => setMode(page)} style={{
+              border:0, borderRadius:9, padding:"10px 8px",
+              background:mode === page ? "#0891b2" : "#26324a",
+              color:"#fff", font:"850 11px system-ui", cursor:"pointer"
+            }}>{page === "question" ? "Question page" : "Answer page"}</button>
+          ))}
+        </div>
+
+        {selected ? (
+          <>
+            <div style={{ padding:"8px 9px", borderRadius:8, background:"#0f172a", color:"#67e8f9", font:"800 10px/1.3 system-ui" }}>
+              {selected.label}
+            </div>
+
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+              {field("Move X", "x")}
+              {field("Move Y", "y")}
+              {field("Width", "width")}
+              {field("Height", "height")}
+              {field("Font size", "fontSize", .5)}
+              {field("Layer", "zIndex")}
+            </div>
+
+            <label style={{ display:"grid", gap:4, color:"#cbd5e1", font:"700 10px system-ui" }}>
+              <span>Text alignment</span>
+              <select value={selected.textAlign || "center"} onChange={(event) => updateSelected({ textAlign:event.target.value })} style={{ border:"1px solid #334155", borderRadius:8, background:"#0f172a", color:"#fff", padding:9, font:"700 11px system-ui" }}>
+                <option value="left">Left</option>
+                <option value="center">Centre</option>
+                <option value="right">Right</option>
+              </select>
+            </label>
+
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7 }}>
+              <button type="button" onClick={() => sendEditor(mode,"center-selected")} style={{ border:0,borderRadius:8,padding:8,background:"#334155",color:"#fff",font:"800 10px system-ui" }}>Centre</button>
+              <button type="button" onClick={() => sendEditor(mode, selected.locked ? "unlock-selected" : "lock-selected")} style={{ border:0,borderRadius:8,padding:8,background:selected.locked ? "#0f766e" : "#78350f",color:"#fff",font:"800 10px system-ui" }}>{selected.locked ? "Unlock" : "Lock"}</button>
+              <button type="button" onClick={() => sendEditor(mode,"layer-backward")} style={{ border:0,borderRadius:8,padding:8,background:"#26324a",color:"#fff",font:"800 10px system-ui" }}>Layer −</button>
+              <button type="button" onClick={() => sendEditor(mode,"layer-forward")} style={{ border:0,borderRadius:8,padding:8,background:"#26324a",color:"#fff",font:"800 10px system-ui" }}>Layer +</button>
+              <button type="button" onClick={() => sendEditor(mode,"reset-selected")} style={{ gridColumn:"1 / -1",border:0,borderRadius:8,padding:8,background:"#7f1d1d",color:"#fff",font:"800 10px system-ui" }}>Reset selected</button>
+            </div>
+          </>
+        ) : (
+          <div style={{ color:"#94a3b8", font:"600 11px/1.4 system-ui" }}>
+            Click any editable part of the {mode} page. Clicking an image selects its containing image box.
+          </div>
+        )}
+
+        <button type="button" onClick={() => {
+          if (window.confirm(\`Reset the whole \${mode} page layout?\`)) sendEditor(mode,"reset-page");
+        }} style={{ border:0,borderRadius:8,padding:9,background:"#7f1d1d",color:"#fff",font:"800 10px system-ui" }}>Reset {mode} page</button>
+
+        <button type="button" onClick={requestExport} style={{ border:0,borderRadius:10,padding:"11px 12px",background:"#f3c94b",color:"#111827",font:"900 12px system-ui",cursor:"pointer" }}>
+          Generate settings for ChatGPT
+        </button>
+
+        {copyText ? (
+          <>
+            <button type="button" onClick={async () => {
+              try { await navigator.clipboard.writeText(copyText); setCopied(true); window.setTimeout(() => setCopied(false), 1600); } catch { setCopied(false); }
+            }} style={{ border:0,borderRadius:9,padding:9,background:"#0f766e",color:"#fff",font:"850 10px system-ui" }}>{copied ? "Copied ✓" : "Copy settings"}</button>
+            <textarea readOnly value={copyText} style={{ width:"100%", minHeight:180, boxSizing:"border-box", resize:"vertical", border:"1px solid #334155", borderRadius:8, background:"#020617", color:"#cbd5e1", padding:9, font:"500 8px/1.35 monospace" }} />
+          </>
+        ) : null}
+
+        <a href="#/host" style={{ color:"#93c5fd", font:"700 11px system-ui", textDecoration:"none" }}>← Back to Quiz In</a>
+      </aside>
+
+      <section style={{ minWidth:0, display:"grid", justifyItems:"center", gap:10 }}>
+        <div style={{ color:"#67e8f9", font:"900 11px system-ui", letterSpacing:".09em" }}>
+          QUIZ TAKER · PICTURE {mode.toUpperCase()} · 390 × 844
+        </div>
+
+        <div style={{ width:(PHONE_WIDTH + FRAME_BORDER * 2) * scale, height:(PHONE_HEIGHT + FRAME_BORDER * 2) * scale, position:"relative" }}>
+          <div style={{
+            position:"absolute", inset:0,
+            width:PHONE_WIDTH + FRAME_BORDER * 2,
+            height:PHONE_HEIGHT + FRAME_BORDER * 2,
+            transform:\`scale(\${scale})\`,
+            transformOrigin:"top left",
+            padding:FRAME_BORDER,
+            boxSizing:"border-box",
+            borderRadius:28,
+            background:"#05070b",
+            boxShadow:"0 18px 55px rgba(0,0,0,.5)",
+            overflow:"hidden"
+          }}>
+            {["question","answer"].map((page) => (
+              <iframe
+                key={page}
+                ref={page === "question" ? questionRef : answerRef}
+                title={\`Picture round \${page} layout editor\`}
+                src={\`#/join/__PREVIEW__/\${stages[page]}\`}
+                onLoad={() => window.setTimeout(() => sendEditor(page,"set-enabled",{enabled:true}), 80)}
+                style={{
+                  position:"absolute",
+                  left:FRAME_BORDER,
+                  top:FRAME_BORDER,
+                  display:"block",
+                  visibility:mode === page ? "visible" : "hidden",
+                  pointerEvents:mode === page ? "auto" : "none",
+                  width:PHONE_WIDTH,
+                  height:PHONE_HEIGHT,
+                  border:0,
+                  borderRadius:20,
+                  background:"#fff"
+                }}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div style={{ color:"#94a3b8", font:"600 10px/1.4 system-ui", textAlign:"center", maxWidth:520 }}>
+          Resize the Question image box and Answer image box once; every uploaded picture will be scaled to fit inside those areas.
+        </div>
+      </section>
+    </main>
+  );
+}
+
 export default function App() {
   const [route, setRoute] = useState(getRoute);
 
@@ -1353,6 +1654,7 @@ export default function App() {
 
   if (route.kind === "preview") return <TeamPreview stage={route.stage} />;
   if (route.kind === "timer-editor") return <TimerLayoutEditor />;
+  if (route.kind === "picture-editor") return <PictureRoundLayoutEditor />;
   if (route.kind === "host-preview") return <QuizmasterPreviewView stage={route.stage} />;
   if (route.kind === "join") return <TeamView sessionCode={route.sessionCode} teamToken={route.teamToken} />;
   return <HostApp />;
