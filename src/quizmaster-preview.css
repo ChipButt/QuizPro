@@ -1432,3 +1432,18 @@
     0 1px 0 rgba(255,255,255,.95),
     0 2px 1px rgba(0,0,0,.3);
 }
+
+
+/* ---------- Final reveal progress in Quizmaster preview ---------- */
+.qm-final-preview-card .qm-result-row.revealed-to-teams{
+  background:#394554 !important;
+  border-color:#596573 !important;
+  box-shadow:none !important;
+  opacity:.58;
+}
+
+.qm-final-preview-card .qm-result-row.revealed-to-teams>span,
+.qm-final-preview-card .qm-result-row.revealed-to-teams>strong,
+.qm-final-preview-card .qm-result-row.revealed-to-teams>b{
+  color:#aeb7c1 !important;
+}
