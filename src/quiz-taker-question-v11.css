@@ -662,3 +662,102 @@
 .live-team-page .team-question-stage.is-review .question-lock-key{
   display:none !important;
 }
+
+
+/* ---------- Image/audio answer reveal ---------- */
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill.has-answer-image,
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill.has-answer-audio{
+  grid-template-areas:
+    "icon label"
+    "media media"
+    "icon answer" !important;
+}
+
+.live-team-page .revealed-answer-media{
+  grid-area:media;
+  width:100%;
+  min-width:0;
+  display:grid;
+  gap:10px;
+}
+
+.live-team-page .revealed-answer-media>img{
+  display:block;
+  width:100%;
+  max-width:100%;
+  max-height:min(30dvh,250px);
+  object-fit:contain;
+  border:2px solid rgba(94,74,0,.28);
+  border-radius:13px;
+  background:#fff;
+  box-shadow:0 3px 0 rgba(94,74,0,.12);
+}
+
+.live-team-page .revealed-answer-audio{
+  min-width:0;
+  padding:9px 10px;
+  display:grid;
+  grid-template-columns:22px minmax(0,1fr);
+  grid-template-areas:
+    "icon name"
+    "player player";
+  align-items:center;
+  gap:7px 9px;
+  border:1px solid rgba(94,74,0,.30);
+  border-radius:12px;
+  background:rgba(255,255,255,.72);
+}
+
+.live-team-page .revealed-answer-audio>svg{
+  grid-area:icon;
+  color:#705700;
+}
+
+.live-team-page .revealed-answer-audio>strong{
+  grid-area:name;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#031b3c;
+  font-size:12px;
+  line-height:1.1;
+}
+
+.live-team-page .revealed-answer-audio>audio{
+  grid-area:player;
+  display:block;
+  width:100%;
+  min-width:0;
+  height:38px;
+}
+
+.live-team-page .revealed-answer-pill .revealed-answer-text{
+  grid-area:answer;
+}
+
+/* Push Question reserves the same answer-media footprint without sending the
+   actual media until Push Answer. */
+.live-team-page .revealed-answer-slot{
+  --answer-image-space:0px;
+  --answer-audio-space:0px;
+  min-height:calc(76px + var(--answer-image-space) + var(--answer-audio-space)) !important;
+}
+
+.live-team-page .revealed-answer-slot.has-answer-image{
+  --answer-image-space:clamp(170px,28dvh,240px);
+}
+
+.live-team-page .revealed-answer-slot.has-answer-audio{
+  --answer-audio-space:82px;
+}
+
+@media(max-height:650px){
+  .live-team-page .revealed-answer-slot.has-answer-image{
+    --answer-image-space:140px;
+  }
+
+  .live-team-page .revealed-answer-media>img{
+    max-height:22dvh;
+  }
+}
