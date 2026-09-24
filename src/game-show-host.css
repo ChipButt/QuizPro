@@ -2782,3 +2782,23 @@
   font-weight:900;
   font-size:14px;
 }
+
+
+/* ---------- Final reveal progress on Quizmaster ---------- */
+.simple-host-app .host-final-full-leaderboard li.revealed-to-teams{
+  background:#e5e7eb !important;
+  border-color:#c7cbd1 !important;
+  color:#7a8492 !important;
+  box-shadow:none !important;
+  opacity:.72;
+}
+
+.simple-host-app .host-final-full-leaderboard li.revealed-to-teams>span{
+  background:#cbd0d7 !important;
+  color:#6b7280 !important;
+}
+
+.simple-host-app .host-final-full-leaderboard li.revealed-to-teams>strong,
+.simple-host-app .host-final-full-leaderboard li.revealed-to-teams>b{
+  color:#7a8492 !important;
+}
