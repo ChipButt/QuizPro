@@ -1091,3 +1091,157 @@
     transition:none !important;
   }
 }
+
+
+/* ---------- Picture reveal must preserve question geometry ---------- */
+/* The Question page is the source of truth for picture rounds. Revealing the
+   answer must not move, shrink or restyle the question text, shared image
+   frame, or the team's answer field. The only layout addition is the gold
+   Correct Answer pill immediately below the existing answer field. */
+
+@media(max-width:420px){
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed{
+    position:relative !important;
+    height:484px !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+    padding:14px !important;
+    border:2px solid var(--gs-line) !important;
+    background:linear-gradient(135deg,#fff 0%,#f7fbff 100%) !important;
+    box-shadow:0 8px 0 rgba(76,29,149,.08),0 18px 40px rgba(28,5,67,.12) !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed::before{
+    background:linear-gradient(90deg,#168cff,#ffd429,#168cff) border-box !important;
+    opacity:.8 !important;
+    animation:gsSweep 3.6s linear infinite !important;
+  }
+
+  /* Remove the generic revealed-answer flow. Every child below is positioned
+     from the same coordinates as the approved Question page export. */
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed>.team-question-core,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed>.team-answer-zone,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .answer-input-shell{
+    position:static !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:visible !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .team-question-text{
+    position:absolute !important;
+    left:16px !important;
+    top:12px !important;
+    width:298px !important;
+    max-width:none !important;
+    margin:0 !important;
+    translate:none !important;
+    transform:none !important;
+    z-index:4;
+    text-align:center !important;
+    color:var(--gs-text) !important;
+    -webkit-text-fill-color:var(--gs-text) !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-shared-image-frame{
+    position:absolute !important;
+    left:16px !important;
+    top:40px !important;
+    width:298px !important;
+    max-width:none !important;
+    height:252px !important;
+    min-height:0 !important;
+    max-height:none !important;
+    margin:0 !important;
+    translate:none !important;
+    transform:none !important;
+    box-sizing:border-box !important;
+    display:grid !important;
+    place-items:center !important;
+    overflow:hidden !important;
+    z-index:2;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .your-answer-section{
+    position:absolute !important;
+    left:16px !important;
+    top:300px !important;
+    width:298px !important;
+    max-width:none !important;
+    height:82px !important;
+    min-height:0 !important;
+    max-height:none !important;
+    margin:0 !important;
+    padding:0 !important;
+    translate:none !important;
+    transform:none !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    z-index:5;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .your-answer-label{
+    display:none !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .your-answer-section textarea,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-correct .your-answer-section textarea:disabled,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-incorrect .your-answer-section textarea:disabled{
+    display:block !important;
+    box-sizing:border-box !important;
+    width:100% !important;
+    height:79px !important;
+    min-height:0 !important;
+    max-height:none !important;
+    margin:0 !important;
+    padding:12px 15px !important;
+    translate:none !important;
+    transform:none !important;
+    opacity:1 !important;
+    filter:none !important;
+    border:2px solid #b8d8ff !important;
+    border-radius:18px !important;
+    background:#fff !important;
+    color:var(--gs-text) !important;
+    -webkit-text-fill-color:var(--gs-text) !important;
+    box-shadow:0 6px 0 rgba(76,29,149,.08) !important;
+    cursor:default !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-correct-answer-panel{
+    position:absolute !important;
+    left:16px !important;
+    top:392px !important;
+    right:auto !important;
+    bottom:auto !important;
+    width:298px !important;
+    max-width:none !important;
+    min-width:0 !important;
+    height:76px !important;
+    min-height:76px !important;
+    margin:0 !important;
+    padding:11px 14px !important;
+    translate:none !important;
+    transform:none !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:5px !important;
+    text-align:center !important;
+    z-index:12 !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-correct-answer-panel>span,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed .picture-correct-answer-panel>.revealed-answer-text{
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    text-align:center !important;
+    align-self:center !important;
+    justify-self:center !important;
+  }
+}
