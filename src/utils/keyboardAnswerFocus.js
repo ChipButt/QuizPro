@@ -45,9 +45,7 @@ function forceKeyboardClasses(enabled) {
   document.querySelector(SHELL_SELECTOR)?.classList.toggle("keyboard-active", enabled);
 }
 
-function restoreOriginalView() {
-  resetKeyboardSlide();
-
+function holdDocumentPosition() {
   try {
     window.scrollTo(originalScrollX, originalScrollY);
   } catch {
@@ -59,6 +57,11 @@ function restoreOriginalView() {
     scrollingElement.scrollLeft = originalScrollX;
     scrollingElement.scrollTop = originalScrollY;
   }
+}
+
+function restoreOriginalView() {
+  resetKeyboardSlide();
+  holdDocumentPosition();
 }
 
 function finishKeyboardClose() {
@@ -115,6 +118,9 @@ function settleKeyboardClose() {
 }
 
 function updateKeyboardSlide() {
+  // Safari must not be allowed to scroll the document underneath our own
+  // keyboard translation. Reassert the pre-focus document position first.
+  holdDocumentPosition();
   syncVisualViewport();
 
   const active = document.activeElement;
@@ -187,9 +193,39 @@ document.addEventListener("pointerdown", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
-  // Capture before Safari performs any automatic focus scrolling.
+  // Capture the real page position before Safari gets a chance to focus-pan.
   preFocusScrollX = window.scrollX;
   preFocusScrollY = window.scrollY;
+  originalScrollX = preFocusScrollX;
+  originalScrollY = preFocusScrollY;
+
+  /*
+   * iOS Safari's default textarea focus action scrolls the document toward the
+   * bottom before visualViewport settles. Cancel that default and perform the
+   * focus ourselves with preventScroll so the ONLY movement afterwards is our
+   * calculated .team-question-stage keyboard lift.
+   */
+  event.preventDefault();
+  forceKeyboardClasses(true);
+
+  try {
+    target.focus({ preventScroll: true });
+  } catch {
+    target.focus();
+    holdDocumentPosition();
+  }
+
+  // A prevented pointerdown does not place the caret from the tap. Put it at
+  // the end, which is the expected behaviour for a quiz-answer text box.
+  try {
+    const end = target.value.length;
+    target.setSelectionRange(end, end);
+  } catch {
+    // Some browser/input modes do not expose selection ranges.
+  }
+
+  holdDocumentPosition();
+  window.requestAnimationFrame(holdDocumentPosition);
 }, true);
 
 document.addEventListener("focusin", (event) => {
@@ -199,6 +235,7 @@ document.addEventListener("focusin", (event) => {
   clearRestoreTimers();
   originalScrollX = preFocusScrollX;
   originalScrollY = preFocusScrollY;
+  holdDocumentPosition();
 
   const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
   baselineHeight = Math.max(window.innerHeight, viewportHeight);
