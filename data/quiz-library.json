@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-24T12:46:08.623Z",
+  "updatedAt": "2026-09-24T12:46:13.886Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -2814,7 +2814,7 @@
               "id": "question-qqiixcq",
               "number": 7,
               "text": "What vegetable is this?",
-              "answer": "",
+              "answer": "Pumpkin",
               "alternatives": [],
               "points": 1,
               "type": "Picture",
