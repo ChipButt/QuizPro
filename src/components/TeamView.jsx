@@ -3,7 +3,6 @@ import {
   ArrowRight,
   CheckCircle2,
   Crown,
-  KeyRound,
   Lightbulb,
   Lock,
   RotateCcw,
@@ -1509,6 +1508,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   );
   const questionLocked = roundLocked || Boolean(question?.revealed);
   const screen = snapshot?.live?.teamScreen ?? "lobby";
+  const reviewQuestionMode = Boolean(roundLocked && screen === "question" && !question?.revealed);
   const isMultipleChoice = Boolean(question?.type === "Multiple choice" && question.options?.length);
   const isTextEntry = Boolean(question && !isMultipleChoice);
 
@@ -1666,8 +1666,7 @@ export default function TeamView({ sessionCode, teamToken }) {
           </button>
         </div>
 
-        <div className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""} ${answerResultClass}`}>
-          {questionLocked && !question.revealed ? <span className="question-lock-key" aria-label="Question locked"><KeyRound size={18} /></span> : null}
+        <div className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${reviewQuestionMode ? "is-review" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""} ${answerResultClass}`}>
 
           <div className="team-question-core lockable-zone">
             {question.image ? (
@@ -1713,8 +1712,8 @@ export default function TeamView({ sessionCode, teamToken }) {
 
             {isTextEntry ? (
               <div className="answer-input-shell">
-                <div className={`your-answer-section ${question.revealed ? "is-revealed" : ""}`}>
-                  {question.revealed ? <span className="your-answer-label">YOUR ANSWER</span> : null}
+                <div className={`your-answer-section ${reviewQuestionMode ? "is-review" : ""} ${question.revealed ? "is-revealed" : ""}`}>
+                  {reviewQuestionMode || question.revealed ? <span className="your-answer-label">YOUR ANSWER</span> : null}
                   <textarea
                     className={`${draft.trim() ? "has-answer" : ""} ${submitted ? "submitted-answer" : ""}`}
                     value={draft}
@@ -1732,7 +1731,9 @@ export default function TeamView({ sessionCode, teamToken }) {
                     placeholder={question.type === "Picture" ? "Type what you think the picture is…" : "Type your answer…"}
                   />
                 </div>
-                {question.revealed ? (
+                {reviewQuestionMode ? (
+                  <div className="revealed-answer-slot" aria-hidden="true" />
+                ) : question.revealed ? (
                   <div className="revealed-answer-pill">
                     <CheckCircle2 aria-hidden="true" />
                     <span>CORRECT ANSWER</span>
