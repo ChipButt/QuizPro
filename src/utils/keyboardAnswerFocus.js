@@ -1,7 +1,8 @@
 const ANSWER_SELECTOR = ".question-team-card .answer-input-shell textarea";
 const PAGE_SELECTOR = ".team-page.live-team-page";
 const SHELL_SELECTOR = ".live-phone-shell";
-const CLEARANCE_PX = 18;
+const QUESTION_STAGE_KEYBOARD_GAP_PX = 20;
+const QUESTION_STAGE_SELECTOR = ".question-team-card .team-question-stage";
 const KEYBOARD_OPEN_THRESHOLD_PX = 100;
 
 let baselineHeight = 0;
@@ -99,22 +100,26 @@ function updateKeyboardSlide() {
   }
 
   /*
-   * Measure the actual textarea, not its wrapper. This matters for layouts
-   * where the field itself has an editor translate. Always measure from an
-   * unshifted page so repeated visualViewport events never accumulate offset.
+   * Always measure from the intact, unshifted layout. The alignment target is
+   * the complete blue/yellow Question Content Area (.team-question-stage),
+   * not the textarea itself.
    */
   resetKeyboardSlide();
-  const answerRect = active.getBoundingClientRect();
+  const questionStage = document.querySelector(QUESTION_STAGE_SELECTOR);
+  if (!(questionStage instanceof Element)) {
+    resetKeyboardSlide();
+    return;
+  }
+  const stageRect = questionStage.getBoundingClientRect();
 
   /*
-   * visualViewport.bottom is the top edge of the software keyboard. Move the
-   * WHOLE existing page only as far as required to leave the textarea fully
-   * visible above it. There is deliberately no question-panel/top-of-screen
-   * cap: keeping the answer field visible is the priority while typing.
+   * visualViewport.bottom is the top edge of the software keyboard. Lift the
+   * WHOLE quiz screen until the bottom of .team-question-stage sits exactly
+   * 20px above that edge. If it is already at least 20px clear, do not move it.
    */
   const requiredShift = Math.max(
     0,
-    answerRect.bottom + CLEARANCE_PX - viewportBottom,
+    stageRect.bottom + QUESTION_STAGE_KEYBOARD_GAP_PX - viewportBottom,
   );
 
   document.documentElement.style.setProperty(
