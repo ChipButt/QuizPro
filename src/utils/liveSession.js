@@ -65,7 +65,18 @@ function safeQuestion(state, roundId, question) {
     text: question.text,
     points: question.points,
     type: question.type,
-    options: question.type === "Multiple choice" ? (question.options ?? []) : [],
+    options: question.type === "Multiple choice"
+      ? (question.options ?? []).map((option) => {
+          if (option && typeof option === "object" && !Array.isArray(option)) {
+            return {
+              text: String(option.text ?? ""),
+              image: String(option.image ?? ""),
+              imageName: String(option.imageName ?? ""),
+            };
+          }
+          return String(option ?? "");
+        })
+      : [],
     image: question.image ?? "",
     imageName: question.imageName ?? "",
     audio: question.audio ?? "",
