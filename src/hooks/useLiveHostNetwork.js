@@ -48,12 +48,36 @@ export function useLiveHostNetwork(state, updateState) {
 
   useEffect(() => {
     if (!state.live?.sessionActive || !state.live?.sessionCode) {
+      const finishing = state.live?.teamScreen === "finished" && Boolean(state.live?.sessionCode);
+      let shutdownTimer;
+
+      if (finishing && connectionsRef.current.size) {
+        const message = {
+          type: "session-finished",
+          sessionCode: state.live.sessionCode,
+          finishedAt: Number(state.live?.finishedAt ?? Date.now()),
+        };
+        connectionsRef.current.forEach((conn) => {
+          if (!conn?.open) return;
+          try { conn.send(message); } catch { /* best effort before shutdown */ }
+        });
+      }
+
       setStatus("offline");
-      connectionsRef.current.forEach((conn) => conn.close());
-      connectionsRef.current.clear();
-      refreshConnectedTokens();
-      peerRef.current?.destroy();
-      peerRef.current = null;
+      const closeAll = () => {
+        connectionsRef.current.forEach((conn) => conn.close());
+        connectionsRef.current.clear();
+        refreshConnectedTokens();
+        peerRef.current?.destroy();
+        peerRef.current = null;
+      };
+
+      if (finishing) {
+        shutdownTimer = window.setTimeout(closeAll, 500);
+        return () => window.clearTimeout(shutdownTimer);
+      }
+
+      closeAll();
       return undefined;
     }
 
