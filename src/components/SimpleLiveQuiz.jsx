@@ -176,6 +176,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
         revealedRounds: {},
         askedQuestionIds: [],
         answerReviewPushedQuestionIds: [],
+        answerReviewQuestionId: "",
         forceLockedRounds: {},
         timerActive: false,
         timerEndsAt: 0,
@@ -277,6 +278,17 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
             reviewQuestion.id,
           ]))
         : (current.live?.answerReviewPushedQuestionIds ?? []);
+
+      const revealedQuestions = { ...(current.live?.revealedQuestions ?? {}) };
+      const revealedRounds = { ...(current.live?.revealedRounds ?? {}) };
+
+      // In the Answers tab, Push Question must always show the question only,
+      // even if this question/round had previously been revealed.
+      if (answerReview) {
+        delete revealedQuestions[reviewQuestion.id];
+        delete revealedRounds[reviewRound.id];
+      }
+
       return {
         ...current,
         live: {
@@ -287,8 +299,12 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
           questionIndex: reviewQuestionIndex,
           askedQuestionIds,
           answerReviewPushedQuestionIds,
+          answerReviewQuestionId: answerReview ? reviewQuestion.id : "",
+          revealedQuestions,
+          revealedRounds,
           timerActive: false,
           timerEndsAt: 0,
+          timerDurationSeconds: 0,
           timerRoundId: "",
           audio: { questionId: "", playNonce: Number(current.live?.audio?.playNonce ?? 0) },
         },
@@ -322,6 +338,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
           roundIndex: reviewRoundIndex,
           questionIndex: reviewQuestionIndex,
           askedQuestionIds,
+          answerReviewQuestionId: reviewQuestion.id,
           revealedQuestions: {
             ...(current.live?.revealedQuestions ?? {}),
             [reviewQuestion.id]: true,
