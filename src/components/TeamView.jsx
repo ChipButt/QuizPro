@@ -1677,24 +1677,34 @@ export default function TeamView({ sessionCode, teamToken }) {
               </div>
             ) : null}
 
-            <h1 className="team-question-text">{question.text}</h1>
+            {String(question.text ?? "").trim() ? <h1 className="team-question-text">{question.text}</h1> : null}
           </div>
 
           <div className="team-answer-zone lockable-zone">
             {isMultipleChoice ? (
               <div className="team-choice-list live-choice-list">
-                {question.options.filter(Boolean).map((option, index) => {
-                  const selected = draft === option;
-                  const correct = question.revealed && correctAnswer === String(option).trim();
+                {question.options.map((option, index) => {
+                  const record = option && typeof option === "object" && !Array.isArray(option)
+                    ? { text: String(option.text ?? ""), image: String(option.image ?? ""), imageName: String(option.imageName ?? "") }
+                    : { text: String(option ?? ""), image: "", imageName: "" };
+                  if (!record.text.trim() && !record.image) return null;
+                  const letter = String.fromCharCode(65 + index);
+                  const value = record.text.trim() || `Option ${letter}`;
+                  const selected = draft === value;
+                  const correct = question.revealed && correctAnswer === value;
                   return (
                     <button
                       type="button"
                       key={index}
                       disabled={questionLocked}
-                      className={`${selected ? "selected" : ""} ${submitted && selected ? "submitted-choice" : ""} ${correct ? "correct-reveal" : ""}`}
-                      onClick={() => chooseAnswer(option)}
+                      className={`${selected ? "selected" : ""} ${submitted && selected ? "submitted-choice" : ""} ${correct ? "correct-reveal" : ""} ${record.image ? "has-choice-image" : ""}`}
+                      onClick={() => chooseAnswer(value)}
                     >
-                      <span>{String.fromCharCode(65 + index)}</span>{option}
+                      <span>{letter}</span>
+                      <div className="live-choice-content">
+                        {record.image ? <img src={record.image} alt={record.imageName || `Option ${letter}`} /> : null}
+                        {record.text.trim() ? <strong>{record.text}</strong> : null}
+                      </div>
                     </button>
                   );
                 })}
