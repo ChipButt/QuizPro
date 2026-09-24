@@ -3,7 +3,9 @@ const ANSWER_SECTION_SELECTOR = ".question-team-card .your-answer-section";
 const QUESTION_STAGE_SELECTOR = ".question-team-card .team-question-stage";
 const PAGE_SELECTOR = ".keyboard-active-page";
 const SHELL_SELECTOR = ".live-phone-shell.keyboard-active";
-const CLEARANCE_PX = 14;
+const CLEARANCE_PX = 18;
+const KEYBOARD_ACCESSORY_RESERVE_PX = 72;
+const KEYBOARD_OPEN_THRESHOLD_PX = 120;
 const QUESTION_TOP_GAP_PX = 6;
 
 let baselineHeight = 0;
@@ -103,6 +105,13 @@ function updateKeyboardSlide() {
   const viewportTop = Math.max(0, viewport?.offsetTop ?? 0);
   const viewportHeight = Math.max(180, viewport?.height ?? window.innerHeight);
   const viewportBottom = viewportTop + viewportHeight;
+  const keyboardReduction = Math.max(0, baselineHeight - viewportHeight);
+  const keyboardOpen = keyboardReduction >= KEYBOARD_OPEN_THRESHOLD_PX;
+
+  // iPhone Safari's visualViewport can extend behind the input accessory bar
+  // (the arrows / Done strip above the keyboard). Treat that strip as unusable
+  // space whenever a real software keyboard is open.
+  const safeViewportBottom = viewportBottom - (keyboardOpen ? KEYBOARD_ACCESSORY_RESERVE_PX : 0);
 
   // Always measure from the intact, unshifted layout. This avoids accumulating
   // translation across repeated visualViewport resize/scroll events.
@@ -111,7 +120,7 @@ function updateKeyboardSlide() {
   const answerRect = answerSection.getBoundingClientRect();
   const stageRect = stage.getBoundingClientRect();
 
-  const overlap = Math.max(0, answerRect.bottom + CLEARANCE_PX - viewportBottom);
+  const overlap = Math.max(0, answerRect.bottom + CLEARANCE_PX - safeViewportBottom);
 
   // Do not slide farther than the point where the question box itself reaches
   // the top of the visible browser viewport.
