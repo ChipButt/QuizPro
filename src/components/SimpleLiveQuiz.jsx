@@ -175,6 +175,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
         revealedQuestions: {},
         revealedRounds: {},
         askedQuestionIds: [],
+        answerReviewPushedQuestionIds: [],
         forceLockedRounds: {},
         timerActive: false,
         timerEndsAt: 0,
@@ -263,13 +264,19 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
     setReviewQuestionIndex(0);
   }
 
-  function pushReviewedQuestion() {
+  function pushReviewedQuestion({ answerReview = false } = {}) {
     if (!reviewRound || !reviewQuestion) return;
     updateState((current) => {
       const askedQuestionIds = Array.from(new Set([
         ...(current.live?.askedQuestionIds ?? []),
         reviewQuestion.id,
       ]));
+      const answerReviewPushedQuestionIds = answerReview
+        ? Array.from(new Set([
+            ...(current.live?.answerReviewPushedQuestionIds ?? []),
+            reviewQuestion.id,
+          ]))
+        : (current.live?.answerReviewPushedQuestionIds ?? []);
       return {
         ...current,
         live: {
@@ -279,6 +286,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
           roundIndex: reviewRoundIndex,
           questionIndex: reviewQuestionIndex,
           askedQuestionIds,
+          answerReviewPushedQuestionIds,
           timerActive: false,
           timerEndsAt: 0,
           timerRoundId: "",
@@ -327,17 +335,17 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
     });
   }
 
-  function runAnswerFlow(reviewQuestionAsked, reviewQuestionRevealed) {
+  function runAnswerFlow(reviewQuestionPushedForAnswers, reviewQuestionRevealed) {
     if (!reviewQuestion || !reviewRound) return;
     if (reviewQuestionRevealed) {
       setReviewQuestionIndex((index) => Math.min(reviewRound.questions.length - 1, index + 1));
       return;
     }
-    if (reviewQuestionAsked) {
+    if (reviewQuestionPushedForAnswers) {
       revealReviewedAnswer();
       return;
     }
-    pushReviewedQuestion();
+    pushReviewedQuestion({ answerReview: true });
   }
 
   function toggleLiveRoundAnswers() {
@@ -635,6 +643,10 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   }
   const askedReviewQuestions = (reviewRound?.questions ?? []).filter((item) => askedQuestionIds.has(item.id));
   const reviewQuestionAsked = Boolean(reviewQuestion && askedQuestionIds.has(reviewQuestion.id));
+  const answerReviewPushedQuestionIds = new Set(state.live?.answerReviewPushedQuestionIds ?? []);
+  const reviewQuestionPushedForAnswers = Boolean(
+    reviewQuestion && answerReviewPushedQuestionIds.has(reviewQuestion.id)
+  );
   const reviewQuestionRevealed = Boolean(
     reviewQuestion &&
     (
@@ -1050,9 +1062,9 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
                 <button
                   className={reviewQuestionRevealed ? "icon-step-button host-question-step next" : "primary-button host-answer-flow-button"}
                   disabled={reviewQuestionRevealed && !canReviewNext}
-                  onClick={() => runAnswerFlow(reviewQuestionAsked, reviewQuestionRevealed)}
+                  onClick={() => runAnswerFlow(reviewQuestionPushedForAnswers, reviewQuestionRevealed)}
                 >
-                  {reviewQuestionRevealed ? <>Next Question <ArrowRight size={16} /></> : reviewQuestionAsked ? <><Eye size={16} /> Push Answer</> : <><Send size={16} /> Push Question</>}
+                  {reviewQuestionRevealed ? <>Next Question <ArrowRight size={16} /></> : reviewQuestionPushedForAnswers ? <><Eye size={16} /> Reveal Answer</> : <><Send size={16} /> Push Question</>}
                 </button>
               )}
             </div>
