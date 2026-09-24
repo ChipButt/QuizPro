@@ -166,7 +166,14 @@ export function buildTeamSnapshot(state, teamToken) {
   const team = state.teams.find((item) => item.token === teamToken) ?? null;
   const quiz = getLiveQuiz(state);
   const round = getLiveRound(state);
-  const maxQuestionIndex = Math.max(-1, Number(state.live?.questionIndex ?? -1));
+  const numericQuestionIndex = Math.max(-1, Number(state.live?.questionIndex ?? -1));
+  const reviewQuestionId = state.live?.teamScreen === "question"
+    ? String(state.live?.answerReviewQuestionId ?? "")
+    : "";
+  const reviewQuestionIndex = reviewQuestionId && round
+    ? round.questions.findIndex((question) => question.id === reviewQuestionId)
+    : -1;
+  const maxQuestionIndex = reviewQuestionIndex >= 0 ? reviewQuestionIndex : numericQuestionIndex;
   const allowedQuestions = round
     ? round.questions.slice(0, maxQuestionIndex + 1).map((question) => safeQuestion(state, round.id, question))
     : [];
@@ -233,6 +240,7 @@ export function buildTeamSnapshot(state, teamToken) {
       roundIndex: state.live?.roundIndex ?? 0,
       waitingRoundIndex: Number.isInteger(Number(state.live?.waitingRoundIndex)) ? Number(state.live?.waitingRoundIndex) : null,
       questionIndex: maxQuestionIndex,
+      answerReviewQuestionId: reviewQuestionId,
       revealMode: state.live?.revealMode ?? "round",
       timerActive: Boolean(state.live?.timerActive),
       timerEndsAt: Number(state.live?.timerEndsAt ?? 0),
