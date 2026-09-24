@@ -575,3 +575,90 @@
     inset 0 1px 2px rgba(190,24,93,.08),
     0 4px 0 rgba(190,24,93,.18) !important;
 }
+
+
+/* ---------- Stable answer-review layout before reveal ---------- */
+/* When the Quizmaster pushes a question during answer review, use the same
+   geometry as the revealed-answer state. Only the correctness colours and the
+   Correct Answer card are withheld until the answer is actually pushed. */
+.live-team-page .team-question-stage.is-review{
+  overflow:visible !important;
+  background:#fff !important;
+  border-color:#c7d7ff !important;
+  box-shadow:
+    0 8px 0 rgba(10,86,216,.08),
+    0 18px 40px rgba(3,27,60,.10) !important;
+}
+
+.live-team-page .team-question-stage.is-review::before{
+  background:linear-gradient(90deg,#168cff,#8fc8ff,#168cff) border-box !important;
+  animation-play-state:running !important;
+  opacity:.8 !important;
+}
+
+.live-team-page .team-question-stage.is-review .team-question-core,
+.live-team-page .team-question-stage.is-review .team-question-text{
+  opacity:1 !important;
+  filter:none !important;
+}
+
+.live-team-page .team-question-stage.is-review .team-question-text{
+  color:#000 !important;
+  -webkit-text-fill-color:#000 !important;
+}
+
+.live-team-page .team-question-stage.is-review .team-answer-zone,
+.live-team-page .team-question-stage.is-review .answer-input-shell{
+  overflow:visible !important;
+}
+
+.live-team-page .team-question-stage.is-review .your-answer-section{
+  box-sizing:border-box;
+  width:100%;
+  padding:10px 10px 11px;
+  border:2px solid #c7d7ff;
+  border-radius:16px;
+  background:#f7faff;
+  box-shadow:0 4px 0 rgba(10,86,216,.10);
+}
+
+.live-team-page .team-question-stage.is-review .your-answer-section .your-answer-label{
+  display:block;
+  margin:0 0 7px 2px !important;
+  color:#41506a !important;
+}
+
+.live-team-page .team-question-stage.is-review .answer-input-shell textarea:disabled{
+  opacity:1 !important;
+  filter:none !important;
+  background:#e1e5eb !important;
+  color:#6b7280 !important;
+  -webkit-text-fill-color:#6b7280 !important;
+  border:2px solid #a8b0bb !important;
+  box-shadow:
+    inset 0 1px 2px rgba(15,23,42,.06),
+    0 4px 0 rgba(100,116,139,.14) !important;
+  cursor:not-allowed !important;
+}
+
+/* Hold the space where the gold Correct Answer card will appear so revealing
+   the answer does not make the question and submitted-answer blocks jump. */
+.live-team-page .team-question-stage.is-review .revealed-answer-slot{
+  box-sizing:border-box;
+  width:100%;
+  min-height:76px;
+  margin:10px 0 0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+@media(max-width:420px){
+  .live-team-page .team-question-stage.is-review .revealed-answer-slot{
+    min-height:76px;
+  }
+}
+
+/* The old manual-lock key is obsolete in answer review. */
+.live-team-page .team-question-stage.is-review .question-lock-key{
+  display:none !important;
+}
