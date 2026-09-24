@@ -33,6 +33,11 @@ export function useLiveHostNetwork(state, updateState) {
   stateRef.current = state;
   updateRef.current = updateState;
 
+  const networkEnabled = Boolean(
+    state.live?.sessionCode &&
+    (state.live?.sessionActive || state.live?.teamScreen === "finished")
+  );
+
   function refreshConnectedTokens() {
     setConnectedTokens([...connectionsRef.current.keys()]);
   }
@@ -47,37 +52,13 @@ export function useLiveHostNetwork(state, updateState) {
   }
 
   useEffect(() => {
-    if (!state.live?.sessionActive || !state.live?.sessionCode) {
-      const finishing = state.live?.teamScreen === "finished" && Boolean(state.live?.sessionCode);
-      let shutdownTimer;
-
-      if (finishing && connectionsRef.current.size) {
-        const message = {
-          type: "session-finished",
-          sessionCode: state.live.sessionCode,
-          finishedAt: Number(state.live?.finishedAt ?? Date.now()),
-        };
-        connectionsRef.current.forEach((conn) => {
-          if (!conn?.open) return;
-          try { conn.send(message); } catch { /* best effort before shutdown */ }
-        });
-      }
-
+    if (!networkEnabled) {
       setStatus("offline");
-      const closeAll = () => {
-        connectionsRef.current.forEach((conn) => conn.close());
-        connectionsRef.current.clear();
-        refreshConnectedTokens();
-        peerRef.current?.destroy();
-        peerRef.current = null;
-      };
-
-      if (finishing) {
-        shutdownTimer = window.setTimeout(closeAll, 500);
-        return () => window.clearTimeout(shutdownTimer);
-      }
-
-      closeAll();
+      connectionsRef.current.forEach((conn) => conn.close());
+      connectionsRef.current.clear();
+      refreshConnectedTokens();
+      peerRef.current?.destroy();
+      peerRef.current = null;
       return undefined;
     }
 
@@ -155,10 +136,10 @@ export function useLiveHostNetwork(state, updateState) {
       peerRef.current?.destroy();
       peerRef.current = null;
     };
-  }, [state.live?.sessionActive, state.live?.sessionCode]);
+  }, [networkEnabled, state.live?.sessionCode]);
 
   useEffect(() => {
-    if (!state.live?.sessionActive) return;
+    if (!state.live?.sessionActive && state.live?.teamScreen !== "finished") return;
     for (const [token, conn] of connectionsRef.current.entries()) {
       sendSnapshot(token, conn);
     }
