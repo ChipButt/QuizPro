@@ -22,6 +22,31 @@ function peerIdForSession(code) {
   return `quizpro-${String(code || "").toLowerCase()}`;
 }
 
+function finishedStorageKey(sessionCode, teamToken) {
+  return `quizpro-finished:${String(sessionCode || "")}:${String(teamToken || "")}`;
+}
+
+function readFinishedSnapshot(sessionCode, teamToken) {
+  if (!sessionCode || !teamToken) return null;
+  try {
+    const raw = window.localStorage.getItem(finishedStorageKey(sessionCode, teamToken));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed?.live?.teamScreen === "finished" ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function storeFinishedSnapshot(sessionCode, teamToken, snapshot) {
+  if (!sessionCode || !teamToken || !snapshot) return;
+  try {
+    window.localStorage.setItem(finishedStorageKey(sessionCode, teamToken), JSON.stringify(snapshot));
+  } catch {
+    // Local persistence is a convenience only; the live finished screen still works without it.
+  }
+}
+
 function previewSnapshot(stage) {
   const base = {
     type: "snapshot",
@@ -125,16 +150,25 @@ function previewSnapshot(stage) {
 
 export function useLiveTeamNetwork(sessionCode, teamToken) {
   const previewMode = sessionCode === "__PREVIEW__";
-  const [snapshot, setSnapshot] = useState(() => previewMode ? previewSnapshot(teamToken) : null);
-  const [status, setStatus] = useState(previewMode ? "online" : "connecting");
+  const restoredFinishedSnapshot = previewMode ? null : readFinishedSnapshot(sessionCode, teamToken);
+  const [snapshot, setSnapshot] = useState(() => previewMode ? previewSnapshot(teamToken) : restoredFinishedSnapshot);
+  const [status, setStatus] = useState(previewMode ? "online" : restoredFinishedSnapshot ? "finished" : "connecting");
   const [error, setError] = useState("");
   const connectionRef = useRef(null);
   const peerRef = useRef(null);
+  const finishedRef = useRef(Boolean(restoredFinishedSnapshot));
 
   useEffect(() => {
     if (previewMode) {
       setSnapshot(previewSnapshot(teamToken));
       setStatus("online");
+      setError("");
+      return undefined;
+    }
+    if (finishedRef.current) {
+      const restored = readFinishedSnapshot(sessionCode, teamToken);
+      if (restored) setSnapshot(restored);
+      setStatus("finished");
       setError("");
       return undefined;
     }
@@ -155,7 +189,7 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
     }
 
     function retry() {
-      if (cancelled) return;
+      if (cancelled || finishedRef.current) return;
       window.clearTimeout(retryTimer);
       closeTransport();
       retryTimer = window.setTimeout(connect, 1600);
@@ -188,26 +222,50 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
               setStatus("online");
               return;
             }
+            if (message?.type === "session-finished") {
+              finishedRef.current = true;
+              setSnapshot((current) => {
+                const finishedSnapshot = {
+                  ...(current || {}),
+                  type: "snapshot",
+                  sessionActive: false,
+                  live: {
+                    ...(current?.live || {}),
+                    status: "Completed",
+                    teamScreen: "finished",
+                    timerActive: false,
+                    timerEndsAt: 0,
+                    timerDurationSeconds: 0,
+                    finishedAt: Number(message.finishedAt ?? Date.now()),
+                  },
+                };
+                storeFinishedSnapshot(sessionCode, teamToken, finishedSnapshot);
+                return finishedSnapshot;
+              });
+              setStatus("finished");
+              setError("");
+              return;
+            }
             if (message?.type === "rejected") {
               setStatus("error");
               setError(message.reason || "This team QR code is not valid.");
             }
           });
           conn.on("close", () => {
-            if (cancelled) return;
+            if (cancelled || finishedRef.current) return;
             setStatus("reconnecting");
             setError("Connection lost. Rejoining the quizmaster…");
             retry();
           });
           conn.on("error", () => {
-            if (cancelled) return;
+            if (cancelled || finishedRef.current) return;
             setStatus("reconnecting");
             retry();
           });
         });
 
         peer.on("error", (peerError) => {
-          if (cancelled) return;
+          if (cancelled || finishedRef.current) return;
           if (["peer-unavailable", "network", "server-error", "socket-error", "disconnected"].includes(peerError?.type)) {
             setStatus("reconnecting");
             setError("Trying to reconnect to the quizmaster…");
