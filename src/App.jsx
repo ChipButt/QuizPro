@@ -151,6 +151,7 @@ function createPreviewHarnessState(stage) {
       totalQuestions: 10,
       teamLocked: false,
       forceLocked: teamScreen === "round_locked",
+      reviewComplete: questions.length > 0 && questions.every((question) => Boolean(question.revealed)),
       questions,
     },
   };
@@ -308,6 +309,7 @@ function applyQuizmasterPreviewAction(current, action, values = {}, stage) {
       askedQuestionIds,
       round: {
         ...current.round,
+        reviewComplete: questions.every((question, index) => index === hostQuestionIndex ? true : Boolean(question.revealed)),
         questions: questions.map((question, index) => index === hostQuestionIndex ? { ...question, revealed: true } : question),
       },
       live: {
