@@ -993,7 +993,7 @@ export default function QuizmasterPreviewView({ stage }) {
               <Unlock size={30} />
               <span>GET READY</span>
               <h2>The Quiz Will Begin Soon</h2>
-              <p>Round 1 · {previewState.round?.title || "General Knowledge"}</p>
+              <p>{previewState.nextRound ? `Round ${previewState.nextRound.number} · ${previewState.nextRound.title}` : "No further round queued"}</p>
             </div>
           ) : null}
 
