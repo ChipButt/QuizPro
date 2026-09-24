@@ -122,7 +122,7 @@ function previewSnapshot(stage) {
   const pictureAnswerEditor = stage === "picture-answer-editor";
   const pictureEditor = pictureQuestionEditor || pictureAnswerEditor;
   const multipleChoice = stage === "multiple-choice" || timerPreview;
-  const revealed = stage === "answer-reveal" || pictureAnswerEditor;
+  const revealed = stage === "answer-reveal";
 
   const questionImage = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#5a7f2b"/><stop offset="1" stop-color="#9ec75b"/></linearGradient></defs><rect width="800" height="800" fill="url(#g)"/><path d="M0 520 C190 330 330 610 800 270 L800 800 L0 800Z" fill="#315d24"/><path d="M90 720 C250 360 500 220 740 80" fill="none" stroke="#c7df8f" stroke-width="34" opacity=".5"/></svg>'
@@ -151,13 +151,14 @@ function previewSnapshot(stage) {
       number: 1,
       type: pictureEditor ? "Picture" : multipleChoice ? "Multiple choice" : "Text",
       text: pictureEditor ? "What vegetable is this?" : multipleChoice ? "Which planet is known as the Red Planet?" : "What is the capital city of Australia?",
-      image: pictureEditor ? questionImage : "",
-      imageName: pictureEditor ? "Question image" : "",
+      image: pictureEditor ? (pictureAnswerEditor ? answerImage : questionImage) : "",
+      imageName: pictureEditor ? (pictureAnswerEditor ? "Answer image" : "Question image") : "",
       answer: pictureEditor ? "Radish" : multipleChoice ? "Mars" : "Canberra",
       answerImage: pictureEditor ? answerImage : "",
       answerImageName: pictureEditor ? "Answer image" : "",
       hasAnswerImage: pictureEditor,
       hasAnswerText: true,
+      editorAnswerPreview: pictureAnswerEditor,
       options: multipleChoice ? ["Venus", "Mars", "Jupiter", "Mercury"] : [],
       revealed,
     }],
