@@ -1688,7 +1688,12 @@ export default function TeamView({ sessionCode, teamToken }) {
   const showNewQuestionAlert = Boolean(newQuestionWaiting && viewIndex < hostQuestionIndex && canGoForward);
 
   return (
-    <TeamChrome status={status} keyboardActive={keyboardActive} rail={<LeaderboardRail leaderboard={snapshot.leaderboard} ownId={snapshot.team?.id} />}>
+    <TeamChrome
+      status={status}
+      keyboardActive={keyboardActive}
+      rail={<LeaderboardRail leaderboard={snapshot.leaderboard} ownId={snapshot.team?.id} />}
+      pageClass={isPictureRound ? "picture-round-team-page" : ""}
+    >
       {snapshot.live?.timerActive ? (
         <div
           className={`team-timer-overlay team-timer-clock-wrap ${countdown <= 10 ? "urgent" : ""}`}
