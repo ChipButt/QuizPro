@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-24T12:43:43.886Z",
+  "updatedAt": "2026-09-24T12:43:47.081Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -2744,7 +2744,7 @@
             {
               "id": "question-vnos4vm",
               "number": 4,
-              "text": "",
+              "text": "What vegetable is this?",
               "answer": "",
               "alternatives": [],
               "points": 1,
