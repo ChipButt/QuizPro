@@ -770,6 +770,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     };
 
     const describeElement = (element) => {
+      if (element?.dataset?.layoutLabel) return element.dataset.layoutLabel;
       const className = String(element?.className?.baseVal ?? element?.className ?? "")
         .split(/\s+/)
         .filter(Boolean)
@@ -1012,7 +1013,11 @@ export default function TeamView({ sessionCode, teamToken }) {
       let element = rawTarget instanceof Element ? rawTarget : null;
       if (!element) return;
 
-      if (element.closest(".team-timer-message")) element = element.closest(".team-timer-message");
+      if (["picture-question-editor", "picture-answer-editor"].includes(teamToken) && element.closest(".live-team-image")) {
+        element = element.closest(".live-team-image");
+      } else if (["picture-question-editor", "picture-answer-editor"].includes(teamToken) && element.closest(".revealed-answer-media")) {
+        element = element.closest(".revealed-answer-media");
+      } else if (element.closest(".team-timer-message")) element = element.closest(".team-timer-message");
       else if (element.closest(".team-timer-clock")) element = element.closest(".team-timer-clock");
       else if (element.closest(".team-timer-clock-wrap")) return;
       else if (element.closest("svg")) element = element.closest("svg");
@@ -1071,6 +1076,7 @@ export default function TeamView({ sessionCode, teamToken }) {
         event.stopPropagation();
         return;
       }
+      element = findByPath(selectedPath) || element;
       beginDrag(event, "move", selectedPath, element);
     };
 
@@ -1641,31 +1647,31 @@ export default function TeamView({ sessionCode, teamToken }) {
       ) : null}
 
       <section className={`team-card live-team-card question-team-card ${snapshot.live?.timerActive ? "timer-running" : ""}`}>
-        <div className="team-question-topline">
+        <div className="team-question-topline" data-layout-label="Team header">
           <div className="team-question-team-name"><span>TEAM</span><strong>{snapshot.team.name}</strong></div>
           <div className="team-question-progress">{answeredCount}/{totalRoundQuestions || questions.length} answered</div>
         </div>
 
-        <div className="team-current-round-title">{snapshot.round?.title || "Round"}</div>
+        <div className="team-current-round-title" data-layout-label="Round title">{snapshot.round?.title || "Round"}</div>
 
         <div className="team-question-nav">
-          <button className="question-nav-button previous" disabled={!canGoBack} onClick={() => setViewIndex((index) => Math.max(0, index - 1))}>
+          <button className="question-nav-button previous" data-layout-label="Previous button" disabled={!canGoBack} onClick={() => setViewIndex((index) => Math.max(0, index - 1))}>
             <ArrowLeft size={24} />
             <span>Previous</span>
           </button>
-          <div className="question-number-display"><strong>{question.number ?? viewIndex + 1}</strong><small>QUESTION {question.number ?? viewIndex + 1} of {totalRoundQuestions || questions.length}</small></div>
-          <button className={`question-nav-button next ${showNewQuestionAlert ? "new-question-waiting" : ""}`} disabled={!canGoForward} onClick={() => setViewIndex((index) => Math.min(questions.length - 1, index + 1))}>
+          <div className="question-number-display" data-layout-label="Question number"><strong>{question.number ?? viewIndex + 1}</strong><small>QUESTION {question.number ?? viewIndex + 1} of {totalRoundQuestions || questions.length}</small></div>
+          <button className={`question-nav-button next ${showNewQuestionAlert ? "new-question-waiting" : ""}`} data-layout-label="Next button" disabled={!canGoForward} onClick={() => setViewIndex((index) => Math.min(questions.length - 1, index + 1))}>
             <span>Next</span>
             <ArrowRight size={24} />
             {showNewQuestionAlert ? <b>NEW</b> : null}
           </button>
         </div>
 
-        <div className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${reviewQuestionMode ? "is-review" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""} ${hasQuestionImage ? "has-question-image" : ""} ${hasQuestionImage && !hasQuestionText ? "image-only-question" : ""} ${hasAnswerImage || hasAnswerAudio ? "has-answer-media" : ""} ${answerResultClass}`}>
+        <div data-layout-label="Question content area" className={`team-question-stage ${questionLocked ? "is-locked" : ""} ${reviewQuestionMode ? "is-review" : ""} ${question.revealed ? "is-revealed" : ""} ${submitted ? "answer-submitted" : ""} ${hasQuestionImage ? "has-question-image" : ""} ${hasQuestionImage && !hasQuestionText ? "image-only-question" : ""} ${hasAnswerImage || hasAnswerAudio ? "has-answer-media" : ""} ${answerResultClass}`}>
 
           <div className="team-question-core lockable-zone">
             {question.image ? (
-              <div className="team-media-frame live-team-image">
+              <div className="team-media-frame live-team-image" data-layout-label="Question image box">
                 <img src={question.image} alt={question.imageName || "Question"} />
               </div>
             ) : null}
@@ -1681,7 +1687,7 @@ export default function TeamView({ sessionCode, teamToken }) {
               </div>
             ) : null}
 
-            {hasQuestionText ? <h1 className="team-question-text">{question.text}</h1> : null}
+            {hasQuestionText ? <h1 className="team-question-text" data-layout-label="Question text">{question.text}</h1> : null}
           </div>
 
           <div className="team-answer-zone lockable-zone">
@@ -1717,7 +1723,7 @@ export default function TeamView({ sessionCode, teamToken }) {
 
             {isTextEntry ? (
               <div className="answer-input-shell">
-                <div className={`your-answer-section ${reviewQuestionMode ? "is-review" : ""} ${question.revealed ? "is-revealed" : ""}`}>
+                <div data-layout-label="Your answer box" className={`your-answer-section ${reviewQuestionMode ? "is-review" : ""} ${question.revealed ? "is-revealed" : ""}`}>
                   {reviewQuestionMode || question.revealed ? <span className="your-answer-label">YOUR ANSWER</span> : null}
                   <textarea
                     className={`${draft.trim() ? "has-answer" : ""} ${submitted ? "submitted-answer" : ""}`}
@@ -1742,11 +1748,11 @@ export default function TeamView({ sessionCode, teamToken }) {
             {reviewQuestionMode && hasAnswerReveal ? (
               <div className={`revealed-answer-slot ${answerRevealClasses}`} aria-hidden="true" />
             ) : question.revealed && hasAnswerReveal ? (
-              <div className={`revealed-answer-pill ${answerRevealClasses}`}>
+              <div data-layout-label="Correct answer panel" className={`revealed-answer-pill ${answerRevealClasses}`}>
                 <CheckCircle2 aria-hidden="true" />
                 <span>CORRECT ANSWER</span>
                 {question.answerImage || question.answerAudio ? (
-                  <div className="revealed-answer-media">
+                  <div className="revealed-answer-media" data-layout-label="Answer image box">
                     {question.answerImage ? (
                       <img src={question.answerImage} alt={question.answerImageName || "Answer"} />
                     ) : null}
@@ -1759,7 +1765,7 @@ export default function TeamView({ sessionCode, teamToken }) {
                     ) : null}
                   </div>
                 ) : null}
-                {correctAnswer ? <strong className="revealed-answer-text">{correctAnswer}</strong> : null}
+                {correctAnswer ? <strong className="revealed-answer-text" data-layout-label="Correct answer text">{correctAnswer}</strong> : null}
               </div>
             ) : null}
 
