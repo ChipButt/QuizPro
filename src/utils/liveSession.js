@@ -57,8 +57,10 @@ function questionIsRevealed(state, roundId, questionId) {
   );
 }
 
-function safeQuestion(state, roundId, question) {
-  const revealed = questionIsRevealed(state, roundId, question.id);
+function safeQuestion(state, roundId, question, revealedOverride = null) {
+  const revealed = typeof revealedOverride === "boolean"
+    ? revealedOverride
+    : questionIsRevealed(state, roundId, question.id);
   return {
     id: question.id,
     number: question.number,
@@ -173,9 +175,13 @@ export function buildTeamSnapshot(state, teamToken) {
   const reviewQuestionIndex = reviewQuestionId && round
     ? round.questions.findIndex((question) => question.id === reviewQuestionId)
     : -1;
-  const maxQuestionIndex = reviewQuestionIndex >= 0 ? reviewQuestionIndex : numericQuestionIndex;
+  const answerReviewActive = reviewQuestionIndex >= 0;
+  const answerReviewAnswerVisible = Boolean(state.live?.answerReviewAnswerVisible);
+  const maxQuestionIndex = answerReviewActive ? 0 : numericQuestionIndex;
   const allowedQuestions = round
-    ? round.questions.slice(0, maxQuestionIndex + 1).map((question) => safeQuestion(state, round.id, question))
+    ? answerReviewActive
+      ? [safeQuestion(state, round.id, round.questions[reviewQuestionIndex], answerReviewAnswerVisible)]
+      : round.questions.slice(0, numericQuestionIndex + 1).map((question) => safeQuestion(state, round.id, question))
     : [];
 
   const teamAnswers = {};
@@ -240,7 +246,9 @@ export function buildTeamSnapshot(state, teamToken) {
       roundIndex: state.live?.roundIndex ?? 0,
       waitingRoundIndex: Number.isInteger(Number(state.live?.waitingRoundIndex)) ? Number(state.live?.waitingRoundIndex) : null,
       questionIndex: maxQuestionIndex,
-      answerReviewQuestionId: reviewQuestionId,
+      answerReviewActive,
+      answerReviewQuestionId: answerReviewActive ? reviewQuestionId : "",
+      answerReviewAnswerVisible: answerReviewActive ? answerReviewAnswerVisible : false,
       revealMode: state.live?.revealMode ?? "round",
       timerActive: Boolean(state.live?.timerActive),
       timerEndsAt: Number(state.live?.timerEndsAt ?? 0),
