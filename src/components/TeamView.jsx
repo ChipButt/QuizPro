@@ -353,7 +353,11 @@ function WaitingScreen({ snapshot, status }) {
   const liveRoundIndex = Number(snapshot.live?.roundIndex ?? 0);
   const totalRounds = Number(snapshot.quiz?.totalRounds ?? 0);
   const screen = snapshot.live?.teamScreen ?? "lobby";
-  const beforeFirstRound = liveRoundIndex === 0 && Number(snapshot.live?.questionIndex ?? -1) < 0 && scores.length === 0;
+  const currentRoundComplete = Boolean(snapshot.round?.reviewComplete);
+  const beforeFirstRound = liveRoundIndex === 0
+    && Number(snapshot.live?.questionIndex ?? -1) < 0
+    && scores.length === 0
+    && !currentRoundComplete;
   const awaitingAnswerReview = screen === "round_locked" && !snapshot.round?.reviewComplete;
   const afterFinalRound = screen === "round_locked" && totalRounds > 0 && liveRoundIndex >= totalRounds - 1 && !awaitingAnswerReview;
   const heading = awaitingAnswerReview
