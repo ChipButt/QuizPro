@@ -41,6 +41,29 @@ function questionTypeForRound(round) {
   return "Text";
 }
 
+function optionRecord(option) {
+  if (option && typeof option === "object" && !Array.isArray(option)) {
+    return {
+      text: String(option.text ?? ""),
+      image: String(option.image ?? ""),
+      imageName: String(option.imageName ?? ""),
+    };
+  }
+  return { text: String(option ?? ""), image: "", imageName: "" };
+}
+
+function optionValue(option, index) {
+  const record = optionRecord(option);
+  const text = record.text.trim();
+  if (text) return text;
+  return record.image ? `Option ${String.fromCharCode(65 + index)}` : "";
+}
+
+function optionHasContent(option) {
+  const record = optionRecord(option);
+  return Boolean(record.text.trim() || record.image);
+}
+
 function createQuestionForRound(round, number) {
   const type = questionTypeForRound(round);
   return {
@@ -51,7 +74,9 @@ function createQuestionForRound(round, number) {
     alternatives: [],
     points: 1,
     type,
-    options: type === "Multiple choice" ? Array(choiceCount(round)).fill("") : [],
+    options: type === "Multiple choice"
+      ? Array.from({ length: choiceCount(round) }, () => ({ text: "", image: "", imageName: "" }))
+      : [],
     category: "",
     difficulty: "Medium",
     image: "",
@@ -221,14 +246,14 @@ export default function SimpleQuizBuilder({ state, updateState }) {
 
         let options = question.options ?? [];
         if (nextQuestionType === "Multiple choice") {
-          options = Array.from({ length: count }, (_, index) => options[index] ?? "");
+          options = Array.from({ length: count }, (_, index) => optionRecord(options[index]));
 
           // Preserve an existing correct text answer when converting into
           // multiple choice by placing it in the first available empty option.
           const existingAnswer = String(question.answer ?? "").trim();
-          if (existingAnswer && !options.some((option) => String(option).trim() === existingAnswer)) {
-            const emptyIndex = options.findIndex((option) => !String(option).trim());
-            if (emptyIndex >= 0) options[emptyIndex] = question.answer;
+          if (existingAnswer && !options.some((option, index) => optionValue(option, index) === existingAnswer)) {
+            const emptyIndex = options.findIndex((option) => !optionHasContent(option));
+            if (emptyIndex >= 0) options[emptyIndex] = { ...options[emptyIndex], text: question.answer };
           }
         }
 
@@ -251,7 +276,9 @@ export default function SimpleQuizBuilder({ state, updateState }) {
       questions: selectedRound.questions.map((question) => ({
         ...question,
         type: nextType,
-        options: mode === "multiple" ? Array.from({ length: count }, (_, index) => question.options?.[index] ?? "") : question.options ?? [],
+        options: mode === "multiple"
+          ? Array.from({ length: count }, (_, index) => optionRecord(question.options?.[index]))
+          : question.options ?? [],
       })),
     });
   }
@@ -262,8 +289,9 @@ export default function SimpleQuizBuilder({ state, updateState }) {
     updateRound({
       choiceCount: nextCount,
       questions: selectedRound.questions.map((question) => {
-        const options = Array.from({ length: nextCount }, (_, index) => question.options?.[index] ?? "");
-        return { ...question, options, answer: options.includes(question.answer) ? question.answer : "" };
+        const options = Array.from({ length: nextCount }, (_, index) => optionRecord(question.options?.[index]));
+        const values = options.map((option, index) => optionValue(option, index));
+        return { ...question, options, answer: values.includes(question.answer) ? question.answer : "" };
       }),
     });
   }
@@ -331,10 +359,38 @@ export default function SimpleQuizBuilder({ state, updateState }) {
 
   function updateOption(question, index, value) {
     const count = choiceCount(selectedRound);
-    const options = Array.from({ length: count }, (_, itemIndex) => question.options?.[itemIndex] ?? "");
-    const old = options[index];
-    options[index] = value;
-    updateQuestion(question.id, { options, answer: question.answer === old ? value : question.answer });
+    const options = Array.from({ length: count }, (_, itemIndex) => optionRecord(question.options?.[itemIndex]));
+    const oldValue = optionValue(options[index], index);
+    options[index] = { ...options[index], text: value };
+    const nextValue = optionValue(options[index], index);
+    updateQuestion(question.id, {
+      options,
+      answer: question.answer === oldValue ? nextValue : question.answer,
+    });
+  }
+
+  async function attachOptionImage(question, index, file) {
+    if (!file) return;
+    const key = `${question.id}:optionImage:${index}`;
+    setMediaStatus((current) => ({ ...current, [key]: { busy: true, error: "" } }));
+    try {
+      const src = await prepareQuizImage(file);
+      const count = choiceCount(selectedRound);
+      const options = Array.from({ length: count }, (_, itemIndex) => optionRecord(question.options?.[itemIndex]));
+      const oldValue = optionValue(options[index], index);
+      options[index] = { ...options[index], image: src, imageName: file.name };
+      const nextValue = optionValue(options[index], index);
+      updateQuestion(question.id, {
+        options,
+        answer: question.answer === oldValue ? nextValue : question.answer,
+      });
+      setMediaStatus((current) => ({ ...current, [key]: { busy: false, error: "" } }));
+    } catch (error) {
+      setMediaStatus((current) => ({
+        ...current,
+        [key]: { busy: false, error: error?.message || "Quiz In could not load that option image." },
+      }));
+    }
   }
 
   const kind = selectedRound ? roundKind(selectedRound) : "text";
@@ -414,16 +470,18 @@ export default function SimpleQuizBuilder({ state, updateState }) {
                   <div className="simple-question-stack">
                     {selectedRound.questions.map((question, index) => {
                       const multiple = question.type === "Multiple choice" || mode === "multiple" || kind === "multiple";
-                      const options = Array.from({ length: choices }, (_, optionIndex) => question.options?.[optionIndex] ?? "");
+                      const options = Array.from({ length: choices }, (_, optionIndex) => optionRecord(question.options?.[optionIndex]));
                       return (
                         <article className="simple-question-card" key={question.id}>
                           <div className="simple-question-card-head"><strong>Question {index + 1}</strong>{selectedRound.questions.length > 1 ? <button className="icon-button" aria-label="Delete question" onClick={() => deleteQuestion(question.id)}><Trash2 size={15} /></button> : null}</div>
-                          <label>Question<textarea value={question.text ?? ""} onChange={(event) => updateQuestion(question.id, { text: event.target.value })} placeholder="Type the question…" /></label>
+                          {kind !== "picture" && kind !== "music" ? (
+                            <label>Question<textarea value={question.text ?? ""} onChange={(event) => updateQuestion(question.id, { text: event.target.value })} placeholder="Type the question…" /></label>
+                          ) : null}
 
                           {kind === "picture" ? (
                             <div className="simple-media-pair">
                               <div className="simple-media-block">
-                                <span className="simple-media-label">QUESTION IMAGE</span>
+                                <span className="simple-media-label">QUESTION IMAGE <small>PRIMARY</small></span>
                                 <div className="simple-media-field">
                                   <label className="file-button"><FileImage size={16} /> {mediaStatus[`${question.id}:image`]?.busy ? "Optimising…" : question.image ? "Replace question image" : "Upload question image"}<input type="file" accept="image/*" disabled={mediaStatus[`${question.id}:image`]?.busy} onChange={(event) => attachMedia(question.id, "image", event.target.files?.[0])} /></label>
                                   {mediaStatus[`${question.id}:image`]?.error ? <span className="media-upload-error">{mediaStatus[`${question.id}:image`].error}</span> : null}
@@ -431,7 +489,7 @@ export default function SimpleQuizBuilder({ state, updateState }) {
                                 </div>
                               </div>
                               <div className="simple-media-block answer-media-block">
-                                <span className="simple-media-label">ANSWER IMAGE <small>OPTIONAL</small></span>
+                                <span className="simple-media-label">ANSWER IMAGE <small>PRIMARY</small></span>
                                 <div className="simple-media-field">
                                   <label className="file-button"><FileImage size={16} /> {mediaStatus[`${question.id}:answerImage`]?.busy ? "Optimising…" : question.answerImage ? "Replace answer image" : "Upload answer image"}<input type="file" accept="image/*" disabled={mediaStatus[`${question.id}:answerImage`]?.busy} onChange={(event) => attachMedia(question.id, "answerImage", event.target.files?.[0])} /></label>
                                   {mediaStatus[`${question.id}:answerImage`]?.error ? <span className="media-upload-error">{mediaStatus[`${question.id}:answerImage`].error}</span> : null}
@@ -441,10 +499,14 @@ export default function SimpleQuizBuilder({ state, updateState }) {
                             </div>
                           ) : null}
 
+                          {kind === "picture" ? (
+                            <label>Question text <small>OPTIONAL</small><textarea value={question.text ?? ""} onChange={(event) => updateQuestion(question.id, { text: event.target.value })} placeholder="Optional text to accompany the picture…" /></label>
+                          ) : null}
+
                           {kind === "music" ? (
                             <div className="simple-media-pair">
                               <div className="simple-media-block">
-                                <span className="simple-media-label">QUESTION AUDIO</span>
+                                <span className="simple-media-label">QUESTION AUDIO <small>PRIMARY</small></span>
                                 <div className="simple-media-field">
                                   <label className="file-button"><FileAudio size={16} /> {mediaStatus[`${question.id}:audio`]?.busy ? "Loading…" : question.audio ? "Replace question audio" : "Upload question audio"}<input type="file" accept="audio/*" disabled={mediaStatus[`${question.id}:audio`]?.busy} onChange={(event) => attachMedia(question.id, "audio", event.target.files?.[0])} /></label>
                                   {mediaStatus[`${question.id}:audio`]?.error ? <span className="media-upload-error">{mediaStatus[`${question.id}:audio`].error}</span> : null}
@@ -452,7 +514,7 @@ export default function SimpleQuizBuilder({ state, updateState }) {
                                 </div>
                               </div>
                               <div className="simple-media-block answer-media-block">
-                                <span className="simple-media-label">ANSWER AUDIO <small>OPTIONAL</small></span>
+                                <span className="simple-media-label">ANSWER AUDIO <small>PRIMARY</small></span>
                                 <div className="simple-media-field">
                                   <label className="file-button"><FileAudio size={16} /> {mediaStatus[`${question.id}:answerAudio`]?.busy ? "Loading…" : question.answerAudio ? "Replace answer audio" : "Upload answer audio"}<input type="file" accept="audio/*" disabled={mediaStatus[`${question.id}:answerAudio`]?.busy} onChange={(event) => attachMedia(question.id, "answerAudio", event.target.files?.[0])} /></label>
                                   {mediaStatus[`${question.id}:answerAudio`]?.error ? <span className="media-upload-error">{mediaStatus[`${question.id}:answerAudio`].error}</span> : null}
@@ -462,10 +524,39 @@ export default function SimpleQuizBuilder({ state, updateState }) {
                             </div>
                           ) : null}
 
+                          {kind === "music" ? (
+                            <label>Question text <small>OPTIONAL</small><textarea value={question.text ?? ""} onChange={(event) => updateQuestion(question.id, { text: event.target.value })} placeholder="Optional text to accompany the audio…" /></label>
+                          ) : null}
+
                           {multiple ? (
                             <div className="simple-choice-editor">
-                              <div className="simple-choice-grid">{options.map((option, optionIndex) => <label key={optionIndex}>Option {String.fromCharCode(65 + optionIndex)}<input value={option} onChange={(event) => updateOption(question, optionIndex, event.target.value)} /></label>)}</div>
-                              <label>Correct answer<select value={question.answer ?? ""} onChange={(event) => updateQuestion(question.id, { answer: event.target.value })}><option value="">Choose the correct answer</option>{options.map((option, optionIndex) => <option key={optionIndex} value={option} disabled={!option.trim()}>{option || `Option ${String.fromCharCode(65 + optionIndex)}`}</option>)}</select></label>
+                              <div className="simple-choice-grid">
+                                {options.map((option, optionIndex) => {
+                                  const letter = String.fromCharCode(65 + optionIndex);
+                                  const key = `${question.id}:optionImage:${optionIndex}`;
+                                  return (
+                                    <div className="simple-choice-option-editor" key={optionIndex}>
+                                      <label>Option {letter} text <small>OPTIONAL</small><input value={option.text} onChange={(event) => updateOption(question, optionIndex, event.target.value)} placeholder={option.image ? "Optional caption…" : "Type option text…"} /></label>
+                                      <label className="file-button simple-option-image-button">
+                                        <FileImage size={15} />
+                                        {mediaStatus[key]?.busy ? "Optimising…" : option.image ? "Replace option image" : "Add option image"}
+                                        <input type="file" accept="image/*" disabled={mediaStatus[key]?.busy} onChange={(event) => attachOptionImage(question, optionIndex, event.target.files?.[0])} />
+                                      </label>
+                                      {mediaStatus[key]?.error ? <span className="media-upload-error">{mediaStatus[key].error}</span> : null}
+                                      {option.image ? <img className="simple-choice-option-image" src={option.image} alt={option.imageName || `Option ${letter}`} /> : null}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                              <label>Correct answer
+                                <select value={question.answer ?? ""} onChange={(event) => updateQuestion(question.id, { answer: event.target.value })}>
+                                  <option value="">Choose the correct answer</option>
+                                  {options.map((option, optionIndex) => {
+                                    const value = optionValue(option, optionIndex);
+                                    return <option key={optionIndex} value={value} disabled={!optionHasContent(option)}>{option.text.trim() || (option.image ? `Option ${String.fromCharCode(65 + optionIndex)} · image` : `Option ${String.fromCharCode(65 + optionIndex)}`)}</option>;
+                                  })}
+                                </select>
+                              </label>
                             </div>
                           ) : (
                             <label>{kind === "picture" || kind === "music" ? "Text answer (optional)" : "Correct answer"}<input value={question.answer ?? ""} onChange={(event) => updateQuestion(question.id, { answer: event.target.value })} placeholder={kind === "picture" || kind === "music" ? "Optional text answer…" : "Correct answer…"} /></label>
