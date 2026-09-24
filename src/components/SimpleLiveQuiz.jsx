@@ -79,6 +79,7 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   const [liveTab, setLiveTab] = useState("questions");
   const [controlsOpen, setControlsOpen] = useState(false);
   const [screenPreview, setScreenPreview] = useState(null);
+  const [waitingRoundIndex, setWaitingRoundIndex] = useState(liveRoundIndex);
   const reviewRound = quiz?.rounds?.[reviewRoundIndex] ?? null;
   const reviewQuestion = reviewRound?.questions?.[reviewQuestionIndex] ?? null;
   const reviewingLiveQuestion = Boolean(
@@ -126,6 +127,11 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   useEffect(() => {
     if (!quiz) return;
     setReviewRoundIndex((current) => Math.min(current, Math.max(0, quiz.rounds.length - 1)));
+  }, [quiz?.id, quiz?.rounds?.length]);
+
+  useEffect(() => {
+    if (!quiz?.rounds?.length) return;
+    setWaitingRoundIndex((current) => Math.min(Math.max(0, current), quiz.rounds.length - 1));
   }, [quiz?.id, quiz?.rounds?.length]);
 
   function updateLive(patch) {
@@ -521,6 +527,13 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   }
 
   function previewTeamScreen(screen) {
+    if (screen === "waiting" && quiz?.rounds?.length) {
+      const suggested = Math.min(
+        quiz.rounds.length - 1,
+        Math.max(0, liveRoundIndex + (liveQuestionIndex >= 0 ? 1 : 0)),
+      );
+      setWaitingRoundIndex(suggested);
+    }
     setScreenPreview(screen);
     setControlsOpen(false);
     setOpenPanel(null);
@@ -530,8 +543,14 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
     if (!screenPreview) return;
 
     if (screenPreview === "waiting") {
+      const targetIndex = Math.min(
+        Math.max(0, Number(waitingRoundIndex) || 0),
+        Math.max(0, (quiz?.rounds?.length ?? 1) - 1),
+      );
       updateLive({
         teamScreen: "lobby",
+        roundIndex: targetIndex,
+        waitingRoundIndex: targetIndex,
         questionIndex: -1,
         timerActive: false,
         timerEndsAt: 0,
@@ -921,12 +940,26 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
           </div>
 
           {screenPreview === "waiting" ? (
-            <div className="host-screen-preview-card waiting">
-              <Unlock size={30} />
-              <span>GET READY</span>
-              <h2>The Quiz Will Begin Soon</h2>
-              <p>Round {liveRoundIndex + 1} · {liveRound?.title || "Next round"}</p>
-            </div>
+            <>
+              <label className="host-waiting-round-selector">
+                <span>Waiting for round</span>
+                <select value={waitingRoundIndex} onChange={(event) => setWaitingRoundIndex(Number(event.target.value))}>
+                  {(quiz?.rounds ?? []).map((roundItem, index) => (
+                    <option key={roundItem.id || index} value={index}>
+                      Round {index + 1} · {roundItem.title || `Round ${index + 1}`}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className="host-screen-preview-card waiting">
+                <Unlock size={30} />
+                <span>GET READY</span>
+                <h2>The Quiz Will Begin Soon</h2>
+                <p>
+                  Round {waitingRoundIndex + 1} · {quiz?.rounds?.[waitingRoundIndex]?.title || `Round ${waitingRoundIndex + 1}`}
+                </p>
+              </div>
+            </>
           ) : null}
 
           {screenPreview === "round_locked" ? (
