@@ -1,6 +1,13 @@
 const ANSWER_SELECTOR = ".question-team-card .answer-input-shell textarea";
-const STAGE_SELECTOR = ".question-team-card.keyboard-active .team-question-stage";
-const CORE_SELECTOR = ".question-team-card.keyboard-active .team-question-core";
+const ANSWER_SECTION_SELECTOR = ".question-team-card .your-answer-section";
+const QUESTION_STAGE_SELECTOR = ".question-team-card .team-question-stage";
+const PAGE_SELECTOR = ".keyboard-active-page";
+const SHELL_SELECTOR = ".live-phone-shell.keyboard-active";
+const CLEARANCE_PX = 14;
+const QUESTION_TOP_GAP_PX = 6;
+
+let baselineHeight = 0;
+let cleanupPending = null;
 
 function syncVisualViewport() {
   const viewport = window.visualViewport;
@@ -14,53 +21,85 @@ function syncVisualViewport() {
   root.style.setProperty("--team-visible-width", `${width}px`);
   root.style.setProperty("--team-visible-top", `${top}px`);
   root.style.setProperty("--team-visible-left", `${left}px`);
+
+  if (baselineHeight > 0) {
+    root.style.setProperty("--team-keyboard-layout-height", `${baselineHeight}px`);
+  }
 }
 
-function resetKeyboardView() {
+function resetKeyboardSlide() {
+  document.documentElement.style.setProperty("--team-keyboard-slide", "0px");
+}
+
+function updateKeyboardSlide() {
   syncVisualViewport();
 
-  // Keep both internal panes at their own tops. The page itself is anchored to
-  // the visual viewport by CSS, so we do not let the browser's focus scrolling
-  // drag the question out of view.
-  const stage = document.querySelector(STAGE_SELECTOR);
-  if (stage) stage.scrollTop = 0;
+  const active = document.activeElement;
+  if (!(active instanceof Element) || !active.matches(ANSWER_SELECTOR)) {
+    resetKeyboardSlide();
+    return;
+  }
 
-  const core = document.querySelector(CORE_SELECTOR);
-  if (core) core.scrollTop = 0;
+  const page = document.querySelector(PAGE_SELECTOR);
+  const shell = document.querySelector(SHELL_SELECTOR);
+  const stage = document.querySelector(QUESTION_STAGE_SELECTOR);
+  const answerSection = document.querySelector(ANSWER_SECTION_SELECTOR) || active;
+
+  if (!page || !shell || !stage || !answerSection) {
+    resetKeyboardSlide();
+    return;
+  }
+
+  const root = document.documentElement;
+  const viewport = window.visualViewport;
+  const viewportTop = Math.max(0, viewport?.offsetTop ?? 0);
+  const viewportHeight = Math.max(180, viewport?.height ?? window.innerHeight);
+  const viewportBottom = viewportTop + viewportHeight;
+
+  // Always measure from the intact, unshifted layout. This avoids accumulating
+  // translation across repeated visualViewport resize/scroll events.
+  root.style.setProperty("--team-keyboard-slide", "0px");
+
+  const answerRect = answerSection.getBoundingClientRect();
+  const stageRect = stage.getBoundingClientRect();
+
+  const overlap = Math.max(0, answerRect.bottom + CLEARANCE_PX - viewportBottom);
+
+  // Do not slide farther than the point where the question box itself reaches
+  // the top of the visible browser viewport.
+  const maxShift = Math.max(0, stageRect.top - viewportTop - QUESTION_TOP_GAP_PX);
+  const shift = Math.min(overlap, maxShift);
+
+  root.style.setProperty("--team-keyboard-slide", `${Math.round(shift)}px`);
 }
 
 function settleKeyboardLayout() {
-  const delays = [0, 24, 60, 120, 220, 360, 520, 760, 1050];
-  const timers = delays.map((delay) => window.setTimeout(resetKeyboardView, delay));
+  const delays = [0, 24, 60, 100, 160, 240, 360, 520, 760, 1050];
+  const timers = delays.map((delay) => window.setTimeout(updateKeyboardSlide, delay));
 
   const viewport = window.visualViewport;
-  const onViewportChange = () => resetKeyboardView();
+  const onViewportChange = () => updateKeyboardSlide();
   viewport?.addEventListener("resize", onViewportChange);
   viewport?.addEventListener("scroll", onViewportChange);
   window.addEventListener("resize", onViewportChange);
 
-  const cleanupTimer = window.setTimeout(() => {
-    viewport?.removeEventListener("resize", onViewportChange);
-    viewport?.removeEventListener("scroll", onViewportChange);
-    window.removeEventListener("resize", onViewportChange);
-  }, 1300);
-
   return () => {
     timers.forEach((timer) => window.clearTimeout(timer));
-    window.clearTimeout(cleanupTimer);
     viewport?.removeEventListener("resize", onViewportChange);
     viewport?.removeEventListener("scroll", onViewportChange);
     window.removeEventListener("resize", onViewportChange);
   };
 }
 
-let cleanupPending = null;
-
 document.addEventListener("focusin", (event) => {
   const target = event.target;
   if (!(target instanceof Element) || !target.matches(ANSWER_SELECTOR)) return;
 
+  const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+  baselineHeight = Math.max(window.innerHeight, viewportHeight);
   syncVisualViewport();
+  resetKeyboardSlide();
+
   cleanupPending?.();
   cleanupPending = settleKeyboardLayout();
 });
@@ -72,6 +111,9 @@ document.addEventListener("focusout", (event) => {
   window.setTimeout(() => {
     cleanupPending?.();
     cleanupPending = null;
+    resetKeyboardSlide();
+    baselineHeight = 0;
+    document.documentElement.style.removeProperty("--team-keyboard-layout-height");
     syncVisualViewport();
   }, 100);
 });
