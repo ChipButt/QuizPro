@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-24T12:44:45.864Z",
+  "updatedAt": "2026-09-24T12:44:52.495Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -2699,7 +2699,7 @@
               "id": "question-14lzuoh",
               "number": 2,
               "text": "What vegetable is this?",
-              "answer": "",
+              "answer": "Carrot",
               "alternatives": [],
               "points": 1,
               "type": "Picture",
