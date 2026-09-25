@@ -45,6 +45,7 @@ export function createInitialState() {
     },
     media: [],
     quizzes: [],
+    roundLibrary: [],
     teams: [],
     teamRoundLocks: {},
     answers: {},
