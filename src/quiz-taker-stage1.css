@@ -1269,3 +1269,59 @@
     padding:10px 13px 12px !important;
   }
 }
+
+
+/* ---------- Stable answers-waiting state ---------- */
+/* round_locked is a dedicated review-waiting state. Keep its headline in
+   normal flow and above the score panel even if Safari reconnects/restores a
+   previous scroll/layout state. */
+@media(max-width:979px){
+  html:not(.quiz-preview-mode) .live-team-page
+  .waiting-team-card.waiting-state-review{
+    grid-template-rows:auto auto minmax(0,1fr) !important;
+    align-content:start !important;
+  }
+
+  html:not(.quiz-preview-mode) .live-team-page
+  .waiting-team-card.waiting-state-review .waiting-team-banner{
+    grid-row:1 !important;
+  }
+
+  html:not(.quiz-preview-mode) .live-team-page
+  .waiting-team-card.waiting-state-review .waiting-headline{
+    grid-row:2 !important;
+    position:relative !important;
+    z-index:5 !important;
+    display:grid !important;
+    width:100% !important;
+    min-height:54px !important;
+    margin:0 !important;
+    padding:4px 8px 8px !important;
+    place-items:center !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    translate:none !important;
+    transform:none !important;
+  }
+
+  html:not(.quiz-preview-mode) .live-team-page
+  .waiting-team-card.waiting-state-review .waiting-headline>span,
+  html:not(.quiz-preview-mode) .live-team-page
+  .waiting-team-card.waiting-state-review .waiting-headline>h1{
+    display:block !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    translate:none !important;
+    transform:none !important;
+  }
+
+  html:not(.quiz-preview-mode) .live-team-page
+  .waiting-team-card.waiting-state-review .waiting-score-panel{
+    grid-row:3 !important;
+    align-self:stretch !important;
+    min-height:0 !important;
+    height:100% !important;
+    translate:none !important;
+    transform:none !important;
+  }
+}
