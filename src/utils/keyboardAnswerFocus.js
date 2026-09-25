@@ -7,9 +7,8 @@ let baselineHeight = 0;
 let cleanupPending = null;
 let originalScrollX = 0;
 let originalScrollY = 0;
-let preFocusScrollX = 0;
-let preFocusScrollY = 0;
 let restoreTimers = [];
+let keyboardCloseCleanup = null;
 let keyboardAlignTimer = null;
 let keyboardFallbackTimers = [];
 let keyboardWasOpen = false;
@@ -49,6 +48,9 @@ function clearKeyboardAlignmentTimers() {
 function clearRestoreTimers() {
   restoreTimers.forEach((timer) => window.clearTimeout(timer));
   restoreTimers = [];
+
+  keyboardCloseCleanup?.();
+  keyboardCloseCleanup = null;
 }
 
 function forceKeyboardClasses(enabled) {
@@ -91,7 +93,7 @@ function applyCleanKeyboardClosedState() {
   restoreDocumentScroll();
 }
 
-function finishKeyboardClose() {
+function finishKeyboardClose({ watchViewport = false } = {}) {
   clearKeyboardAlignmentTimers();
   cleanupPending?.();
   cleanupPending = null;
@@ -102,14 +104,46 @@ function finishKeyboardClose() {
   baselineHeight = 0;
 
   /*
-   * Reset synchronously on blur/focusout. Re-assert briefly afterwards because
-   * iOS can finish its native keyboard pan after the DOM focus event has fired.
-   * This makes the first close as deterministic as later closes and guarantees
-   * the header/logo returns with the rest of the page.
+   * The live team page's normal resting position is the top of the document.
+   * iOS can finish its own keyboard pan well after blur, so restore immediately
+   * and, on close, keep re-asserting the clean state while the visual viewport
+   * completes its final resize/scroll sequence.
    */
+  originalScrollX = 0;
+  originalScrollY = 0;
   applyCleanKeyboardClosedState();
-  restoreTimers = [60, 180].map((delay) =>
-    window.setTimeout(applyCleanKeyboardClosedState, delay)
+
+  const reassertClosedState = () => {
+    const active = document.activeElement;
+    if (active instanceof HTMLTextAreaElement && active.matches(ANSWER_SELECTOR)) {
+      return;
+    }
+    applyCleanKeyboardClosedState();
+  };
+
+  if (watchViewport) {
+    const viewport = window.visualViewport;
+    viewport?.addEventListener("resize", reassertClosedState);
+    viewport?.addEventListener("scroll", reassertClosedState);
+    window.addEventListener("resize", reassertClosedState);
+
+    keyboardCloseCleanup = () => {
+      viewport?.removeEventListener("resize", reassertClosedState);
+      viewport?.removeEventListener("scroll", reassertClosedState);
+      window.removeEventListener("resize", reassertClosedState);
+    };
+  }
+
+  restoreTimers = [60, 180, 360, 700].map((delay) =>
+    window.setTimeout(reassertClosedState, delay)
+  );
+
+  restoreTimers.push(
+    window.setTimeout(() => {
+      reassertClosedState();
+      keyboardCloseCleanup?.();
+      keyboardCloseCleanup = null;
+    }, 900),
   );
 }
 
@@ -129,7 +163,7 @@ function updateKeyboardLayout() {
   }
 
   if (keyboardReductionPx() < KEYBOARD_OPEN_THRESHOLD_PX) {
-    if (keyboardWasOpen) finishKeyboardClose();
+    if (keyboardWasOpen) finishKeyboardClose({ watchViewport: true });
     return;
   }
 
@@ -208,12 +242,11 @@ document.addEventListener("pointerdown", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
-  // Record the normal page position only. Safari must retain ownership of the
-  // native tap/focus gesture; nothing is moved, focused or prevented here.
-  preFocusScrollX = window.scrollX;
-  preFocusScrollY = window.scrollY;
-  originalScrollX = preFocusScrollX;
-  originalScrollY = preFocusScrollY;
+  // Safari retains ownership of the native tap/focus gesture. Do not move,
+  // focus or prevent anything here. Only establish the intended normal resting
+  // position so a previous iOS keyboard pan can never become the next baseline.
+  originalScrollX = 0;
+  originalScrollY = 0;
 }, true);
 
 document.addEventListener("focusin", (event) => {
@@ -225,8 +258,8 @@ document.addEventListener("focusin", (event) => {
   cleanupPending?.();
   cleanupPending = null;
 
-  originalScrollX = preFocusScrollX;
-  originalScrollY = preFocusScrollY;
+  originalScrollX = 0;
+  originalScrollY = 0;
   baselineHeight = Math.max(
     window.innerHeight,
     window.visualViewport?.height ?? 0,
@@ -247,7 +280,7 @@ document.addEventListener("focusout", (event) => {
 
   // Focus loss is authoritative: restore immediately rather than waiting for a
   // particular visualViewport event sequence that differs between iPhones.
-  finishKeyboardClose();
+  finishKeyboardClose({ watchViewport: true });
 });
 
 /* ---------- Team-name keyboard: move the complete page as one composition ---------- */
