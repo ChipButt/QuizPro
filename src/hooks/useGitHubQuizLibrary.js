@@ -9,38 +9,45 @@ const RAW_LIBRARY_URL = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BR
 const CONTENTS_API_URL = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${LIBRARY_PATH}`;
 
 function emptyLibrary() {
-  return { schema: 1, updatedAt: null, quizzes: [], media: [] };
+  return { schema: 2, updatedAt: null, quizzes: [], roundLibrary: [], media: [] };
 }
 
 function normalizeLibrary(value) {
   const source = value && typeof value === "object" ? value : {};
   return {
-    schema: 1,
+    schema: 2,
     updatedAt: source.updatedAt || null,
     quizzes: Array.isArray(source.quizzes) ? source.quizzes : [],
+    roundLibrary: Array.isArray(source.roundLibrary) ? source.roundLibrary : [],
     media: Array.isArray(source.media) ? source.media : [],
   };
 }
 
 function snapshotFromState(state) {
   return {
-    schema: 1,
+    schema: 2,
     updatedAt: null,
     quizzes: Array.isArray(state?.quizzes) ? state.quizzes : [],
+    roundLibrary: Array.isArray(state?.roundLibrary) ? state.roundLibrary : [],
     media: Array.isArray(state?.media) ? state.media : [],
   };
 }
 
 function fingerprint(value) {
-  const source = value?.quizzes || value?.media ? value : snapshotFromState(value);
+  const source = value?.quizzes || value?.roundLibrary || value?.media ? value : snapshotFromState(value);
   return JSON.stringify({
     quizzes: Array.isArray(source.quizzes) ? source.quizzes : [],
+    roundLibrary: Array.isArray(source.roundLibrary) ? source.roundLibrary : [],
     media: Array.isArray(source.media) ? source.media : [],
   });
 }
 
 function hasLibraryContent(value) {
-  return Boolean((value?.quizzes?.length ?? 0) || (value?.media?.length ?? 0));
+  return Boolean(
+    (value?.quizzes?.length ?? 0)
+    || (value?.roundLibrary?.length ?? 0)
+    || (value?.media?.length ?? 0)
+  );
 }
 
 function utf8ToBase64(text) {
@@ -111,8 +118,8 @@ export function useGitHubQuizLibrary(state, updateState) {
   const savingRef = useRef(false);
 
   const currentFingerprint = useMemo(
-    () => fingerprint({ quizzes: state.quizzes, media: state.media }),
-    [state.quizzes, state.media],
+    () => fingerprint({ quizzes: state.quizzes, roundLibrary: state.roundLibrary, media: state.media }),
+    [state.quizzes, state.roundLibrary, state.media],
   );
   const dirty = Boolean(remoteLoaded && baselineFingerprint && currentFingerprint !== baselineFingerprint);
   const connected = Boolean(token && login);
@@ -130,12 +137,14 @@ export function useGitHubQuizLibrary(state, updateState) {
 
   function applyRemoteLibrary(library, remoteFingerprint) {
     const quizzes = library.quizzes;
+    const roundLibrary = library.roundLibrary;
     const media = library.media;
     updateState((current) => {
       const selectedStillExists = quizzes.some((quiz) => quiz.id === current.selectedQuizId);
       return {
         ...current,
         quizzes,
+        roundLibrary,
         media,
         selectedQuizId: selectedStillExists ? current.selectedQuizId : quizzes[0]?.id || "",
       };
@@ -288,9 +297,10 @@ export function useGitHubQuizLibrary(state, updateState) {
 
       const updatedAt = new Date().toISOString();
       const document = {
-        schema: 1,
+        schema: 2,
         updatedAt,
         quizzes: localSnapshot.quizzes,
+        roundLibrary: localSnapshot.roundLibrary,
         media: localSnapshot.media,
       };
       const body = {
