@@ -1655,3 +1655,42 @@
   scroll-margin-top:16px !important;
   scroll-margin-bottom:28px !important;
 }
+
+
+/* ---------- Final centred gold Correct Answer pill ---------- */
+/* The gold Correct Answer panel is text-only. Remove the old icon column and
+   centre both the label and the answer without changing the panel geometry. */
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:4px !important;
+  grid-template-columns:none !important;
+  grid-template-areas:none !important;
+  column-gap:0 !important;
+  text-align:center !important;
+}
+
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill>svg{
+  display:none !important;
+  visibility:hidden !important;
+}
+
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill>span,
+.live-team-page .team-question-stage.is-revealed .revealed-answer-pill>.revealed-answer-text{
+  width:100% !important;
+  max-width:100% !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  text-align:center !important;
+  align-self:center !important;
+  justify-self:center !important;
+  grid-area:auto !important;
+}
+
+.live-team-page .team-question-stage.is-revealed .revealed-answer-media{
+  width:100% !important;
+  align-self:stretch !important;
+  grid-area:auto !important;
+}
