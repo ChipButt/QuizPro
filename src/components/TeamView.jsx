@@ -72,6 +72,19 @@ function QuizInLogo({ className = "" }) {
 }
 
 function TeamChrome({ children, status, keyboardActive = false, rail = null, pageClass = "" }) {
+  useEffect(() => {
+    const root = document.documentElement;
+    const body = document.body;
+
+    root.classList.add("quiz-taker-active");
+    body?.classList.add("quiz-taker-active");
+
+    return () => {
+      root.classList.remove("quiz-taker-active");
+      body?.classList.remove("quiz-taker-active");
+    };
+  }, []);
+
   const connectionLabel = status === "online"
     ? "Connected to Quiz Host"
     : status === "reconnecting"
