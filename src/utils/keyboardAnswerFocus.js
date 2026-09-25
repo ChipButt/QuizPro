@@ -135,9 +135,6 @@ function settleKeyboardClose() {
   const checkKeyboardClosed = () => {
     if (finished) return;
 
-    forceKeyboardClasses(true);
-    holdDocumentPosition();
-
     const viewportHeight = Math.round(viewport?.height ?? window.innerHeight);
     const targetHeight = Math.max(1, Math.round(baselineHeight || window.innerHeight));
     const keyboardReduction = Math.max(0, targetHeight - viewportHeight);
@@ -171,9 +168,6 @@ function settleKeyboardClose() {
 }
 
 function updateKeyboardSlide() {
-  // Safari must not be allowed to scroll the document underneath our own
-  // keyboard translation. Reassert the pre-focus document position first.
-  holdDocumentPosition();
   syncVisualViewport();
 
   const active = document.activeElement;
@@ -183,36 +177,42 @@ function updateKeyboardSlide() {
 
   const viewport = window.visualViewport;
   const viewportHeight = Math.max(180, viewport?.height ?? window.innerHeight);
-  const viewportTop = Math.max(0, viewport?.offsetTop ?? 0);
-  const viewportBottom = viewportTop + viewportHeight;
   const layoutHeight = Math.max(baselineHeight || 0, window.innerHeight);
   const keyboardReduction = Math.max(0, layoutHeight - viewportHeight);
   const keyboardOpen = keyboardReduction >= KEYBOARD_OPEN_THRESHOLD_PX;
 
   if (!keyboardOpen) return;
 
-  const questionStage = document.querySelector(QUESTION_STAGE_SELECTOR);
-  if (!(questionStage instanceof Element)) return;
-
   /*
-   * Do NOT reset the page to zero before measuring. The stage rect already
-   * includes the current shell translation, so add currentKeyboardSlide back
-   * to recover its unshifted bottom without creating a visible jump.
+   * Once Safari has genuinely opened the keyboard, switch to a responsive
+   * visible-viewport layout. Do not freeze the old page height and do not
+   * translate the complete shell by a calculated amount. The page itself can
+   * scroll, while the question stage keeps natural document flow.
    */
-  const stageRect = questionStage.getBoundingClientRect();
-  const unshiftedStageBottom = stageRect.bottom + currentKeyboardSlide;
+  forceKeyboardClasses(true);
+  resetKeyboardSlide();
 
-  /*
-   * visualViewport.bottom is the top edge of the software keyboard. Make one
-   * move to the final target where .team-question-stage ends exactly 150px
-   * above the keyboard.
-   */
-  const requiredShift = Math.max(
-    0,
-    unshiftedStageBottom + QUESTION_STAGE_KEYBOARD_GAP_PX - viewportBottom,
-  );
+  const page = document.querySelector(PAGE_SELECTOR);
+  if (page instanceof HTMLElement) {
+    const pageRect = page.getBoundingClientRect();
+    const inputRect = active.getBoundingClientRect();
+    const viewportTop = Math.max(0, viewport?.offsetTop ?? 0);
+    const viewportBottom = viewportTop + viewportHeight;
+    const safeTop = viewportTop + 12;
+    const safeBottom = viewportBottom - 24;
 
-  setKeyboardSlide(requiredShift);
+    if (inputRect.bottom > safeBottom || inputRect.top < safeTop) {
+      active.scrollIntoView({ block: "center", inline: "nearest", behavior: "auto" });
+    }
+
+    // Safari can report a viewport offset after scrollIntoView. Keep the
+    // fixed page aligned with the actual visible viewport rather than the
+    // layout viewport behind the keyboard.
+    document.documentElement.style.setProperty(
+      "--team-visible-top",
+      `${Math.max(0, Math.round(viewport?.offsetTop ?? pageRect.top ?? 0))}px`,
+    );
+  }
 }
 
 function settleKeyboardLayout() {
@@ -233,7 +233,6 @@ function settleKeyboardLayout() {
   };
 
   const onViewportChange = () => {
-    holdDocumentPosition();
     syncVisualViewport();
     scheduleAlignment();
   };
@@ -270,12 +269,11 @@ document.addEventListener("pointerdown", (event) => {
   originalScrollY = preFocusScrollY;
 
   /*
-   * Do not prevent the pointer event and do not call focus() ourselves.
-   * iPhone Safari must own the actual focus gesture or it can briefly open
-   * the software keyboard and immediately dismiss it. We only prepare the
-   * fixed page mode here; focusin handles the positioning once focus is real.
+   * Do not alter layout during pointerdown. Moving/fixing the page while
+   * Safari is still resolving the tap can make the textarea move out from
+   * under the finger, which causes iOS to drop the first focus attempt.
+   * Native focus must complete before keyboard layout begins.
    */
-  forceKeyboardClasses(true);
 }, true);
 
 document.addEventListener("focusin", (event) => {
@@ -286,7 +284,6 @@ document.addEventListener("focusin", (event) => {
   clearKeyboardAlignmentTimers();
   originalScrollX = preFocusScrollX;
   originalScrollY = preFocusScrollY;
-  holdDocumentPosition();
 
   const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
   baselineHeight = Math.max(window.innerHeight, viewportHeight);
@@ -294,11 +291,11 @@ document.addEventListener("focusin", (event) => {
   resetKeyboardSlide();
 
   /*
-   * Apply the keyboard classes synchronously rather than waiting for React's
-   * focus state render. That prevents Safari's initial focus-pan from winning
-   * the race before our fixed-layout keyboard mode is active.
+   * Leave native Safari focus/layout alone until visualViewport confirms the
+   * keyboard is actually open. updateKeyboardSlide() then enables the
+   * responsive keyboard layout.
    */
-  forceKeyboardClasses(true);
+  forceKeyboardClasses(false);
 
   cleanupPending?.();
   cleanupPending = settleKeyboardLayout();
@@ -312,9 +309,8 @@ document.addEventListener("focusout", (event) => {
   cleanupPending = null;
   clearKeyboardAlignmentTimers();
 
-  // Keep the current keyboard lift in place while Safari closes. The complete
-  // page, including the header/logo, is restored together once it is closed.
-  forceKeyboardClasses(true);
+  // Keep the responsive viewport until Safari reports the keyboard closed,
+  // then restore the normal full-page layout.
   settleKeyboardClose();
 });
 
