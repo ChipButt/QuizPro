@@ -16,6 +16,7 @@ let keyboardAlignTimer = null;
 let keyboardFallbackTimers = [];
 let keyboardCloseCleanup = null;
 let currentKeyboardSlide = 0;
+let keyboardWasOpen = false;
 
 function syncVisualViewport() {
   const viewport = window.visualViewport;
@@ -88,24 +89,49 @@ function restoreOriginalView() {
 
 function finishKeyboardClose() {
   const root = document.documentElement;
+  const page = document.querySelector(PAGE_SELECTOR);
 
-  /*
-   * Return the translated page, the document scroll position and the header
-   * state in one synchronous frame. This prevents the content from snapping
-   * back first and the blue header/logo appearing a moment later.
-   */
+  clearKeyboardAlignmentTimers();
+  cleanupPending?.();
+  cleanupPending = null;
+
+  keyboardWasOpen = false;
   setKeyboardSlide(0);
-  holdDocumentPosition();
+  forceKeyboardClasses(false);
+
   root.style.setProperty("--team-visible-top", "0px");
   root.style.setProperty("--team-visible-left", "0px");
   root.style.removeProperty("--team-keyboard-layout-height");
-  baselineHeight = 0;
-  forceKeyboardClasses(false);
-  holdDocumentPosition();
 
-  window.requestAnimationFrame(() => {
-    holdDocumentPosition();
-    window.requestAnimationFrame(holdDocumentPosition);
+  if (page instanceof HTMLElement) {
+    page.scrollTop = 0;
+    page.scrollLeft = 0;
+  }
+
+  try {
+    window.scrollTo({ left: originalScrollX, top: originalScrollY, behavior: "auto" });
+  } catch {
+    window.scrollTo(originalScrollX, originalScrollY);
+  }
+
+  baselineHeight = 0;
+
+  // Some mobile Chrome versions finish their viewport restoration a frame or
+  // two after the keyboard disappears. Re-assert the clean state so the blue
+  // header/logo cannot remain stranded off-screen.
+  [0, 60, 180].forEach((delay) => {
+    window.setTimeout(() => {
+      forceKeyboardClasses(false);
+      setKeyboardSlide(0);
+      root.style.setProperty("--team-visible-top", "0px");
+      root.style.setProperty("--team-visible-left", "0px");
+      if (page instanceof HTMLElement) page.scrollTop = 0;
+      try {
+        window.scrollTo({ left: originalScrollX, top: originalScrollY, behavior: "auto" });
+      } catch {
+        window.scrollTo(originalScrollX, originalScrollY);
+      }
+    }, delay);
   });
 }
 
@@ -181,37 +207,33 @@ function updateKeyboardSlide() {
   const keyboardReduction = Math.max(0, layoutHeight - viewportHeight);
   const keyboardOpen = keyboardReduction >= KEYBOARD_OPEN_THRESHOLD_PX;
 
-  if (!keyboardOpen) return;
+  if (!keyboardOpen) {
+    if (keyboardWasOpen) finishKeyboardClose();
+    return;
+  }
 
-  /*
-   * Once Safari has genuinely opened the keyboard, switch to a responsive
-   * visible-viewport layout. Do not freeze the old page height and do not
-   * translate the complete shell by a calculated amount. The page itself can
-   * scroll, while the question stage keeps natural document flow.
-   */
+  keyboardWasOpen = true;
   forceKeyboardClasses(true);
   resetKeyboardSlide();
 
   const page = document.querySelector(PAGE_SELECTOR);
-  if (page instanceof HTMLElement) {
-    const pageRect = page.getBoundingClientRect();
-    const inputRect = active.getBoundingClientRect();
-    const viewportTop = Math.max(0, viewport?.offsetTop ?? 0);
-    const viewportBottom = viewportTop + viewportHeight;
-    const safeTop = viewportTop + 12;
-    const safeBottom = viewportBottom - 24;
+  if (!(page instanceof HTMLElement)) return;
 
-    if (inputRect.bottom > safeBottom || inputRect.top < safeTop) {
-      active.scrollIntoView({ block: "center", inline: "nearest", behavior: "auto" });
-    }
+  const viewportTop = Math.max(0, viewport?.offsetTop ?? 0);
+  const viewportBottom = viewportTop + viewportHeight;
+  const inputRect = active.getBoundingClientRect();
+  const safeBottom = viewportBottom - 18;
+  const overlap = Math.max(0, inputRect.bottom - safeBottom);
 
-    // Safari can report a viewport offset after scrollIntoView. Keep the
-    // fixed page aligned with the actual visible viewport rather than the
-    // layout viewport behind the keyboard.
-    document.documentElement.style.setProperty(
-      "--team-visible-top",
-      `${Math.max(0, Math.round(viewport?.offsetTop ?? pageRect.top ?? 0))}px`,
-    );
+  /*
+   * Chrome/iOS/Android normally pans the focused field itself. Never call
+   * scrollIntoView() here: that can compound the native pan and create the
+   * large jump seen on some phones. If Chrome still leaves a small overlap,
+   * correct only the quiz page's own scroll position and cap that correction.
+   */
+  if (overlap > 0) {
+    const correction = Math.min(140, Math.ceil(overlap + 12));
+    page.scrollTop = Math.max(0, page.scrollTop + correction);
   }
 }
 
@@ -234,6 +256,19 @@ function settleKeyboardLayout() {
 
   const onViewportChange = () => {
     syncVisualViewport();
+
+    const viewportHeight = Math.max(
+      180,
+      window.visualViewport?.height ?? window.innerHeight,
+    );
+    const layoutHeight = Math.max(baselineHeight || 0, window.innerHeight);
+    const keyboardReduction = Math.max(0, layoutHeight - viewportHeight);
+
+    if (keyboardWasOpen && keyboardReduction < KEYBOARD_OPEN_THRESHOLD_PX) {
+      finishKeyboardClose();
+      return;
+    }
+
     scheduleAlignment();
   };
 
@@ -287,6 +322,7 @@ document.addEventListener("focusin", (event) => {
 
   const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
   baselineHeight = Math.max(window.innerHeight, viewportHeight);
+  keyboardWasOpen = false;
   syncVisualViewport();
   resetKeyboardSlide();
 
@@ -309,9 +345,13 @@ document.addEventListener("focusout", (event) => {
   cleanupPending = null;
   clearKeyboardAlignmentTimers();
 
-  // Keep the responsive viewport until Safari reports the keyboard closed,
-  // then restore the normal full-page layout.
+  // Mobile Chrome does not always emit the same viewport event sequence on
+  // keyboard dismissal. Start the normal close watcher, with an immediate
+  // hard-reset fallback so the header/logo always returns.
   settleKeyboardClose();
+  window.setTimeout(() => {
+    if (document.activeElement !== target) finishKeyboardClose();
+  }, 40);
 });
 
 
