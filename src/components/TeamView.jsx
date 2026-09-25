@@ -1716,10 +1716,12 @@ export default function TeamView({ sessionCode, teamToken }) {
           role="timer"
           aria-label={`${countdown} seconds remaining before the round ends`}
         >
-          <div className="team-timer-message">
-            <strong data-default-text={"LAST CHANCE \nTO INPUT YOUR ANSWERS!"}>{"LAST CHANCE \nTO INPUT YOUR ANSWERS!"}</strong>
-            <span data-default-text={"When the timer runs out, \nyour answers will be locked!"}>{"When the timer runs out, \nyour answers will be locked!"}</span>
-          </div>
+          {!isPictureRound ? (
+            <div className="team-timer-message">
+              <strong data-default-text={"LAST CHANCE \nTO INPUT YOUR ANSWERS!"}>{"LAST CHANCE \nTO INPUT YOUR ANSWERS!"}</strong>
+              <span data-default-text={"When the timer runs out, \nyour answers will be locked!"}>{"When the timer runs out, \nyour answers will be locked!"}</span>
+            </div>
+          ) : null}
           <div className="team-timer-clock" aria-hidden="true">
             <i className="team-timer-clock-knob" />
             <strong>{countdown}</strong>
