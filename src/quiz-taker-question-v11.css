@@ -1665,3 +1665,57 @@
     display:block !important;
   }
 }
+
+
+/* ---------- Keyboard-active long-question clearance ---------- */
+/* On iOS, focusing a text answer can compress the visible viewport enough for
+   the final line of a long question to be clipped by the answer area. Keep the
+   normal browser-owned keyboard movement, but make the text-question stack
+   intrinsically sized while focused so every rendered line reserves its full
+   height before the answer field begins. Picture-round editor geometry is
+   deliberately excluded. */
+@media(max-width:979px){
+  .team-page.live-team-page.keyboard-active-page
+  .team-question-stage:not(.picture-round-question-layout){
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:flex-start !important;
+  }
+
+  .team-page.live-team-page.keyboard-active-page
+  .team-question-stage:not(.picture-round-question-layout) .team-question-core{
+    box-sizing:border-box !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+    flex:0 0 auto !important;
+  }
+
+  .team-page.live-team-page.keyboard-active-page
+  .team-question-stage:not(.picture-round-question-layout) .team-question-text{
+    box-sizing:border-box !important;
+    position:relative !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+    flex:0 0 auto !important;
+    padding-bottom:4px !important;
+    margin-bottom:8px !important;
+  }
+
+  .team-page.live-team-page.keyboard-active-page
+  .team-question-stage:not(.picture-round-question-layout) .team-answer-zone{
+    position:relative !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+    flex:0 0 auto !important;
+  }
+}
