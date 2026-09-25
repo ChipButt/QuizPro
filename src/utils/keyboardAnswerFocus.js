@@ -1,52 +1,9 @@
 const ANSWER_SELECTOR = ".question-team-card .answer-input-shell textarea";
 const PAGE_SELECTOR = ".team-page.live-team-page";
 const SHELL_SELECTOR = ".live-phone-shell";
-const QUESTION_STAGE_SELECTOR = ".question-team-card .team-question-stage";
-const QUESTION_STAGE_KEYBOARD_GAP_PX = 150;
-const KEYBOARD_OPEN_THRESHOLD_PX = 100;
-const QUESTION_STAGE_SAFE_TOP_PX = 12;
-const QUESTION_STAGE_MIN_GAP_PX = 18;
 
-let baselineHeight = 0;
-let baselineViewportHeight = 0;
-let stableViewportHeight = Math.max(
-  window.visualViewport?.height ?? 0,
-  window.innerHeight,
-);
-let cleanupPending = null;
-let originalScrollX = 0;
-let originalScrollY = 0;
 let restoreTimers = [];
 let keyboardCloseCleanup = null;
-let keyboardAlignTimer = null;
-let keyboardFallbackTimers = [];
-let keyboardWasOpen = false;
-let keyboardAlignmentApplied = false;
-let keyboardAlignmentFrame = null;
-
-function setKeyboardSlide(value) {
-  const next = Math.max(0, Math.round(Number(value) || 0));
-  document.documentElement.style.setProperty("--team-keyboard-slide", `${next}px`);
-}
-
-function resetKeyboardSlide() {
-  setKeyboardSlide(0);
-}
-
-function clearKeyboardAlignmentTimers() {
-  if (keyboardAlignTimer !== null) {
-    window.clearTimeout(keyboardAlignTimer);
-    keyboardAlignTimer = null;
-  }
-
-  if (keyboardAlignmentFrame !== null) {
-    window.cancelAnimationFrame(keyboardAlignmentFrame);
-    keyboardAlignmentFrame = null;
-  }
-
-  keyboardFallbackTimers.forEach((timer) => window.clearTimeout(timer));
-  keyboardFallbackTimers = [];
-}
 
 function clearRestoreTimers() {
   restoreTimers.forEach((timer) => window.clearTimeout(timer));
@@ -61,277 +18,87 @@ function forceKeyboardClasses(enabled) {
   document.querySelector(SHELL_SELECTOR)?.classList.toggle("keyboard-active", enabled);
 }
 
-function restoreDocumentScroll() {
-  try {
-    window.scrollTo({ left: originalScrollX, top: originalScrollY, behavior: "auto" });
-  } catch {
-    window.scrollTo(originalScrollX, originalScrollY);
-  }
-
-  const scrollingElement = document.scrollingElement;
-  if (scrollingElement) {
-    scrollingElement.scrollLeft = originalScrollX;
-    scrollingElement.scrollTop = originalScrollY;
-  }
-}
-
-function captureNormalKeyboardBaseline() {
-  const page = document.querySelector(PAGE_SELECTOR);
-  const pageHeight =
-    page instanceof HTMLElement ? page.getBoundingClientRect().height : 0;
-  const viewportHeight = Math.max(
-    180,
-    window.visualViewport?.height ?? window.innerHeight,
-  );
-
-  stableViewportHeight = Math.max(stableViewportHeight, viewportHeight);
-  baselineViewportHeight = Math.max(stableViewportHeight, viewportHeight);
-  baselineHeight = Math.max(
-    180,
-    Math.round(pageHeight || window.innerHeight || baselineViewportHeight),
-  );
-}
-
-function applyCleanKeyboardClosedState() {
+function clearQuestionKeyboardVars() {
   const root = document.documentElement;
-  const page = document.querySelector(PAGE_SELECTOR);
-
-  forceKeyboardClasses(false);
-  resetKeyboardSlide();
-
+  root.style.setProperty("--team-keyboard-slide", "0px");
   root.style.setProperty("--team-visible-top", "0px");
   root.style.setProperty("--team-visible-left", "0px");
   root.style.removeProperty("--team-visible-height");
   root.style.removeProperty("--team-visible-width");
   root.style.removeProperty("--team-keyboard-layout-height");
+}
 
+function restoreClosedQuestionPage() {
+  const active = document.activeElement;
+  if (active instanceof HTMLTextAreaElement && active.matches(ANSWER_SELECTOR)) {
+    return;
+  }
+
+  forceKeyboardClasses(false);
+  clearQuestionKeyboardVars();
+
+  const page = document.querySelector(PAGE_SELECTOR);
   if (page instanceof HTMLElement) {
     page.scrollTop = 0;
     page.scrollLeft = 0;
   }
 
-  restoreDocumentScroll();
-}
-
-function finishKeyboardClose({ watchViewport = false } = {}) {
-  clearKeyboardAlignmentTimers();
-  cleanupPending?.();
-  cleanupPending = null;
-  clearRestoreTimers();
-
-  keyboardWasOpen = false;
-  keyboardAlignmentApplied = false;
-  baselineHeight = 0;
-  baselineViewportHeight = 0;
-
-  /*
-   * The live team page always returns to the document origin. iOS can finish
-   * its native focus pan after blur, so keep re-asserting this clean state for
-   * a short period instead of trusting one visualViewport event.
-   */
-  originalScrollX = 0;
-  originalScrollY = 0;
-  applyCleanKeyboardClosedState();
-
-  const reassertClosedState = () => {
-    const active = document.activeElement;
-    if (active instanceof HTMLTextAreaElement && active.matches(ANSWER_SELECTOR)) {
-      return;
-    }
-
-    const viewportHeight = Math.max(
-      180,
-      window.visualViewport?.height ?? window.innerHeight,
-    );
-    stableViewportHeight = Math.max(stableViewportHeight, viewportHeight);
-    applyCleanKeyboardClosedState();
-  };
-
-  if (watchViewport) {
-    const viewport = window.visualViewport;
-    viewport?.addEventListener("resize", reassertClosedState);
-    viewport?.addEventListener("scroll", reassertClosedState);
-    window.addEventListener("resize", reassertClosedState);
-
-    keyboardCloseCleanup = () => {
-      viewport?.removeEventListener("resize", reassertClosedState);
-      viewport?.removeEventListener("scroll", reassertClosedState);
-      window.removeEventListener("resize", reassertClosedState);
-    };
+  const scrollingElement = document.scrollingElement;
+  if (scrollingElement) {
+    scrollingElement.scrollTop = 0;
+    scrollingElement.scrollLeft = 0;
   }
 
-  restoreTimers = [60, 180, 360, 700].map((delay) =>
-    window.setTimeout(reassertClosedState, delay)
+  document.documentElement.scrollTop = 0;
+  document.documentElement.scrollLeft = 0;
+  if (document.body) {
+    document.body.scrollTop = 0;
+    document.body.scrollLeft = 0;
+  }
+
+  try {
+    window.scrollTo({ left: 0, top: 0, behavior: "auto" });
+  } catch {
+    window.scrollTo(0, 0);
+  }
+}
+
+function finishQuestionKeyboardClose() {
+  clearRestoreTimers();
+  forceKeyboardClasses(false);
+  clearQuestionKeyboardVars();
+
+  /*
+   * WebKit can finish its native keyboard-dismiss pan after focusout. Restore
+   * the normal Quiz In origin immediately and keep re-asserting it briefly,
+   * but only while the answer textarea is genuinely unfocused.
+   */
+  restoreClosedQuestionPage();
+
+  const viewport = window.visualViewport;
+  const reassert = () => restoreClosedQuestionPage();
+
+  viewport?.addEventListener("resize", reassert);
+  viewport?.addEventListener("scroll", reassert);
+  window.addEventListener("resize", reassert);
+
+  keyboardCloseCleanup = () => {
+    viewport?.removeEventListener("resize", reassert);
+    viewport?.removeEventListener("scroll", reassert);
+    window.removeEventListener("resize", reassert);
+  };
+
+  restoreTimers = [60, 180, 360, 700, 1000].map((delay) =>
+    window.setTimeout(reassert, delay)
   );
 
   restoreTimers.push(
     window.setTimeout(() => {
-      reassertClosedState();
+      reassert();
       keyboardCloseCleanup?.();
       keyboardCloseCleanup = null;
-    }, 900),
+    }, 1200),
   );
-}
-
-function keyboardReductionPx() {
-  const viewportHeight = Math.max(
-    180,
-    window.visualViewport?.height ?? window.innerHeight,
-  );
-  const normalViewportHeight = Math.max(
-    baselineViewportHeight || 0,
-    stableViewportHeight || 0,
-  );
-
-  return Math.max(0, normalViewportHeight - viewportHeight);
-}
-
-function applyDeterministicKeyboardAlignment() {
-  const active = document.activeElement;
-  if (!(active instanceof HTMLTextAreaElement) || !active.matches(ANSWER_SELECTOR)) {
-    return;
-  }
-
-  const page = document.querySelector(PAGE_SELECTOR);
-  const stage = document.querySelector(QUESTION_STAGE_SELECTOR);
-  if (!(page instanceof HTMLElement) || !(stage instanceof HTMLElement)) {
-    return;
-  }
-
-  /*
-   * From this point on the browser's focus pan is not allowed to define the
-   * Quiz In layout. Freeze the normal pre-keyboard composition, cancel the
-   * document pan, then move the complete phone shell exactly once.
-   */
-  const root = document.documentElement;
-  root.style.setProperty(
-    "--team-keyboard-layout-height",
-    `${Math.round(baselineHeight)}px`,
-  );
-  root.style.setProperty("--team-visible-top", "0px");
-  root.style.setProperty("--team-visible-left", "0px");
-  resetKeyboardSlide();
-  forceKeyboardClasses(true);
-
-  page.scrollTop = 0;
-  page.scrollLeft = 0;
-  restoreDocumentScroll();
-
-  keyboardAlignmentFrame = window.requestAnimationFrame(() => {
-    keyboardAlignmentFrame = null;
-
-    const current = document.activeElement;
-    if (!(current instanceof HTMLTextAreaElement) || !current.matches(ANSWER_SELECTOR)) {
-      return;
-    }
-
-    const viewportHeight = Math.max(
-      180,
-      window.visualViewport?.height ?? window.innerHeight,
-    );
-    const stageRect = stage.getBoundingClientRect();
-
-    /*
-     * Keep the entire question stage visible. Use the approved 150px clearance
-     * above the keyboard whenever the physical viewport can accommodate it;
-     * on a genuinely shorter viewport use the largest possible gap rather than
-     * cropping the question.
-     */
-    const largestGapThatKeepsStageVisible = Math.max(
-      QUESTION_STAGE_MIN_GAP_PX,
-      viewportHeight - QUESTION_STAGE_SAFE_TOP_PX - stageRect.height,
-    );
-    const targetGap = Math.min(
-      QUESTION_STAGE_KEYBOARD_GAP_PX,
-      largestGapThatKeepsStageVisible,
-    );
-    const targetStageBottom = viewportHeight - targetGap;
-    const requestedSlide = Math.max(0, stageRect.bottom - targetStageBottom);
-    const maxSlideWithoutCroppingStage = Math.max(
-      0,
-      stageRect.top - QUESTION_STAGE_SAFE_TOP_PX,
-    );
-    const slide = Math.min(requestedSlide, maxSlideWithoutCroppingStage);
-
-    setKeyboardSlide(slide);
-    restoreDocumentScroll();
-
-    /*
-     * Some WebKit builds try one final document pan after the fixed layout has
-     * been applied. Re-cancel that pan once; never recalculate or chase the
-     * shell position, so first focus and later focuses use the same geometry.
-     */
-    keyboardFallbackTimers.push(
-      window.setTimeout(restoreDocumentScroll, 90),
-    );
-
-    keyboardWasOpen = true;
-    keyboardAlignmentApplied = true;
-  });
-}
-
-function updateKeyboardLayout() {
-  const active = document.activeElement;
-  if (!(active instanceof HTMLTextAreaElement) || !active.matches(ANSWER_SELECTOR)) {
-    return;
-  }
-
-  if (keyboardReductionPx() < KEYBOARD_OPEN_THRESHOLD_PX) {
-    if (keyboardWasOpen) finishKeyboardClose({ watchViewport: true });
-    return;
-  }
-
-  if (!keyboardAlignmentApplied && keyboardAlignmentFrame === null) {
-    applyDeterministicKeyboardAlignment();
-  }
-}
-
-function settleKeyboardLayout() {
-  const viewport = window.visualViewport;
-
-  const scheduleAlignment = (delay = 140) => {
-    if (keyboardAlignmentApplied || keyboardAlignmentFrame !== null) return;
-    if (keyboardAlignTimer !== null) window.clearTimeout(keyboardAlignTimer);
-
-    keyboardAlignTimer = window.setTimeout(() => {
-      keyboardAlignTimer = null;
-      updateKeyboardLayout();
-    }, delay);
-  };
-
-  const onViewportChange = () => {
-    const reduction = keyboardReductionPx();
-
-    if (keyboardWasOpen && reduction < KEYBOARD_OPEN_THRESHOLD_PX) {
-      finishKeyboardClose({ watchViewport: true });
-      return;
-    }
-
-    if (!keyboardAlignmentApplied && keyboardAlignmentFrame === null) {
-      scheduleAlignment();
-    }
-  };
-
-  viewport?.addEventListener("resize", onViewportChange);
-  viewport?.addEventListener("scroll", onViewportChange);
-  window.addEventListener("resize", onViewportChange);
-
-  scheduleAlignment(180);
-
-  keyboardFallbackTimers = [500, 900].map((delay) =>
-    window.setTimeout(() => {
-      if (!keyboardAlignmentApplied && keyboardAlignmentFrame === null) {
-        updateKeyboardLayout();
-      }
-    }, delay)
-  );
-
-  return () => {
-    clearKeyboardAlignmentTimers();
-    viewport?.removeEventListener("resize", onViewportChange);
-    viewport?.removeEventListener("scroll", onViewportChange);
-    window.removeEventListener("resize", onViewportChange);
-  };
 }
 
 document.addEventListener("pointerdown", (event) => {
@@ -339,43 +106,30 @@ document.addEventListener("pointerdown", (event) => {
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
   /*
-   * Do not focus, preventDefault or alter layout on pointerdown. Safari owns
-   * the native focus gesture. Only capture the normal composition before it
-   * begins moving anything.
+   * Intentionally do nothing here. Safari/Chrome must own the native tap and
+   * focus gesture so the first tap and every later tap take the same path.
    */
-  originalScrollX = 0;
-  originalScrollY = 0;
-  captureNormalKeyboardBaseline();
 }, true);
 
 document.addEventListener("focusin", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
+  /*
+   * Cancel any close-time cleanup from the previous focus, remove stale
+   * keyboard variables, then leave layout/scroll entirely to the browser.
+   * The classes remain solely so the timer clock follows the phone shell.
+   */
   clearRestoreTimers();
-  clearKeyboardAlignmentTimers();
-  cleanupPending?.();
-  cleanupPending = null;
-
-  originalScrollX = 0;
-  originalScrollY = 0;
-  if (!baselineHeight || !baselineViewportHeight) {
-    captureNormalKeyboardBaseline();
-  }
-
-  keyboardWasOpen = false;
-  keyboardAlignmentApplied = false;
-  resetKeyboardSlide();
-  forceKeyboardClasses(false);
-
-  cleanupPending = settleKeyboardLayout();
+  clearQuestionKeyboardVars();
+  forceKeyboardClasses(true);
 });
 
 document.addEventListener("focusout", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
-  finishKeyboardClose({ watchViewport: true });
+  finishQuestionKeyboardClose();
 });
 
 /* ---------- Team-name keyboard: move the complete page as one composition ---------- */
