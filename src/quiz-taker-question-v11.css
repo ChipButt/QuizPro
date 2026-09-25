@@ -379,54 +379,6 @@
 }
 
 
-/* ---------- Viewport-aware keyboard slide ---------- */
-/* When a team focuses a text answer, keep the existing page geometry intact.
-   The only visual change is a vertical lift of the complete phone shell, sized
-   from the actual focused textarea against the current visualViewport. */
-.keyboard-active-page{
-  position:fixed !important;
-  inset:0 !important;
-  width:100% !important;
-  height:var(--team-keyboard-layout-height,100dvh) !important;
-  min-height:var(--team-keyboard-layout-height,100dvh) !important;
-  max-height:var(--team-keyboard-layout-height,100dvh) !important;
-  margin:0 !important;
-  padding:0 !important;
-  overflow:hidden !important;
-  z-index:2147483000;
-}
-
-.keyboard-active-page .live-phone-shell.keyboard-active{
-  transform:translate3d(0,calc(-1 * var(--team-keyboard-slide,0px)),0) !important;
-  transition:transform 180ms ease-out !important;
-  will-change:transform;
-}
-
-/* Do not resize, hide, reorder or restyle anything when the keyboard opens.
-   The page is translated as one intact composition. */
-.keyboard-active-page .question-team-card,
-.keyboard-active-page .team-question-stage,
-.keyboard-active-page .team-question-core,
-.keyboard-active-page .team-question-text,
-.keyboard-active-page .team-answer-zone,
-.keyboard-active-page .answer-input-shell,
-.keyboard-active-page .answer-input-shell textarea,
-.keyboard-active-page .team-question-nav,
-.keyboard-active-page .question-number-display{
-  transform:none;
-}
-
-/* Stop the browser from adding a second focus-scroll offset of its own. */
-.keyboard-active-page .answer-input-shell textarea{
-  scroll-margin:0 !important;
-}
-
-@media(prefers-reduced-motion:reduce){
-  .keyboard-active-page .live-phone-shell.keyboard-active{
-    transition:none !important;
-  }
-}
-
 /* ---------- Answer-field result colour + Your Answer section ---------- */
 /* Result colour belongs to the team's submitted answer field, not the whole
    question panel. Keep the surrounding reveal panel neutral. */
@@ -1341,27 +1293,6 @@
 }
 
 
-/* ---------- Final keyboard lift override: never resize picture rounds ---------- */
-/* Picture-round viewport rules normally pin the page/shell to 100dvh. While
-   typing, freeze both at the pre-keyboard layout height so the keyboard cannot
-   cause a responsive re-layout; only --team-keyboard-slide moves the page. */
-.team-page.live-team-page.picture-round-team-page.keyboard-active-page{
-  height:var(--team-keyboard-layout-height,100dvh) !important;
-  min-height:var(--team-keyboard-layout-height,100dvh) !important;
-  max-height:var(--team-keyboard-layout-height,100dvh) !important;
-}
-
-.team-page.live-team-page.picture-round-team-page.keyboard-active-page .live-phone-shell.picture-round-team-page.keyboard-active{
-  height:var(--team-keyboard-layout-height,100dvh) !important;
-  min-height:var(--team-keyboard-layout-height,100dvh) !important;
-  max-height:var(--team-keyboard-layout-height,100dvh) !important;
-  width:100% !important;
-  max-width:100% !important;
-  margin:0 !important;
-  transform:translate3d(0,calc(-1 * var(--team-keyboard-slide,0px)),0) !important;
-}
-
-
 /* ---------- Final picture Correct Answer content rule ---------- */
 /* Picture rounds never use the generic tick/icon treatment. Preserve the
    approved pill geometry/position; only force its internal content to be the
@@ -1535,16 +1466,17 @@
 
 
 /* ---------- Responsive question keyboard mode ---------- */
-/* iOS/Chrome must be allowed to finish native textarea focus first. Once the
-   software keyboard is open, size the quiz to the real visible viewport
-   instead of freezing the pre-keyboard 100dvh layout. */
+/* Safari/Chrome owns the native textarea focus gesture. After the visual
+   viewport settles, pin the quiz once to that visible viewport. This keeps the
+   first keyboard open identical to later opens without adding a second scroll
+   or translating the complete phone shell. */
 .team-page.live-team-page.keyboard-active-page{
   position:fixed !important;
-  left:0 !important;
-  right:0 !important;
-  top:0 !important;
+  left:var(--team-visible-left,0px) !important;
+  right:auto !important;
+  top:var(--team-visible-top,0px) !important;
   bottom:auto !important;
-  width:100% !important;
+  width:var(--team-visible-width,100%) !important;
   height:var(--team-visible-height,100dvh) !important;
   min-height:0 !important;
   max-height:var(--team-visible-height,100dvh) !important;
