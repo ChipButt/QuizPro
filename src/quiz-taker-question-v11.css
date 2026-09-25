@@ -1694,3 +1694,41 @@
   align-self:stretch !important;
   grid-area:auto !important;
 }
+
+
+/* ---------- Final picture reveal geometry + overlay text ---------- */
+/* Question and Answer pages must use the exact same picture-round geometry.
+   An older editor export applied a +93px reveal-only textarea translation;
+   cancel it so Push Answer swaps only the image/content, never the field
+   position. */
+@media(max-width:420px){
+  .live-team-page .team-question-stage.picture-answer-editor-preview
+  .your-answer-section textarea,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed
+  .your-answer-section textarea,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-correct
+  .your-answer-section textarea:disabled,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-incorrect
+  .your-answer-section textarea:disabled{
+    translate:none !important;
+    transform:none !important;
+  }
+}
+
+/* Picture-round Correct Answer overlay: black lettering with a crisp white
+   outline, directly over the answer image. No pill or background box. */
+.live-team-page .picture-correct-answer-overlay>span,
+.live-team-page .picture-correct-answer-overlay>strong{
+  color:#000 !important;
+  -webkit-text-fill-color:#000 !important;
+  text-shadow:
+    -1px -1px 0 #fff,
+     0 -1px 0 #fff,
+     1px -1px 0 #fff,
+    -1px  0 0 #fff,
+     1px  0 0 #fff,
+    -1px  1px 0 #fff,
+     0  1px 0 #fff,
+     1px  1px 0 #fff,
+     0  2px 3px rgba(255,255,255,.65) !important;
+}
