@@ -1465,48 +1465,6 @@
 }
 
 
-/* ---------- Deterministic question keyboard mode ---------- */
-/* Keep the normal Quiz In composition intact while typing. Safari/Chrome may
-   perform their native focus pan, but JS cancels that document movement after
-   the keyboard settles and applies one calculated translation to the complete
-   phone shell. No keyboard-specific responsive reflow is allowed here. */
-.team-page.live-team-page.keyboard-active-page{
-  position:fixed !important;
-  inset:0 !important;
-  width:100% !important;
-  height:var(--team-keyboard-layout-height,100dvh) !important;
-  min-height:var(--team-keyboard-layout-height,100dvh) !important;
-  max-height:var(--team-keyboard-layout-height,100dvh) !important;
-  margin:0 !important;
-  padding:0 !important;
-  overflow:hidden !important;
-  z-index:2147483000;
-}
-
-.team-page.live-team-page.keyboard-active-page .live-phone-shell.keyboard-active{
-  transform:translate3d(
-    0,
-    calc(-1 * var(--team-keyboard-slide,0px)),
-    0
-  ) !important;
-  translate:none !important;
-  transition:none !important;
-  will-change:transform !important;
-}
-
-/* Do not change the question, answer field or picture-round geometry while the
-   software keyboard is open. The complete shell moves as one composition, so
-   the timer clock continues to follow the same shell as the rest of Quiz In. */
-.team-page.live-team-page.keyboard-active-page .question-team-card,
-.team-page.live-team-page.keyboard-active-page .team-question-stage,
-.team-page.live-team-page.keyboard-active-page .team-question-core,
-.team-page.live-team-page.keyboard-active-page .team-question-text,
-.team-page.live-team-page.keyboard-active-page .team-answer-zone,
-.team-page.live-team-page.keyboard-active-page .answer-input-shell,
-.team-page.live-team-page.keyboard-active-page .answer-input-shell textarea{
-  scroll-margin:0 !important;
-}
-
 /* ---------- Final centred gold Correct Answer pill ---------- */
 /* The gold Correct Answer panel is text-only. Remove the old icon column and
    centre both the label and the answer without changing the panel geometry. */
