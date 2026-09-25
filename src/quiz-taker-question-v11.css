@@ -1787,3 +1787,27 @@
     overflow:visible !important;
   }
 }
+
+
+/* ---------- Preserve full Quiz Taker canvas behind keyboard ---------- */
+/* Legacy keyboard CSS sizes the fixed page and shell to the reduced keyboard
+   viewport. On iOS that can make the app's bottom edge rise through the focused
+   textarea. JS captures the pre-keyboard layout height before focus; keep the
+   complete Quiz Taker canvas at that height while Safari pans the visual
+   viewport over it. This changes no keyboard motion and applies no translation. */
+@media(max-width:979px){
+  .team-page.live-team-page.keyboard-active-page{
+    height:var(--team-keyboard-layout-height,100dvh) !important;
+    min-height:var(--team-keyboard-layout-height,100dvh) !important;
+    max-height:none !important;
+  }
+
+  .team-page.live-team-page.keyboard-active-page
+  .live-phone-shell.keyboard-active{
+    box-sizing:border-box !important;
+    height:auto !important;
+    min-height:var(--team-keyboard-layout-height,100dvh) !important;
+    max-height:none !important;
+    overflow:visible !important;
+  }
+}
