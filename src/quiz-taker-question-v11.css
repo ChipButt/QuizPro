@@ -1465,129 +1465,47 @@
 }
 
 
-/* ---------- Responsive question keyboard mode ---------- */
-/* Safari/Chrome owns the native textarea focus gesture. After the visual
-   viewport settles, pin the quiz once to that visible viewport. This keeps the
-   first keyboard open identical to later opens without adding a second scroll
-   or translating the complete phone shell. */
+/* ---------- Deterministic question keyboard mode ---------- */
+/* Keep the normal Quiz In composition intact while typing. Safari/Chrome may
+   perform their native focus pan, but JS cancels that document movement after
+   the keyboard settles and applies one calculated translation to the complete
+   phone shell. No keyboard-specific responsive reflow is allowed here. */
 .team-page.live-team-page.keyboard-active-page{
   position:fixed !important;
-  left:var(--team-visible-left,0px) !important;
-  right:auto !important;
-  top:var(--team-visible-top,0px) !important;
-  bottom:auto !important;
-  width:var(--team-visible-width,100%) !important;
-  height:var(--team-visible-height,100dvh) !important;
-  min-height:0 !important;
-  max-height:var(--team-visible-height,100dvh) !important;
+  inset:0 !important;
+  width:100% !important;
+  height:var(--team-keyboard-layout-height,100dvh) !important;
+  min-height:var(--team-keyboard-layout-height,100dvh) !important;
+  max-height:var(--team-keyboard-layout-height,100dvh) !important;
   margin:0 !important;
   padding:0 !important;
-  overflow-x:hidden !important;
-  overflow-y:auto !important;
-  overscroll-behavior:contain !important;
-  -webkit-overflow-scrolling:touch;
+  overflow:hidden !important;
   z-index:2147483000;
 }
 
 .team-page.live-team-page.keyboard-active-page .live-phone-shell.keyboard-active{
-  box-sizing:border-box !important;
-  width:100% !important;
-  height:auto !important;
-  min-height:var(--team-visible-height,100dvh) !important;
-  max-height:none !important;
-  margin:0 !important;
-  overflow:visible !important;
-  transform:none !important;
+  transform:translate3d(
+    0,
+    calc(-1 * var(--team-keyboard-slide,0px)),
+    0
+  ) !important;
   translate:none !important;
   transition:none !important;
-  will-change:auto !important;
+  will-change:transform !important;
 }
 
-/* The question area must remain normal document flow while typing. It can grow
-   to fit the full question and answer field; it must never behave like a
-   clipped fixed-height stage. */
-.team-page.live-team-page.keyboard-active-page .question-team-card{
-  height:auto !important;
-  min-height:0 !important;
-  max-height:none !important;
-  overflow:visible !important;
+/* Do not change the question, answer field or picture-round geometry while the
+   software keyboard is open. The complete shell moves as one composition, so
+   the timer clock continues to follow the same shell as the rest of Quiz In. */
+.team-page.live-team-page.keyboard-active-page .question-team-card,
+.team-page.live-team-page.keyboard-active-page .team-question-stage,
+.team-page.live-team-page.keyboard-active-page .team-question-core,
+.team-page.live-team-page.keyboard-active-page .team-question-text,
+.team-page.live-team-page.keyboard-active-page .team-answer-zone,
+.team-page.live-team-page.keyboard-active-page .answer-input-shell,
+.team-page.live-team-page.keyboard-active-page .answer-input-shell textarea{
+  scroll-margin:0 !important;
 }
-
-.team-page.live-team-page.keyboard-active-page .team-question-stage:not(.picture-round-question-layout){
-  height:auto !important;
-  min-height:0 !important;
-  max-height:none !important;
-  overflow:visible !important;
-  display:flex !important;
-  flex-direction:column !important;
-}
-
-.team-page.live-team-page.keyboard-active-page
-.team-question-stage:not(.picture-round-question-layout) .team-question-core,
-.team-page.live-team-page.keyboard-active-page
-.team-question-stage:not(.picture-round-question-layout) .team-answer-zone,
-.team-page.live-team-page.keyboard-active-page
-.team-question-stage:not(.picture-round-question-layout) .answer-input-shell,
-.team-page.live-team-page.keyboard-active-page
-.team-question-stage:not(.picture-round-question-layout) .your-answer-section{
-  position:relative !important;
-  height:auto !important;
-  min-height:0 !important;
-  max-height:none !important;
-  overflow:visible !important;
-  transform:none !important;
-  translate:none !important;
-}
-
-.team-page.live-team-page.keyboard-active-page
-.team-question-stage:not(.picture-round-question-layout) .team-question-text{
-  position:relative !important;
-  margin-top:0 !important;
-  margin-bottom:8px !important;
-  transform:none !important;
-  translate:none !important;
-}
-
-.team-page.live-team-page.keyboard-active-page
-.team-question-stage:not(.picture-round-question-layout) .answer-input-shell textarea{
-  position:relative !important;
-  width:100% !important;
-  height:64px !important;
-  min-height:64px !important;
-  max-height:96px !important;
-  margin:0 !important;
-  transform:none !important;
-  translate:none !important;
-  scroll-margin-block:24px !important;
-}
-
-/* The old picture-round keyboard rule froze the complete shell at the
-   pre-keyboard height. Do not let that rule reintroduce a hidden overflow
-   viewport when a picture answer uses text input. */
-.team-page.live-team-page.picture-round-team-page.keyboard-active-page{
-  height:var(--team-visible-height,100dvh) !important;
-  min-height:0 !important;
-  max-height:var(--team-visible-height,100dvh) !important;
-  overflow-y:auto !important;
-}
-
-.team-page.live-team-page.picture-round-team-page.keyboard-active-page
-.live-phone-shell.picture-round-team-page.keyboard-active{
-  height:auto !important;
-  min-height:var(--team-visible-height,100dvh) !important;
-  max-height:none !important;
-  overflow:visible !important;
-  transform:none !important;
-  translate:none !important;
-}
-
-/* Keep the focussed field clear of the keyboard without manufacturing a large
-   empty fixed gap underneath the question. */
-.team-page.live-team-page.keyboard-active-page textarea:focus{
-  scroll-margin-top:16px !important;
-  scroll-margin-bottom:28px !important;
-}
-
 
 /* ---------- Final centred gold Correct Answer pill ---------- */
 /* The gold Correct Answer panel is text-only. Remove the old icon column and
