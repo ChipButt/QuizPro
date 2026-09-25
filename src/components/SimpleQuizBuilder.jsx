@@ -10,6 +10,78 @@ const ROUND_CHOICES = [
   { key: "music", label: "Music", detail: "Upload an audio file for every question.", type: "Music round" },
 ];
 
+const ROUND_CATEGORIES = [
+  "General Knowledge",
+  "Picture",
+  "Music (Text Questions)",
+  "Music (Audio Questions)",
+  "Film & TV",
+  "Sport",
+  "History",
+  "Geography",
+  "Science & Nature",
+  "Food & Drink",
+  "Arts & Literature",
+  "Current Affairs",
+  "Other",
+];
+
+function suggestedRoundCategory(kind) {
+  if (kind === "picture") return "Picture";
+  if (kind === "music") return "Music (Audio Questions)";
+  return "General Knowledge";
+}
+
+function cloneQuestion(question, number) {
+  return {
+    ...question,
+    id: createId("question"),
+    number,
+    alternatives: [...(question?.alternatives ?? [])],
+    options: (question?.options ?? []).map((option) => (
+      option && typeof option === "object" && !Array.isArray(option) ? { ...option } : option
+    )),
+  };
+}
+
+function cloneSavedRoundForQuiz(savedRound, order) {
+  return {
+    ...savedRound,
+    id: createId("round"),
+    librarySourceId: savedRound.id,
+    order,
+    questions: (savedRound.questions ?? []).map((question, index) => cloneQuestion(question, index + 1)),
+  };
+}
+
+function librarySnapshotFromRound(round, libraryId, createdAt = "") {
+  const now = new Date().toISOString();
+  const {
+    id: _roundId,
+    order: _order,
+    librarySourceId: _librarySourceId,
+    savedAt: _savedAt,
+    updatedAt: _updatedAt,
+    ...content
+  } = round;
+
+  return {
+    ...content,
+    id: libraryId,
+    category: String(round.category || suggestedRoundCategory(roundKind(round))).trim() || "General Knowledge",
+    createdAt: createdAt || now,
+    updatedAt: now,
+    questions: (round.questions ?? []).map((question, index) => ({
+      ...question,
+      number: index + 1,
+      alternatives: [...(question?.alternatives ?? [])],
+      options: (question?.options ?? []).map((option) => (
+        option && typeof option === "object" && !Array.isArray(option) ? { ...option } : option
+      )),
+    })),
+  };
+}
+
 function roundKind(round) {
   const type = String(round?.type || "").toLowerCase();
   if (type.includes("picture")) return "picture";
@@ -103,6 +175,7 @@ function createRound(kind, order) {
     choiceCount: 4,
     instructions: "",
     scoringRules: "",
+    category: suggestedRoundCategory(kind),
     order,
     questions: [],
   };
@@ -133,6 +206,8 @@ export default function SimpleQuizBuilder({ state, updateState }) {
   const quiz = getSelectedQuiz(state);
   const [selectedRoundId, setSelectedRoundId] = useState(quiz?.rounds?.[0]?.id || "");
   const [choosingRound, setChoosingRound] = useState(false);
+  const [roundChooserMode, setRoundChooserMode] = useState("new");
+  const [roundLibraryFilter, setRoundLibraryFilter] = useState("All");
   const [mediaStatus, setMediaStatus] = useState({});
 
   useEffect(() => {
@@ -204,10 +279,71 @@ export default function SimpleQuizBuilder({ state, updateState }) {
     const round = createRound(kind, (quiz.rounds?.length ?? 0) + 1);
     updateState((current) => ({
       ...current,
-      quizzes: current.quizzes.map((item) => item.id === quiz.id ? { ...item, rounds: [...(item.rounds ?? []), round] } : item),
+      quizzes: current.quizzes.map((item) => item.id === quiz.id ? {
+        ...item,
+        rounds: [...(item.rounds ?? []), round].map((itemRound, index) => ({ ...itemRound, order: index + 1 })),
+      } : item),
     }));
     setSelectedRoundId(round.id);
     setChoosingRound(false);
+  }
+
+  function quizzesUsingSavedRound(libraryRoundId) {
+    return (state.quizzes ?? [])
+      .filter((item) => (item.rounds ?? []).some((round) => round.librarySourceId === libraryRoundId))
+      .map((item) => item.title || "Untitled quiz");
+  }
+
+  function addSavedRound(savedRound) {
+    if (!quiz || !savedRound) return;
+    const round = cloneSavedRoundForQuiz(savedRound, (quiz.rounds?.length ?? 0) + 1);
+    updateState((current) => ({
+      ...current,
+      quizzes: current.quizzes.map((item) => item.id === quiz.id ? {
+        ...item,
+        rounds: [...(item.rounds ?? []), round].map((itemRound, index) => ({ ...itemRound, order: index + 1 })),
+      } : item),
+    }));
+    setSelectedRoundId(round.id);
+    setChoosingRound(false);
+  }
+
+  function saveRoundToLibrary() {
+    if (!quiz || !selectedRound) return;
+
+    const existingId = selectedRound.librarySourceId;
+    const existing = (state.roundLibrary ?? []).find((item) => item.id === existingId);
+    const libraryId = existing?.id || createId("saved-round");
+    const snapshot = librarySnapshotFromRound(selectedRound, libraryId, existing?.createdAt);
+
+    updateState((current) => ({
+      ...current,
+      roundLibrary: existing
+        ? (current.roundLibrary ?? []).map((item) => item.id === libraryId ? snapshot : item)
+        : [...(current.roundLibrary ?? []), snapshot],
+      quizzes: current.quizzes.map((item) => item.id === quiz.id ? {
+        ...item,
+        rounds: (item.rounds ?? []).map((round) => round.id === selectedRound.id ? {
+          ...round,
+          category: snapshot.category,
+          librarySourceId: libraryId,
+        } : round),
+      } : item),
+    }));
+  }
+
+  function moveRound(direction) {
+    if (!quiz || !selectedRound) return;
+    const rounds = [...(quiz.rounds ?? [])];
+    const from = rounds.findIndex((round) => round.id === selectedRound.id);
+    const to = from + direction;
+    if (from < 0 || to < 0 || to >= rounds.length) return;
+    [rounds[from], rounds[to]] = [rounds[to], rounds[from]];
+    const reordered = rounds.map((round, index) => ({ ...round, order: index + 1 }));
+    updateState((current) => ({
+      ...current,
+      quizzes: current.quizzes.map((item) => item.id === quiz.id ? { ...item, rounds: reordered } : item),
+    }));
   }
 
   function updateRound(patch) {
@@ -300,12 +436,14 @@ export default function SimpleQuizBuilder({ state, updateState }) {
     if (!quiz || !selectedRound) return;
     const okay = window.confirm(`Delete ${selectedRound.title || "this round"}?`);
     if (!okay) return;
-    const nextRounds = quiz.rounds.filter((round) => round.id !== selectedRound.id);
+    const nextRounds = quiz.rounds
+      .filter((round) => round.id !== selectedRound.id)
+      .map((round, index) => ({ ...round, order: index + 1 }));
     updateState((current) => ({
       ...current,
-      quizzes: current.quizzes.map((item) => item.id === quiz.id ? { ...item, rounds: item.rounds.filter((round) => round.id !== selectedRound.id) } : item),
+      quizzes: current.quizzes.map((item) => item.id === quiz.id ? { ...item, rounds: nextRounds } : item),
     }));
-    setSelectedRoundId(nextRounds[0]?.id || "");
+    setSelectedRoundId(nextRounds[Math.min(Math.max(0, selectedRound.order - 2), Math.max(0, nextRounds.length - 1))]?.id || nextRounds[0]?.id || "");
   }
 
   function addQuestion() {
@@ -396,6 +534,20 @@ export default function SimpleQuizBuilder({ state, updateState }) {
   const kind = selectedRound ? roundKind(selectedRound) : "text";
   const mode = selectedRound ? answerMode(selectedRound) : "text";
   const choices = selectedRound ? choiceCount(selectedRound) : 4;
+  const savedRounds = Array.isArray(state.roundLibrary) ? state.roundLibrary : [];
+  const availableCategories = Array.from(new Set([
+    ...ROUND_CATEGORIES,
+    ...savedRounds.map((round) => String(round.category || "").trim()).filter(Boolean),
+  ]));
+  const filteredSavedRounds = savedRounds.filter((round) => (
+    roundLibraryFilter === "All" || (round.category || "General Knowledge") === roundLibraryFilter
+  ));
+  const groupedSavedRounds = filteredSavedRounds.reduce((groups, round) => {
+    const category = String(round.category || "General Knowledge").trim() || "General Knowledge";
+    if (!groups[category]) groups[category] = [];
+    groups[category].push(round);
+    return groups;
+  }, {});
 
   return (
     <main className="simple-page simple-quizzes-page">
@@ -432,27 +584,98 @@ export default function SimpleQuizBuilder({ state, updateState }) {
               <div className="simple-round-strip">
                 {(quiz.rounds ?? []).map((round, index) => (
                   <button key={round.id} className={round.id === selectedRound?.id ? "selected" : ""} onClick={() => { setSelectedRoundId(round.id); setChoosingRound(false); }}>
-                    <span>Round {index + 1}</span><strong>{round.title || `Round ${index + 1}`}</strong><small>{roundLabel(round)}</small>
+                    <span>Round {index + 1}</span>
+                    <strong>{round.title || `Round ${index + 1}`}</strong>
+                    <small>{round.category || suggestedRoundCategory(roundKind(round))} · {roundLabel(round)}</small>
                   </button>
                 ))}
-                <button className="add-round-button" onClick={() => setChoosingRound(true)}><Plus size={17} /> Add round</button>
+                <button className="add-round-button" onClick={() => {
+                  setChoosingRound(true);
+                  setRoundChooserMode(savedRounds.length ? "library" : "new");
+                }}><Plus size={17} /> Add round</button>
               </div>
 
               {choosingRound ? (
-                <div className="round-type-chooser">
-                  <div className="round-type-heading"><div><h2>What type of round?</h2><p>This sets the format for every question in this round.</p></div><button className="ghost-button compact" onClick={() => setChoosingRound(false)}>Cancel</button></div>
-                  <div className="round-type-grid">
-                    {ROUND_CHOICES.map((choice) => (
-                      <button key={choice.key} onClick={() => addRound(choice.key)}>
-                        <strong>{choice.label}</strong><span>{choice.detail}</span>
-                      </button>
-                    ))}
+                <div className="round-type-chooser round-library-chooser">
+                  <div className="round-type-heading">
+                    <div><h2>Add a round</h2><p>Create a new round or build this quiz from your saved Round Library.</p></div>
+                    <button className="ghost-button compact" onClick={() => setChoosingRound(false)}>Cancel</button>
                   </div>
+
+                  <div className="round-chooser-tabs">
+                    <button className={roundChooserMode === "library" ? "selected" : ""} onClick={() => setRoundChooserMode("library")}>
+                      Saved Round Library <span>{savedRounds.length}</span>
+                    </button>
+                    <button className={roundChooserMode === "new" ? "selected" : ""} onClick={() => setRoundChooserMode("new")}>Create new round</button>
+                  </div>
+
+                  {roundChooserMode === "library" ? (
+                    <div className="round-library-browser">
+                      <label className="round-library-filter">Category
+                        <select value={roundLibraryFilter} onChange={(event) => setRoundLibraryFilter(event.target.value)}>
+                          <option value="All">All categories</option>
+                          {availableCategories.map((category) => <option key={category} value={category}>{category}</option>)}
+                        </select>
+                      </label>
+
+                      {!savedRounds.length ? (
+                        <div className="round-library-empty">
+                          <strong>No saved rounds yet.</strong>
+                          <span>Open a round in a quiz and use “Save round to library” to make it reusable.</span>
+                          <button className="primary-button compact" onClick={() => setRoundChooserMode("new")}>Create a new round</button>
+                        </div>
+                      ) : !filteredSavedRounds.length ? (
+                        <div className="round-library-empty"><strong>No rounds in this category.</strong><span>Choose another category or save a round into this one.</span></div>
+                      ) : (
+                        Object.entries(groupedSavedRounds).map(([category, rounds]) => (
+                          <section className="round-library-category" key={category}>
+                            <h3>{category}<span>{rounds.length}</span></h3>
+                            <div className="round-library-list">
+                              {rounds.map((savedRound) => {
+                                const usedBy = quizzesUsingSavedRound(savedRound.id);
+                                return (
+                                  <article className={`round-library-card ${usedBy.length ? "in-use" : ""}`} key={savedRound.id}>
+                                    <div className="round-library-card-copy">
+                                      <strong>{savedRound.title || "Untitled round"}</strong>
+                                      <span>{(savedRound.questions ?? []).length} question{(savedRound.questions ?? []).length === 1 ? "" : "s"} · {roundLabel(savedRound)}</span>
+                                      {usedBy.length ? <b>In use in: {usedBy.join(", ")}</b> : <b className="available">Not currently in a quiz</b>}
+                                    </div>
+                                    <button className={usedBy.length ? "ghost-button compact" : "primary-button compact"} onClick={() => addSavedRound(savedRound)}>
+                                      {usedBy.length ? "Add again anyway" : "Add to quiz"}
+                                    </button>
+                                  </article>
+                                );
+                              })}
+                            </div>
+                          </section>
+                        ))
+                      )}
+                    </div>
+                  ) : (
+                    <div className="round-type-grid">
+                      {ROUND_CHOICES.map((choice) => (
+                        <button key={choice.key} onClick={() => addRound(choice.key)}>
+                          <strong>{choice.label}</strong><span>{choice.detail}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ) : selectedRound ? (
                 <>
                   <div className="simple-round-settings">
                     <label>Round name<input value={selectedRound.title} onChange={(event) => updateRound({ title: event.target.value })} /></label>
+                    <label>Category
+                      <input
+                        list="round-category-options"
+                        value={selectedRound.category || suggestedRoundCategory(kind)}
+                        onChange={(event) => updateRound({ category: event.target.value })}
+                        placeholder="Choose or type a category"
+                      />
+                      <datalist id="round-category-options">
+                        {availableCategories.map((category) => <option key={category} value={category} />)}
+                      </datalist>
+                    </label>
                     <label>Round type
                       <select value={kind} onChange={(event) => setRoundKind(event.target.value)}>
                         {ROUND_CHOICES.map((choice) => <option key={choice.key} value={choice.key}>{choice.label}</option>)}
@@ -464,7 +687,14 @@ export default function SimpleQuizBuilder({ state, updateState }) {
                     {(kind === "picture" || kind === "music") ? (
                       <div className="round-answer-mode"><span>How do teams answer?</span><div><button className={mode === "text" ? "selected" : ""} onClick={() => setRoundAnswerMode("text")}>Enter the answer</button><button className={mode === "multiple" ? "selected" : ""} onClick={() => setRoundAnswerMode("multiple")}>Multiple choice</button></div></div>
                     ) : null}
-                    <button className="danger-soft-button compact" onClick={deleteRound}><Trash2 size={14} /> Delete round</button>
+                    <div className="round-library-actions">
+                      <button className="ghost-button compact" disabled={(quiz.rounds ?? []).findIndex((round) => round.id === selectedRound.id) <= 0} onClick={() => moveRound(-1)}>↑ Move earlier</button>
+                      <button className="ghost-button compact" disabled={(quiz.rounds ?? []).findIndex((round) => round.id === selectedRound.id) >= (quiz.rounds?.length ?? 0) - 1} onClick={() => moveRound(1)}>↓ Move later</button>
+                      <button className="primary-button compact" onClick={saveRoundToLibrary}>
+                        {selectedRound.librarySourceId && savedRounds.some((round) => round.id === selectedRound.librarySourceId) ? "Update saved round" : "Save round to library"}
+                      </button>
+                      <button className="danger-soft-button compact" onClick={deleteRound}><Trash2 size={14} /> Remove from quiz</button>
+                    </div>
                   </div>
 
                   <div className="simple-question-stack">
