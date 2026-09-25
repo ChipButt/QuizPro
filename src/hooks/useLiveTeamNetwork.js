@@ -181,9 +181,11 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
   const [snapshot, setSnapshot] = useState(() => previewMode ? previewSnapshot(teamToken) : restoredFinishedSnapshot);
   const [status, setStatus] = useState(previewMode ? "online" : restoredFinishedSnapshot ? "finished" : "connecting");
   const [error, setError] = useState("");
+  const [resumeNonce, setResumeNonce] = useState(0);
   const connectionRef = useRef(null);
   const peerRef = useRef(null);
   const finishedRef = useRef(Boolean(restoredFinishedSnapshot));
+  const wasHiddenRef = useRef(false);
 
   useEffect(() => {
     if (previewMode) {
@@ -325,7 +327,44 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
       window.clearTimeout(retryTimer);
       closeTransport();
     };
-  }, [sessionCode, teamToken, previewMode]);
+  }, [sessionCode, teamToken, previewMode, resumeNonce]);
+
+  useEffect(() => {
+    if (previewMode) return undefined;
+
+    const resumeConnection = () => {
+      if (finishedRef.current || !sessionCode || !teamToken) return;
+      setStatus("reconnecting");
+      setError("");
+      setResumeNonce((value) => value + 1);
+    };
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        wasHiddenRef.current = true;
+        return;
+      }
+
+      if (document.visibilityState === "visible" && wasHiddenRef.current) {
+        wasHiddenRef.current = false;
+        resumeConnection();
+      }
+    };
+
+    const onPageShow = (event) => {
+      if (!event.persisted) return;
+      wasHiddenRef.current = false;
+      resumeConnection();
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("pageshow", onPageShow);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("pageshow", onPageShow);
+    };
+  }, [previewMode, sessionCode, teamToken]);
 
   useEffect(() => {
     if (!previewMode) return undefined;
