@@ -98,34 +98,6 @@ export default function SimpleLiveQuiz({ state, updateState, network }) {
   const hostAudioRef = useRef(null);
 
   useEffect(() => {
-    if (!state.live?.timerActive || timerSeconds > 0) return;
-    const roundId = state.live?.timerRoundId || liveRound?.id;
-    if (!roundId) return;
-
-    updateState((current) => {
-      if (!current.live?.timerActive) return current;
-      const endsAt = Number(current.live?.timerEndsAt ?? 0);
-      if (endsAt && endsAt > Date.now()) return current;
-
-      return {
-        ...current,
-        live: {
-          ...current.live,
-          timerActive: false,
-          timerEndsAt: 0,
-          timerDurationSeconds: 0,
-          timerRoundId: "",
-          teamScreen: "round_locked",
-          forceLockedRounds: {
-            ...(current.live?.forceLockedRounds ?? {}),
-            [roundId]: true,
-          },
-        },
-      };
-    });
-  }, [timerSeconds, state.live?.timerActive, state.live?.timerEndsAt, state.live?.timerRoundId, liveRound?.id, updateState]);
-
-  useEffect(() => {
     if (!quiz) return;
     setReviewRoundIndex((current) => Math.min(current, Math.max(0, quiz.rounds.length - 1)));
   }, [quiz?.id, quiz?.rounds?.length]);
