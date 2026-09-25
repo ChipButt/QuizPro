@@ -1186,6 +1186,49 @@
 }
 
 
+/* ---------- Cross-browser text-entry keyboard compatibility ---------- */
+/* All answer textareas must present the browser with the same scrollable page
+   structure while focused. This does not move, resize or reposition the quiz;
+   it only removes clipping/scroll locks that differ between round layouts. */
+@media(max-width:979px){
+  .team-page.live-team-page.keyboard-active-page{
+    overflow-y:visible !important;
+    overscroll-behavior-y:auto !important;
+  }
+
+  .team-page.live-team-page.keyboard-active-page
+  .live-phone-shell.keyboard-active{
+    overflow:visible !important;
+    overscroll-behavior-y:auto !important;
+  }
+}
+
+/* Picture rounds normally lock the complete page/shell to one 100dvh canvas so
+   Question and Reveal views have identical geometry. While its textarea is
+   focused, temporarily remove only that viewport lock so the browser can use
+   the same native keyboard/scroll path as every other text-entry round. The
+   398px picture stage, shared image frame and answer geometry are untouched. */
+@media(max-width:420px){
+  .team-page.live-team-page.picture-round-team-page.keyboard-active-page{
+    height:auto !important;
+    min-height:100dvh !important;
+    max-height:none !important;
+    overflow:visible !important;
+    overscroll-behavior:auto !important;
+    scrollbar-gutter:auto !important;
+  }
+
+  .team-page.live-team-page.picture-round-team-page.keyboard-active-page
+  .live-phone-shell.picture-round-team-page.keyboard-active{
+    height:auto !important;
+    min-height:100dvh !important;
+    max-height:none !important;
+    overflow:visible !important;
+    overscroll-behavior:auto !important;
+  }
+}
+
+
 /* ---------- Picture answer editor: question clone + independent gold pill ---------- */
 /* The answer editor is deliberately NOT a revealed-answer layout. It inherits
    the normal picture-question geometry unchanged. Only this extra pill is
