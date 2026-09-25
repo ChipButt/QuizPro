@@ -1835,7 +1835,7 @@ export default function TeamView({ sessionCode, teamToken }) {
             {isTextEntry ? (
               <div className="answer-input-shell">
                 <div data-layout-label="Your answer box" className={`your-answer-section ${reviewQuestionMode ? "is-review" : ""} ${question.revealed ? "is-revealed" : ""}`}>
-                  {reviewQuestionMode || question.revealed ? <span className="your-answer-label">YOUR ANSWER</span> : null}
+                  {isPictureRound || reviewQuestionMode || question.revealed ? <span className="your-answer-label">YOUR ANSWER</span> : null}
                   <textarea
                     className={`${draft.trim() ? "has-answer" : ""} ${submitted ? "submitted-answer" : ""}`}
                     value={draft}
