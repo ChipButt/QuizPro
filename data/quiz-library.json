@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-09-24T12:46:25.036Z",
+  "updatedAt": "2026-09-25T00:28:11.824Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -2887,6 +2887,41 @@
               "alternatives": [],
               "points": 1,
               "type": "Picture",
+              "options": [],
+              "category": "",
+              "difficulty": "Medium",
+              "image": "",
+              "imageName": "",
+              "audio": "",
+              "audioName": "",
+              "answerImage": "",
+              "answerImageName": "",
+              "answerAudio": "",
+              "answerAudioName": "",
+              "notes": "",
+              "timeLimit": 60,
+              "autoMark": true
+            }
+          ]
+        },
+        {
+          "id": "round-ei2ibrf",
+          "title": "Round 2",
+          "type": "Standard question round",
+          "answerMode": "text",
+          "choiceCount": 4,
+          "instructions": "",
+          "scoringRules": "",
+          "order": 2,
+          "questions": [
+            {
+              "id": "question-3vrot09",
+              "number": 1,
+              "text": "1",
+              "answer": "1",
+              "alternatives": [],
+              "points": 1,
+              "type": "Text",
               "options": [],
               "category": "",
               "difficulty": "Medium",
