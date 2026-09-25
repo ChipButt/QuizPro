@@ -543,3 +543,111 @@
 .team-name-screen .team-name-lock-button{
   translate:-1px -11px;
 }
+
+
+/* ---------- Team-name keyboard: preserve layout, move the whole page ---------- */
+.team-page.live-team-page.team-name-screen.team-name-keyboard-active-page{
+  position:fixed !important;
+  inset:0 !important;
+  width:100% !important;
+  height:var(--team-name-keyboard-layout-height,100dvh) !important;
+  min-height:var(--team-name-keyboard-layout-height,100dvh) !important;
+  max-height:var(--team-name-keyboard-layout-height,100dvh) !important;
+  margin:0 !important;
+  padding:0 !important;
+  overflow:hidden !important;
+}
+
+.team-page.live-team-page.team-name-screen.team-name-keyboard-active-page
+.live-phone-shell.team-name-screen.team-name-keyboard-active{
+  width:100% !important;
+  height:var(--team-name-keyboard-layout-height,100dvh) !important;
+  min-height:var(--team-name-keyboard-layout-height,100dvh) !important;
+  max-height:var(--team-name-keyboard-layout-height,100dvh) !important;
+  margin:0 !important;
+  overflow:hidden !important;
+  transform:translate3d(0,calc(-1 * var(--team-name-keyboard-slide,0px)),0) !important;
+  transition:transform 180ms ease-out !important;
+  will-change:transform;
+}
+
+.team-page.live-team-page.team-name-screen.team-name-keyboard-active-page
+.team-name-stage{
+  min-height:var(--team-name-keyboard-layout-height,100dvh) !important;
+}
+
+/* If a normally tall phone becomes shorter than the 760px media query only
+   because the software keyboard opened, preserve the exact pre-keyboard
+   desktop/mobile composition rather than switching to the short-phone design. */
+@media(max-height:760px){
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline .team-name-stage{
+    gap:14px;
+    padding-top:14px;
+    padding-bottom:16px;
+  }
+
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline .team-name-hero{
+    min-height:142px;
+  }
+
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline .quiz-in-logo-asset{
+    width:min(100%,310px);
+  }
+
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline .team-name-meta-card{
+    min-height:104px;
+    padding:13px;
+    grid-template-columns:58px minmax(0,1fr);
+  }
+
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline .team-meta-icon{
+    transform:none;
+  }
+
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline .team-name-prompt{
+    min-height:245px;
+    padding:12px 8px 8px;
+  }
+
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline .team-name-crown{
+    width:58px;
+    height:58px;
+  }
+
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline .team-name-prompt h1{
+    font-size:clamp(43px,13.4vw,58px) !important;
+  }
+
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline .team-name-prompt p{
+    margin-top:13px;
+    font-size:15px;
+  }
+
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline .team-name-prompt p::after{
+    margin-top:10px;
+  }
+
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline .team-name-form-v2{
+    gap:12px;
+  }
+
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline
+  .team-name-form-v2 .team-name-input-shell input{
+    min-height:64px !important;
+  }
+
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline .team-name-lock-button{
+    min-height:82px;
+  }
+
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-tall-baseline .team-name-footer{
+    font-size:10px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .team-page.live-team-page.team-name-screen.team-name-keyboard-active-page
+  .live-phone-shell.team-name-screen.team-name-keyboard-active{
+    transition:none !important;
+  }
+}
