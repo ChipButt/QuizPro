@@ -1,7 +1,6 @@
 import {
   ArrowLeft,
   ArrowRight,
-  CheckCircle2,
   Crown,
   Lock,
   RotateCcw,
@@ -1638,7 +1637,9 @@ export default function TeamView({ sessionCode, teamToken }) {
   const draftMatchesSaved = draft.trim() === savedText.trim() && (Boolean(savedAnswer) || !draft.trim());
   const answerSaving = Boolean(question && !questionLocked && draft.trim() !== savedText.trim());
   const submitted = Boolean(savedAnswer && draftMatchesSaved);
-  const revealedAnswerStatus = question?.revealed ? String(savedAnswer?.status ?? "") : "";
+  const revealedAnswerStatus = question?.revealed
+    ? (savedText.trim() ? String(savedAnswer?.status ?? "") : "incorrect")
+    : "";
   const answerResultClass = revealedAnswerStatus === "correct"
     ? "answer-correct"
     : revealedAnswerStatus === "incorrect"
@@ -1857,7 +1858,6 @@ export default function TeamView({ sessionCode, teamToken }) {
               <div className={`revealed-answer-slot ${answerRevealClasses}`} aria-hidden="true" />
             ) : (question.revealed || pictureAnswerEditorPreview) && hasAnswerReveal && !showPictureCorrectAnswerOverlay ? (
               <div data-layout-label="Correct answer panel" className={`revealed-answer-pill ${answerRevealClasses} ${isPictureRound ? "picture-correct-answer-panel" : ""}`}>
-                {!isPictureRound ? <CheckCircle2 aria-hidden="true" /> : null}
                 <span>CORRECT ANSWER</span>
                 {((question.answerImage && !pictureAnswerInSharedFrame) || question.answerAudio) ? (
                   <div className="revealed-answer-media" data-layout-label="Answer media box">
