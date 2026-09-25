@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "updatedAt": "2026-09-25T15:16:45.469Z",
+  "updatedAt": "2026-09-25T16:13:03.217Z",
   "quizzes": [
     {
       "id": "quiz-674nu9f",
@@ -3992,8 +3992,8 @@
             {
               "id": "question-u7zlvce",
               "number": 4,
-              "text": "In water polo, what colour cap is worn by the goalkeeper?",
-              "answer": "Red",
+              "text": "Which iconic sporting event, held annually in London, is contested over a 4.25-mile course on the River Thames between Putney and Mortlake?",
+              "answer": "The Oxford and Cambridge Boat Race",
               "alternatives": [],
               "points": 1,
               "type": "Text",
@@ -4232,7 +4232,7 @@
             {
               "id": "question-5qt7e2h",
               "number": 6,
-              "text": "What is the largest species of cat in the world?",
+              "text": "What is the largest natural, wild species of cat in the world?",
               "answer": "Tiger",
               "alternatives": [],
               "points": 1,
