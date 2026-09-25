@@ -708,7 +708,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     const root = document.querySelector(".live-phone-shell");
     if (!root) return undefined;
 
-    const storageVersion = teamToken === "question" ? "v5" : ["timer", "timer-editor"].includes(teamToken) ? "v14" : ["picture-question-editor", "picture-answer-editor"].includes(teamToken) ? "v7" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
+    const storageVersion = teamToken === "question" ? "v5" : ["timer", "timer-editor"].includes(teamToken) ? "v14" : ["picture-question-editor", "picture-answer-editor"].includes(teamToken) ? "v8" : teamToken === "between-rounds" ? "v5" : teamToken === "waiting" ? "v7" : ["team-name", "multiple-choice", "answer-reveal"].includes(teamToken) ? "v2" : "v1";
     const storageKey = `quiz-layout-${storageVersion}:${teamToken || "preview"}`;
     let editEnabled = false;
     let selectedPath = "";
@@ -744,7 +744,7 @@ export default function TeamView({ sessionCode, teamToken }) {
       if (element.classList?.contains("team-timer-message")) return "__timer_message__";
       if (element.classList?.contains("team-timer-clock")) return "__timer_clock__";
       if (element.classList?.contains("live-team-image")) return "__picture_question_image_box__";
-      if (element.classList?.contains("picture-correct-answer-panel")) return "__picture_correct_answer_panel__";
+      if (element.classList?.contains("picture-correct-answer-overlay")) return "__picture_correct_answer_panel__";
       if (element.classList?.contains("revealed-answer-media")) return "__picture_answer_image_box__";
 
       const parts = [];
@@ -766,7 +766,7 @@ export default function TeamView({ sessionCode, teamToken }) {
       if (path === "__timer_message__") return root.querySelector(".team-timer-message");
       if (path === "__timer_clock__") return root.querySelector(".team-timer-clock");
       if (path === "__picture_question_image_box__") return root.querySelector(".live-team-image");
-      if (path === "__picture_correct_answer_panel__") return root.querySelector(".picture-correct-answer-panel");
+      if (path === "__picture_correct_answer_panel__") return root.querySelector(".picture-correct-answer-overlay");
       if (path === "__picture_answer_image_box__") return root.querySelector(".revealed-answer-media");
       try {
         return root.querySelector(path);
@@ -1054,8 +1054,8 @@ export default function TeamView({ sessionCode, teamToken }) {
       let element = rawTarget instanceof Element ? rawTarget : null;
       if (!element) return;
 
-      if (teamToken === "picture-answer-editor" && element.closest(".picture-correct-answer-panel")) {
-        element = element.closest(".picture-correct-answer-panel");
+      if (teamToken === "picture-answer-editor" && element.closest(".picture-correct-answer-overlay")) {
+        element = element.closest(".picture-correct-answer-overlay");
       } else if (["picture-question-editor", "picture-answer-editor"].includes(teamToken) && element.closest(".live-team-image")) {
         element = element.closest(".live-team-image");
       } else if (["picture-question-editor", "picture-answer-editor"].includes(teamToken) && element.closest(".revealed-answer-media")) {
@@ -1088,7 +1088,7 @@ export default function TeamView({ sessionCode, teamToken }) {
     };
 
     const selectPictureCorrectAnswer = () => {
-      const element = root.querySelector(".picture-correct-answer-panel");
+      const element = root.querySelector(".picture-correct-answer-overlay");
       if (!element) return;
       selectElement(element);
     };
@@ -1694,6 +1694,12 @@ export default function TeamView({ sessionCode, teamToken }) {
   const pictureAnswerInSharedFrame = Boolean(isPictureRound && question.answerImage);
   const hasAnswerPanelMedia = Boolean((hasAnswerImage && !pictureAnswerInSharedFrame) || hasAnswerAudio);
   const hasAnswerReveal = hasAnswerImage || hasAnswerAudio || hasAnswerText;
+  const showPictureCorrectAnswerOverlay = Boolean(
+    isPictureRound
+    && pictureAnswerInSharedFrame
+    && (question.revealed || pictureAnswerEditorPreview)
+    && hasAnswerReveal
+  );
   const answerRevealClasses = [
     hasAnswerImage && !pictureAnswerInSharedFrame ? "has-answer-image" : "",
     hasAnswerAudio ? "has-answer-audio" : "",
@@ -1768,8 +1774,20 @@ export default function TeamView({ sessionCode, teamToken }) {
                     className="picture-answer-image"
                     src={question.answerImage}
                     alt={question.answerImageName || "Answer"}
-                    aria-hidden={!question.revealed}
+                    aria-hidden={!question.revealed && !pictureAnswerEditorPreview}
                   />
+                ) : null}
+                {showPictureCorrectAnswerOverlay ? (
+                  <div
+                    className="picture-correct-answer-overlay"
+                    data-layout-label="Correct answer overlay"
+                    aria-live={question.revealed ? "polite" : undefined}
+                  >
+                    <span>CORRECT ANSWER</span>
+                    {correctAnswer ? (
+                      <strong data-layout-label="Correct answer text">{correctAnswer}</strong>
+                    ) : null}
+                  </div>
                 ) : null}
               </div>
             ) : null}
@@ -1843,7 +1861,7 @@ export default function TeamView({ sessionCode, teamToken }) {
 
             {reviewQuestionMode && hasAnswerReveal ? (
               <div className={`revealed-answer-slot ${answerRevealClasses}`} aria-hidden="true" />
-            ) : (question.revealed || pictureAnswerEditorPreview) && hasAnswerReveal ? (
+            ) : (question.revealed || pictureAnswerEditorPreview) && hasAnswerReveal && !showPictureCorrectAnswerOverlay ? (
               <div data-layout-label="Correct answer panel" className={`revealed-answer-pill ${answerRevealClasses} ${isPictureRound ? "picture-correct-answer-panel" : ""}`}>
                 {!isPictureRound ? <CheckCircle2 aria-hidden="true" /> : null}
                 <span>CORRECT ANSWER</span>
