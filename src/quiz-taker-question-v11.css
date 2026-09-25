@@ -1396,3 +1396,83 @@
   grid-template-columns:none !important;
   grid-template-areas:none !important;
 }
+
+
+/* ---------- Picture correct answer text overlay on answer image ---------- */
+/* Picture rounds no longer use a separate Correct Answer pill. The answer
+   label and answer text sit directly over the bottom of the shared answer
+   image, with no box/background so the image remains the visual focus. */
+.live-team-page .picture-shared-image-frame{
+  position:relative !important;
+}
+
+.live-team-page .picture-correct-answer-overlay{
+  position:absolute !important;
+  left:12px !important;
+  right:12px !important;
+  bottom:12px !important;
+  z-index:5 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:3px !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:#fff !important;
+  text-align:center !important;
+  pointer-events:none !important;
+  text-shadow:
+    0 2px 3px rgba(0,0,0,.95),
+    0 0 8px rgba(0,0,0,.85) !important;
+}
+
+.live-team-page .picture-correct-answer-overlay>span{
+  display:block !important;
+  width:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  color:#fff !important;
+  font-size:10px !important;
+  line-height:1.05 !important;
+  font-weight:950 !important;
+  letter-spacing:.14em !important;
+  text-transform:uppercase !important;
+  text-align:center !important;
+}
+
+.live-team-page .picture-correct-answer-overlay>strong{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  color:#fff !important;
+  font-size:clamp(18px,5.2vw,24px) !important;
+  line-height:1.08 !important;
+  font-weight:1000 !important;
+  letter-spacing:-.02em !important;
+  text-align:center !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+}
+
+@media(min-width:421px){
+  .live-team-page .picture-correct-answer-overlay{
+    left:18px !important;
+    right:18px !important;
+    bottom:16px !important;
+  }
+
+  .live-team-page .picture-correct-answer-overlay>span{
+    font-size:11px !important;
+  }
+
+  .live-team-page .picture-correct-answer-overlay>strong{
+    font-size:clamp(20px,2.4vw,28px) !important;
+  }
+}
