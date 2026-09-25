@@ -1476,3 +1476,58 @@
     font-size:clamp(20px,2.4vw,28px) !important;
   }
 }
+
+
+/* ---------- Picture-round answer marking colours ---------- */
+/* Picture rounds use the same correct/incorrect feedback as text rounds.
+   Preserve all approved picture-round geometry; change result colours only. */
+.live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-correct
+.your-answer-section textarea:disabled{
+  opacity:1 !important;
+  filter:none !important;
+  background:#e8f7ef !important;
+  color:#075f3c !important;
+  -webkit-text-fill-color:#075f3c !important;
+  border-color:#54ad84 !important;
+  box-shadow:
+    inset 0 1px 2px rgba(15,157,95,.08),
+    0 4px 0 rgba(15,157,95,.18) !important;
+}
+
+.live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-incorrect
+.your-answer-section textarea:disabled{
+  opacity:1 !important;
+  filter:none !important;
+  background:#fff0f1 !important;
+  color:#8f1830 !important;
+  -webkit-text-fill-color:#8f1830 !important;
+  border-color:#e36a76 !important;
+  box-shadow:
+    inset 0 1px 2px rgba(190,24,93,.08),
+    0 4px 0 rgba(190,24,93,.18) !important;
+}
+
+/* Picture rounds using multiple choice: the correct answer remains green;
+   if the team's submitted choice was wrong, show that submitted choice red. */
+.live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-incorrect
+.live-choice-list button.submitted-choice:not(.correct-reveal),
+.live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-incorrect
+.live-choice-list button.selected:not(.correct-reveal){
+  opacity:1 !important;
+  filter:none !important;
+  background:#c92a3c !important;
+  color:#fff !important;
+  border-color:#941f2d !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.24),
+    0 6px 0 #7b1825 !important;
+}
+
+.live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-incorrect
+.live-choice-list button.submitted-choice:not(.correct-reveal)>span,
+.live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-incorrect
+.live-choice-list button.selected:not(.correct-reveal)>span{
+  background:#fff !important;
+  color:#941f2d !important;
+  border-color:#fff !important;
+}
