@@ -51,6 +51,28 @@ body::before{
   mask-image:linear-gradient(to bottom,#000 0%,transparent 72%);
 }
 
+
+/* ----- Quiz Taker owns the browser canvas ----- */
+/* TeamView adds this class to both html and body while any Quiz Taker screen is
+   mounted. This removes the pink/green host-app canvas completely, including
+   Safari overscroll/keyboard gaps that can expose the document behind the team
+   page. Quizmaster and builder screens keep the normal app-wide theme. */
+html.quiz-taker-active,
+body.quiz-taker-active{
+  background:
+    radial-gradient(circle at 50% 2%,rgba(26,105,238,.34),transparent 28%),
+    radial-gradient(circle at 50% 52%,rgba(0,145,255,.10),transparent 38%),
+    linear-gradient(180deg,#041a39 0%,#02162f 56%,#031b3c 100%) !important;
+  background-color:#02162f !important;
+  min-height:100%;
+}
+
+body.quiz-taker-active::before{
+  display:none !important;
+  content:none !important;
+  background:none !important;
+}
+
 /* ----- App shell ----- */
 .simple-host-app{
   grid-template-columns:205px minmax(0,1fr);
