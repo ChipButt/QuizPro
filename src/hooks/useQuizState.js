@@ -19,6 +19,7 @@ function normalizeStoredState(stored) {
       audio: { ...initial.live.audio, ...(next.live?.audio ?? {}) },
     },
     quizzes: Array.isArray(next.quizzes) ? next.quizzes : [],
+    roundLibrary: Array.isArray(next.roundLibrary) ? next.roundLibrary : [],
     media: Array.isArray(next.media) ? next.media : [],
     teams: Array.isArray(next.teams) ? next.teams : [],
     teamRoundLocks: next.teamRoundLocks && typeof next.teamRoundLocks === "object" ? next.teamRoundLocks : {},
