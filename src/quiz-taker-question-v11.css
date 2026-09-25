@@ -1359,3 +1359,40 @@
   margin:0 !important;
   transform:translate3d(0,calc(-1 * var(--team-keyboard-slide,0px)),0) !important;
 }
+
+
+/* ---------- Final picture Correct Answer content rule ---------- */
+/* Picture rounds never use the generic tick/icon treatment. Preserve the
+   approved pill geometry/position; only force its internal content to be the
+   centred, text-only treatment requested for picture answers. */
+.live-team-page .picture-correct-answer-panel{
+  text-align:center !important;
+}
+
+.live-team-page .picture-correct-answer-panel>svg{
+  display:none !important;
+  visibility:hidden !important;
+}
+
+.live-team-page .picture-correct-answer-panel>span,
+.live-team-page .picture-correct-answer-panel>.revealed-answer-text{
+  width:100% !important;
+  max-width:100% !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  padding-left:0 !important;
+  padding-right:0 !important;
+  text-align:center !important;
+  align-self:center !important;
+  justify-self:center !important;
+}
+
+.live-team-page .team-question-stage.picture-round-question-layout.is-revealed
+.picture-correct-answer-panel{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  grid-template-columns:none !important;
+  grid-template-areas:none !important;
+}
