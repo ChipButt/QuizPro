@@ -1,10 +1,13 @@
 const ANSWER_SELECTOR = ".question-team-card .answer-input-shell textarea";
 const PAGE_SELECTOR = ".team-page.live-team-page";
 const SHELL_SELECTOR = ".live-phone-shell";
+const ANSWER_KEYBOARD_OPEN_THRESHOLD_PX = 100;
 
 let restoreTimers = [];
 let keyboardCloseCleanup = null;
 let answerKeyboardLayoutHeight = 0;
+let answerKeyboardWasOpen = false;
+let answerViewportCleanup = null;
 
 function clearRestoreTimers() {
   restoreTimers.forEach((timer) => window.clearTimeout(timer));
@@ -12,6 +15,11 @@ function clearRestoreTimers() {
 
   keyboardCloseCleanup?.();
   keyboardCloseCleanup = null;
+}
+
+function clearAnswerViewportWatcher() {
+  answerViewportCleanup?.();
+  answerViewportCleanup = null;
 }
 
 function forceKeyboardClasses(enabled) {
@@ -29,20 +37,39 @@ function clearQuestionKeyboardVars() {
   root.style.removeProperty("--team-keyboard-layout-height");
 }
 
-function restoreClosedQuestionPage() {
+function setQuestionKeyboardLayoutHeight() {
+  if (answerKeyboardLayoutHeight <= 0) return;
+
+  document.documentElement.style.setProperty(
+    "--team-keyboard-layout-height",
+    `${Math.round(answerKeyboardLayoutHeight)}px`,
+  );
+}
+
+function resetQuestionPageOrigin({ force = false, preserveBaseline = false } = {}) {
   const active = document.activeElement;
-  if (active instanceof HTMLTextAreaElement && active.matches(ANSWER_SELECTOR)) {
+  if (
+    !force &&
+    active instanceof HTMLTextAreaElement &&
+    active.matches(ANSWER_SELECTOR)
+  ) {
     return;
   }
 
   forceKeyboardClasses(false);
   clearQuestionKeyboardVars();
-  answerKeyboardLayoutHeight = 0;
+  if (!preserveBaseline) answerKeyboardLayoutHeight = 0;
 
   const page = document.querySelector(PAGE_SELECTOR);
   if (page instanceof HTMLElement) {
     page.scrollTop = 0;
     page.scrollLeft = 0;
+  }
+
+  const shell = document.querySelector(SHELL_SELECTOR);
+  if (shell instanceof HTMLElement) {
+    shell.scrollTop = 0;
+    shell.scrollLeft = 0;
   }
 
   const scrollingElement = document.scrollingElement;
@@ -65,20 +92,96 @@ function restoreClosedQuestionPage() {
   }
 }
 
-function finishQuestionKeyboardClose() {
-  clearRestoreTimers();
-  forceKeyboardClasses(false);
-  clearQuestionKeyboardVars();
+function answerKeyboardReduction() {
+  const viewportHeight = Math.max(
+    180,
+    window.visualViewport?.height ?? window.innerHeight,
+  );
+  return Math.max(0, answerKeyboardLayoutHeight - viewportHeight);
+}
+
+function restoreHiddenKeyboardState() {
+  const active = document.activeElement;
+  if (!(active instanceof HTMLTextAreaElement) || !active.matches(ANSWER_SELECTOR)) {
+    return;
+  }
+
+  if (answerKeyboardReduction() >= ANSWER_KEYBOARD_OPEN_THRESHOLD_PX) {
+    return;
+  }
 
   /*
-   * WebKit can finish its native keyboard-dismiss pan after focusout. Restore
-   * the normal Quiz In origin immediately and keep re-asserting it briefly,
-   * but only while the answer textarea is genuinely unfocused.
+   * iOS can dismiss the keyboard from its toolbar without blurring the textarea.
+   * In that state focusout never fires, so restore the complete Quiz In origin
+   * from the viewport expansion itself while retaining the baseline in case the
+   * same focused textarea is tapped again to reopen the keyboard.
    */
-  restoreClosedQuestionPage();
+  resetQuestionPageOrigin({ force: true, preserveBaseline: true });
+}
+
+function startAnswerViewportWatcher() {
+  clearAnswerViewportWatcher();
 
   const viewport = window.visualViewport;
-  const reassert = () => restoreClosedQuestionPage();
+
+  const checkViewport = () => {
+    const active = document.activeElement;
+    if (!(active instanceof HTMLTextAreaElement) || !active.matches(ANSWER_SELECTOR)) {
+      return;
+    }
+
+    const reduction = answerKeyboardReduction();
+
+    if (reduction >= ANSWER_KEYBOARD_OPEN_THRESHOLD_PX) {
+      answerKeyboardWasOpen = true;
+      setQuestionKeyboardLayoutHeight();
+      forceKeyboardClasses(true);
+      return;
+    }
+
+    if (!answerKeyboardWasOpen) return;
+
+    answerKeyboardWasOpen = false;
+    restoreHiddenKeyboardState();
+
+    /*
+     * WebKit may finish the dismissal pan a frame or two after it reports the
+     * viewport expanded. Reassert only while the keyboard remains closed.
+     */
+    window.requestAnimationFrame(restoreHiddenKeyboardState);
+    [60, 180, 360].forEach((delay) => {
+      window.setTimeout(restoreHiddenKeyboardState, delay);
+    });
+  };
+
+  viewport?.addEventListener("resize", checkViewport);
+  viewport?.addEventListener("scroll", checkViewport);
+  window.addEventListener("resize", checkViewport);
+
+  answerViewportCleanup = () => {
+    viewport?.removeEventListener("resize", checkViewport);
+    viewport?.removeEventListener("scroll", checkViewport);
+    window.removeEventListener("resize", checkViewport);
+  };
+
+  window.setTimeout(checkViewport, 120);
+}
+
+function finishQuestionKeyboardClose() {
+  clearAnswerViewportWatcher();
+  answerKeyboardWasOpen = false;
+  clearRestoreTimers();
+
+  /*
+   * A genuine focusout is authoritative even if WebKit has not yet updated
+   * document.activeElement. Reset immediately, then reassert through the native
+   * keyboard-dismiss animation so the logo/header returns with the rest of the
+   * page rather than remaining above the visual viewport.
+   */
+  resetQuestionPageOrigin({ force: true });
+
+  const viewport = window.visualViewport;
+  const reassert = () => resetQuestionPageOrigin({ force: true });
 
   viewport?.addEventListener("resize", reassert);
   viewport?.addEventListener("scroll", reassert);
@@ -90,7 +193,7 @@ function finishQuestionKeyboardClose() {
     window.removeEventListener("resize", reassert);
   };
 
-  restoreTimers = [60, 180, 360, 700, 1000].map((delay) =>
+  restoreTimers = [0, 60, 180, 360, 700, 1000].map((delay) =>
     window.setTimeout(reassert, delay)
   );
 
@@ -108,28 +211,34 @@ document.addEventListener("pointerdown", (event) => {
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
   /*
-   * Measure only, before the keyboard changes the visual viewport. Safari still
-   * owns the tap/focus gesture; this does not move, focus or prevent anything.
-   * The captured height keeps the Quiz Taker canvas from collapsing to the
-   * shrunken keyboard viewport after focus.
+   * Measurement only, before the keyboard changes the visual viewport. Safari
+   * still owns the tap/focus gesture; nothing is moved or prevented here.
    */
-  answerKeyboardLayoutHeight = Math.max(
-    window.innerHeight,
-    window.visualViewport?.height ?? 0,
-    document.documentElement.clientHeight,
-  );
+  if (answerKeyboardLayoutHeight <= 0) {
+    answerKeyboardLayoutHeight = Math.max(
+      window.innerHeight,
+      window.visualViewport?.height ?? 0,
+      document.documentElement.clientHeight,
+    );
+  }
+
+  /*
+   * If iOS dismissed the keyboard without blurring this already-focused field,
+   * the next tap may not fire focusin. Keep the viewport watcher alive so its
+   * resize event can put keyboard mode back when the keyboard reopens.
+   */
+  const active = document.activeElement;
+  if (active === target && answerViewportCleanup === null) {
+    startAnswerViewportWatcher();
+  }
 }, true);
 
 document.addEventListener("focusin", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
-  /*
-   * Cancel any close-time cleanup from the previous focus, remove stale
-   * keyboard variables, then leave layout/scroll entirely to the browser.
-   * The classes remain solely so the timer clock follows the phone shell.
-   */
   clearRestoreTimers();
+  clearAnswerViewportWatcher();
   clearQuestionKeyboardVars();
 
   if (answerKeyboardLayoutHeight <= 0) {
@@ -140,12 +249,10 @@ document.addEventListener("focusin", (event) => {
     );
   }
 
-  document.documentElement.style.setProperty(
-    "--team-keyboard-layout-height",
-    `${Math.round(answerKeyboardLayoutHeight)}px`,
-  );
-
+  answerKeyboardWasOpen = false;
+  setQuestionKeyboardLayoutHeight();
   forceKeyboardClasses(true);
+  startAnswerViewportWatcher();
 });
 
 document.addEventListener("focusout", (event) => {
