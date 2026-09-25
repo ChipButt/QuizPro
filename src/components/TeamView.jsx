@@ -351,8 +351,8 @@ function WaitingScreen({ snapshot, status }) {
     && Number(snapshot.live?.questionIndex ?? -1) < 0
     && scores.length === 0
     && !currentRoundComplete;
-  const awaitingAnswerReview = screen === "round_locked" && !snapshot.round?.reviewComplete;
-  const afterFinalRound = screen === "round_locked" && totalRounds > 0 && liveRoundIndex >= totalRounds - 1 && !awaitingAnswerReview;
+  const awaitingAnswerReview = screen === "round_locked";
+  const afterFinalRound = false;
   const heading = awaitingAnswerReview
     ? "The Answers Will Be Revealed Soon"
     : afterFinalRound
