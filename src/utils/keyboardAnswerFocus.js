@@ -263,39 +263,19 @@ document.addEventListener("pointerdown", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
-  // Capture the real page position before Safari gets a chance to focus-pan.
+  // Capture the real page position before Safari performs its native focus.
   preFocusScrollX = window.scrollX;
   preFocusScrollY = window.scrollY;
   originalScrollX = preFocusScrollX;
   originalScrollY = preFocusScrollY;
 
   /*
-   * iOS Safari's default textarea focus action scrolls the document toward the
-   * bottom before visualViewport settles. Cancel that default and perform the
-   * focus ourselves with preventScroll so the ONLY movement afterwards is our
-   * calculated .team-question-stage keyboard lift.
+   * Do not prevent the pointer event and do not call focus() ourselves.
+   * iPhone Safari must own the actual focus gesture or it can briefly open
+   * the software keyboard and immediately dismiss it. We only prepare the
+   * fixed page mode here; focusin handles the positioning once focus is real.
    */
-  event.preventDefault();
   forceKeyboardClasses(true);
-
-  try {
-    target.focus({ preventScroll: true });
-  } catch {
-    target.focus();
-    holdDocumentPosition();
-  }
-
-  // A prevented pointerdown does not place the caret from the tap. Put it at
-  // the end, which is the expected behaviour for a quiz-answer text box.
-  try {
-    const end = target.value.length;
-    target.setSelectionRange(end, end);
-  } catch {
-    // Some browser/input modes do not expose selection ranges.
-  }
-
-  holdDocumentPosition();
-  window.requestAnimationFrame(holdDocumentPosition);
 }, true);
 
 document.addEventListener("focusin", (event) => {
