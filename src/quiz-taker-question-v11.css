@@ -1732,3 +1732,85 @@
      1px  1px 0 #fff,
      0  2px 3px rgba(255,255,255,.65) !important;
 }
+
+
+/* ---------- One shared picture-round Your Answer geometry ---------- */
+/* The Answers-tab Push Question state is the approved source of truth for
+   picture-round answer placement. Reuse that exact section treatment during
+   normal question entry and after Reveal Answer so the label/field never move. */
+@media(max-width:420px){
+  .live-team-page .team-question-stage.picture-round-question-layout
+  .your-answer-section{
+    box-sizing:border-box !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    margin:0 !important;
+    padding:10px 10px 11px !important;
+    border:2px solid #c7d7ff !important;
+    border-radius:16px !important;
+    background:#f7faff !important;
+    box-shadow:0 4px 0 rgba(10,86,216,.10) !important;
+    translate:none !important;
+    transform:none !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout
+  .your-answer-section .your-answer-label{
+    display:block !important;
+    margin:0 0 7px 2px !important;
+    padding:0 !important;
+    color:#41506a !important;
+    font-size:10px !important;
+    line-height:1 !important;
+    font-weight:950 !important;
+    letter-spacing:.13em !important;
+    text-transform:uppercase !important;
+    translate:none !important;
+    transform:none !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout
+  .answer-input-shell,
+  .live-team-page .team-question-stage.picture-round-question-layout
+  .team-answer-zone{
+    overflow:visible !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout
+  .your-answer-section textarea,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-review
+  .your-answer-section textarea:disabled,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed
+  .your-answer-section textarea:disabled,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-correct
+  .your-answer-section textarea:disabled,
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed.answer-incorrect
+  .your-answer-section textarea:disabled{
+    box-sizing:border-box !important;
+    width:100% !important;
+    height:79px !important;
+    min-height:79px !important;
+    max-height:79px !important;
+    margin:0 !important;
+    translate:none !important;
+    transform:none !important;
+  }
+
+  /* Reveal changes result colours/content only. It must not remove the
+     approved Your Answer wrapper or hide its label. */
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed
+  .your-answer-section{
+    padding:10px 10px 11px !important;
+    border:2px solid #c7d7ff !important;
+    border-radius:16px !important;
+    background:#f7faff !important;
+    box-shadow:0 4px 0 rgba(10,86,216,.10) !important;
+  }
+
+  .live-team-page .team-question-stage.picture-round-question-layout.is-revealed
+  .your-answer-label{
+    display:block !important;
+  }
+}
