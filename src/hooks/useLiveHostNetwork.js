@@ -22,11 +22,74 @@ function peerIdForSession(code) {
   return `quizpro-${String(code || "").toLowerCase()}`;
 }
 
+const MEDIA_FIELDS = ["image", "audio", "answerImage", "answerAudio"];
+
+function mediaKey(roundId, questionId, field) {
+  return `${roundId || ""}:${questionId || ""}:${field}`;
+}
+
+function dedupeSnapshotMedia(snapshot, cache) {
+  if (!snapshot?.round?.questions?.length) return snapshot;
+
+  const reuse = [];
+  const roundId = snapshot.round.id ?? "";
+  const questions = snapshot.round.questions.map((question) => {
+    const next = { ...question };
+
+    for (const field of MEDIA_FIELDS) {
+      const key = mediaKey(roundId, question.id, field);
+      const value = question[field];
+
+      if (typeof value === "string" && value) {
+        if (cache.get(key) === value) {
+          delete next[field];
+          reuse.push(key);
+        } else {
+          cache.set(key, value);
+        }
+      } else {
+        cache.delete(key);
+      }
+    }
+
+    return next;
+  });
+
+  return {
+    ...snapshot,
+    round: { ...snapshot.round, questions },
+    mediaReuse: reuse,
+  };
+}
+
+function changedAnswerTeamIds(previousAnswers = {}, nextAnswers = {}) {
+  const changed = new Set();
+  const questionIds = new Set([
+    ...Object.keys(previousAnswers || {}),
+    ...Object.keys(nextAnswers || {}),
+  ]);
+
+  for (const questionId of questionIds) {
+    const before = previousAnswers?.[questionId] ?? {};
+    const after = nextAnswers?.[questionId] ?? {};
+    if (before === after) continue;
+
+    const teamIds = new Set([...Object.keys(before), ...Object.keys(after)]);
+    for (const teamId of teamIds) {
+      if (before[teamId] !== after[teamId]) changed.add(teamId);
+    }
+  }
+
+  return changed;
+}
+
 export function useLiveHostNetwork(state, updateState) {
   const stateRef = useRef(state);
   const updateRef = useRef(updateState);
   const peerRef = useRef(null);
   const connectionsRef = useRef(new Map());
+  const mediaCacheRef = useRef(new Map());
+  const previousStateRef = useRef(state);
   const [status, setStatus] = useState("offline");
   const [connectedTokens, setConnectedTokens] = useState([]);
 
@@ -45,7 +108,13 @@ export function useLiveHostNetwork(state, updateState) {
   function sendSnapshot(teamToken, conn) {
     if (!conn?.open) return;
     try {
-      conn.send(buildTeamSnapshot(stateRef.current, teamToken));
+      let mediaCache = mediaCacheRef.current.get(teamToken);
+      if (!mediaCache) {
+        mediaCache = new Map();
+        mediaCacheRef.current.set(teamToken, mediaCache);
+      }
+      const snapshot = buildTeamSnapshot(stateRef.current, teamToken);
+      conn.send(dedupeSnapshotMedia(snapshot, mediaCache));
     } catch {
       // Connection cleanup is handled by PeerJS close/error events.
     }
@@ -56,6 +125,7 @@ export function useLiveHostNetwork(state, updateState) {
       setStatus("offline");
       connectionsRef.current.forEach((conn) => conn.close());
       connectionsRef.current.clear();
+      mediaCacheRef.current.clear();
       refreshConnectedTokens();
       peerRef.current?.destroy();
       peerRef.current = null;
@@ -106,6 +176,7 @@ export function useLiveHostNetwork(state, updateState) {
               const previous = connectionsRef.current.get(teamToken);
               if (previous && previous !== conn) previous.close();
               connectionsRef.current.set(teamToken, conn);
+              mediaCacheRef.current.delete(teamToken);
               refreshConnectedTokens();
               sendSnapshot(teamToken, conn);
               return;
@@ -118,6 +189,7 @@ export function useLiveHostNetwork(state, updateState) {
           const cleanup = () => {
             if (teamToken && connectionsRef.current.get(teamToken) === conn) {
               connectionsRef.current.delete(teamToken);
+              mediaCacheRef.current.delete(teamToken);
               refreshConnectedTokens();
             }
           };
@@ -139,7 +211,29 @@ export function useLiveHostNetwork(state, updateState) {
   }, [networkEnabled, state.live?.sessionCode]);
 
   useEffect(() => {
+    const previous = previousStateRef.current;
+    previousStateRef.current = state;
+
     if (!state.live?.sessionActive && state.live?.teamScreen !== "finished") return;
+
+    const answersOnlyChanged = Boolean(
+      previous
+      && previous.answers !== state.answers
+      && previous.live === state.live
+      && previous.quizzes === state.quizzes
+      && previous.teams === state.teams
+    );
+
+    if (answersOnlyChanged && !["leaderboard", "final"].includes(state.live?.teamScreen)) {
+      const changedTeamIds = changedAnswerTeamIds(previous.answers, state.answers);
+      for (const team of state.teams ?? []) {
+        if (!changedTeamIds.has(team.id)) continue;
+        const conn = connectionsRef.current.get(team.token);
+        if (conn) sendSnapshot(team.token, conn);
+      }
+      return;
+    }
+
     for (const [token, conn] of connectionsRef.current.entries()) {
       sendSnapshot(token, conn);
     }
