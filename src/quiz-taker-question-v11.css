@@ -537,6 +537,7 @@
   display:block;
   margin:0 0 7px 2px !important;
   color:#41506a !important;
+  font-size:10px !important;
 }
 
 .live-team-page .team-question-stage.is-review .answer-input-shell textarea:disabled{
