@@ -1742,3 +1742,39 @@
     overflow:visible !important;
   }
 }
+
+
+/* ---------- One-piece text-question keyboard clearance ---------- */
+/* The text answer is already a child of the blue question stage. On iOS the
+   lower part of that stage can sit behind the keyboard accessory region, which
+   makes the textarea look detached from its parent. After Safari finishes its
+   native focus pan, JS supplies one bounded --team-keyboard-slide value. Move
+   the complete phone composition by that amount; never move the textarea on
+   its own. Picture-round geometry is intentionally not opted into this class. */
+@media(max-width:979px){
+  .team-page.live-team-page.keyboard-active-page
+  .live-phone-shell.keyboard-active.answer-stage-keyboard-align{
+    transform:translate3d(0,calc(-1 * var(--team-keyboard-slide,0px)),0) !important;
+    translate:none !important;
+  }
+
+  .team-page.live-team-page.keyboard-active-page
+  .team-question-stage:not(.picture-round-question-layout) .team-answer-zone,
+  .team-page.live-team-page.keyboard-active-page
+  .team-question-stage:not(.picture-round-question-layout) .answer-input-shell,
+  .team-page.live-team-page.keyboard-active-page
+  .team-question-stage:not(.picture-round-question-layout) .your-answer-section,
+  .team-page.live-team-page.keyboard-active-page
+  .team-question-stage:not(.picture-round-question-layout) .answer-input-shell textarea{
+    box-sizing:border-box !important;
+    position:relative !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    bottom:auto !important;
+    translate:none !important;
+    transform:none !important;
+    width:100% !important;
+    max-width:100% !important;
+  }
+}
