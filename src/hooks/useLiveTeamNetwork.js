@@ -22,6 +22,46 @@ function peerIdForSession(code) {
   return `quizpro-${String(code || "").toLowerCase()}`;
 }
 
+const MEDIA_FIELDS = ["image", "audio", "answerImage", "answerAudio"];
+
+function hydrateSnapshotMedia(snapshot, cache) {
+  if (!snapshot?.round?.questions?.length) return snapshot;
+
+  const reuse = new Set(Array.isArray(snapshot.mediaReuse) ? snapshot.mediaReuse : []);
+  const roundId = snapshot.round.id ?? "";
+  const questions = snapshot.round.questions.map((question) => {
+    const next = { ...question };
+
+    for (const field of MEDIA_FIELDS) {
+      const key = `${roundId}:${question.id ?? ""}:${field}`;
+      const hasField = Object.prototype.hasOwnProperty.call(question, field);
+      const value = question[field];
+
+      if (hasField && typeof value === "string" && value) {
+        cache.set(key, value);
+        continue;
+      }
+
+      if (!hasField && reuse.has(key)) {
+        const cached = cache.get(key);
+        if (typeof cached === "string" && cached) next[field] = cached;
+        continue;
+      }
+
+      cache.delete(key);
+    }
+
+    return next;
+  });
+
+  const nextSnapshot = {
+    ...snapshot,
+    round: { ...snapshot.round, questions },
+  };
+  delete nextSnapshot.mediaReuse;
+  return nextSnapshot;
+}
+
 function finishedStorageKey(sessionCode, teamToken) {
   return `quizpro-finished:${String(sessionCode || "")}:${String(teamToken || "")}`;
 }
@@ -184,10 +224,13 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
   const [resumeNonce, setResumeNonce] = useState(0);
   const connectionRef = useRef(null);
   const peerRef = useRef(null);
+  const mediaCacheRef = useRef(new Map());
   const finishedRef = useRef(Boolean(restoredFinishedSnapshot));
   const wasHiddenRef = useRef(false);
 
   useEffect(() => {
+    mediaCacheRef.current.clear();
+
     if (previewMode) {
       setSnapshot(previewSnapshot(teamToken));
       setStatus("online");
@@ -247,15 +290,16 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
           });
           conn.on("data", (message) => {
             if (message?.type === "snapshot") {
-              if (message.live?.teamScreen === "finished") {
+              const hydratedMessage = hydrateSnapshotMedia(message, mediaCacheRef.current);
+              if (hydratedMessage.live?.teamScreen === "finished") {
                 finishedRef.current = true;
-                storeFinishedSnapshot(sessionCode, teamToken, message);
-                setSnapshot(message);
+                storeFinishedSnapshot(sessionCode, teamToken, hydratedMessage);
+                setSnapshot(hydratedMessage);
                 setStatus("finished");
                 setError("");
                 return;
               }
-              setSnapshot(message);
+              setSnapshot(hydratedMessage);
               setStatus("online");
               return;
             }
