@@ -1,9 +1,18 @@
 const ANSWER_SELECTOR = ".question-team-card .answer-input-shell textarea";
 const PAGE_SELECTOR = ".team-page.live-team-page";
 const SHELL_SELECTOR = ".live-phone-shell";
+const QUESTION_STAGE_SELECTOR = ".question-team-card .team-question-stage";
+const ANSWER_KEYBOARD_GAP_PX = 150;
+const ANSWER_KEYBOARD_OPEN_THRESHOLD_PX = 100;
+const ANSWER_MAX_STAGE_SHIFT_PX = 320;
 
 let restoreTimers = [];
 let keyboardCloseCleanup = null;
+let answerBaselineHeight = 0;
+let answerAlignTimer = null;
+let answerFallbackTimers = [];
+let answerLayoutCleanup = null;
+let answerAlignmentApplied = false;
 
 function clearRestoreTimers() {
   restoreTimers.forEach((timer) => window.clearTimeout(timer));
@@ -13,9 +22,34 @@ function clearRestoreTimers() {
   keyboardCloseCleanup = null;
 }
 
+function clearAnswerAlignment() {
+  if (answerAlignTimer !== null) {
+    window.clearTimeout(answerAlignTimer);
+    answerAlignTimer = null;
+  }
+
+  answerFallbackTimers.forEach((timer) => window.clearTimeout(timer));
+  answerFallbackTimers = [];
+
+  answerLayoutCleanup?.();
+  answerLayoutCleanup = null;
+}
+
 function forceKeyboardClasses(enabled) {
   document.querySelector(PAGE_SELECTOR)?.classList.toggle("keyboard-active-page", enabled);
   document.querySelector(SHELL_SELECTOR)?.classList.toggle("keyboard-active", enabled);
+}
+
+function setAnswerStageAlignmentClass(enabled) {
+  document.querySelector(SHELL_SELECTOR)?.classList.toggle(
+    "answer-stage-keyboard-align",
+    enabled,
+  );
+}
+
+function setAnswerKeyboardSlide(value) {
+  const next = Math.max(0, Math.round(Number(value) || 0));
+  document.documentElement.style.setProperty("--team-keyboard-slide", `${next}px`);
 }
 
 function clearQuestionKeyboardVars() {
@@ -33,6 +67,11 @@ function restoreClosedQuestionPage() {
   if (active instanceof HTMLTextAreaElement && active.matches(ANSWER_SELECTOR)) {
     return;
   }
+
+  clearAnswerAlignment();
+  setAnswerStageAlignmentClass(false);
+  answerAlignmentApplied = false;
+  answerBaselineHeight = 0;
 
   forceKeyboardClasses(false);
   clearQuestionKeyboardVars();
@@ -64,6 +103,11 @@ function restoreClosedQuestionPage() {
 }
 
 function finishQuestionKeyboardClose() {
+  clearAnswerAlignment();
+  setAnswerStageAlignmentClass(false);
+  answerAlignmentApplied = false;
+  answerBaselineHeight = 0;
+
   clearRestoreTimers();
   forceKeyboardClasses(false);
   clearQuestionKeyboardVars();
@@ -101,28 +145,115 @@ function finishQuestionKeyboardClose() {
   );
 }
 
+function alignAnswerStageOnce() {
+  if (answerAlignmentApplied) return;
+
+  const active = document.activeElement;
+  if (!(active instanceof HTMLTextAreaElement) || !active.matches(ANSWER_SELECTOR)) return;
+
+  const stage = active.closest(QUESTION_STAGE_SELECTOR);
+  if (!(stage instanceof HTMLElement)) return;
+  if (stage.classList.contains("picture-round-question-layout")) return;
+
+  const viewport = window.visualViewport;
+  const viewportHeight = Math.max(180, viewport?.height ?? window.innerHeight);
+  const baseline = Math.max(answerBaselineHeight || 0, window.innerHeight);
+  const keyboardReduction = Math.max(0, baseline - viewportHeight);
+
+  if (keyboardReduction < ANSWER_KEYBOARD_OPEN_THRESHOLD_PX) return;
+
+  const viewportTop = Math.max(0, viewport?.offsetTop ?? 0);
+  const viewportBottom = viewportTop + viewportHeight;
+  const targetStageBottom = viewportBottom - ANSWER_KEYBOARD_GAP_PX;
+  const stageRect = stage.getBoundingClientRect();
+
+  const requiredShift = Math.max(0, stageRect.bottom - targetStageBottom);
+  const viewportBound = Math.max(0, viewportHeight - 160);
+  const boundedShift = Math.min(
+    requiredShift,
+    ANSWER_MAX_STAGE_SHIFT_PX,
+    viewportBound,
+  );
+
+  setAnswerKeyboardSlide(boundedShift);
+  answerAlignmentApplied = true;
+  clearAnswerAlignment();
+}
+
+function startAnswerStageAlignment() {
+  clearAnswerAlignment();
+
+  const viewport = window.visualViewport;
+
+  const schedule = (delay = 150) => {
+    if (answerAlignmentApplied) return;
+    if (answerAlignTimer !== null) window.clearTimeout(answerAlignTimer);
+
+    answerAlignTimer = window.setTimeout(() => {
+      answerAlignTimer = null;
+      alignAnswerStageOnce();
+    }, delay);
+  };
+
+  const onViewportChange = () => schedule();
+
+  viewport?.addEventListener("resize", onViewportChange);
+  viewport?.addEventListener("scroll", onViewportChange);
+  window.addEventListener("resize", onViewportChange);
+
+  answerLayoutCleanup = () => {
+    viewport?.removeEventListener("resize", onViewportChange);
+    viewport?.removeEventListener("scroll", onViewportChange);
+    window.removeEventListener("resize", onViewportChange);
+  };
+
+  schedule(180);
+  answerFallbackTimers = [500, 900].map((delay) =>
+    window.setTimeout(alignAnswerStageOnce, delay)
+  );
+}
+
 document.addEventListener("pointerdown", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
   /*
-   * Intentionally do nothing here. Safari/Chrome must own the native tap and
-   * focus gesture so the first tap and every later tap take the same path.
+   * Measurement only. Safari/Chrome still owns the native tap/focus gesture;
+   * nothing is moved, focused or prevented on pointerdown.
    */
+  answerBaselineHeight = Math.max(
+    window.innerHeight,
+    window.visualViewport?.height ?? 0,
+    document.documentElement.clientHeight,
+  );
 }, true);
 
 document.addEventListener("focusin", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
-  /*
-   * Cancel any close-time cleanup from the previous focus, remove stale
-   * keyboard variables, then leave layout/scroll entirely to the browser.
-   * The classes remain solely so the timer clock follows the phone shell.
-   */
   clearRestoreTimers();
+  clearAnswerAlignment();
   clearQuestionKeyboardVars();
+
+  answerAlignmentApplied = false;
+  if (answerBaselineHeight <= 0) {
+    answerBaselineHeight = Math.max(
+      window.innerHeight,
+      window.visualViewport?.height ?? 0,
+      document.documentElement.clientHeight,
+    );
+  }
+
   forceKeyboardClasses(true);
+
+  const stage = target.closest(QUESTION_STAGE_SELECTOR);
+  const isPictureRound =
+    stage instanceof HTMLElement &&
+    stage.classList.contains("picture-round-question-layout");
+
+  setAnswerStageAlignmentClass(!isPictureRound);
+  if (!isPictureRound) startAnswerStageAlignment();
 });
 
 document.addEventListener("focusout", (event) => {
