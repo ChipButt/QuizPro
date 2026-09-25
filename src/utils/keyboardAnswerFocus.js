@@ -4,6 +4,7 @@ const SHELL_SELECTOR = ".live-phone-shell";
 
 let restoreTimers = [];
 let keyboardCloseCleanup = null;
+let answerKeyboardLayoutHeight = 0;
 
 function clearRestoreTimers() {
   restoreTimers.forEach((timer) => window.clearTimeout(timer));
@@ -36,6 +37,7 @@ function restoreClosedQuestionPage() {
 
   forceKeyboardClasses(false);
   clearQuestionKeyboardVars();
+  answerKeyboardLayoutHeight = 0;
 
   const page = document.querySelector(PAGE_SELECTOR);
   if (page instanceof HTMLElement) {
@@ -106,9 +108,16 @@ document.addEventListener("pointerdown", (event) => {
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
   /*
-   * Intentionally do nothing here. Safari/Chrome must own the native tap and
-   * focus gesture so the first tap and every later tap take the same path.
+   * Measure only, before the keyboard changes the visual viewport. Safari still
+   * owns the tap/focus gesture; this does not move, focus or prevent anything.
+   * The captured height keeps the Quiz Taker canvas from collapsing to the
+   * shrunken keyboard viewport after focus.
    */
+  answerKeyboardLayoutHeight = Math.max(
+    window.innerHeight,
+    window.visualViewport?.height ?? 0,
+    document.documentElement.clientHeight,
+  );
 }, true);
 
 document.addEventListener("focusin", (event) => {
@@ -122,6 +131,20 @@ document.addEventListener("focusin", (event) => {
    */
   clearRestoreTimers();
   clearQuestionKeyboardVars();
+
+  if (answerKeyboardLayoutHeight <= 0) {
+    answerKeyboardLayoutHeight = Math.max(
+      window.innerHeight,
+      window.visualViewport?.height ?? 0,
+      document.documentElement.clientHeight,
+    );
+  }
+
+  document.documentElement.style.setProperty(
+    "--team-keyboard-layout-height",
+    `${Math.round(answerKeyboardLayoutHeight)}px`,
+  );
+
   forceKeyboardClasses(true);
 });
 
