@@ -1719,3 +1719,26 @@
     flex:0 0 auto !important;
   }
 }
+
+
+/* ---------- Keyboard-active Quiz Taker backdrop + card overflow ---------- */
+/* Safari can pan the 100dvh Quiz Taker canvas far enough that its bottom edge
+   enters the visible viewport. The global app theme then shows through beneath
+   it. Keep the existing browser-owned focus movement, but make the Quiz Taker's
+   fixed decorative layer opaque while typing so there is never a body-background
+   seam. Also release the legacy card overflow clip so a long question cannot
+   cut the focused textarea at that same boundary. */
+@media(max-width:979px){
+  .team-page.live-team-page.keyboard-active-page::before{
+    background:
+      linear-gradient(135deg,transparent 0 10%,rgba(24,77,163,.12) 10% 13%,transparent 13% 36%,rgba(24,77,163,.10) 36% 39%,transparent 39% 70%,rgba(24,77,163,.10) 70% 73%,transparent 73%),
+      linear-gradient(45deg,transparent 0 23%,rgba(20,71,150,.08) 23% 26%,transparent 26% 63%,rgba(20,71,150,.08) 63% 66%,transparent 66%),
+      radial-gradient(circle at 50% 2%,rgba(26,105,238,.34),transparent 28%),
+      radial-gradient(circle at 50% 52%,rgba(0,145,255,.10),transparent 38%),
+      linear-gradient(180deg,#041a39 0%,#02162f 56%,#031b3c 100%) !important;
+  }
+
+  .team-page.live-team-page.keyboard-active-page .question-team-card{
+    overflow:visible !important;
+  }
+}
