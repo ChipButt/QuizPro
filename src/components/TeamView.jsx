@@ -354,7 +354,7 @@ function WaitingScreen({ snapshot, status }) {
   const awaitingAnswerReview = screen === "round_locked" && !snapshot.round?.reviewComplete;
   const afterFinalRound = screen === "round_locked" && totalRounds > 0 && liveRoundIndex >= totalRounds - 1 && !awaitingAnswerReview;
   const heading = awaitingAnswerReview
-    ? "The Answers Will Be Reviewed Soon"
+    ? "The Answers Will Be Revealed Soon"
     : afterFinalRound
       ? "The Results Will Be Announced Soon"
       : beforeFirstRound
@@ -1677,7 +1677,7 @@ export default function TeamView({ sessionCode, teamToken }) {
   if (!snapshot.team.nameLocked) return <TeamNameScreen snapshot={snapshot} send={send} status={status} />;
   if (screen === "leaderboard") return <LeaderboardScreen snapshot={snapshot} status={status} />;
   if (screen === "final") return <FinalScreen snapshot={snapshot} status={status} />;
-  if (screen === "lobby" || screen === "round_locked" || (snapshot.live?.timerActive && countdown <= 0) || !question) {
+  if (screen === "lobby" || screen === "round_locked" || !question) {
     return <WaitingScreen snapshot={snapshot} status={status} />;
   }
 
@@ -1722,12 +1722,6 @@ export default function TeamView({ sessionCode, teamToken }) {
           role="timer"
           aria-label={`${countdown} seconds remaining before the round ends`}
         >
-          {!isPictureRound ? (
-            <div className="team-timer-message">
-              <strong data-default-text={"LAST CHANCE \nTO INPUT YOUR ANSWERS!"}>{"LAST CHANCE \nTO INPUT YOUR ANSWERS!"}</strong>
-              <span data-default-text={"When the timer runs out, \nyour answers will be locked!"}>{"When the timer runs out, \nyour answers will be locked!"}</span>
-            </div>
-          ) : null}
           <div className="team-timer-clock" aria-hidden="true">
             <i className="team-timer-clock-knob" />
             <strong>{countdown}</strong>
