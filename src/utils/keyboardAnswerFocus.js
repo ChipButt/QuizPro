@@ -1,9 +1,18 @@
 const ANSWER_SELECTOR = ".question-team-card .answer-input-shell textarea";
 const PAGE_SELECTOR = ".team-page.live-team-page";
 const SHELL_SELECTOR = ".live-phone-shell";
+const QUESTION_STAGE_SELECTOR = ".question-team-card .team-question-stage";
+const QUESTION_STAGE_KEYBOARD_GAP_PX = 150;
 const KEYBOARD_OPEN_THRESHOLD_PX = 100;
+const QUESTION_STAGE_SAFE_TOP_PX = 12;
+const QUESTION_STAGE_MIN_GAP_PX = 18;
 
 let baselineHeight = 0;
+let baselineViewportHeight = 0;
+let stableViewportHeight = Math.max(
+  window.visualViewport?.height ?? 0,
+  window.innerHeight,
+);
 let cleanupPending = null;
 let originalScrollX = 0;
 let originalScrollY = 0;
@@ -13,27 +22,15 @@ let keyboardAlignTimer = null;
 let keyboardFallbackTimers = [];
 let keyboardWasOpen = false;
 let keyboardAlignmentApplied = false;
+let keyboardAlignmentFrame = null;
 
-function syncVisualViewport() {
-  const viewport = window.visualViewport;
-  const root = document.documentElement;
-  const height = Math.max(180, Math.round(viewport?.height ?? window.innerHeight));
-  const width = Math.max(240, Math.round(viewport?.width ?? window.innerWidth));
-  const top = Math.max(0, Math.round(viewport?.offsetTop ?? 0));
-  const left = Math.max(0, Math.round(viewport?.offsetLeft ?? 0));
-
-  root.style.setProperty("--team-visible-height", `${height}px`);
-  root.style.setProperty("--team-visible-width", `${width}px`);
-  root.style.setProperty("--team-visible-top", `${top}px`);
-  root.style.setProperty("--team-visible-left", `${left}px`);
-
-  if (baselineHeight > 0) {
-    root.style.setProperty("--team-keyboard-layout-height", `${baselineHeight}px`);
-  }
+function setKeyboardSlide(value) {
+  const next = Math.max(0, Math.round(Number(value) || 0));
+  document.documentElement.style.setProperty("--team-keyboard-slide", `${next}px`);
 }
 
 function resetKeyboardSlide() {
-  document.documentElement.style.setProperty("--team-keyboard-slide", "0px");
+  setKeyboardSlide(0);
 }
 
 function clearKeyboardAlignmentTimers() {
@@ -41,6 +38,12 @@ function clearKeyboardAlignmentTimers() {
     window.clearTimeout(keyboardAlignTimer);
     keyboardAlignTimer = null;
   }
+
+  if (keyboardAlignmentFrame !== null) {
+    window.cancelAnimationFrame(keyboardAlignmentFrame);
+    keyboardAlignmentFrame = null;
+  }
+
   keyboardFallbackTimers.forEach((timer) => window.clearTimeout(timer));
   keyboardFallbackTimers = [];
 }
@@ -70,6 +73,23 @@ function restoreDocumentScroll() {
     scrollingElement.scrollLeft = originalScrollX;
     scrollingElement.scrollTop = originalScrollY;
   }
+}
+
+function captureNormalKeyboardBaseline() {
+  const page = document.querySelector(PAGE_SELECTOR);
+  const pageHeight =
+    page instanceof HTMLElement ? page.getBoundingClientRect().height : 0;
+  const viewportHeight = Math.max(
+    180,
+    window.visualViewport?.height ?? window.innerHeight,
+  );
+
+  stableViewportHeight = Math.max(stableViewportHeight, viewportHeight);
+  baselineViewportHeight = Math.max(stableViewportHeight, viewportHeight);
+  baselineHeight = Math.max(
+    180,
+    Math.round(pageHeight || window.innerHeight || baselineViewportHeight),
+  );
 }
 
 function applyCleanKeyboardClosedState() {
@@ -102,12 +122,12 @@ function finishKeyboardClose({ watchViewport = false } = {}) {
   keyboardWasOpen = false;
   keyboardAlignmentApplied = false;
   baselineHeight = 0;
+  baselineViewportHeight = 0;
 
   /*
-   * The live team page's normal resting position is the top of the document.
-   * iOS can finish its own keyboard pan well after blur, so restore immediately
-   * and, on close, keep re-asserting the clean state while the visual viewport
-   * completes its final resize/scroll sequence.
+   * The live team page always returns to the document origin. iOS can finish
+   * its native focus pan after blur, so keep re-asserting this clean state for
+   * a short period instead of trusting one visualViewport event.
    */
   originalScrollX = 0;
   originalScrollY = 0;
@@ -118,6 +138,12 @@ function finishKeyboardClose({ watchViewport = false } = {}) {
     if (active instanceof HTMLTextAreaElement && active.matches(ANSWER_SELECTOR)) {
       return;
     }
+
+    const viewportHeight = Math.max(
+      180,
+      window.visualViewport?.height ?? window.innerHeight,
+    );
+    stableViewportHeight = Math.max(stableViewportHeight, viewportHeight);
     applyCleanKeyboardClosedState();
   };
 
@@ -152,8 +178,96 @@ function keyboardReductionPx() {
     180,
     window.visualViewport?.height ?? window.innerHeight,
   );
-  const layoutHeight = Math.max(baselineHeight || 0, window.innerHeight);
-  return Math.max(0, layoutHeight - viewportHeight);
+  const normalViewportHeight = Math.max(
+    baselineViewportHeight || 0,
+    stableViewportHeight || 0,
+  );
+
+  return Math.max(0, normalViewportHeight - viewportHeight);
+}
+
+function applyDeterministicKeyboardAlignment() {
+  const active = document.activeElement;
+  if (!(active instanceof HTMLTextAreaElement) || !active.matches(ANSWER_SELECTOR)) {
+    return;
+  }
+
+  const page = document.querySelector(PAGE_SELECTOR);
+  const stage = document.querySelector(QUESTION_STAGE_SELECTOR);
+  if (!(page instanceof HTMLElement) || !(stage instanceof HTMLElement)) {
+    return;
+  }
+
+  /*
+   * From this point on the browser's focus pan is not allowed to define the
+   * Quiz In layout. Freeze the normal pre-keyboard composition, cancel the
+   * document pan, then move the complete phone shell exactly once.
+   */
+  const root = document.documentElement;
+  root.style.setProperty(
+    "--team-keyboard-layout-height",
+    `${Math.round(baselineHeight)}px`,
+  );
+  root.style.setProperty("--team-visible-top", "0px");
+  root.style.setProperty("--team-visible-left", "0px");
+  resetKeyboardSlide();
+  forceKeyboardClasses(true);
+
+  page.scrollTop = 0;
+  page.scrollLeft = 0;
+  restoreDocumentScroll();
+
+  keyboardAlignmentFrame = window.requestAnimationFrame(() => {
+    keyboardAlignmentFrame = null;
+
+    const current = document.activeElement;
+    if (!(current instanceof HTMLTextAreaElement) || !current.matches(ANSWER_SELECTOR)) {
+      return;
+    }
+
+    const viewportHeight = Math.max(
+      180,
+      window.visualViewport?.height ?? window.innerHeight,
+    );
+    const stageRect = stage.getBoundingClientRect();
+
+    /*
+     * Keep the entire question stage visible. Use the approved 150px clearance
+     * above the keyboard whenever the physical viewport can accommodate it;
+     * on a genuinely shorter viewport use the largest possible gap rather than
+     * cropping the question.
+     */
+    const largestGapThatKeepsStageVisible = Math.max(
+      QUESTION_STAGE_MIN_GAP_PX,
+      viewportHeight - QUESTION_STAGE_SAFE_TOP_PX - stageRect.height,
+    );
+    const targetGap = Math.min(
+      QUESTION_STAGE_KEYBOARD_GAP_PX,
+      largestGapThatKeepsStageVisible,
+    );
+    const targetStageBottom = viewportHeight - targetGap;
+    const requestedSlide = Math.max(0, stageRect.bottom - targetStageBottom);
+    const maxSlideWithoutCroppingStage = Math.max(
+      0,
+      stageRect.top - QUESTION_STAGE_SAFE_TOP_PX,
+    );
+    const slide = Math.min(requestedSlide, maxSlideWithoutCroppingStage);
+
+    setKeyboardSlide(slide);
+    restoreDocumentScroll();
+
+    /*
+     * Some WebKit builds try one final document pan after the fixed layout has
+     * been applied. Re-cancel that pan once; never recalculate or chase the
+     * shell position, so first focus and later focuses use the same geometry.
+     */
+    keyboardFallbackTimers.push(
+      window.setTimeout(restoreDocumentScroll, 90),
+    );
+
+    keyboardWasOpen = true;
+    keyboardAlignmentApplied = true;
+  });
 }
 
 function updateKeyboardLayout() {
@@ -167,31 +281,16 @@ function updateKeyboardLayout() {
     return;
   }
 
-  /*
-   * The browser owns the native focus gesture and its initial pan. Once the
-   * visual viewport has settled, capture that final viewport exactly once and
-   * pin the fixed quiz page to it. Do not call scrollIntoView(), do not add a
-   * second document scroll, and do not keep chasing visualViewport animation.
-   */
-  syncVisualViewport();
-  keyboardWasOpen = true;
-  keyboardAlignmentApplied = true;
-  resetKeyboardSlide();
-
-  const page = document.querySelector(PAGE_SELECTOR);
-  if (page instanceof HTMLElement) {
-    page.scrollTop = 0;
-    page.scrollLeft = 0;
+  if (!keyboardAlignmentApplied && keyboardAlignmentFrame === null) {
+    applyDeterministicKeyboardAlignment();
   }
-
-  forceKeyboardClasses(true);
 }
 
 function settleKeyboardLayout() {
   const viewport = window.visualViewport;
 
   const scheduleAlignment = (delay = 140) => {
-    if (keyboardAlignmentApplied) return;
+    if (keyboardAlignmentApplied || keyboardAlignmentFrame !== null) return;
     if (keyboardAlignTimer !== null) window.clearTimeout(keyboardAlignTimer);
 
     keyboardAlignTimer = window.setTimeout(() => {
@@ -204,14 +303,11 @@ function settleKeyboardLayout() {
     const reduction = keyboardReductionPx();
 
     if (keyboardWasOpen && reduction < KEYBOARD_OPEN_THRESHOLD_PX) {
-      finishKeyboardClose();
+      finishKeyboardClose({ watchViewport: true });
       return;
     }
 
-    if (!keyboardAlignmentApplied) {
-      // Track the native viewport only until it has settled. Once the keyboard
-      // layout is applied, its anchor is intentionally frozen for this focus.
-      syncVisualViewport();
+    if (!keyboardAlignmentApplied && keyboardAlignmentFrame === null) {
       scheduleAlignment();
     }
   };
@@ -222,11 +318,11 @@ function settleKeyboardLayout() {
 
   scheduleAlignment(180);
 
-  // Short missed-event fallbacks. They can apply the layout once, never stack
-  // repeated movements on top of Safari's own pan.
   keyboardFallbackTimers = [500, 900].map((delay) =>
     window.setTimeout(() => {
-      if (!keyboardAlignmentApplied) updateKeyboardLayout();
+      if (!keyboardAlignmentApplied && keyboardAlignmentFrame === null) {
+        updateKeyboardLayout();
+      }
     }, delay)
   );
 
@@ -242,11 +338,14 @@ document.addEventListener("pointerdown", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
-  // Safari retains ownership of the native tap/focus gesture. Do not move,
-  // focus or prevent anything here. Only establish the intended normal resting
-  // position so a previous iOS keyboard pan can never become the next baseline.
+  /*
+   * Do not focus, preventDefault or alter layout on pointerdown. Safari owns
+   * the native focus gesture. Only capture the normal composition before it
+   * begins moving anything.
+   */
   originalScrollX = 0;
   originalScrollY = 0;
+  captureNormalKeyboardBaseline();
 }, true);
 
 document.addEventListener("focusin", (event) => {
@@ -260,16 +359,14 @@ document.addEventListener("focusin", (event) => {
 
   originalScrollX = 0;
   originalScrollY = 0;
-  baselineHeight = Math.max(
-    window.innerHeight,
-    window.visualViewport?.height ?? 0,
-  );
+  if (!baselineHeight || !baselineViewportHeight) {
+    captureNormalKeyboardBaseline();
+  }
+
   keyboardWasOpen = false;
   keyboardAlignmentApplied = false;
-
   resetKeyboardSlide();
   forceKeyboardClasses(false);
-  syncVisualViewport();
 
   cleanupPending = settleKeyboardLayout();
 });
@@ -278,8 +375,6 @@ document.addEventListener("focusout", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLTextAreaElement) || !target.matches(ANSWER_SELECTOR)) return;
 
-  // Focus loss is authoritative: restore immediately rather than waiting for a
-  // particular visualViewport event sequence that differs between iPhones.
   finishKeyboardClose({ watchViewport: true });
 });
 
