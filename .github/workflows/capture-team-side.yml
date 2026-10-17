@@ -1,0 +1,66 @@
+name: Capture authentic Quiz In team-screen
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/capture-team-side.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - name: Install app and browser automation
+        run: |
+          npm ci
+          npm install --no-save playwright-core
+          which google-chrome || which chromium || true
+      - name: Start actual QuizPro React app
+        run: |
+          (npm run dev -- --host 127.0.0.1 > /tmp/quizpro.log 2>&1 &)
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:5173/index.dev.html >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/quizpro.log
+          exit 1
+      - name: Screenshot actual Team Side text-answer question
+        run: |
+          node --input-type=module <<'JS'
+          import { chromium } from 'playwright-core';
+          import fs from 'node:fs';
+          const chrome = fs.existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' :
+            fs.existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : '/usr/bin/google-chrome-stable';
+          const browser=await chromium.launch({headless:true,executablePath:chrome,args:['--no-sandbox']});
+          const page=await browser.newPage({viewport:{width:1280,height:1050},deviceScaleFactor:2});
+          const errors=[];
+          page.on('pageerror', e => errors.push(e.message));
+          await page.goto('http://127.0.0.1:5173/index.dev.html#/preview/question',{waitUntil:'networkidle'});
+          const frame=page.frameLocator('iframe[title="Quiz-taker live response preview"]');
+          await frame.locator('body').waitFor({state:'visible'});
+          await page.waitForTimeout(1000);
+          await page.evaluate(()=>window.postMessage({type:'quizmaster-preview-action',action:'send-question'},window.location.origin));
+          await frame.getByText('What is the capital city of Australia?').waitFor({timeout:20000});
+          await page.waitForTimeout(1200);
+          fs.mkdirSync('artifacts',{recursive:true});
+          const iframe=page.locator('iframe[title="Quiz-taker live response preview"]');
+          await iframe.screenshot({path:'artifacts/quiz-in-real-team-question.png',animations:'disabled'});
+          const questionText=await frame.locator('body').innerText();
+          console.log('REAL TEAM SCREEN CAPTURED:', questionText.slice(0,450).replace(/\\s+/g,' '));
+          console.log('SCREENSHOT SIZE:',fs.statSync('artifacts/quiz-in-real-team-question.png').size);
+          if(errors.length)throw Error('Browser errors: '+errors.join(' | '));
+          await browser.close();
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quiz-in-actual-team-question
+          path: artifacts/
+          if-no-files-found: warn
