@@ -161,12 +161,36 @@ export function useGitHubQuizLibrary(state, updateState) {
     }
 
     try {
-      const response = await fetch(`${RAW_LIBRARY_URL}?_=${Date.now()}`, {
-        cache: "no-store",
-        headers: { Accept: "application/json" },
-      });
-      if (!response.ok) throw new Error(`GitHub library returned ${response.status}.`);
-      const library = normalizeLibrary(await response.json());
+      // GitHub Pages serves the library from this repository as well. Try that
+      // first so the host is not dependent on raw.githubusercontent.com being
+      // reachable from every venue's network/browser.
+      const cacheBust = Date.now();
+      const sameOriginUrl = `${import.meta.env.BASE_URL}data/quiz-library.json?_=${cacheBust}`;
+      const candidates = [
+        sameOriginUrl,
+        `${RAW_LIBRARY_URL}?_=${cacheBust}`,
+      ];
+      let payload = null;
+      let lastFailure = "";
+      for (const url of candidates) {
+        try {
+          const response = await fetch(url, {
+            cache: "no-store",
+            headers: { Accept: "application/json" },
+          });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const json = await response.json();
+          if (!json || !Array.isArray(json.quizzes) || !Array.isArray(json.roundLibrary)) {
+            throw new Error("The response is not a valid QuizPro library.");
+          }
+          payload = json;
+          break;
+        } catch (error) {
+          lastFailure = error?.message || "Network error";
+        }
+      }
+      if (!payload) throw new Error(`Could not load the shared QuizPro library from either source: ${lastFailure}.`);
+      const library = normalizeLibrary(payload);
       const remoteFingerprint = fingerprint(library);
       const localSnapshot = snapshotFromState(stateRef.current);
       const localFingerprint = fingerprint(localSnapshot);
