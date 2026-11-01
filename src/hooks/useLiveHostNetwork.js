@@ -1,3 +1,4 @@
+import { RELAY_READY, RELAY_URL, RelayPeer } from "../utils/relayPeer.js";
 import { useEffect, useRef, useState } from "react";
 import { applyTeamMessage, buildTeamSnapshot } from "../utils/liveSession.js";
 
@@ -136,11 +137,12 @@ export function useLiveHostNetwork(state, updateState) {
     let reconnectTimer;
     setStatus("connecting");
 
-    loadPeerJs()
+    (RELAY_READY && RELAY_URL ? Promise.resolve(RelayPeer) : loadPeerJs())
       .then((Peer) => {
         if (cancelled) return;
         const peer = new Peer(peerIdForSession(state.live.sessionCode));
         peerRef.current = peer;
+        peer.setAllowedTokens?.((stateRef.current.teams || []).map(team => team.token));
 
         peer.on("open", () => setStatus("online"));
         peer.on("disconnected", () => {
@@ -211,6 +213,7 @@ export function useLiveHostNetwork(state, updateState) {
   }, [networkEnabled, state.live?.sessionCode]);
 
   useEffect(() => {
+    peerRef.current?.setAllowedTokens?.((state.teams || []).map(team => team.token));
     const previous = previousStateRef.current;
     previousStateRef.current = state;
 
