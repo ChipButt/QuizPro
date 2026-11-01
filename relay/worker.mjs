@@ -37,6 +37,8 @@ export class QuizSession {
     } else {
       this.teams.get(token)?.close(1000, "Team reconnected");
       this.teams.set(token,server);
+      if (this.allowed.has(token) && this.host?.readyState === WebSocket.OPEN)
+        this.host.send(JSON.stringify({ type: "team-joined", token }));
     }
     server.addEventListener("message", async event => {
       let msg; try { msg = JSON.parse(event.data); } catch { return; }
