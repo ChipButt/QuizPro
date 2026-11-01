@@ -651,3 +651,33 @@
     transition:none !important;
   }
 }
+
+/* iOS Safari keyboard stability: don't animate the input or viewport on focus.
+   The keyboard is user-initiated; native scrolling maintains the caret visibility. */
+.team-name-screen .team-name-form-v2 .team-name-input-shell input{
+  font-size:16px !important;
+  -webkit-text-size-adjust:100%;
+  scroll-margin-block:24px;
+  transition:none !important;
+  animation:none !important;
+}
+@supports (-webkit-touch-callout:none){
+  .team-page.live-team-page.team-name-screen{
+    min-height:100svh;
+    overscroll-behavior-y:contain;
+  }
+  .team-name-screen.live-phone-shell{
+    min-height:100svh;
+    height:auto !important;
+    overflow:visible !important;
+  }
+  .team-name-stage{
+    min-height:100svh;
+    height:auto;
+  }
+  .team-name-screen .team-name-input-shell,
+  .team-name-screen .team-name-form-v2 .team-name-input-shell input{
+    -webkit-transform:none !important;
+    transform:none !important;
+  }
+}
