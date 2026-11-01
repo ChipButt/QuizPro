@@ -330,7 +330,8 @@ function TeamNameScreen({ snapshot, send, status }) {
           <div className="team-name-input-shell">
             <input
               id="team-name"
-              autoFocus
+              autoComplete="off"
+              enterKeyHint="done"
               maxLength={60}
               value={name}
               onChange={(event) => setName(event.target.value)}
