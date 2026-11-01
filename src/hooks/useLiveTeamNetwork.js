@@ -1,3 +1,4 @@
+import { RELAY_READY, RELAY_URL, RelayPeer } from "../utils/relayPeer.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { WAITING_FACT_POOL } from "../data/waitingFacts.js";
 
@@ -272,7 +273,7 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
       setStatus("connecting");
       setError("");
       try {
-        const Peer = await loadPeerJs();
+        const Peer = RELAY_READY && RELAY_URL ? RelayPeer : await loadPeerJs();
         if (cancelled) return;
         closeTransport();
         const peer = new Peer();
