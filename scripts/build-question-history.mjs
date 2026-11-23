@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 const source = JSON.parse(await readFile(new URL("../data/quiz-library.json", import.meta.url), "utf8"));
-const normalize = (value) => String(value ?? "").normalize("NFKD").toLowerCase().replace(/[’']/g, "").replace(/[^a-z0-9]+/g, " ").trim().replace(/\\s+/g, " ");
+const normalize = (value) => String(value ?? "").normalize("NFKD").toLowerCase().replace(/[’']/g, "").replace(/[^a-z0-9]+/g, " ").trim().replace(/\s+/g, " ");
 const byQuestion = new Map();
 function add(question, quiz, round) {
   const text = String(question?.text ?? "").trim();
@@ -31,5 +31,5 @@ const history = {
   questions
 };
 const output = new URL("../data/question-history.json", import.meta.url);
-await writeFile(output, JSON.stringify(history, null, 2) + "\\n");
+await writeFile(output, JSON.stringify(history, null, 2) + "\n");
 console.log("Question history:", questions.length, "distinct entries");
