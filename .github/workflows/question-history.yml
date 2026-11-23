@@ -5,6 +5,8 @@ on:
     paths:
       - 'data/quiz-library.json'
       - 'scripts/build-question-history.mjs'
+      - 'scripts/check-questions.mjs'
+      - 'scripts/check-questions.test.mjs'
   workflow_dispatch:
 permissions:
   contents: write
@@ -21,6 +23,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Test the read-only duplicate checker
+        run: node --test scripts/check-questions.test.mjs
       - name: Generate searchable history without changing the quiz library
         run: node scripts/build-question-history.mjs
       - name: Commit history only if updated
