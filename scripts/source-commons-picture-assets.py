@@ -78,12 +78,23 @@ def image_info(title):
     if not info or not info.get('url'): raise ValueError('Wikimedia image source unavailable')
     return info,api
 
-def webp(data):
+def webp(data, focus_rect=None):
     with Image.open(io.BytesIO(data)) as source:
         source.load()
         if source.width < 250 or source.height < 250:
             raise ValueError('Source is too low-resolution')
         img=ImageOps.exif_transpose(source).convert('RGB')
+        if focus_rect is not None:
+            if (not isinstance(focus_rect, list) or len(focus_rect) != 4
+                or not all(isinstance(n, (int,float)) for n in focus_rect)):
+                raise ValueError('focusRect must contain four fractional numeric crop coordinates')
+            x1,y1,x2,y2=focus_rect
+            if not (0 <= x1 < x2 <= 1 and 0 <= y1 < y2 <= 1):
+                raise ValueError('Invalid focusRect, outside image boundaries')
+            bounds=tuple(round(n*d) for n,d in zip(focus_rect,(img.width,img.height,img.width,img.height)))
+            if bounds[2]-bounds[0] < 250 or bounds[3]-bounds[1] < 250:
+                raise ValueError('Subject crop too small for QuizPro')
+            img=img.crop(bounds)
         img.thumbnail((720,720),Image.Resampling.LANCZOS)
         frame=Image.new('RGB',(720,720),(24,27,32))
         frame.paste(img,((720-img.width)//2,(720-img.height)//2))
@@ -115,14 +126,16 @@ def acquire(item,out):
     if urlparse(url).hostname not in ('upload.wikimedia.org','thumb.wikimedia.org'):
         raise ValueError('Commons image URL host invalid')
     raw=get_bytes(url)
-    picture=webp(raw)
+    focus_rect=item.get('focusRect')
+    picture=webp(raw, focus_rect)
     target=out/(key[1:].lower()+'.webp')
     target.write_bytes(picture)
     evidence={'id':key,'fileName':target.name,'sourcePage':source_page,'commonsFileTitle':title,
               'imageUrl':url,'sourceMetadataApi':api,'license':license_info,
               'sourceSha256':hashlib.sha256(raw).hexdigest(),
               'imageSha256':hashlib.sha256(picture).hexdigest(),
-              'bytes':len(picture),'width':720,'height':720,'cropApplied':False,
+              'bytes':len(picture),'width':720,'height':720,'cropApplied':bool(focus_rect),
+              'cropRect':focus_rect,'modificationNotice':'Photo resized and cropped to isolate subject' if focus_rect else 'Photo resized for QuizPro',
               'editorialStatus':'PENDING USER REVIEW','published':False,
               'attributionDisplayNeeded':license_info['attributionRequired']}
     (out/(key[1:].lower()+'.source.json')).write_text(json.dumps(evidence,indent=2)+'\n')
