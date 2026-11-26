@@ -1,0 +1,166 @@
+{
+  "filesSaved": 5,
+  "sources": [
+    {
+      "id": "Q02-question",
+      "fileName": "02-question.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Sophia_Loren_Com_X-L060-007.jpg",
+      "commonsFileTitle": "File:Sophia Loren Com X-L060-007.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Sophia_Loren_Com_X-L060-007.jpg/1280px-Sophia_Loren_Com_X-L060-007.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ASophia+Loren+Com+X-L060-007.jpg",
+      "license": {
+        "name": "CC BY-SA 4.0",
+        "url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "author": "Comet Photo AG (Z\u00fcrich)",
+        "credit": "This image is from the collection of the  ETH-Bibliothek  and has been published on Wikimedia Commons as part of a cooperation with  Wikimedia CH . Corrections and additional information are welcome.",
+        "attributionRequired": true,
+        "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+      },
+      "sourceSha256": "0e9f03aee1abd2ad790c2a84defd52cfec6bb52746392710423f4c0d5d943f30",
+      "imageSha256": "9fcf476f8baee7717250eb9597746169951fa9a6c2dee8b87f6357316c763ea5",
+      "bytes": 81816,
+      "width": 720,
+      "height": 720,
+      "cropApplied": true,
+      "cropRect": [
+        0.22,
+        0.08,
+        0.8,
+        0.76
+      ],
+      "modificationNotice": "Photo resized and cropped to isolate subject",
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    },
+    {
+      "id": "Q05-question",
+      "fileName": "05-question.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Jane_Fonda_1975c.jpg",
+      "commonsFileTitle": "File:Jane Fonda 1975c.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/Jane_Fonda_1975c.jpg/1280px-Jane_Fonda_1975c.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AJane+Fonda+1975c.jpg",
+      "license": {
+        "name": "CC BY-SA 3.0 nl",
+        "url": "https://creativecommons.org/licenses/by-sa/3.0/nl/deed.en",
+        "author": "Mieremet, Rob / Anefo",
+        "credit": "[1]   Dutch National Archives, The Hague, Fotocollectie Algemeen Nederlands Persbureau (ANeFo), 1945-1989 , Nummer toegang 2.24.01.05 Bestanddeelnummer 927-6992",
+        "attributionRequired": true,
+        "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+      },
+      "sourceSha256": "d121f884a95acab1c231f739e972f07bd7190d76cdc5fceb35dacb5eb085bf59",
+      "imageSha256": "7fa5ea62dddb7e9e31a6fb1e5f0942e30283e7dc8f5080f3ab65063faf19ae6d",
+      "bytes": 61228,
+      "width": 720,
+      "height": 720,
+      "cropApplied": true,
+      "cropRect": [
+        0.08,
+        0.03,
+        0.78,
+        0.69
+      ],
+      "modificationNotice": "Photo resized and cropped to isolate subject",
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    },
+    {
+      "id": "Q05-answer",
+      "fileName": "05-answer.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Jane_Fonda_at_the_2026_Cannes_Film_Festival_01.jpg",
+      "commonsFileTitle": "File:Jane Fonda at the 2026 Cannes Film Festival 01.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/Jane_Fonda_at_the_2026_Cannes_Film_Festival_01.jpg/1280px-Jane_Fonda_at_the_2026_Cannes_Film_Festival_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AJane+Fonda+at+the+2026+Cannes+Film+Festival+01.jpg",
+      "license": {
+        "name": "CC BY-SA 4.0",
+        "url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "author": "Gabriel Hutchinson",
+        "credit": "Own work",
+        "attributionRequired": true,
+        "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+      },
+      "sourceSha256": "076214ede88ef8bbf45a49bf3307d530d22f2e7f315b7c62e13d868c921364f1",
+      "imageSha256": "d331c18bf5d544f51dc56aac04c8943907a245a44deb6cb04c751a05eef38de7",
+      "bytes": 98270,
+      "width": 720,
+      "height": 720,
+      "cropApplied": true,
+      "cropRect": [
+        0.25,
+        0.03,
+        0.7,
+        0.75
+      ],
+      "modificationNotice": "Photo resized and cropped to isolate subject",
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    },
+    {
+      "id": "Q06-question",
+      "fileName": "06-question.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Supremes1965NL.jpg",
+      "commonsFileTitle": "File:Supremes1965NL.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/Supremes1965NL.jpg/1280px-Supremes1965NL.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ASupremes1965NL.jpg",
+      "license": {
+        "name": "CC0",
+        "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "author": "Eric Koch  for  Anefo",
+        "credit": "GaHetNa (Nationaal Archief NL)  918-2599",
+        "attributionRequired": false,
+        "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+      },
+      "sourceSha256": "ff54c90415e69d21e0e23de9f7e51ab4723796c528b43d278a61f250685560b9",
+      "imageSha256": "3dd072a989b3264ac7b9aef9b88b4b028596b88419b398374aac66e6cb965db5",
+      "bytes": 37352,
+      "width": 720,
+      "height": 720,
+      "cropApplied": true,
+      "cropRect": [
+        0.59,
+        0.09,
+        0.88,
+        0.48
+      ],
+      "modificationNotice": "Photo resized and cropped to isolate subject",
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": false
+    },
+    {
+      "id": "Q08-question",
+      "fileName": "08-question.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Sonny-and-Cher.jpg",
+      "commonsFileTitle": "File:Sonny-and-Cher.jpg",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Sonny-and-Cher.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ASonny-and-Cher.jpg",
+      "license": {
+        "name": "CC BY-SA 2.0",
+        "url": "https://creativecommons.org/licenses/by-sa/2.0",
+        "author": "Peter Denton",
+        "credit": "https://www.flickr.com/photos/peterdenton/2081130340/",
+        "attributionRequired": true,
+        "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+      },
+      "sourceSha256": "3cd3ed87cb4eb1ee7b45c89b491e2a90ff64ce1bb8fc4f18a0acf96f8589d1ee",
+      "imageSha256": "e7a538b753fe381827b2bcbb112fb12241e23a5782bd02755fe125e2ae51a102",
+      "bytes": 7034,
+      "width": 720,
+      "height": 720,
+      "cropApplied": true,
+      "cropRect": [
+        0.16,
+        0,
+        0.59,
+        0.7
+      ],
+      "modificationNotice": "Photo resized and cropped to isolate subject",
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    }
+  ],
+  "failures": []
+}
