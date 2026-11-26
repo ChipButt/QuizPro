@@ -85,5 +85,6 @@
       "photoTakenYear": 2021,
       "note": "Only answer image is a candidate; preserve locked 1964 solo Cliff Richard question image."
     }
-  ]
+  ],
+  "acquisitionAttempt": "v3-retry-after-source-licence-script-syntax-repair"
 }
