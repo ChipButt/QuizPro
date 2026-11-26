@@ -93,7 +93,7 @@ def acquire(item,out):
         raise ValueError('Commons image URL host invalid')
     raw=get_bytes(url)
     picture=webp(raw)
-    target=out/(key.lower()+'.webp')
+    target=out/(key[1:].lower()+'.webp')
     if target.exists(): raise FileExistsError('Refusing to replace a previously sourced image: '+str(target))
     target.write_bytes(picture)
     evidence={'id':key,'fileName':target.name,'sourcePage':source_page,'commonsFileTitle':title,
@@ -103,7 +103,7 @@ def acquire(item,out):
               'bytes':len(picture),'width':720,'height':720,'cropApplied':False,
               'editorialStatus':'PENDING USER REVIEW','published':False,
               'attributionDisplayNeeded':license_info['attributionRequired']}
-    (out/(key.lower()+'.source.json')).write_text(json.dumps(evidence,indent=2)+'\n')
+    (out/(key[1:].lower()+'.source.json')).write_text(json.dumps(evidence,indent=2)+'\n')
     return evidence
 
 def main():
