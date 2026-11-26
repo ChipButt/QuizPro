@@ -83,7 +83,7 @@ function makeEntry(manifest, assetsDir) {
           const licenseUrl = String(proof.license?.url || '').trim();
           const author = String(proof.license?.author || '').trim();
           const isCc0 = /^CC0(?:[ -]1\.0)?$/i.test(license);
-          const isAttribution = /^CC BY(?:-SA)?[ -]\d+(?:\.\d+)?$/i.test(license);
+          const isAttribution = /^CC BY(?:-SA)?[ -]\d+(?:\.\d+)?(?: nl)?$/i.test(license);
           const globallyLicensed = isCc0
             ? /^https?:\/\/creativecommons\.org\/publicdomain\/zero\/1\.0(?:\/|$)/i.test(licenseUrl)
             : /^https?:\/\/creativecommons\.org\/licenses\/by(?:-sa)?\/\d+(?:\.\d+)?(?:\/|$)/i.test(licenseUrl);
