@@ -1,0 +1,118 @@
+{
+  "schema": "quizpro-source-first-dated-candidates-v1",
+  "statement": "NEW PHOTO SELECTION — replaces earlier photo-ineligible or too-short gap people only after actual saved file review. Q4 Tom Jones and Q10 Helen Mirren locked historical photos unchanged. All persons on this manifest pending user approval.",
+  "items": [
+    {
+      "id": "Q01-question",
+      "subject": "Paul McCartney",
+      "subjectBirthDate": "1942-06-18",
+      "photoTakenYear": 1964,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Paul_McCartney_Headshot_(cropped).jpg"
+    },
+    {
+      "id": "Q01-answer",
+      "subject": "Paul McCartney",
+      "subjectBirthDate": "1942-06-18",
+      "photoTakenYear": 2022,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Paul_McCartney_2022.jpg"
+    },
+    {
+      "id": "Q02-question",
+      "subject": "Mick Jagger",
+      "subjectBirthDate": "1943-07-26",
+      "photoTakenYear": 1965,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Mick-Jagger-1965-Turku.jpg"
+    },
+    {
+      "id": "Q02-answer",
+      "subject": "Mick Jagger",
+      "subjectBirthDate": "1943-07-26",
+      "photoTakenYear": 2022,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:RStonesHydePark030722_(49_of_125)_(52193656268)_(cropped).jpg"
+    },
+    {
+      "id": "Q03-question",
+      "subject": "Keith Richards",
+      "subjectBirthDate": "1943-12-18",
+      "photoTakenYear": 1965,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Keith_Richards_1965_(cropped).jpg"
+    },
+    {
+      "id": "Q03-answer",
+      "subject": "Keith Richards",
+      "subjectBirthDate": "1943-12-18",
+      "photoTakenYear": 2018,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Keith_Richards_2018.jpg"
+    },
+    {
+      "id": "Q05-question",
+      "subject": "Rod Stewart",
+      "subjectBirthDate": "1945-01-10",
+      "photoTakenYear": 1971,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Popsinger_Rod_Stewart_krijgt_gouden_LPs%2C_Edison_en_Oscar_in_Hilton_Amsterdam%2C_Ro%2C_Bestanddeelnr_925-1082.jpg"
+    },
+    {
+      "id": "Q05-answer",
+      "subject": "Rod Stewart",
+      "subjectBirthDate": "1945-01-10",
+      "photoTakenYear": 2023,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:JeffBeckTribute2RAH230523_(53_of_81)_(52922038276).jpg"
+    },
+    {
+      "id": "Q06-question",
+      "subject": "Joan Baez",
+      "subjectBirthDate": "1941-01-09",
+      "photoTakenYear": 1966,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Joan_Baez_1966.jpg"
+    },
+    {
+      "id": "Q06-answer",
+      "subject": "Joan Baez",
+      "subjectBirthDate": "1941-01-09",
+      "photoTakenYear": 2015,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Festival_des_Vieilles_Charrues_2015_-_Joan_Baez_-_025.jpg"
+    },
+    {
+      "id": "Q07-question",
+      "subject": "Cliff Richard",
+      "subjectBirthDate": "1940-10-14",
+      "photoTakenYear": 1964,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_%2C_aankomst_op_Schiphol_op_het_platform_en_trap%2C_Bestanddeelnr_916-3957.jpg"
+    },
+    {
+      "id": "Q07-answer",
+      "subject": "Cliff Richard",
+      "subjectBirthDate": "1940-10-14",
+      "photoTakenYear": 2017,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_-_Old_Royal_Naval_Yard_Greenwich_-_Saturday_1st_July_2017_CliffGreenwich010717-41_(35672274140).jpg"
+    },
+    {
+      "id": "Q08-question",
+      "subject": "Nana Mouskouri",
+      "subjectBirthDate": "1934-10-13",
+      "photoTakenYear": 1963,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Opdracht_Telegraaf_Nana_Mouskouri_%2C_Griekse_zangeres%2C_Bestanddeelnr_915-4940.jpg"
+    },
+    {
+      "id": "Q08-answer",
+      "subject": "Nana Mouskouri",
+      "subjectBirthDate": "1934-10-13",
+      "photoTakenYear": 2012,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Nana_Mouskouri_2012_04_(cropped).jpg"
+    },
+    {
+      "id": "Q09-question",
+      "subject": "Mick Fleetwood",
+      "subjectBirthDate": "1947-06-24",
+      "photoTakenYear": 1970,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Fleetwood_mac_mick_fleetwood_2.jpg"
+    },
+    {
+      "id": "Q09-answer",
+      "subject": "Mick Fleetwood",
+      "subjectBirthDate": "1947-06-24",
+      "photoTakenYear": 2020,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:MickFltwoodPall250220-78.jpg"
+    }
+  ]
+}
