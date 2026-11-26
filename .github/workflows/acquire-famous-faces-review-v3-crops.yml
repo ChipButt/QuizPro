@@ -1,0 +1,40 @@
+name: Build solo-face replacements from licensed review 3 originals
+on:
+  push:
+    branches: [picture-rounds-14-formats-20261126]
+    paths:
+      - .github/workflows/acquire-famous-faces-review-v3-crops.yml
+      - drafts/picture-rounds/famous-faces-then-now-0001/review-v3-face-crop-candidates.json
+  workflow_dispatch:
+permissions: {contents: write}
+jobs:
+  prepare-crops:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install pillow
+      - name: Crop approved-source originals to solo identifiable faces
+        run: |
+          python scripts/source-commons-picture-assets.py \
+          drafts/picture-rounds/famous-faces-then-now-0001/review-v3-face-crop-candidates.json \
+          --out drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-face-crops
+      - uses: actions/upload-artifact@v4
+        with:
+          name: famous-faces-review-3-license-verified-crops
+          path: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-face-crops/
+      - name: Save cropped actual WebPs and new SHA-256 evidence to draft branch
+        run: |
+          git config user.name "QuizPro photo licensing"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-face-crops/
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive verified solo-face crops for Famous Faces review 3"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin picture-rounds-14-formats-20261126
+              git rebase origin/picture-rounds-14-formats-20261126
+              if git push; then break; fi
+              if [ "$attempt" = "5" ]; then exit 1; fi
+              sleep 3
+            done
+          fi
