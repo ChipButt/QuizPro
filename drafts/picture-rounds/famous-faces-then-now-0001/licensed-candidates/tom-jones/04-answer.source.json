@@ -1,0 +1,25 @@
+{
+  "id": "Q04-answer",
+  "fileName": "04-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Sir_Tom_Jones_at_The_Queen%27s_Birthday_Party_(cropped).jpg",
+  "commonsFileTitle": "File:Sir Tom Jones at The Queen's Birthday Party (cropped).jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ee/Sir_Tom_Jones_at_The_Queen%27s_Birthday_Party_%28cropped%29.jpg/1280px-Sir_Tom_Jones_at_The_Queen%27s_Birthday_Party_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ASir+Tom+Jones+at+The+Queen%27s+Birthday+Party+%28cropped%29.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Raph_PH",
+    "credit": "This image has been  extracted  from another file",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "4f9386736fcdb6d4dcc620ae7706d44487b75d9d899d33f02ffd69fc1ddc48be",
+  "imageSha256": "911d713fa3b758d55d28ecfa2def8a8842f9a3f44f9f4ce5bc007cefdf3784f5",
+  "bytes": 40714,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

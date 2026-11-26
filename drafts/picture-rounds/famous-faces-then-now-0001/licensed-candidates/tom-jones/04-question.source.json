@@ -1,0 +1,25 @@
+{
+  "id": "Q04-question",
+  "fileName": "04-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Tom_Jones_voor_TV-optreden_in_Nederland._Hier_tijdens_persconferentie,_Bestanddeelnr_920-9037.jpg",
+  "commonsFileTitle": "File:Tom Jones voor TV-optreden in Nederland. Hier tijdens persconferentie, Bestanddeelnr 920-9037.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Tom_Jones_voor_TV-optreden_in_Nederland._Hier_tijdens_persconferentie%2C_Bestanddeelnr_920-9037.jpg/1280px-Tom_Jones_voor_TV-optreden_in_Nederland._Hier_tijdens_persconferentie%2C_Bestanddeelnr_920-9037.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ATom+Jones+voor+TV-optreden+in+Nederland.+Hier+tijdens+persconferentie%2C+Bestanddeelnr+920-9037.jpg",
+  "license": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "author": "Ron Kroon  for  Anefo",
+    "credit": "http://proxy.handle.net/10648/ab2efb9a-d0b4-102d-bcf8-003048976d84",
+    "attributionRequired": false,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "9c796c7223d70005371708f3127b47271e06d95903771b4d7bc348e66edba1eb",
+  "imageSha256": "9adeadcbdc185150e96a551c53957a0b756a21e08d73d94c195a38c061e77016",
+  "bytes": 72336,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": false
+}
