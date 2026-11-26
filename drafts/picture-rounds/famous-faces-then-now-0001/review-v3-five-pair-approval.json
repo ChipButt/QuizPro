@@ -1,0 +1,192 @@
+{
+  "schema": "quizpro-famous-faces-review-v3-five-real-picture-pairs",
+  "round": "Famous Faces – Then & Now 0001",
+  "reviewStatus": "5 QUESTIONS PENDING (2,5,6,7,8); 5 FULL PAIRS LOCKED (1,3,4,9,10)",
+  "lockedDecisionsFile": "drafts/picture-rounds/famous-faces-then-now-0001/decisions-review-v3.json",
+  "publicationStatus": "NOT LIVE",
+  "userApprovalRequired": true,
+  "licenceAttributionsRequiredOnPublish": true,
+  "items": [
+    {
+      "number": 2,
+      "person": "Sophia Loren",
+      "subjectBirthDate": "1934-09-20",
+      "approval": "PENDING",
+      "chronology": {
+        "earlier": "1955–1960",
+        "later": "2016",
+        "earlierLatestYear": 1960,
+        "laterEarliestYear": 2016,
+        "guaranteedGapYears": 55,
+        "requiredGapYears": 40
+      },
+      "imagePair": {
+        "question": {
+          "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-face-crops/02-question.webp",
+          "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-face-crops/02-question.source.json",
+          "sha256": "9fcf476f8baee7717250eb9597746169951fa9a6c2dee8b87f6357316c763ea5",
+          "source": "https://commons.wikimedia.org/wiki/File:Sophia_Loren_Com_X-L060-007.jpg",
+          "author": "Comet Photo AG (Zürich)",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+          "modification": "Photo resized and cropped to isolate subject"
+        },
+        "answer": {
+          "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-originals/02-answer.webp",
+          "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-originals/02-answer.source.json",
+          "sha256": "a035a7358cf560a2271de4f5807eb6e5684b3a4856e28a2b06914af4ebd43db7",
+          "source": "https://commons.wikimedia.org/wiki/File:Sophia_Loren_2016.jpg",
+          "author": "Nuță Lucian  from Cluj-Napoca, Romania",
+          "license": "CC BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+          "modification": "Photo resized for QuizPro"
+        }
+      }
+    },
+    {
+      "number": 5,
+      "person": "Jane Fonda",
+      "subjectBirthDate": "1937-12-21",
+      "approval": "PENDING",
+      "chronology": {
+        "earlier": "1975",
+        "later": "2026",
+        "earlierLatestYear": 1975,
+        "laterEarliestYear": 2026,
+        "guaranteedGapYears": 50,
+        "requiredGapYears": 40
+      },
+      "imagePair": {
+        "question": {
+          "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-face-crops/05-question.webp",
+          "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-face-crops/05-question.source.json",
+          "sha256": "7fa5ea62dddb7e9e31a6fb1e5f0942e30283e7dc8f5080f3ab65063faf19ae6d",
+          "source": "https://commons.wikimedia.org/wiki/File:Jane_Fonda_1975c.jpg",
+          "author": "Mieremet, Rob / Anefo",
+          "license": "CC BY-SA 3.0 nl",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/nl/deed.en",
+          "modification": "Photo resized and cropped to isolate subject"
+        },
+        "answer": {
+          "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-face-crops/05-answer.webp",
+          "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-face-crops/05-answer.source.json",
+          "sha256": "d331c18bf5d544f51dc56aac04c8943907a245a44deb6cb04c751a05eef38de7",
+          "source": "https://commons.wikimedia.org/wiki/File:Jane_Fonda_at_the_2026_Cannes_Film_Festival_01.jpg",
+          "author": "Gabriel Hutchinson",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+          "modification": "Photo resized and cropped to isolate subject"
+        }
+      }
+    },
+    {
+      "number": 6,
+      "person": "Diana Ross",
+      "subjectBirthDate": "1944-03-26",
+      "approval": "PENDING",
+      "chronology": {
+        "earlier": "1965",
+        "later": "2022",
+        "earlierLatestYear": 1965,
+        "laterEarliestYear": 2022,
+        "guaranteedGapYears": 56,
+        "requiredGapYears": 40
+      },
+      "imagePair": {
+        "question": {
+          "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-final-fixes/06-question.webp",
+          "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-final-fixes/06-question.source.json",
+          "sha256": "ce1c1da1119a490284de9c672775bc98cc311a826bb64d2408e8945de389e8b9",
+          "source": "https://commons.wikimedia.org/wiki/File:Supremes1965NL.jpg",
+          "author": "Eric Koch  for  Anefo",
+          "license": "CC0",
+          "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+          "modification": "Cropped to isolate celebrity, resampled to fit quiz card; no changes to the person or original scene"
+        },
+        "answer": {
+          "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-final-fixes/06-answer.webp",
+          "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-final-fixes/06-answer.source.json",
+          "sha256": "ceecce970d28dafd67ffe9cd2d2826b9f49ec3a70d71167a46c4977717835f42",
+          "source": "https://commons.wikimedia.org/wiki/File:Diana_Ross_(2022).jpg",
+          "author": "Raph_PH",
+          "license": "CC BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+          "modification": "Cropped to isolate celebrity, resampled to fit quiz card; no changes to the person or original scene"
+        }
+      }
+    },
+    {
+      "number": 7,
+      "person": "Cliff Richard",
+      "subjectBirthDate": "1940-10-14",
+      "approval": "PENDING",
+      "chronology": {
+        "earlier": "1964",
+        "later": "2021",
+        "earlierLatestYear": 1964,
+        "laterEarliestYear": 2021,
+        "guaranteedGapYears": 56,
+        "requiredGapYears": 40
+      },
+      "imagePair": {
+        "question": {
+          "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/cliff-solo/07-question.webp",
+          "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/cliff-solo/07-question.source.json",
+          "sha256": "b9803de8f8ffc1c965c5cc7b19248030c4e779e5b26fdbd77693688997902f8d",
+          "source": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_%2C_aankomst_op_Schiphol_met_Willeke_Alberti_tijdens_persconferentie%2C_Bestanddeelnr_916-3949.jpg",
+          "author": "Jack de Nijs  for  Anefo   / Anefo",
+          "license": "CC0",
+          "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+          "modification": "Photo resized and cropped to isolate subject"
+        },
+        "answer": {
+          "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-originals/07-answer.webp",
+          "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-originals/07-answer.source.json",
+          "sha256": "7f62ba7d47d7771029a34fa6cf8deefb44a84b310b32c6813e4317809d7a7bd2",
+          "source": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_2021.jpg",
+          "author": "Raph_PH",
+          "license": "CC BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+          "modification": "Photo resized for QuizPro"
+        }
+      }
+    },
+    {
+      "number": 8,
+      "person": "Cher",
+      "subjectBirthDate": "1946-05-20",
+      "approval": "PENDING",
+      "chronology": {
+        "earlier": "1966",
+        "later": "2019",
+        "earlierLatestYear": 1966,
+        "laterEarliestYear": 2019,
+        "guaranteedGapYears": 52,
+        "requiredGapYears": 40
+      },
+      "imagePair": {
+        "question": {
+          "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-final-fixes/08-question.webp",
+          "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-final-fixes/08-question.source.json",
+          "sha256": "577294f3d1664c7e21a85c11de8c38aacc3a8322eaafc16662f38326b1c850ac",
+          "source": "https://commons.wikimedia.org/wiki/File:Sonny-and-Cher.jpg",
+          "author": "Peter Denton",
+          "license": "CC BY-SA 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+          "modification": "Cropped to isolate celebrity, resampled to fit quiz card; no changes to the person or original scene"
+        },
+        "answer": {
+          "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-originals/08-answer.webp",
+          "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-originals/08-answer.source.json",
+          "sha256": "04243b34315b49630dd2777471a63a698a7ac0859ee261f5295e769443dffdd5",
+          "source": "https://commons.wikimedia.org/wiki/File:Cher_in_2019_cropped.jpg",
+          "author": "Raph_PH",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+          "modification": "Photo resized for QuizPro"
+        }
+      }
+    }
+  ],
+  "retiredHistoricalImages": "PRESERVED; no overwrites"
+}
