@@ -16,7 +16,7 @@ assert.match(ok.warnings.join(' '),/UNDER 25/); // Tom was 26–27 in 1967; acce
 
 const notEnough=validatePhotoTimeline(record({thenYear:2009,nowYear:2023}));
 assert.match(notEnough.errors.join(' '),/40 years apart/);
-const daniel=validatePhotoTimeline(record({number:7,name:'Daniel Radcliffe',born:'1989-07-23',thenYear:1989,nowYear:2026}));
+const daniel=validatePhotoTimeline(record({number:7,name:'Daniel Radcliffe',born:'1989-07-23',thenDate:'1995-08-01',nowDate:'2026-08-01'}));
 assert.deepEqual(daniel.errors,[]); // Infant photo + 2026 can qualify for the under-15 exception.
 assert.equal(daniel.requiredGapYears,30);
 // Exactly age 14: 30-year gap is permitted.
