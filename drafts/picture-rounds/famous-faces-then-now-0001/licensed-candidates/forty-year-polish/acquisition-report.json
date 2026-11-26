@@ -1,0 +1,119 @@
+{
+  "filesSaved": 4,
+  "sources": [
+    {
+      "id": "Q05-answer",
+      "fileName": "05-answer.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:JeffBeckTribute2RAH230523_(53_of_81)_(52922038276).jpg",
+      "commonsFileTitle": "File:JeffBeckTribute2RAH230523 (53 of 81) (52922038276).jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7f/JeffBeckTribute2RAH230523_%2853_of_81%29_%2852922038276%29.jpg/1280px-JeffBeckTribute2RAH230523_%2853_of_81%29_%2852922038276%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AJeffBeckTribute2RAH230523+%2853+of+81%29+%2852922038276%29.jpg",
+      "license": {
+        "name": "CC BY 2.0",
+        "url": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Raph_PH",
+        "credit": "JeffBeckTribute2RAH230523 (53 of 81)",
+        "attributionRequired": true,
+        "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+      },
+      "sourceSha256": "b0f2a73865786923cb77b7d9cedba8fb3575b30a9be298edf33f968b15d5fc49",
+      "imageSha256": "4d8d46423ad83b792ea67b10a1eb6ab4b21adce392176c1f4d609494a9897eac",
+      "bytes": 47896,
+      "width": 720,
+      "height": 720,
+      "cropApplied": true,
+      "cropRect": [
+        0.24,
+        0.08,
+        0.75,
+        0.93
+      ],
+      "modificationNotice": "Photo resized and cropped to isolate subject",
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    },
+    {
+      "id": "Q07-question",
+      "fileName": "07-question.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_%2C_aankomst_op_Schiphol_met_Willeke_Alberti_tijdens_persconferentie%2C_Bestanddeelnr_916-3949.jpg",
+      "commonsFileTitle": "File:Cliff Richard , aankomst op Schiphol met Willeke Alberti tijdens persconferentie, Bestanddeelnr 916-3949.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Cliff_Richard_%2C_aankomst_op_Schiphol_met_Willeke_Alberti_tijdens_persconferentie%2C_Bestanddeelnr_916-3949.jpg/1280px-Cliff_Richard_%2C_aankomst_op_Schiphol_met_Willeke_Alberti_tijdens_persconferentie%2C_Bestanddeelnr_916-3949.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ACliff+Richard+%2C+aankomst+op+Schiphol+met+Willeke+Alberti+tijdens+persconferentie%2C+Bestanddeelnr+916-3949.jpg",
+      "license": {
+        "name": "CC0",
+        "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "author": "Jack de Nijs  for  Anefo   / Anefo",
+        "credit": "http://proxy.handle.net/10648/aa67bb34-d0b4-102d-bcf8-003048976d84",
+        "attributionRequired": false,
+        "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+      },
+      "sourceSha256": "0c540d7f9eecac565e6ea311a151031a54a3c76673f86bd8143ec5d30f499d86",
+      "imageSha256": "dbf22110a7284623d3e9be2802fe155473611fdad26517ace6b1a31e1cc9f155",
+      "bytes": 104098,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "cropRect": null,
+      "modificationNotice": "Photo resized for QuizPro",
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": false
+    },
+    {
+      "id": "Q09-question",
+      "fileName": "09-question.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Popzanger_Elton_John_in_Nederland_Elton_John_%2C_kop%2C_Bestanddeelnr_924-2767.jpg",
+      "commonsFileTitle": "File:Popzanger Elton John in Nederland Elton John , kop, Bestanddeelnr 924-2767.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Popzanger_Elton_John_in_Nederland_Elton_John_%2C_kop%2C_Bestanddeelnr_924-2767.jpg/1280px-Popzanger_Elton_John_in_Nederland_Elton_John_%2C_kop%2C_Bestanddeelnr_924-2767.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3APopzanger+Elton+John+in+Nederland+Elton+John+%2C+kop%2C+Bestanddeelnr+924-2767.jpg",
+      "license": {
+        "name": "CC0",
+        "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "author": "Bert Verhoeff  for  Anefo",
+        "credit": "http://proxy.handle.net/10648/abb41032-d0b4-102d-bcf8-003048976d84",
+        "attributionRequired": false,
+        "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+      },
+      "sourceSha256": "6cbc1e5da73487c32c32f92ea3a80c9922fc30033cd9fa6a053807d80c6308a4",
+      "imageSha256": "3786f124941253296b608e58bf0f020ec260924928eaf1d30c1b02637cff68f0",
+      "bytes": 55140,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "cropRect": null,
+      "modificationNotice": "Photo resized for QuizPro",
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": false
+    },
+    {
+      "id": "Q09-answer",
+      "fileName": "09-answer.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Elton_John_2023.jpg",
+      "commonsFileTitle": "File:Elton John 2023.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Elton_John_2023.jpg/1280px-Elton_John_2023.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AElton+John+2023.jpg",
+      "license": {
+        "name": "CC BY 2.0",
+        "url": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Raph_PH",
+        "credit": "Glasto2023 (419 of 468)",
+        "attributionRequired": true,
+        "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+      },
+      "sourceSha256": "ace2e8d6573e51a589c4d99ee572139a4be678eb38c86b215bedbd7d627b6a7f",
+      "imageSha256": "f5b9bffe03d60574fa4012916ae5a8b6fa4a7ba8d04f53fb6e5bf4a895dbc5f1",
+      "bytes": 81272,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "cropRect": null,
+      "modificationNotice": "Photo resized for QuizPro",
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    }
+  ],
+  "failures": []
+}

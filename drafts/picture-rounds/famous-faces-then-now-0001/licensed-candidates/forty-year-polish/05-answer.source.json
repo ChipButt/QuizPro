@@ -1,0 +1,32 @@
+{
+  "id": "Q05-answer",
+  "fileName": "05-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:JeffBeckTribute2RAH230523_(53_of_81)_(52922038276).jpg",
+  "commonsFileTitle": "File:JeffBeckTribute2RAH230523 (53 of 81) (52922038276).jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7f/JeffBeckTribute2RAH230523_%2853_of_81%29_%2852922038276%29.jpg/1280px-JeffBeckTribute2RAH230523_%2853_of_81%29_%2852922038276%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AJeffBeckTribute2RAH230523+%2853+of+81%29+%2852922038276%29.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Raph_PH",
+    "credit": "JeffBeckTribute2RAH230523 (53 of 81)",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "b0f2a73865786923cb77b7d9cedba8fb3575b30a9be298edf33f968b15d5fc49",
+  "imageSha256": "4d8d46423ad83b792ea67b10a1eb6ab4b21adce392176c1f4d609494a9897eac",
+  "bytes": 47896,
+  "width": 720,
+  "height": 720,
+  "cropApplied": true,
+  "cropRect": [
+    0.24,
+    0.08,
+    0.75,
+    0.93
+  ],
+  "modificationNotice": "Photo resized and cropped to isolate subject",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}
