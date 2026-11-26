@@ -1,0 +1,57 @@
+{
+  "purpose": "New persisted, license-screened Commons alternative photos. They do not replace already approved image choices until explicitly re-approved.",
+  "items": [
+    {
+      "id": "Q01-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Richard_Branson_March_2015.jpg"
+    },
+    {
+      "id": "Q02-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:201000_-_Opening_Ceremony_Kylie_Minogue_performs_2_-_3b_-_2000_Sydney_opening_ceremony_photo_(cropped).jpg"
+    },
+    {
+      "id": "Q02-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Kylie_Minogue_performing_in_2018_(cropped).jpg"
+    },
+    {
+      "id": "Q03-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Robbie_Williams_(148950528).jpg"
+    },
+    {
+      "id": "Q03-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Robbie_Williams_2024.jpg"
+    },
+    {
+      "id": "Q05-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:SamuelLJackson.jpg"
+    },
+    {
+      "id": "Q06-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Emma_Thompson_at_the_2025_Locarno_Film_Festival_04.jpg"
+    },
+    {
+      "id": "Q07-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Daniel_Radcliffe_NY11.jpg"
+    },
+    {
+      "id": "Q07-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:DanielRadcliffe.jpg"
+    },
+    {
+      "id": "Q08-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Gary_Barlow_performing_in_Glasgow%2C_2017.jpg"
+    },
+    {
+      "id": "Q09-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Joan_Collins_2023_(headcrop).jpg"
+    },
+    {
+      "id": "Q10-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Helen_Mirren_1985_IPTC_(cropped).jpg"
+    },
+    {
+      "id": "Q10-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Helen_Mirren_at_the_2026_Toronto_International_Film_Festival._4_(cropped).jpg"
+    }
+  ]
+}
