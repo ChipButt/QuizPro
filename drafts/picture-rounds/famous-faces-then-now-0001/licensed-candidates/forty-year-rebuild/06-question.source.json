@@ -1,0 +1,27 @@
+{
+  "id": "Q06-question",
+  "fileName": "06-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Joan_Baez_1966.jpg",
+  "commonsFileTitle": "File:Joan Baez 1966.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/Joan_Baez_1966.jpg/1280px-Joan_Baez_1966.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AJoan+Baez+1966.jpg",
+  "license": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "author": "Ron Kroon / Anefo",
+    "credit": "Nationaal Archief",
+    "attributionRequired": false,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "d11047f20a3db49a0a1ff37f8218504150677b8f5532878d29dfddcdf7274f97",
+  "imageSha256": "357fd274e493f2bb56064ed781a79965660200c8a9257f566480c38ea8ca7152",
+  "bytes": 47602,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": false
+}

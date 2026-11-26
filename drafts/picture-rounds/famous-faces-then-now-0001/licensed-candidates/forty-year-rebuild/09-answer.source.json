@@ -1,0 +1,27 @@
+{
+  "id": "Q09-answer",
+  "fileName": "09-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:MickFltwoodPall250220-78.jpg",
+  "commonsFileTitle": "File:MickFltwoodPall250220-78.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2c/MickFltwoodPall250220-78.jpg/1280px-MickFltwoodPall250220-78.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AMickFltwoodPall250220-78.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Raph_PH",
+    "credit": "https://www.flickr.com/photos/69880995@N04/49586731113/",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "4bd784ac55a7599f22f586d887bc3c6bf6f0088052fdea123d6095b71cfc69cc",
+  "imageSha256": "6c4f43ce213161d95ee8167f9ee913209818dd56b01f4712c6864347f734d82e",
+  "bytes": 32274,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

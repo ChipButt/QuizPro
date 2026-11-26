@@ -1,0 +1,27 @@
+{
+  "id": "Q05-question",
+  "fileName": "05-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Popsinger_Rod_Stewart_krijgt_gouden_LPs%2C_Edison_en_Oscar_in_Hilton_Amsterdam%2C_Ro%2C_Bestanddeelnr_925-1082.jpg",
+  "commonsFileTitle": "File:Popsinger Rod Stewart krijgt gouden LPs, Edison en Oscar in Hilton Amsterdam, Ro, Bestanddeelnr 925-1082.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/Popsinger_Rod_Stewart_krijgt_gouden_LPs%2C_Edison_en_Oscar_in_Hilton_Amsterdam%2C_Ro%2C_Bestanddeelnr_925-1082.jpg/1280px-Popsinger_Rod_Stewart_krijgt_gouden_LPs%2C_Edison_en_Oscar_in_Hilton_Amsterdam%2C_Ro%2C_Bestanddeelnr_925-1082.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3APopsinger+Rod+Stewart+krijgt+gouden+LPs%2C+Edison+en+Oscar+in+Hilton+Amsterdam%2C+Ro%2C+Bestanddeelnr+925-1082.jpg",
+  "license": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "author": "W. Punt  for  Anefo",
+    "credit": "http://proxy.handle.net/10648/abd5dabe-d0b4-102d-bcf8-003048976d84",
+    "attributionRequired": false,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "237683d7854f8405c0ef2a751f5741aae24169e24c506bb28419dfc6ae322e0d",
+  "imageSha256": "06cdf8cff220d96e22a39e76162cb9e767d31d6f58c656c0caeb98a4bb4e146b",
+  "bytes": 59682,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": false
+}

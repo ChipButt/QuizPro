@@ -1,0 +1,27 @@
+{
+  "id": "Q01-answer",
+  "fileName": "01-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Paul_McCartney_2022.jpg",
+  "commonsFileTitle": "File:Paul McCartney 2022.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Paul_McCartney_2022.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3APaul+McCartney+2022.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Raph_PH",
+    "credit": "Glastonbury2022 (239 of 413)",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "6f6f332660ebd152000d9f2c327120ef37e4b05b4cdb2492260f98e419fa0492",
+  "imageSha256": "e432cbf75702f03957e2a83f045ddc383c9b18c8dfb1020c3fd54c2419881929",
+  "bytes": 41136,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}
