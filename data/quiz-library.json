@@ -651,7 +651,7 @@
             {
               "id": "question-nxewikz",
               "number": 2,
-              "text": "After watching streetcar drivers struggle to see through rain and snow, Mary Anderson patented a lever-operated, rubber-bladed device in 190 What was it?",
+              "text": "After watching streetcar drivers struggle to see through rain and snow, Mary Anderson patented a lever-operated, rubber-bladed device in 1903. What was it?",
               "answer": "Windscreen wiper.",
               "alternatives": [],
               "points": 1,
@@ -1915,7 +1915,7 @@
               "id": "question-icor7h0",
               "number": 3,
               "text": "What is the most consumed fruit in the world?",
-              "answer": "Tomato (Botanically a fruit, Banana is actual “fruit”)",
+              "answer": "Tomato",
               "alternatives": [],
               "points": 1,
               "type": "Text",
