@@ -50,9 +50,13 @@ export function validatePhotoTimeline(question,minYears=MIN_GAP_YEARS) {
     errors.push('Q'+num+': subject date of birth is missing or invalid, cannot verify first-photo age');
   } else {
     if(birth>earlier.first) errors.push('Q'+num+': claimed photo predates the subject’s birth');
-    const ageAtFirst=fullYearsBetween(birth,earlier.first);
-    if(ageAtFirst<26) {
-      warnings.push('Q'+num+': subject may be younger than the preferred over-25 age in the first photograph ('+ageAtFirst+' years at earliest possible capture date)');
+    const youngestPossibleAge=fullYearsBetween(birth,earlier.first);
+    const oldestPossibleAge=fullYearsBetween(birth,earlier.last);
+    // Preference: subject must be UNDER 25 at capture (ages 0–24), not over 25.
+    // For year-only metadata, require the full possible capture window to be under 25.
+    if(oldestPossibleAge >= 25) {
+      warnings.push('Q'+num+': first photograph does not establish the preferred age UNDER 25'
+        +' (possible age '+youngestPossibleAge+'–'+oldestPossibleAge+'); prefer a photograph taken before the 25th birthday');
     }
     if(fullYearsBetween(birth,later.first)<minYears) {
       errors.push('Q'+num+': subject is not yet '+minYears+' years old at the latest photograph; impossible to meet the rule');
