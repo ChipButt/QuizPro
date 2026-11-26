@@ -1,0 +1,50 @@
+name: Correct approved July and August quiz answers
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/correct-july-aug-editorial.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: quizpro-editorial-two-field-correction
+  cancel-in-progress: false
+
+jobs:
+  correct:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout current QuizPro quizzes
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Read latest quiz library
+        run: git pull --ff-only origin main
+      - name: Apply and verify only the two requested text corrections
+        run: node scripts/correct-july-aug-editorial.mjs
+      - name: Commit exact edit to original QuizPro source
+        run: |
+          git add data/quiz-library.json
+          if git diff --cached --quiet; then
+            echo "Both questions already have the requested corrections."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Correct 1903 in July Automotive Q2 and Tomato in August Food Q3"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then exit 0; fi
+            git pull --rebase origin main
+            node scripts/correct-july-aug-editorial.mjs
+            git add data/quiz-library.json
+          done
+          exit 1
