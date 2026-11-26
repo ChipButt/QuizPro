@@ -1,0 +1,47 @@
+name: Acquire eligible Famous Faces Review 3 replacements
+on:
+  push:
+    branches: [picture-rounds-14-formats-20261126]
+    paths:
+      - .github/workflows/acquire-famous-faces-review-v3.yml
+      - drafts/picture-rounds/famous-faces-then-now-0001/review-v3-source-candidates.json
+  workflow_dispatch:
+permissions: {contents: write}
+jobs:
+  acquire-nine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install pillow
+      - name: Save nine actual CC licensed photos, optimized with creator/usage metadata
+        id: acquire
+        continue-on-error: true
+        run: |
+          python scripts/source-commons-picture-assets.py \
+            drafts/picture-rounds/famous-faces-then-now-0001/review-v3-source-candidates.json \
+            --out drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-originals
+      - name: Preserve all downloaded actual photos and evidence in artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: famous-faces-review-3-source-files
+          path: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-originals/
+          if-no-files-found: warn
+      - name: Store actual photos and original licences without overwriting prior approvals
+        run: |
+          git config user.name "QuizPro photo licensing"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-originals/
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive nine photograph candidate originals and rights information for review 3"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin picture-rounds-14-formats-20261126
+              git rebase origin/picture-rounds-14-formats-20261126
+              if git push; then break; fi
+              if [ "$attempt" = "5" ]; then exit 1; fi
+              sleep 4
+            done
+          fi
+      - name: Refuse to count missing or license-rejected files
+        if: steps.acquire.outcome == 'failure'
+        run: exit 1
