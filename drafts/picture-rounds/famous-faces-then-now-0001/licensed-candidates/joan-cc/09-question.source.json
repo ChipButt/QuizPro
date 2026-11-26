@@ -1,0 +1,25 @@
+{
+  "id": "Q09-question",
+  "fileName": "09-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Joan_Collins_and_Sophia_Loren.jpg",
+  "commonsFileTitle": "File:Joan Collins and Sophia Loren.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/67/Joan_Collins_and_Sophia_Loren.jpg/1280px-Joan_Collins_and_Sophia_Loren.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AJoan+Collins+and+Sophia+Loren.jpg",
+  "license": {
+    "name": "CC BY-SA 3.0",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "author": "Prince Power",
+    "credit": "Own work  ( Original text:   I ( Immortal-truth  ( talk )) created this work entirely by myself.   )",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "d54bc505fc96947b518c96a162293827c8dc5b1a380a6bf36b89f525671b30c2",
+  "imageSha256": "05a2d4f89b23e0781e659a199d51ba6d3cece5b8adeb412c420d5a18bba77411",
+  "bytes": 63802,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}
