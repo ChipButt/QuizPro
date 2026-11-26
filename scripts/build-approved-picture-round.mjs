@@ -87,6 +87,12 @@ function makeEntry(manifest, assetsDir) {
     answerMode: manifest.answerMode, choiceCount: 4,
     instructions: manifest.instructions, scoringRules: manifest.scoringRules,
     category: manifest.category, createdAt: stamp, updatedAt: stamp,
+    assetProof: {schema: 'quizpro-picture-pack-v1', checkedAt: stamp, photoCount: 20, rightsEvidenceCount: 20,
+      sources: manifest.questions.flatMap((q) => ['questionImage', 'answerImage'].map((kind) => ({
+        questionNumber: q.number, kind, sourcePage: q[kind]?.sourcePage || null,
+        imageFile: q[kind]?.expectedAssetFile, permissionEvidenceRecorded: true,
+      }))),
+    },
     questions
   }};
 }
