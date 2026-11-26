@@ -1,0 +1,52 @@
+name: Source eight revised Famous Faces question images
+on:
+  push:
+    branches:
+      - picture-rounds-14-formats-20261126
+    paths:
+      - .github/workflows/source-famous-faces-question-replacements-v2.yml
+      - drafts/picture-rounds/famous-faces-then-now-0001/replacements-question-v2-manifest.json
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  acquire-v2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install Pillow
+        run: python -m pip install pillow
+      - name: Acquire actual Commons originals, prepare WebPs and licence evidence
+        id: acquire
+        continue-on-error: true
+        run: |
+          python scripts/source-commons-picture-assets.py \
+            drafts/picture-rounds/famous-faces-then-now-0001/replacements-question-v2-manifest.json \
+            --out drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v2
+      - name: Archive acquired files even if any candidate cannot be used
+        uses: actions/upload-artifact@v4
+        with:
+          name: famous-faces-eight-new-question-images
+          path: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v2/
+          if-no-files-found: warn
+      - name: Commit real files and metadata to working branch, rebase to avoid conflicts
+        run: |
+          git config user.name "QuizPro picture asset bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v2/
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive real replacement question files for picture review"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin picture-rounds-14-formats-20261126
+              git rebase origin/picture-rounds-14-formats-20261126
+              if git push; then break; fi
+              if [ "$attempt" = "5" ]; then echo "Could not safely publish candidate files"; exit 1; fi
+              sleep 4
+            done
+          fi
+      - name: Require candidate acquisition to have succeeded
+        if: steps.acquire.outcome == 'failure'
+        run: exit 1
