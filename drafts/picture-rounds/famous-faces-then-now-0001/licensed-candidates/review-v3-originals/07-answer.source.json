@@ -1,0 +1,27 @@
+{
+  "id": "Q07-answer",
+  "fileName": "07-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_2021.jpg",
+  "commonsFileTitle": "File:Cliff Richard 2021.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/95/Cliff_Richard_2021.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ACliff+Richard+2021.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Raph_PH",
+    "credit": "CliffRAH241021 (8 of 54)",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "5f9a9bf982b211b3086aa1081bd753108529629f608b32bbf7f6f43675d6e80f",
+  "imageSha256": "7f62ba7d47d7771029a34fa6cf8deefb44a84b310b32c6813e4317809d7a7bd2",
+  "bytes": 33954,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

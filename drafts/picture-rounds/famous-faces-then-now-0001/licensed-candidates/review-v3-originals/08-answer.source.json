@@ -1,0 +1,27 @@
+{
+  "id": "Q08-answer",
+  "fileName": "08-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Cher_in_2019_cropped.jpg",
+  "commonsFileTitle": "File:Cher in 2019 cropped.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Cher_in_2019_cropped.jpg/1280px-Cher_in_2019_cropped.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ACher+in+2019+cropped.jpg",
+  "license": {
+    "name": "CC BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "author": "Raph_PH",
+    "credit": "CherO2201019-32",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "71ed1320a72c802e78c061d4511823c3be7e9f59232d1eb5ee0dd958a0bd636c",
+  "imageSha256": "04243b34315b49630dd2777471a63a698a7ac0859ee261f5295e769443dffdd5",
+  "bytes": 97700,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

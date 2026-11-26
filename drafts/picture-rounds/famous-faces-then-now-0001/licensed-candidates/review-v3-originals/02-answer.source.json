@@ -1,0 +1,27 @@
+{
+  "id": "Q02-answer",
+  "fileName": "02-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Sophia_Loren_2016.jpg",
+  "commonsFileTitle": "File:Sophia Loren 2016.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Sophia_Loren_2016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ASophia+Loren+2016.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Nu\u021b\u0103 Lucian  from Cluj-Napoca, Romania",
+    "credit": "Gala de \u00cenchidere TIFF 2016",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "228ed8491c4657c382acb3f519e1674a9c41aac399799cf6878da0066ac89608",
+  "imageSha256": "a035a7358cf560a2271de4f5807eb6e5684b3a4856e28a2b06914af4ebd43db7",
+  "bytes": 63734,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

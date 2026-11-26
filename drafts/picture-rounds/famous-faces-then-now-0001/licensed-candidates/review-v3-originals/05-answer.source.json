@@ -1,0 +1,27 @@
+{
+  "id": "Q05-answer",
+  "fileName": "05-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Jane_Fonda_at_the_2026_Cannes_Film_Festival_01.jpg",
+  "commonsFileTitle": "File:Jane Fonda at the 2026 Cannes Film Festival 01.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/Jane_Fonda_at_the_2026_Cannes_Film_Festival_01.jpg/1280px-Jane_Fonda_at_the_2026_Cannes_Film_Festival_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AJane+Fonda+at+the+2026+Cannes+Film+Festival+01.jpg",
+  "license": {
+    "name": "CC BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "author": "Gabriel Hutchinson",
+    "credit": "Own work",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "41a310a00c8f2d8cecf3e3a96c19c7b69066031c1ac97eb4d0b744e667e0d0e5",
+  "imageSha256": "74327d9e553dbdd65e1b9a11e6221072358974fe54b2baa9dee3a5a45e246836",
+  "bytes": 65992,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}
