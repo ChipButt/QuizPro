@@ -93,6 +93,15 @@ def acquire(item,out):
     if not re.fullmatch(r'Q(?:0[1-9]|10)-(question|answer)',key):
         raise ValueError('Invalid picture candidate identifier')
     source_page=item['commonsFilePage']
+    target=out/(key[1:].lower()+'.webp')
+    source_record=out/(key[1:].lower()+'.source.json')
+    if target.exists():
+        if source_record.exists():
+            saved=json.loads(source_record.read_text())
+            actual_hash=hashlib.sha256(target.read_bytes()).hexdigest()
+            if saved.get('sourcePage')==source_page and saved.get('imageSha256')==actual_hash:
+                return saved  # Reuse identical saved file; no network access, no overwrite
+        raise FileExistsError('Saved candidate differs from recorded original; refusing overwrite: '+str(target))
     title=commons_title(source_page)
     info,api=image_info(title)
     license_info=choose_license(info.get('extmetadata',{}))
@@ -102,7 +111,6 @@ def acquire(item,out):
     raw=get_bytes(url)
     picture=webp(raw)
     target=out/(key[1:].lower()+'.webp')
-    if target.exists(): raise FileExistsError('Refusing to replace a previously sourced image: '+str(target))
     target.write_bytes(picture)
     evidence={'id':key,'fileName':target.name,'sourcePage':source_page,'commonsFileTitle':title,
               'imageUrl':url,'sourceMetadataApi':api,'license':license_info,
