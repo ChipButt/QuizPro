@@ -20,8 +20,15 @@
       "id": "Q02-question",
       "subject": "Mick Jagger",
       "subjectBirthDate": "1943-07-26",
-      "photoTakenYear": 1965,
-      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Mick-Jagger-1965-Turku.jpg"
+      "photoTakenYear": 1966,
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Rolling_Stones_at_Schiphol_1966_-_Jagger_%26_Richards.png",
+      "focusRect": [
+        0.5,
+        0,
+        1,
+        1
+      ],
+      "note": "Photographer Jac. de Nijs, Anefo/Nationaal Archief; Mick Jagger is on right; crop must be visually verified and show Mick alone."
     },
     {
       "id": "Q02-answer",
