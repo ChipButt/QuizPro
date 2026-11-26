@@ -40,10 +40,15 @@ def choose_license(ext):
     link=value('LicenseUrl')
     if not ACCEPTED_LICENSE_RE.fullmatch(name):
         raise ValueError('Missing/restricted image licence: '+repr(name))
-    if name.lower()=='public domain' and clean_markup(value('Copyrighted')).lower()!='false':
-        raise ValueError('Ambiguous public domain status')
-    if name.lower().startswith('cc') and not link.startswith(('https://creativecommons.org/','http://creativecommons.org/')):
-        raise ValueError('Missing verified Creative Commons licence link')
+    # Do not accept jurisdiction-limited "Public domain" labels (e.g. PD-US-no-notice).
+    # Explicit, documented commercial-use Creative Commons licences are the allowed set.
+    if name.lower().startswith('cc0'):
+        if not re.match(r'^https?://creativecommons\\.org/publicdomain/zero/1\\.0(?:/|$)', str(link)):
+            raise ValueError('CC0 requires an explicit Creative Commons worldwide dedication URL')
+    elif not re.match(r'^https?://creativecommons\\.org/licenses/by(?:-sa)?/[0-9]+(?:\\.[0-9]+)?(?:/|$)', str(link)):
+        raise ValueError('CC BY/BY-SA requires a valid commercial-use worldwide licence URL')
+    if not clean_markup(value('Artist')):
+        raise ValueError('Missing named source photographer/author')
     return {'name':name,'url':link,'author':clean_markup(value('Artist')),'credit':clean_markup(value('Credit')),
             'attributionRequired':name.lower().startswith('cc by'),
             'caution':'Check personality rights and applicable copyright law for intended publication'}
