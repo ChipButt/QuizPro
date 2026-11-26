@@ -1,0 +1,25 @@
+{
+  "id": "Q07-question",
+  "fileName": "07-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Daniel_Radcliffe.jpg",
+  "commonsFileTitle": "File:Daniel Radcliffe.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/6/62/Daniel_Radcliffe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ADaniel+Radcliffe.jpg",
+  "license": {
+    "name": "CC BY-SA 3.0",
+    "url": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "author": "Matthew Blaney  from London, UK",
+    "credit": "Dan Radcliffe",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "67d864becf9053fb02253b45ef3196475d537205e0120fc2e2640c122d3eba87",
+  "imageSha256": "5b9ed7eeb409ca6fea375eef6e96c916fd1ac480753296c207cbc6da155b0e07",
+  "bytes": 18794,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

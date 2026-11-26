@@ -1,0 +1,25 @@
+{
+  "id": "Q10-question",
+  "fileName": "10-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Mirren0407.jpg",
+  "commonsFileTitle": "File:Mirren0407.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/18/Mirren0407.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AMirren0407.jpg",
+  "license": {
+    "name": "CC BY-SA 3.0",
+    "url": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "author": "The original uploader was  Angmering  at  English Wikipedia .",
+    "credit": "Transferred from   en.wikipedia   to Commons.",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "1e8fee9f6f56bb34e3890d10789d24ac84bdf26bef04739935a3c5f1739a0909",
+  "imageSha256": "04cd67af463348c4623f5faf730071a1f026b73ecc9ed304c24050dfb8d58e2f",
+  "bytes": 59174,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

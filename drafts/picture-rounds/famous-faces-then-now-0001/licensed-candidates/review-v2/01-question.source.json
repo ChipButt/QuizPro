@@ -1,0 +1,25 @@
+{
+  "id": "Q01-question",
+  "fileName": "01-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Richard_Branson.jpg",
+  "commonsFileTitle": "File:Richard Branson.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Richard_Branson.jpg/1280px-Richard_Branson.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ARichard+Branson.jpg",
+  "license": {
+    "name": "Public domain",
+    "url": "",
+    "author": "Kim Shiflett",
+    "credit": "https://images.nasa.gov/details/KSC-06pd0211  \n   Kennedy Media Gallery  at the    Wayback Machine",
+    "attributionRequired": false,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "12199c4eccf3daff54cc56075db3f6dd7ca48a36cf3496895eeeb19b3932fb40",
+  "imageSha256": "99e4295f1e35cd07f03d7befae98f9e83612b0d1c61023324cfb3d19f7f1c8b5",
+  "bytes": 40672,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": false
+}
