@@ -1,6 +1,7 @@
 // Age-difference and capture-date gate for THEN & NOW photographic pub-quiz packs.
 // No guesses: each image must be dated from documented evidence before any approval.
-const MIN_GAP_YEARS = 40;
+const STANDARD_MIN_GAP_YEARS = 40;
+const UNDER_15_MIN_GAP_YEARS = 30;
 
 function exactDate(value) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) return null;
@@ -24,7 +25,7 @@ function photoRange(slot) {
   const first=exactDate(year+'-01-01'),last=exactDate(year+'-12-31');
   return {first,last,description:String(year)};
 }
-export function validatePhotoTimeline(question,minYears=MIN_GAP_YEARS) {
+export function validatePhotoTimeline(question,minYears=STANDARD_MIN_GAP_YEARS) {
   const errors=[],warnings=[];
   const num=question?.number ?? '?';
   const earlier=photoRange(question?.questionImage);
@@ -41,28 +42,35 @@ export function validatePhotoTimeline(question,minYears=MIN_GAP_YEARS) {
   if(earlier.last >= later.first) {
     errors.push('Q'+num+': question photograph is not demonstrably earlier than answer photograph');
   }
-  const guaranteedGap=fullYearsBetween(earlier.last,later.first);
-  if(guaranteedGap<minYears) {
-    errors.push('Q'+num+': photos are not verifiably '+minYears+' years apart (earliest possible age gap '+guaranteedGap+' years)');
-  }
   const birth=exactDate(String(question?.subjectBirthDate||''));
+  let requiredGapYears=minYears;
+  let ageAtFirst=null;
   if(!birth) {
     errors.push('Q'+num+': subject date of birth is missing or invalid, cannot verify first-photo age');
   } else {
     if(birth>earlier.first) errors.push('Q'+num+': claimed photo predates the subject’s birth');
     const youngestPossibleAge=fullYearsBetween(birth,earlier.first);
     const oldestPossibleAge=fullYearsBetween(birth,earlier.last);
-    // Preference: subject must be UNDER 25 at capture (ages 0–24), not over 25.
-    // For year-only metadata, require the full possible capture window to be under 25.
-    if(oldestPossibleAge >= 25) {
+    ageAtFirst={youngestPossibleAge,oldestPossibleAge};
+    // A 30-year photo gap is allowed ONLY if every possible capture date proves
+    // the person was under 15. Undated birthdays/ambiguous year windows retain 40.
+    if(youngestPossibleAge>=0 && oldestPossibleAge<15) requiredGapYears=UNDER_15_MIN_GAP_YEARS;
+    // Preferred first photo: under 25. Unlike the gap, this is a warning only.
+    if(oldestPossibleAge>=25) {
       warnings.push('Q'+num+': first photograph does not establish the preferred age UNDER 25'
         +' (possible age '+youngestPossibleAge+'–'+oldestPossibleAge+'); prefer a photograph taken before the 25th birthday');
     }
-    if(fullYearsBetween(birth,later.first)<minYears) {
-      errors.push('Q'+num+': subject is not yet '+minYears+' years old at the latest photograph; impossible to meet the rule');
-    }
   }
-  return {errors,warnings,guaranteedGapYears:guaranteedGap,earlier:earlier.description,later:later.description};
+  const guaranteedGap=fullYearsBetween(earlier.last,later.first);
+  if(guaranteedGap<requiredGapYears) {
+    errors.push('Q'+num+': photos are not verifiably '+requiredGapYears
+      +' years apart (guaranteed gap '+guaranteedGap+' years)');
+  }
+  if(birth && fullYearsBetween(birth,later.first)<requiredGapYears) {
+    errors.push('Q'+num+': subject is not yet '+requiredGapYears
+      +' years old at the later photograph; impossible to meet the rule');
+  }
+  return {errors,warnings,requiredGapYears,guaranteedGapYears:guaranteedGap,ageAtFirst,earlier:earlier.description,later:later.description};
 }
 export function validateRoundPhotoTimeline(questions) {
   const errors=[],warnings=[],summaries=[];
