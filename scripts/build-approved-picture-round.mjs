@@ -41,7 +41,7 @@ function makeEntry(manifest, assetsDir) {
   if (manifest.schema !== 'quizpro-approved-picture-round-manifest-v1') errors.push('Wrong manifest schema');
   if (manifest.type !== 'Picture round' || manifest.answerMode !== 'text') errors.push('Invalid QuizPro round format');
   if (!Array.isArray(manifest.questions) || manifest.questions.length !== 10) errors.push('Expected exactly 10 questions');
-  // Historical photo captures, not merely the person's age today, must be >=40 years apart.
+  // Historical capture dates must prove >=30 years if under 15 in the first photo; otherwise >=40 years.
   const chronology = validateRoundPhotoTimeline(manifest.questions);
   errors.push(...chronology.errors);
   for (const warning of chronology.warnings) process.stderr.write('REVIEW NOTE: '+warning+'\n');
