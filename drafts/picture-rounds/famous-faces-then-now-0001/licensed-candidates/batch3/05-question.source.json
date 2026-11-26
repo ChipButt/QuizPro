@@ -1,0 +1,25 @@
+{
+  "id": "Q05-question",
+  "fileName": "05-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Samuel_L._Jackson_(2006_Pebble_Beach).jpg",
+  "commonsFileTitle": "File:Samuel L. Jackson (2006 Pebble Beach).jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Samuel_L._Jackson_%282006_Pebble_Beach%29.jpg/1280px-Samuel_L._Jackson_%282006_Pebble_Beach%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ASamuel+L.+Jackson+%282006+Pebble+Beach%29.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Steve Juretson",
+    "credit": "cropped from  https://www.flickr.com/photos/jurvetson/98505594/  /  Image:Samuel L Jackson golfing.jpg",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "3cfede64d403174603dd123b35fbb53ba0ec32e8ffc63d03d61b2749393fdbe6",
+  "imageSha256": "04ce938f6c89cbeccb66a61d25e411870aa9352e99356aa05c018ef982d65526",
+  "bytes": 23240,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

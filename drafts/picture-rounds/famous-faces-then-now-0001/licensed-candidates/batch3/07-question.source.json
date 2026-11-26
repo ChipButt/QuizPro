@@ -1,0 +1,25 @@
+{
+  "id": "Q07-question",
+  "fileName": "07-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Daniel_Radcliffe_NY11.jpg",
+  "commonsFileTitle": "File:Daniel Radcliffe NY11.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Daniel_Radcliffe_NY11.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ADaniel+Radcliffe+NY11.jpg",
+  "license": {
+    "name": "CC BY-SA 2.0",
+    "url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "author": "Fairose Kanoon  from Sydney, Australia",
+    "credit": "Daniel Radcliffe. \n \n  Uploaded by  Chzz",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "f4c365578a8972ceee436ef68071ffa91f43eb6b83111f949770a9d967435a45",
+  "imageSha256": "72f296719ba374010b79f969e6aa1a473c0821da2e2d86daa989f24f1711f8a0",
+  "bytes": 73620,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

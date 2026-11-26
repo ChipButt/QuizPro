@@ -1,0 +1,25 @@
+{
+  "id": "Q01-question",
+  "fileName": "01-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Richard_Branson_2000.jpg",
+  "commonsFileTitle": "File:Richard Branson 2000.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Richard_Branson_2000.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ARichard+Branson+2000.jpg",
+  "license": {
+    "name": "CC BY-SA 2.0",
+    "url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "author": "John Mathew Smith & www.celebrity-photos.com  from Laurel  Maryland, USA",
+    "credit": "Richard Branson",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "f34f6a52366db73a2f4cbbd5914eb4f289d23b29999d643900f2bbf8a3f25a7a",
+  "imageSha256": "657a91e2dc3e0dacbd0f924e487bf8c2c51f4b7764e9e9962e905c3c3c42d5db",
+  "bytes": 47148,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

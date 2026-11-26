@@ -1,0 +1,25 @@
+{
+  "id": "Q10-question",
+  "fileName": "10-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Helen_Mirren_1985_IPTC_(cropped).jpg",
+  "commonsFileTitle": "File:Helen Mirren 1985 IPTC (cropped).jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Helen_Mirren_1985_IPTC_%28cropped%29.jpg/1280px-Helen_Mirren_1985_IPTC_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AHelen+Mirren+1985+IPTC+%28cropped%29.jpg",
+  "license": {
+    "name": "CC BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "author": "MaryMotleyKalergisPhotography",
+    "credit": "Own work",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "a9e2225e41a1ef2f348cd1ca4336addebcd47e639755ce0d2fcc0bbcbaf9c891",
+  "imageSha256": "4a7013b2d4f633a1f5febe37ab912c3ea34cccbfef6e3d66e5caa62adf91f62e",
+  "bytes": 49252,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

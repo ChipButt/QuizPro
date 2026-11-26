@@ -1,0 +1,25 @@
+{
+  "id": "Q10-answer",
+  "fileName": "10-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Helen_Mirren_at_the_2026_Toronto_International_Film_Festival._4_(cropped).jpg",
+  "commonsFileTitle": "File:Helen Mirren at the 2026 Toronto International Film Festival. 4 (cropped).jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/93/Helen_Mirren_at_the_2026_Toronto_International_Film_Festival._4_%28cropped%29.jpg/1280px-Helen_Mirren_at_the_2026_Toronto_International_Film_Festival._4_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AHelen+Mirren+at+the+2026+Toronto+International+Film+Festival.+4+%28cropped%29.jpg",
+  "license": {
+    "name": "CC BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "author": "Patrick.suechan",
+    "credit": "Own work",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "a4d6d1ef04bb00b620d0e9bf18daccfefb145a531a49977ee7b755b17c48e2f5",
+  "imageSha256": "1054c61a0002b37eee49841d1f7c3908eddaf651d6c102ba5df1e1ea026991fc",
+  "bytes": 46228,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}
