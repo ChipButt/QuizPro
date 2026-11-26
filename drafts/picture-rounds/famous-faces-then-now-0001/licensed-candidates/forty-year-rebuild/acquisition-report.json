@@ -1,5 +1,5 @@
 {
-  "filesSaved": 15,
+  "filesSaved": 16,
   "sources": [
     {
       "id": "Q01-question",
@@ -51,6 +51,38 @@
       "cropApplied": false,
       "cropRect": null,
       "modificationNotice": "Photo resized for QuizPro",
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    },
+    {
+      "id": "Q02-question",
+      "fileName": "02-question.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Rolling_Stones_at_Schiphol_1966_-_Jagger_%26_Richards.png",
+      "commonsFileTitle": "File:Rolling Stones at Schiphol 1966 - Jagger & Richards.png",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Rolling_Stones_at_Schiphol_1966_-_Jagger_%26_Richards.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ARolling+Stones+at+Schiphol+1966+-+Jagger+%26+Richards.png",
+      "license": {
+        "name": "CC BY-SA 3.0",
+        "url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "author": "Jac. de Nijs (ANEFO)",
+        "credit": "https://www.nationaalarchief.nl/onderzoeken/fotocollectie/aae20c5e-d0b4-102d-bcf8-003048976d84",
+        "attributionRequired": true,
+        "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+      },
+      "sourceSha256": "da7bd6cbadc9f8f47a8f6cfa27799b649dcfb4cb0df4820bd6458226fd134754",
+      "imageSha256": "ce61223d29ee472fe283c63e29465b3cf80b7a320379d773f806c9b33f0a5113",
+      "bytes": 48512,
+      "width": 720,
+      "height": 720,
+      "cropApplied": true,
+      "cropRect": [
+        0.5,
+        0,
+        1,
+        1
+      ],
+      "modificationNotice": "Photo resized and cropped to isolate subject",
       "editorialStatus": "PENDING USER REVIEW",
       "published": false,
       "attributionDisplayNeeded": true
@@ -407,10 +439,5 @@
       "attributionDisplayNeeded": true
     }
   ],
-  "failures": [
-    {
-      "id": "Q02-question",
-      "error": "Blocked: no explicit worldwide commercial-use CC/CC0 licence: 'Public domain'"
-    }
-  ]
+  "failures": []
 }
