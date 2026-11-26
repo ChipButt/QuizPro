@@ -372,6 +372,27 @@ export default function SimpleQuizBuilder({ state, updateState }) {
           }
         });
       });
+      // The imported images must be byte-for-byte identical to the reviewed and signed-off files.
+      if (!window.crypto?.subtle?.digest) {
+        throw new Error("This browser cannot verify image hashes. Import stopped safely.");
+      }
+      for (let index = 0; index < questions.length; index += 1) {
+        for (const [slotKey, imageKey] of [["questionImage", "image"], ["answerImage", "answerImage"]]) {
+          const proof = packageData.assetProof.sources.find((source) => (
+            source.questionNumber === index + 1 && source.kind === slotKey
+          ));
+          if (!/^[a-f0-9]{64}$/i.test(String(proof?.approvedSha256 || ""))) {
+            throw new Error(`Question ${index + 1} is missing the approved image fingerprint.`);
+          }
+          const encoded = questions[index][imageKey].split(",")[1];
+          const bytes = Uint8Array.from(atob(encoded), (character) => character.charCodeAt(0));
+          const digest = await window.crypto.subtle.digest("SHA-256", bytes);
+          const actualHash = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+          if (actualHash !== proof.approvedSha256.toLowerCase()) {
+            throw new Error(`Question ${index + 1} ${imageKey} differs from the approved file.`);
+          }
+        }
+      }
       const title = String(packageData.title || "").trim();
       if (!title) throw new Error("Picture round title is missing.");
       if ((state.roundLibrary ?? []).some((item) => item.title?.toLowerCase() === title.toLowerCase())) {
