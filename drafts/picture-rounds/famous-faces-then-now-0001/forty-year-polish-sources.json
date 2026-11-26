@@ -1,0 +1,31 @@
+{
+  "purpose": "Saved, licensed, date-verified and visually checked replacements for currently inadequate Rod answer, Cliff earlier photo, and Q9 Mick Fleetwood person switched to Elton John.",
+  "items": [
+    {
+      "id": "Q05-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:JeffBeckTribute2RAH230523_(53_of_81)_(52922038276).jpg",
+      "focusRect": [
+        0.24,
+        0.08,
+        0.75,
+        0.93
+      ],
+      "subject": "Rod Stewart, modern onstage, check close crop"
+    },
+    {
+      "id": "Q07-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_%2C_aankomst_op_Schiphol_met_Willeke_Alberti_tijdens_persconferentie%2C_Bestanddeelnr_916-3949.jpg",
+      "subject": "Cliff Richard early 1964, solo clear crop after inspecting"
+    },
+    {
+      "id": "Q09-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Popzanger_Elton_John_in_Nederland_Elton_John_%2C_kop%2C_Bestanddeelnr_924-2767.jpg",
+      "subject": "Elton John 1971, early close-up"
+    },
+    {
+      "id": "Q09-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Elton_John_2023.jpg",
+      "subject": "Elton John 2023"
+    }
+  ]
+}
