@@ -1,0 +1,16 @@
+{
+  "purpose": "Solo Cliff Richard 1964 photo: final face-only crop of verified CC0 file. Separate from earlier group candidate, never overwrite.",
+  "items": [
+    {
+      "id": "Q07-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_%2C_aankomst_op_Schiphol_met_Willeke_Alberti_tijdens_persconferentie%2C_Bestanddeelnr_916-3949.jpg",
+      "focusRect": [
+        0.5,
+        0.3,
+        0.99,
+        0.98
+      ],
+      "subject": "Cliff Richard, foreground right; reject any visible other people's faces"
+    }
+  ]
+}
