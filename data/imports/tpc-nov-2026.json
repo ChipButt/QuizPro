@@ -1,0 +1,330 @@
+{
+  "schema": 1,
+  "slug": "tpc-nov-2026",
+  "title": "TPC Nov 2026",
+  "status": "Draft",
+  "rounds": [
+    {
+      "title": "General Knowledge",
+      "category": "General Knowledge",
+      "questions": [
+        [
+          "Which British author created Paddington Bear?",
+          "Michael Bond"
+        ],
+        [
+          "What is the name for growing plants without soil, using water containing dissolved nutrients?",
+          "Hydroponics"
+        ],
+        [
+          "Which metal makes up the largest proportion of traditional bronze?",
+          "Copper"
+        ],
+        [
+          "What is the name given to a young swan?",
+          "Cygnet"
+        ],
+        [
+          "In which English county is Cheddar Gorge located?",
+          "Somerset"
+        ],
+        [
+          "In which European capital city would you find the Vasa Museum, home to a preserved 17th-century warship?",
+          "Stockholm"
+        ],
+        [
+          "Which currently circulating British coin has twelve sides?",
+          "The £1 coin"
+        ],
+        [
+          "Which country was the first to use paper money?",
+          "China"
+        ],
+        [
+          "What is the name for the small plastic or metal tip at the end of a shoelace?",
+          "Aglet"
+        ],
+        [
+          "Despite their nickname, what colour are aircraft flight data recorders normally painted?",
+          "Bright orange"
+        ]
+      ]
+    },
+    {
+      "title": "Food & Drink",
+      "category": "Food & Drink",
+      "questions": [
+        [
+          "Which type of Italian pasta gets its name from the word for butterflies?",
+          "Farfalle"
+        ],
+        [
+          "What is the French cooking term for setting alcohol alight in a pan?",
+          "Flambé"
+        ],
+        [
+          "Which Italian dairy product takes its name from the Italian word meaning \"recooked\"?",
+          "Ricotta"
+        ],
+        [
+          "Which Canadian dish consists of chips topped with cheese curds and gravy?",
+          "Poutine"
+        ],
+        [
+          "What is the Japanese name for the dried seaweed commonly used to wrap sushi rolls?",
+          "Nori"
+        ],
+        [
+          "Which French dessert has a rich custard base topped with a hard layer of caramelised sugar?",
+          "Crème brûlée"
+        ],
+        [
+          "Which North African dish shares its name with the distinctive conical-lidded pot used to cook it?",
+          "Tagine"
+        ],
+        [
+          "What is the name for the liquid from cooked chickpeas that can be whipped as an alternative to egg whites?",
+          "Aquafaba"
+        ],
+        [
+          "Which Italian blue cheese takes its name from a town near Milan?",
+          "Gorgonzola"
+        ],
+        [
+          "What is the Japanese name for seafood or vegetables coated in a light batter and deep-fried?",
+          "Tempura"
+        ]
+      ]
+    },
+    {
+      "title": "Film & Television",
+      "category": "Film & TV",
+      "questions": [
+        [
+          "What is the name of the fictional Caribbean island where the BBC crime drama Death in Paradise is set?",
+          "Saint Marie"
+        ],
+        [
+          "In the animated film Chicken Run, what is the name of the hen who leads the escape plans?",
+          "Ginger"
+        ],
+        [
+          "In the 2003 film School of Rock, who plays the character Dewey Finn?",
+          "Jack Black"
+        ],
+        [
+          "In The Inbetweeners Movie (2011), which European country do the four friends visit on holiday?",
+          "Greece"
+        ],
+        [
+          "In Monsters, Inc., what nickname do Sulley and Mike give the little human girl?",
+          "Boo"
+        ],
+        [
+          "What is the name of the fictional Gloucestershire village where the film Hot Fuzz is set?",
+          "Sandford"
+        ],
+        [
+          "In the 1995 film Babe, what type of animal is Ferdinand, who tries to behave like a rooster?",
+          "Duck"
+        ],
+        [
+          "Which actor plays Ebenezer Scrooge in the 1992 film The Muppet Christmas Carol?",
+          "Michael Caine"
+        ],
+        [
+          "In Parks and Recreation, what is the name of the beloved miniature horse from Pawnee?",
+          "Li'l Sebastian"
+        ],
+        [
+          "What is the surname of the formerly wealthy family at the centre of the TV comedy Schitt's Creek?",
+          "Rose"
+        ]
+      ]
+    },
+    {
+      "title": "Automotive",
+      "category": "Automotive",
+      "questions": [
+        [
+          "Which Italian car manufacturer produced the legendary Delta HF Integrale rally car?",
+          "Lancia"
+        ],
+        [
+          "Which Ford model was introduced in 1998 as the successor to the Escort in Europe?",
+          "Ford Focus"
+        ],
+        [
+          "What is the small, often triangular opening window found ahead of the main front-door window on many older cars called in British motoring terminology?",
+          "Quarterlight"
+        ],
+        [
+          "In which US state are the Bonneville Salt Flats, famous for land speed record attempts?",
+          "Utah"
+        ],
+        [
+          "Which British car manufacturer produced the Dolomite Sprint sports saloon, launched in 1973?",
+          "Triumph"
+        ],
+        [
+          "Which Japanese car manufacturer previously marketed its vehicles under the Datsun brand name?",
+          "Nissan"
+        ],
+        [
+          "Which classic French car was affectionately nicknamed the \"Tin Snail\"?",
+          "Citroën 2CV"
+        ],
+        [
+          "Which German car manufacturer produced a version of the Isetta bubble car, famous for its front-opening door?",
+          "BMW"
+        ],
+        [
+          "On international vehicle registration stickers, which country is represented by the letter \"D\"?",
+          "Germany"
+        ],
+        [
+          "What component in a car's exhaust system uses chemical reactions to reduce harmful emissions?",
+          "Catalytic converter"
+        ]
+      ]
+    },
+    {
+      "title": "Science & Nature",
+      "category": "Science & Nature",
+      "questions": [
+        [
+          "What is the name of the tiny, eight-legged animal nicknamed a \"water bear\"?",
+          "Tardigrade"
+        ],
+        [
+          "What is the medical term for the loss of the sense of smell?",
+          "Anosmia"
+        ],
+        [
+          "In which type of marine animal does the male carry developing young in a pouch and give birth to them?",
+          "Seahorse"
+        ],
+        [
+          "What is the name of the light-sensitive layer at the back of the human eye?",
+          "Retina"
+        ],
+        [
+          "What are the small structures on a spider's abdomen that release silk called?",
+          "Spinnerets"
+        ],
+        [
+          "Olympus Mons, the largest known volcano in the Solar System, is found on which planet?",
+          "Mars"
+        ],
+        [
+          "Which part of its body does a butterfly use to taste?",
+          "Feet"
+        ],
+        [
+          "What naturally occurring volcanic glass forms when lava cools very quickly?",
+          "Obsidian"
+        ],
+        [
+          "Which gemstone is the purple variety of quartz?",
+          "Amethyst"
+        ],
+        [
+          "What is the name of the liquid component of blood in which red cells, white cells and platelets are suspended?",
+          "Plasma"
+        ]
+      ]
+    },
+    {
+      "title": "Music",
+      "category": "Music (Text Questions)",
+      "questions": [
+        [
+          "Which Irish singer had a worldwide hit in 1990 with “Nothing Compares 2 U”?",
+          "Sinéad O'Connor"
+        ],
+        [
+          "Which American band had a hit with “Breakfast at Tiffany's” in 1995?",
+          "Deep Blue Something"
+        ],
+        [
+          "Which British singer released the 2006 hit “Put Your Records On”?",
+          "Corinne Bailey Rae"
+        ],
+        [
+          "In what year was Queen's “Bohemian Rhapsody” originally released as a single?",
+          "1975"
+        ],
+        [
+          "Which singer released the 1981 hit “Kids in America”?",
+          "Kim Wilde"
+        ],
+        [
+          "What musical term means gradually getting louder?",
+          "Crescendo"
+        ],
+        [
+          "What was the title of Girls Aloud's debut single, which reached UK number one in 2002?",
+          "Sound of the Underground"
+        ],
+        [
+          "Which British electronic group released the 2014 hit “Rather Be”, featuring Jess Glynne?",
+          "Clean Bandit"
+        ],
+        [
+          "In which American city was the Motown record label founded in 1959?",
+          "Detroit"
+        ],
+        [
+          "Which American band released the 2003 hit “Stacy's Mom”?",
+          "Fountains of Wayne"
+        ]
+      ]
+    },
+    {
+      "title": "History",
+      "category": "History",
+      "questions": [
+        [
+          "What name was given to the textile workers who destroyed industrial machinery in England during the early 19th century?",
+          "Luddites"
+        ],
+        [
+          "What was the name of Ernest Shackleton's ship that was crushed by Antarctic ice in 1915?",
+          "Endurance"
+        ],
+        [
+          "What name was given to the sustained German bombing campaign against British cities during 1940–41?",
+          "The Blitz"
+        ],
+        [
+          "The remains of which English king were discovered beneath a Leicester car park in 2012?",
+          "Richard III"
+        ],
+        [
+          "In what year was the Channel Tunnel officially opened?",
+          "1994"
+        ],
+        [
+          "Which modern-day country was known as Ceylon until 1972?",
+          "Sri Lanka"
+        ],
+        [
+          "Which disease became the first human infectious disease to be officially declared eradicated worldwide in 1980?",
+          "Smallpox"
+        ],
+        [
+          "In what year did Britain switch to decimal currency?",
+          "1971"
+        ],
+        [
+          "Which Tudor warship sank in the Solent in 1545 and was raised from the seabed in 1982?",
+          "Mary Rose"
+        ],
+        [
+          "Which famous medieval embroidery depicts the events surrounding the Norman Conquest of England in 1066?",
+          "Bayeux Tapestry"
+        ]
+      ]
+    }
+  ]
+}
