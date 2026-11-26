@@ -1,3 +1,5 @@
+> **SUPERSEDED — NOT AN APPROVAL SCREEN.** This old review includes a 1954 Joan Collins image whose public-domain claim applies only in the US, not established for UK reuse. Do **not** approve, import, or publish any image from this archived sheet. See [the current strict rights and image-quality audit](./famous-faces-0001-strict-photo-eligibility-audit.md) for eligible saved-file choices. Original decisions remain in history.
+
 # Famous Faces – Then & Now 0001 — review of actual retained files
 
 **All 20 photographs are actual stored WebP files on this branch**, 720×720 pixels and under QuizPro's 140 KB file target, with a source/author/licence JSON record for each.
