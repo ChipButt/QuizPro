@@ -2,6 +2,7 @@
 // Offline picture-round packaging gate. Does NOT edit existing QuizPro data.
 import fs from 'node:fs';
 import path from 'node:path';
+import {createHash} from 'node:crypto';
 
 function inspectImage(bytes) {
   if (bytes.length >= 24 && bytes.subarray(0, 8).equals(Buffer.from('89504e470d0a1a0a', 'hex'))) {
@@ -64,6 +65,12 @@ function makeEntry(manifest, assetsDir) {
         continue;
       }
       const bytes = fs.readFileSync(location);
+      const hash = createHash('sha256').update(bytes).digest('hex');
+      if (!/^[a-f0-9]{64}$/.test(String(slot.approvedSha256 || ''))) {
+        errors.push('Approved image hash missing: ' + filename + '; approval must lock exact stored bytes');
+      } else if (hash !== slot.approvedSha256.toLowerCase()) {
+        errors.push('Approved image was changed after review: ' + filename);
+      }
       const info = inspectImage(bytes);
       if (!info) { errors.push('Invalid image: ' + filename); continue; }
       if (bytes.length > 140000) errors.push('Image exceeds QuizPro 140KB target: ' + filename);
@@ -90,7 +97,8 @@ function makeEntry(manifest, assetsDir) {
     assetProof: {schema: 'quizpro-picture-pack-v1', checkedAt: stamp, photoCount: 20, rightsEvidenceCount: 20,
       sources: manifest.questions.flatMap((q) => ['questionImage', 'answerImage'].map((kind) => ({
         questionNumber: q.number, kind, sourcePage: q[kind]?.sourcePage || null,
-        imageFile: q[kind]?.expectedAssetFile, permissionEvidenceRecorded: true,
+        imageFile: q[kind]?.expectedAssetFile, approvedSha256: q[kind]?.approvedSha256,
+        permissionEvidenceRecorded: true,
       }))),
     },
     questions
