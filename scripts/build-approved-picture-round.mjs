@@ -66,6 +66,36 @@ function makeEntry(manifest, assetsDir) {
       }
       const bytes = fs.readFileSync(location);
       const hash = createHash('sha256').update(bytes).digest('hex');
+      const evidenceFile = location.replace(/\.webp$/i, '.source.json');
+      if (!fs.existsSync(evidenceFile)) {
+        errors.push('File-specific licence provenance missing: ' + filename);
+      } else {
+        let proof = null;
+        try { proof = JSON.parse(fs.readFileSync(evidenceFile, 'utf8')); }
+        catch { errors.push('Invalid licence provenance JSON: ' + filename); }
+        if (proof) {
+          const license = String(proof.license?.name || '').trim();
+          const licenseUrl = String(proof.license?.url || '').trim();
+          const author = String(proof.license?.author || '').trim();
+          const isCc0 = /^CC0(?:[ -]1\.0)?$/i.test(license);
+          const isAttribution = /^CC BY(?:-SA)?[ -]\d+(?:\.\d+)?$/i.test(license);
+          const globallyLicensed = isCc0
+            ? /^https?:\/\/creativecommons\.org\/publicdomain\/zero\/1\.0(?:\/|$)/i.test(licenseUrl)
+            : /^https?:\/\/creativecommons\.org\/licenses\/by(?:-sa)?\/\d+(?:\.\d+)?(?:\/|$)/i.test(licenseUrl);
+          if ((!isCc0 && !isAttribution) || !globallyLicensed) {
+            errors.push('Not eligible for UK commercial reuse: ' + filename + ', ' + license);
+          }
+          if (!author || !String(proof.sourcePage || '').startsWith('https://commons.wikimedia.org/wiki/File:')) {
+            errors.push('Original author/source attribution missing: ' + filename);
+          }
+          if (String(proof.imageSha256 || '').toLowerCase() !== hash) {
+            errors.push('Image hash differs from original verified licence evidence: ' + filename);
+          }
+          if (String(slot.sourcePage || '') !== proof.sourcePage) {
+            errors.push('Reviewed source page differs from archived licence provenance: ' + filename);
+          }
+        }
+      }
       if (!/^[a-f0-9]{64}$/.test(String(slot.approvedSha256 || ''))) {
         errors.push('Approved image hash missing: ' + filename + '; approval must lock exact stored bytes');
       } else if (hash !== slot.approvedSha256.toLowerCase()) {
@@ -98,6 +128,8 @@ function makeEntry(manifest, assetsDir) {
       sources: manifest.questions.flatMap((q) => ['questionImage', 'answerImage'].map((kind) => ({
         questionNumber: q.number, kind, sourcePage: q[kind]?.sourcePage || null,
         imageFile: q[kind]?.expectedAssetFile, approvedSha256: q[kind]?.approvedSha256,
+        license: q[kind]?.licensing?.name, author: q[kind]?.licensing?.author,
+        licenseUrl: q[kind]?.licensing?.url, modified: q[kind]?.licensing?.modified || 'Resized for QuizPro',
         permissionEvidenceRecorded: true,
       }))),
     },
