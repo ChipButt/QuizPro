@@ -1,0 +1,25 @@
+{
+  "id": "Q07-answer",
+  "fileName": "07-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:DanielRadcliffe.jpg",
+  "commonsFileTitle": "File:DanielRadcliffe.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/DanielRadcliffe.jpg/1280px-DanielRadcliffe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ADanielRadcliffe.jpg",
+  "license": {
+    "name": "CC BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "author": "Philip Romano",
+    "credit": "Own work",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "bffd16e3f4776bae19dde1b417b381b84c62b1b7202ce694e9172995c46d9f69",
+  "imageSha256": "990f011ec50c1c970d58d65af29c3e5b63fd3aff2d7702b64f2541ad0f020c41",
+  "bytes": 34202,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

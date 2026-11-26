@@ -1,0 +1,25 @@
+{
+  "id": "Q02-answer",
+  "fileName": "02-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Kylie_Minogue_performing_in_2018_(cropped).jpg",
+  "commonsFileTitle": "File:Kylie Minogue performing in 2018 (cropped).jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Kylie_Minogue_performing_in_2018_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AKylie+Minogue+performing+in+2018+%28cropped%29.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Raph_PH",
+    "credit": "QueenbdayRAH210418-84",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "e41d1c3bf3825b1ddfba7623a9061ee5f8e5b8e910859677c637dfc834390745",
+  "imageSha256": "0226dfc9c39c6094dbd53bf7f5300dd695c9327cfdf45a5cc1217337dae263d8",
+  "bytes": 63668,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

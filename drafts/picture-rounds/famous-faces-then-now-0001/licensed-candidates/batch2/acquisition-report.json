@@ -1,0 +1,248 @@
+{
+  "filesSaved": 9,
+  "sources": [
+    {
+      "id": "Q01-answer",
+      "fileName": "01-answer.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Richard_Branson_March_2015.jpg",
+      "commonsFileTitle": "File:Richard Branson March 2015.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/Richard_Branson_March_2015.jpg/1280px-Richard_Branson_March_2015.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ARichard+Branson+March+2015.jpg",
+      "license": {
+        "name": "CC BY 2.0",
+        "url": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Chatham House",
+        "credit": "https://www.flickr.com/photos/chathamhouse/16528067458/",
+        "attributionRequired": true,
+        "caution": "Check personality rights and applicable copyright law for intended publication"
+      },
+      "sourceSha256": "5a90c82c8f1f05257c65b0b6c23d309743ce54c02d22bab8857f1c12ff039554",
+      "imageSha256": "78670cc1da09eddcd33bdbc1e5797da00c9d6a448d36d759c135b9f011ac344b",
+      "bytes": 30036,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    },
+    {
+      "id": "Q02-question",
+      "fileName": "02-question.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:201000_-_Opening_Ceremony_Kylie_Minogue_performs_2_-_3b_-_2000_Sydney_opening_ceremony_photo_(cropped).jpg",
+      "commonsFileTitle": "File:201000 - Opening Ceremony Kylie Minogue performs 2 - 3b - 2000 Sydney opening ceremony photo (cropped).jpg",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/10/201000_-_Opening_Ceremony_Kylie_Minogue_performs_2_-_3b_-_2000_Sydney_opening_ceremony_photo_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3A201000+-+Opening+Ceremony+Kylie+Minogue+performs+2+-+3b+-+2000+Sydney+opening+ceremony+photo+%28cropped%29.jpg",
+      "license": {
+        "name": "CC BY-SA 3.0",
+        "url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "author": "Sport the library",
+        "credit": "Australian Paralympic Committee/Australian Sports Commission",
+        "attributionRequired": true,
+        "caution": "Check personality rights and applicable copyright law for intended publication"
+      },
+      "sourceSha256": "ed8e61b4696a6ed54f16433b3649c44ebde6b7dea4a2afb9512e612915e456d9",
+      "imageSha256": "45594d37e1c57ea5ce5b882829019d4d792d7d94a62937b6682605f35589beb5",
+      "bytes": 42006,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    },
+    {
+      "id": "Q02-answer",
+      "fileName": "02-answer.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kylie_Minogue_performing_in_2018_(cropped).jpg",
+      "commonsFileTitle": "File:Kylie Minogue performing in 2018 (cropped).jpg",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Kylie_Minogue_performing_in_2018_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AKylie+Minogue+performing+in+2018+%28cropped%29.jpg",
+      "license": {
+        "name": "CC BY 2.0",
+        "url": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Raph_PH",
+        "credit": "QueenbdayRAH210418-84",
+        "attributionRequired": true,
+        "caution": "Check personality rights and applicable copyright law for intended publication"
+      },
+      "sourceSha256": "e41d1c3bf3825b1ddfba7623a9061ee5f8e5b8e910859677c637dfc834390745",
+      "imageSha256": "0226dfc9c39c6094dbd53bf7f5300dd695c9327cfdf45a5cc1217337dae263d8",
+      "bytes": 63668,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    },
+    {
+      "id": "Q03-question",
+      "fileName": "03-question.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Robbie_Williams_(148950528).jpg",
+      "commonsFileTitle": "File:Robbie Williams (148950528).jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Robbie_Williams_%28148950528%29.jpg/1280px-Robbie_Williams_%28148950528%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ARobbie+Williams+%28148950528%29.jpg",
+      "license": {
+        "name": "CC BY 2.0",
+        "url": "https://creativecommons.org/licenses/by/2.0",
+        "author": "wonker  from London, United Kingdom",
+        "credit": "Robbie Williams",
+        "attributionRequired": true,
+        "caution": "Check personality rights and applicable copyright law for intended publication"
+      },
+      "sourceSha256": "968904479f891f6ef56328d4df90b3e6e30d12f35cfe1e4b3882bcb71b52240e",
+      "imageSha256": "377fa4efb6459c5e15ae2df15ecd9b1a63aa932af9fcfb6381875b97ce9c6aaf",
+      "bytes": 30834,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    },
+    {
+      "id": "Q03-answer",
+      "fileName": "03-answer.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Robbie_Williams_2024.jpg",
+      "commonsFileTitle": "File:Robbie Williams 2024.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Robbie_Williams_2024.jpg/1280px-Robbie_Williams_2024.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ARobbie+Williams+2024.jpg",
+      "license": {
+        "name": "CC0",
+        "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "author": "ManoSolo13241324",
+        "credit": "Own work",
+        "attributionRequired": false,
+        "caution": "Check personality rights and applicable copyright law for intended publication"
+      },
+      "sourceSha256": "4286ccf8c9fbefa2ca6b90d847620789f0428db7ba3caba008d73cc721ded5c1",
+      "imageSha256": "e242f4018fa8f61b090298e45af6012f1633ed6851cf51a39881969b78b1e140",
+      "bytes": 85182,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": false
+    },
+    {
+      "id": "Q05-answer",
+      "fileName": "05-answer.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:SamuelLJackson.jpg",
+      "commonsFileTitle": "File:SamuelLJackson.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/SamuelLJackson.jpg/1280px-SamuelLJackson.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ASamuelLJackson.jpg",
+      "license": {
+        "name": "CC BY-SA 4.0",
+        "url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "author": "Philip Romano",
+        "credit": "Own work",
+        "attributionRequired": true,
+        "caution": "Check personality rights and applicable copyright law for intended publication"
+      },
+      "sourceSha256": "543099757963cab2da73d7a3ec60fce4d20e32e11391b2ec3956490ab1156ec1",
+      "imageSha256": "f768b5d6ca336b69b155d8c88190e1f3ba4796bdd7d028af1c7a590c18fc010d",
+      "bytes": 64964,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    },
+    {
+      "id": "Q06-answer",
+      "fileName": "06-answer.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Emma_Thompson_at_the_2025_Locarno_Film_Festival_04.jpg",
+      "commonsFileTitle": "File:Emma Thompson at the 2025 Locarno Film Festival 04.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Emma_Thompson_at_the_2025_Locarno_Film_Festival_04.jpg/1280px-Emma_Thompson_at_the_2025_Locarno_Film_Festival_04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AEmma+Thompson+at+the+2025+Locarno+Film+Festival+04.jpg",
+      "license": {
+        "name": "CC BY-SA 4.0",
+        "url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "author": "Walid Farouk",
+        "credit": "Own work",
+        "attributionRequired": true,
+        "caution": "Check personality rights and applicable copyright law for intended publication"
+      },
+      "sourceSha256": "3872ff983c83f6c7ed39284af36302c46067395e96e7a1e5435aa095354ed2b7",
+      "imageSha256": "7f04527b6161829063ff732de27a0571068cd7749cc8ad4940a943718ba830bb",
+      "bytes": 64188,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    },
+    {
+      "id": "Q07-answer",
+      "fileName": "07-answer.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:DanielRadcliffe.jpg",
+      "commonsFileTitle": "File:DanielRadcliffe.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/DanielRadcliffe.jpg/1280px-DanielRadcliffe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ADanielRadcliffe.jpg",
+      "license": {
+        "name": "CC BY-SA 4.0",
+        "url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "author": "Philip Romano",
+        "credit": "Own work",
+        "attributionRequired": true,
+        "caution": "Check personality rights and applicable copyright law for intended publication"
+      },
+      "sourceSha256": "bffd16e3f4776bae19dde1b417b381b84c62b1b7202ce694e9172995c46d9f69",
+      "imageSha256": "990f011ec50c1c970d58d65af29c3e5b63fd3aff2d7702b64f2541ad0f020c41",
+      "bytes": 34202,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    },
+    {
+      "id": "Q08-answer",
+      "fileName": "08-answer.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Gary_Barlow_performing_in_Glasgow%2C_2017.jpg",
+      "commonsFileTitle": "File:Gary Barlow performing in Glasgow, 2017.jpg",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/Gary_Barlow_performing_in_Glasgow%2C_2017.jpg/1280px-Gary_Barlow_performing_in_Glasgow%2C_2017.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AGary+Barlow+performing+in+Glasgow%2C+2017.jpg",
+      "license": {
+        "name": "CC BY 2.0",
+        "url": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Marc E.",
+        "credit": "https://www.flickr.com/photos/marcen27/33994842414",
+        "attributionRequired": true,
+        "caution": "Check personality rights and applicable copyright law for intended publication"
+      },
+      "sourceSha256": "c07fd79781e2ef6e803dc4b205edf79fe67fe17b49cc6697502ef280a5d2f2e6",
+      "imageSha256": "b81c02050a5376947d3c506f09d67f4f109205dce987e91a16c1e4553510ec13",
+      "bytes": 30794,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    }
+  ],
+  "failures": [
+    {
+      "id": "Q07-question",
+      "error": "HTTP Error 429: Too many requests (f061ab2)"
+    },
+    {
+      "id": "Q09-answer",
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    {
+      "id": "Q10-question",
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    {
+      "id": "Q10-answer",
+      "error": "HTTP Error 429: Too Many Requests"
+    }
+  ]
+}

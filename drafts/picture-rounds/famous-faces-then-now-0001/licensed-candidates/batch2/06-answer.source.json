@@ -1,0 +1,25 @@
+{
+  "id": "Q06-answer",
+  "fileName": "06-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Emma_Thompson_at_the_2025_Locarno_Film_Festival_04.jpg",
+  "commonsFileTitle": "File:Emma Thompson at the 2025 Locarno Film Festival 04.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Emma_Thompson_at_the_2025_Locarno_Film_Festival_04.jpg/1280px-Emma_Thompson_at_the_2025_Locarno_Film_Festival_04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AEmma+Thompson+at+the+2025+Locarno+Film+Festival+04.jpg",
+  "license": {
+    "name": "CC BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "author": "Walid Farouk",
+    "credit": "Own work",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "3872ff983c83f6c7ed39284af36302c46067395e96e7a1e5435aa095354ed2b7",
+  "imageSha256": "7f04527b6161829063ff732de27a0571068cd7749cc8ad4940a943718ba830bb",
+  "bytes": 64188,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}
