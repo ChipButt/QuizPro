@@ -1,0 +1,89 @@
+{
+  "schema": "quizpro-photo-review-v3-source-candidates",
+  "purpose": "Actual commercially licensed WebP files, 4 new celebrity pairs and one Cliff answer replacement; never overwrite originals, do not publish",
+  "items": [
+    {
+      "id": "Q02-question",
+      "subject": "Sophia Loren",
+      "subjectBirthDate": "1934-09-20",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Sophia_Loren_Com_X-L060-007.jpg",
+      "photoTakenYear": 1960,
+      "originalArchiveRange": [
+        1955,
+        1960
+      ],
+      "note": "Archive records 1955–1960; use 1960 as conservative latest capture year"
+    },
+    {
+      "id": "Q02-answer",
+      "subject": "Sophia Loren",
+      "subjectBirthDate": "1934-09-20",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Sophia_Loren_2016.jpg",
+      "photoTakenYear": 2016,
+      "originalArchiveRange": null,
+      "note": null
+    },
+    {
+      "id": "Q05-question",
+      "subject": "Jane Fonda",
+      "subjectBirthDate": "1937-12-21",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Jane_Fonda_1975c.jpg",
+      "photoTakenYear": 1975,
+      "originalArchiveRange": null,
+      "note": null
+    },
+    {
+      "id": "Q05-answer",
+      "subject": "Jane Fonda",
+      "subjectBirthDate": "1937-12-21",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Jane_Fonda_at_the_2026_Cannes_Film_Festival_01.jpg",
+      "photoTakenYear": 2026,
+      "originalArchiveRange": null,
+      "note": null
+    },
+    {
+      "id": "Q06-question",
+      "subject": "Diana Ross",
+      "subjectBirthDate": "1944-03-26",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Supremes1965NL.jpg",
+      "photoTakenYear": 1965,
+      "originalArchiveRange": null,
+      "note": "Group photo; Diana Ross at RIGHT; require a subject-only crop after inspecting"
+    },
+    {
+      "id": "Q06-answer",
+      "subject": "Diana Ross",
+      "subjectBirthDate": "1944-03-26",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Diana_Ross_(2022).jpg",
+      "photoTakenYear": 2022,
+      "originalArchiveRange": null,
+      "note": null
+    },
+    {
+      "id": "Q08-question",
+      "subject": "Cher",
+      "subjectBirthDate": "1946-05-20",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Sonny-and-Cher.jpg",
+      "photoTakenYear": 1966,
+      "originalArchiveRange": null,
+      "note": "Group photo; isolate Cher only after inspecting exact file"
+    },
+    {
+      "id": "Q08-answer",
+      "subject": "Cher",
+      "subjectBirthDate": "1946-05-20",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Cher_in_2019_cropped.jpg",
+      "photoTakenYear": 2019,
+      "originalArchiveRange": null,
+      "note": null
+    },
+    {
+      "id": "Q07-answer",
+      "subject": "Cliff Richard",
+      "subjectBirthDate": "1940-10-14",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_2021.jpg",
+      "photoTakenYear": 2021,
+      "note": "Only answer image is a candidate; preserve locked 1964 solo Cliff Richard question image."
+    }
+  ]
+}
