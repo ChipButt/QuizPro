@@ -1,0 +1,27 @@
+{
+  "id": "Q01-question",
+  "fileName": "01-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Richard_Branson_2001.jpg",
+  "commonsFileTitle": "File:Richard Branson 2001.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Richard_Branson_2001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ARichard+Branson+2001.jpg",
+  "license": {
+    "name": "CC BY-SA 2.0",
+    "url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "author": "Kingkongphoto & www.celebrity-photos.com  from Laurel  Maryland, USA",
+    "credit": "Richard Branson",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "fb831acfa52f1a603cb06aad72e9c51e83234fd108b6b9e20ba96830a6a6344a",
+  "imageSha256": "443c1cfe10ad1736c00b69024249df0e28fadfb30895224f5d4fd027b6564b25",
+  "bytes": 31716,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

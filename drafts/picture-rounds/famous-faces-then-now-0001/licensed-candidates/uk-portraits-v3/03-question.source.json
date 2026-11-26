@@ -1,0 +1,27 @@
+{
+  "id": "Q03-question",
+  "fileName": "03-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Robbie_Williams_catzi.jpg",
+  "commonsFileTitle": "File:Robbie Williams catzi.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Robbie_Williams_catzi.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ARobbie+Williams+catzi.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "catzi",
+    "credit": "[1]",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "cc4f79c6df0cd55af8805370fd6b7dca4587f7383230dcc055725dd5adb567b9",
+  "imageSha256": "43c9f417496f21e5c12626b58e1a0bfcd8c815b1288cf36d2f93a9777864d338",
+  "bytes": 31724,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}
