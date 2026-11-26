@@ -21,7 +21,7 @@ from urllib.parse import unquote, urlencode, urlparse
 from urllib.request import Request, urlopen
 from PIL import Image, ImageOps
 
-ACCEPTED_LICENSE_RE = re.compile(r'^(CC BY(?:-SA)?[ -]\d+(?:\.\d+)?|CC0(?:[ -]1\.0)?)
+ACCEPTED_LICENSE_RE = re.compile(r'^(CC BY(?:-SA)?[ -]\d+(?:\.\d+)?|CC0(?:[ -]1\.0)?)$', re.I)
 AGENT = 'QuizPro-PictureAssetReview/1.0 (source/licence verification and local archival)'
 
 def clean_markup(s):
@@ -35,23 +35,24 @@ def commons_title(url):
 
 def choose_license(ext):
     def value(k):
-        return ext.get(k,{}).get('value','')
-    name=clean_markup(value('LicenseShortName'))
-    link=value('LicenseUrl')
+        return ext.get(k, {}).get('value', '')
+    name = clean_markup(value('LicenseShortName'))
+    link = str(value('LicenseUrl')).strip()
+    author = clean_markup(value('Artist'))
     if not ACCEPTED_LICENSE_RE.fullmatch(name):
-        raise ValueError('Missing/restricted image licence: '+repr(name))
-    # Do not accept jurisdiction-limited "Public domain" labels (e.g. PD-US-no-notice).
-    # Explicit, documented commercial-use Creative Commons licences are the allowed set.
+        raise ValueError('Blocked: no explicit worldwide commercial-use CC/CC0 licence: ' + repr(name))
+    if not author:
+        raise ValueError('Blocked: named author/photographer missing')
     if name.lower().startswith('cc0'):
-        if not re.match(r'^https?://creativecommons\.org/publicdomain/zero/1\.0(?:/|$)', str(link)):
-            raise ValueError('CC0 requires an explicit Creative Commons worldwide dedication URL')
-    elif not re.match(r'^https?://creativecommons\\.org/licenses/by(?:-sa)?/[0-9]+(?:\.[0-9]+)?(?:/|$)', str(link)):
-        raise ValueError('CC BY/BY-SA requires a valid commercial-use worldwide licence URL')
-    if not clean_markup(value('Artist')):
-        raise ValueError('Missing named source photographer/author')
-    return {'name':name,'url':link,'author':clean_markup(value('Artist')),'credit':clean_markup(value('Credit')),
-            'attributionRequired':name.lower().startswith('cc by'),
-            'caution':'Check personality rights and applicable copyright law for intended publication'}
+        if not re.match(r'^https?://creativecommons\.org/publicdomain/zero/1\.0(?:/|$)', link):
+            raise ValueError('Blocked: CC0 dedication link missing')
+    elif not re.match(r'^https?://creativecommons\.org/licenses/by(?:-sa)?/[0-9]+(?:\.[0-9]+)?(?:/|$)', link):
+        raise ValueError('Blocked: invalid CC BY/BY-SA licence link')
+    return {
+        'name': name, 'url': link, 'author': author, 'credit': clean_markup(value('Credit')),
+        'attributionRequired': name.lower().startswith('cc by'),
+        'caution': 'Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately.'
+    }
 
 def get_bytes(url,max_size=26000000):
     request=Request(url, headers={'User-Agent':AGENT})
