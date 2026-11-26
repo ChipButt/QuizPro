@@ -1,0 +1,40 @@
+{
+  "id": "Q06-question",
+  "fileName": "06-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Supremes1965NL.jpg",
+  "commonsFileTitle": "File:Supremes1965NL.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/Supremes1965NL.jpg/1280px-Supremes1965NL.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ASupremes1965NL.jpg",
+  "license": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "author": "Eric Koch  for  Anefo",
+    "credit": "GaHetNa (Nationaal Archief NL)  918-2599",
+    "attributionRequired": false,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "ff54c90415e69d21e0e23de9f7e51ab4723796c528b43d278a61f250685560b9",
+  "imageSha256": "ce1c1da1119a490284de9c672775bc98cc311a826bb64d2408e8945de389e8b9",
+  "bytes": 31400,
+  "width": 720,
+  "height": 720,
+  "cropApplied": true,
+  "cropRect": [
+    0.59,
+    0.09,
+    0.88,
+    0.48
+  ],
+  "modificationNotice": "Cropped to isolate celebrity, resampled to fit quiz card; no changes to the person or original scene",
+  "editorialStatus": "PENDING USER APPROVAL",
+  "published": false,
+  "attributionDisplayNeeded": false,
+  "derivedFromImageSha256": "3dd072a989b3264ac7b9aef9b88b4b028596b88419b398374aac66e6cb965db5",
+  "postProcessCropRect": [
+    232,
+    35,
+    532,
+    635
+  ],
+  "postProcessUpscaled": true
+}

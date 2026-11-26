@@ -1,0 +1,40 @@
+{
+  "id": "Q08-question",
+  "fileName": "08-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Sonny-and-Cher.jpg",
+  "commonsFileTitle": "File:Sonny-and-Cher.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Sonny-and-Cher.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ASonny-and-Cher.jpg",
+  "license": {
+    "name": "CC BY-SA 2.0",
+    "url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "author": "Peter Denton",
+    "credit": "https://www.flickr.com/photos/peterdenton/2081130340/",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "3cd3ed87cb4eb1ee7b45c89b491e2a90ff64ce1bb8fc4f18a0acf96f8589d1ee",
+  "imageSha256": "577294f3d1664c7e21a85c11de8c38aacc3a8322eaafc16662f38326b1c850ac",
+  "bytes": 17188,
+  "width": 720,
+  "height": 720,
+  "cropApplied": true,
+  "cropRect": [
+    0.16,
+    0,
+    0.59,
+    0.7
+  ],
+  "modificationNotice": "Cropped to isolate celebrity, resampled to fit quiz card; no changes to the person or original scene",
+  "editorialStatus": "PENDING USER APPROVAL",
+  "published": false,
+  "attributionDisplayNeeded": true,
+  "derivedFromImageSha256": "e7a538b753fe381827b2bcbb112fb12241e23a5782bd02755fe125e2ae51a102",
+  "postProcessCropRect": [
+    224,
+    215,
+    496,
+    504
+  ],
+  "postProcessUpscaled": true
+}
