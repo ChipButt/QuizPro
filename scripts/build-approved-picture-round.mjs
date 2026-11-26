@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {validateRoundPhotoTimeline} from './picture-round-age-gap.mjs';
 
 function inspectImage(bytes) {
   if (bytes.length >= 24 && bytes.subarray(0, 8).equals(Buffer.from('89504e470d0a1a0a', 'hex'))) {
@@ -40,6 +41,10 @@ function makeEntry(manifest, assetsDir) {
   if (manifest.schema !== 'quizpro-approved-picture-round-manifest-v1') errors.push('Wrong manifest schema');
   if (manifest.type !== 'Picture round' || manifest.answerMode !== 'text') errors.push('Invalid QuizPro round format');
   if (!Array.isArray(manifest.questions) || manifest.questions.length !== 10) errors.push('Expected exactly 10 questions');
+  // Historical photo captures, not merely the person's age today, must be >=40 years apart.
+  const chronology = validateRoundPhotoTimeline(manifest.questions);
+  errors.push(...chronology.errors);
+  for (const warning of chronology.warnings) process.stderr.write('REVIEW NOTE: '+warning+'\n');
   const seen = new Set();
   const questions = [];
   for (const [i, question] of (manifest.questions || []).entries()) {
