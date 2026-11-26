@@ -14,6 +14,8 @@ import io
 import json
 import re
 import sys
+import time
+from urllib.error import HTTPError
 from pathlib import Path
 from urllib.parse import unquote, urlencode, urlparse
 from urllib.request import Request, urlopen
@@ -48,13 +50,19 @@ def choose_license(ext):
 
 def get_bytes(url,max_size=26000000):
     request=Request(url, headers={'User-Agent':AGENT})
-    with urlopen(request,timeout=35) as response:
-        u=urlparse(response.url)
-        if u.scheme!='https' or u.hostname not in ('commons.wikimedia.org','upload.wikimedia.org','thumb.wikimedia.org'):
-            raise ValueError('Wikimedia download redirected to unknown host')
-        data=response.read(max_size+1)
-    if len(data)>max_size: raise ValueError('Source image exceeded 26MB')
-    return data
+    for attempt in range(5):
+        try:
+            with urlopen(request,timeout=35) as response:
+                u=urlparse(response.url)
+                if u.scheme!='https' or u.hostname not in ('commons.wikimedia.org','upload.wikimedia.org','thumb.wikimedia.org'):
+                    raise ValueError('Wikimedia download redirected to unknown host')
+                data=response.read(max_size+1)
+            if len(data)>max_size: raise ValueError('Source image exceeded 26MB')
+            return data
+        except HTTPError as e:
+            if e.code not in (429,500,502,503,504) or attempt==4: raise
+            time.sleep(min(45, 4 * 2**attempt))
+    raise RuntimeError('Exhausted retries')
 
 def image_info(title):
     params={'action':'query','format':'json','prop':'imageinfo','iiprop':'url|extmetadata|size','iiurlwidth':'1200','titles':title}
@@ -118,6 +126,7 @@ def main():
     dest=Path(args.out);dest.mkdir(parents=True,exist_ok=True)
     success=[];failures=[]
     for item in items:
+        time.sleep(1.5)  # Gentle pacing for Wikimedia's public API
         try: success.append(acquire(item,dest))
         except Exception as ex: failures.append({'id':item.get('id'), 'error':str(ex)})
     (dest/'acquisition-report.json').write_text(json.dumps({'filesSaved':len(success),'sources':success,'failures':failures},indent=2)+'\n')
