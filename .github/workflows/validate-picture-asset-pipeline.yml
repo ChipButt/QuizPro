@@ -7,6 +7,8 @@ on:
       - .github/workflows/validate-picture-asset-pipeline.yml
       - src/components/SimpleQuizBuilder.jsx
       - scripts/build-approved-picture-round.mjs
+      - scripts/picture-round-age-gap.mjs
+      - scripts/test-picture-round-age-gap.mjs
       - scripts/source-commons-picture-assets.py
   workflow_dispatch:
 permissions:
@@ -26,6 +28,8 @@ jobs:
         run: npm ci
       - name: Check package builder syntax
         run: node --check scripts/build-approved-picture-round.mjs
+      - name: Check verified 40-year photo gap unit tests
+        run: node scripts/test-picture-round-age-gap.mjs
       - name: Check image acquisition syntax
         run: python -m py_compile scripts/source-commons-picture-assets.py
       - name: Compile QuizPro and image-import UI
