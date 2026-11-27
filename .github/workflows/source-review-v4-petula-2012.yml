@@ -1,0 +1,56 @@
+name: Source Petula Clark 2012 authentic portrait for Review 4
+on:
+  push:
+    branches: [picture-rounds-14-formats-20261126]
+    paths:
+      - .github/workflows/source-review-v4-petula-2012.yml
+      - drafts/picture-rounds/famous-faces-then-now-0001/review-v4-petula-2012-source.json
+  workflow_dispatch:
+permissions: {contents: write}
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install pillow
+      - name: Acquire actual CC photo and prove SHA
+        id: acquire
+        continue-on-error: true
+        run: |
+          python scripts/source-commons-picture-assets.py \
+            drafts/picture-rounds/famous-faces-then-now-0001/review-v4-petula-2012-source.json \
+            --out drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-petula-2012
+          python - <<'PY'
+          import json,hashlib,pathlib
+          p=pathlib.Path("drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-petula-2012")
+          s=json.loads((p/"02-answer.source.json").read_text())
+          assert s["imageSha256"]==hashlib.sha256((p/"02-answer.webp").read_bytes()).hexdigest()
+          assert s["license"]["name"].startswith("CC BY")
+          print(s["imageSha256"],s["license"]["name"])
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: real-petula-clark-2012-portrait-proof
+          path: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-petula-2012/
+          if-no-files-found: warn
+      - name: Save unchanged original WebP bytes and rights proof
+        if: always()
+        run: |
+          git config user.name "QuizPro real photo archive"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-petula-2012/
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive Petula Clark 2012 close-up with SHA and licence proof"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin picture-rounds-14-formats-20261126
+              git rebase origin/picture-rounds-14-formats-20261126
+              if git push; then break; fi
+              if [ "$attempt" = "5" ]; then exit 1; fi
+              sleep 3
+            done
+          fi
+      - name: Reject failed source
+        if: steps.acquire.outcome == 'failure'
+        run: exit 1
