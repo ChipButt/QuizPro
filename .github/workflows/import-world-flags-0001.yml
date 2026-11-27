@@ -1,0 +1,39 @@
+name: Import approved World Flags 0001
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/imports/world-flags-0001.json"
+      - "data/imports/import-world-flags-0001.mjs"
+      - ".github/workflows/import-world-flags-0001.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: quizpro-import-world-flags-0001
+  cancel-in-progress: false
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Import only the approved round into QuizPro's saved round library
+        run: node data/imports/import-world-flags-0001.mjs
+      - name: Safely commit the additive round-library update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/quiz-library.json
+          if git diff --cached --quiet; then
+            echo "World Flags 0001 is already imported."
+            exit 0
+          fi
+          git commit -m "Import approved World Flags 0001 into QuizPro saved rounds"
+          git pull --rebase origin main
+          git push origin HEAD:main

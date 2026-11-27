@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "slug": "world-flags-0001",
+  "title": "World Flags – 0001",
+  "category": "Picture",
+  "editorialStatus": "approved-10-of-10",
+  "approvalDate": "2026-11-27",
+  "flags": [
+    {
+      "number": 1,
+      "country": "Jamaica",
+      "code": "jm",
+      "filename": "01-jamaica.svg",
+      "source": "https://github.com/hampusborgos/country-flags/blob/main/svg/jm.svg"
+    },
+    {
+      "number": 2,
+      "country": "Ghana",
+      "code": "gh",
+      "filename": "02-ghana.svg",
+      "source": "https://github.com/hampusborgos/country-flags/blob/main/svg/gh.svg"
+    },
+    {
+      "number": 3,
+      "country": "Laos",
+      "code": "la",
+      "filename": "03-laos.svg",
+      "source": "https://github.com/hampusborgos/country-flags/blob/main/svg/la.svg"
+    },
+    {
+      "number": 4,
+      "country": "North Macedonia",
+      "code": "mk",
+      "filename": "04-north-macedonia.svg",
+      "source": "https://github.com/hampusborgos/country-flags/blob/main/svg/mk.svg"
+    },
+    {
+      "number": 5,
+      "country": "South Africa",
+      "code": "za",
+      "filename": "05-south-africa.svg",
+      "source": "https://github.com/hampusborgos/country-flags/blob/main/svg/za.svg"
+    },
+    {
+      "number": 6,
+      "country": "Argentina",
+      "code": "ar",
+      "filename": "06-argentina.svg",
+      "source": "https://github.com/hampusborgos/country-flags/blob/main/svg/ar.svg"
+    },
+    {
+      "number": 7,
+      "country": "Ukraine",
+      "code": "ua",
+      "filename": "07-ukraine.svg",
+      "source": "https://github.com/hampusborgos/country-flags/blob/main/svg/ua.svg"
+    },
+    {
+      "number": 8,
+      "country": "Iceland",
+      "code": "is",
+      "filename": "08-iceland.svg",
+      "source": "https://github.com/hampusborgos/country-flags/blob/main/svg/is.svg"
+    },
+    {
+      "number": 9,
+      "country": "Thailand",
+      "code": "th",
+      "filename": "09-thailand.svg",
+      "source": "https://github.com/hampusborgos/country-flags/blob/main/svg/th.svg"
+    },
+    {
+      "number": 10,
+      "country": "Greece",
+      "code": "gr",
+      "filename": "10-greece.svg",
+      "source": "https://github.com/hampusborgos/country-flags/blob/main/svg/gr.svg"
+    }
+  ]
+}
