@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "sourceUpdatedAt": "2026-11-27T14:56:29.930Z",
+  "sourceUpdatedAt": "2026-11-27T14:56:47.505Z",
   "distinctQuestions": 1692,
   "note": "Exact and punctuation-normalised question history. A human/semantic check is still required for rewordings that test the same fact.",
   "questions": [
@@ -13240,11 +13240,11 @@
       "occurrences": [
         {
           "quiz": "TPC Nov 2026",
-          "round": "World Flags – 0001"
+          "round": "World Flags"
         },
         {
           "quiz": "[Saved round]",
-          "round": "World Flags – 0001"
+          "round": "World Flags"
         }
       ]
     },
