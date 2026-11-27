@@ -1811,3 +1811,55 @@
     overflow:visible !important;
   }
 }
+
+
+/* ---------- Picture-round software keyboard viewport ---------- */
+/* Activate only after the keyboard is detected. The normal question/reveal
+   canvas and its approved image/answer dimensions are not changed. */
+@media(max-width:979px){
+  .team-page.live-team-page.picture-round-team-page.picture-keyboard-open{
+    position:fixed !important;
+    display:block !important;
+    top:var(--picture-keyboard-top,0px) !important;
+    left:var(--picture-keyboard-left,0px) !important;
+    right:auto !important;
+    bottom:auto !important;
+    width:var(--picture-keyboard-width,100vw) !important;
+    height:var(--picture-keyboard-height,100dvh) !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    overscroll-behavior:contain !important;
+    scroll-behavior:auto !important;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .team-page.live-team-page.picture-round-team-page.picture-keyboard-open
+  .live-phone-shell.picture-round-team-page{
+    box-sizing:border-box !important;
+    height:var(--team-keyboard-layout-height,100dvh) !important;
+    min-height:var(--team-keyboard-layout-height,100dvh) !important;
+    max-height:none !important;
+    overflow:visible !important;
+  }
+
+  .team-page.live-team-page.picture-round-team-page.picture-keyboard-open
+  .question-team-card,
+  .team-page.live-team-page.picture-round-team-page.picture-keyboard-open
+  .team-question-stage.picture-round-question-layout{
+    overflow:visible !important;
+  }
+
+  .team-page.live-team-page.picture-round-team-page.picture-keyboard-open
+  .live-phone-shell.picture-round-team-page::after{
+    content:"";
+    position:absolute;
+    top:100%;
+    left:0;
+    height:24px;
+    width:1px;
+    pointer-events:none;
+  }
+}
