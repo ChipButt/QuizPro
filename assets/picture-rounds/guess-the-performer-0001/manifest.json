@@ -1,0 +1,217 @@
+{
+  "slug": "guess-the-performer-0001",
+  "title": "Guess the Performer \u2013 0001",
+  "category": "Picture",
+  "questions": [
+    {
+      "number": 1,
+      "performer": "Ryan Gosling",
+      "width": 1254,
+      "height": 1254,
+      "unchangedPixelFraction": 0.90881,
+      "question": {
+        "filename": "ryan-gosling-question.webp",
+        "sha256": "2257f2f5b61f20522cf4c667ab0e7d08b0c373273c3b30c0b4e7624fe373862e",
+        "sourceFilename": "image(5).png",
+        "sourceSha256": "e84b922fc328920b62824dcc0b4a7809f8962828b5a441189ad10423cb82e1ff",
+        "bytes": 3451260
+      },
+      "answer": {
+        "filename": "ryan-gosling-answer.webp",
+        "sha256": "3f2f41a45640e1c09c2b18e760063bf084ba13c4e327c27d95d16035fcf951f0",
+        "sourceFilename": "Ryan_Gosling_Answer_Overlay.png",
+        "sourceSha256": "01d27c1467d2fd75735b205027f363ebcbaba864e56476b1d6cf4d89f1099a6c",
+        "bytes": 3417464
+      }
+    },
+    {
+      "number": 2,
+      "performer": "Hugh Grant",
+      "width": 1254,
+      "height": 1254,
+      "unchangedPixelFraction": 0.89514,
+      "question": {
+        "filename": "hugh-grant-question.webp",
+        "sha256": "da96bb4eea04fbfd61203f3d9a82b089045f821af2dab4e1080bb58aa3d62aa9",
+        "sourceFilename": "Hugh_Grant_Question_V2.png",
+        "sourceSha256": "ddd45e22a24b33c17e8ad7924d4e167fb22c14d1a86638a74f258ce411cdb555",
+        "bytes": 3321650
+      },
+      "answer": {
+        "filename": "hugh-grant-answer.webp",
+        "sha256": "bdefd03017899036070e24bfaab3afdc5e5f3cae0ce4c5507e4e6cece6d36be8",
+        "sourceFilename": "Hugh_Grant_Answer_V2.png",
+        "sourceSha256": "5bd6ed4f2db7abf2d41d2a62826b9a0204f3a68abcf0057db18d13ad2b3cbb5c",
+        "bytes": 3297016
+      }
+    },
+    {
+      "number": 3,
+      "performer": "Tom Hanks",
+      "width": 1254,
+      "height": 1254,
+      "unchangedPixelFraction": 0.90709,
+      "question": {
+        "filename": "tom-hanks-question.webp",
+        "sha256": "060e0bef15f9a4b31ed1b03b3256fee352f26fdfa28a8b6ea9f6fdb04af4d5a0",
+        "sourceFilename": "Tom_Hanks_Question.png",
+        "sourceSha256": "ffe9a40cb96c9ae63e7889cbddeb96f236dcf8967719bf8d8bb5bd79a29cd850",
+        "bytes": 3335748
+      },
+      "answer": {
+        "filename": "tom-hanks-answer.webp",
+        "sha256": "3f53c679b5ae82ea0bebea5cfaa711032807b5325aff66426ea45367f3cd84d2",
+        "sourceFilename": "Tom_Hanks_Answer.png",
+        "sourceSha256": "c7fe8bc1844d9009df766f07043667fd331be1aafd21a9e17a0cf2410d72d5da",
+        "bytes": 3349542
+      }
+    },
+    {
+      "number": 4,
+      "performer": "Emily Blunt",
+      "width": 1254,
+      "height": 1254,
+      "unchangedPixelFraction": 0.91825,
+      "question": {
+        "filename": "emily-blunt-question.webp",
+        "sha256": "0e23b25212c7a95e52390d0bca99e5d21cf7276cc7ad1d3a1e51d5fc5c61505e",
+        "sourceFilename": "Emily_Blunt_Question.png",
+        "sourceSha256": "70af1507437aa7a3ed240037e9ab5757dc8e7bccc04b7e079bc298dd8246c30a",
+        "bytes": 3462678
+      },
+      "answer": {
+        "filename": "emily-blunt-answer.webp",
+        "sha256": "0f7cf0b8f3f61ccdd11890eda949ba9bfbb6da14278e9e5402ddb6a421b0497f",
+        "sourceFilename": "Emily_Blunt_Answer.png",
+        "sourceSha256": "332d3a066bd3a25fe18a8661a724d1eefe172ae246f572d4065fc97717428334",
+        "bytes": 3430054
+      }
+    },
+    {
+      "number": 5,
+      "performer": "Robin Williams",
+      "width": 1254,
+      "height": 1254,
+      "unchangedPixelFraction": 0.90249,
+      "question": {
+        "filename": "robin-williams-question.webp",
+        "sha256": "5beaa6d5794f12171878b97589bc0744e50211a338ae96ecc20db2d252ed679c",
+        "sourceFilename": "Robin_Williams_Open_House_Question_V3.png",
+        "sourceSha256": "9603bdb2b290ba3a936790a91e5c99104a2a5adc4532f85b04fe8d82a6ac42d7",
+        "bytes": 3163832
+      },
+      "answer": {
+        "filename": "robin-williams-answer.webp",
+        "sha256": "264be25bdf0645e0f994268fa6f22d8826bf948ec1f351afe6e0f1d0f0bef926",
+        "sourceFilename": "Robin_Williams_Open_House_Answer_V3.png",
+        "sourceSha256": "30106fa8d7866322f4908663c89f79d4a1948e8dce50f73b39d5f6a1ea7a3399",
+        "bytes": 3139204
+      }
+    },
+    {
+      "number": 6,
+      "performer": "Sandra Bullock",
+      "width": 1254,
+      "height": 1254,
+      "unchangedPixelFraction": 0.89825,
+      "question": {
+        "filename": "sandra-bullock-question.webp",
+        "sha256": "fe5c6cd2b424305eddb88da0c73e92b8eeba5bda45bcf328a997d5b49e2ccf52",
+        "sourceFilename": "Sandra_Bullock_Question.png",
+        "sourceSha256": "516dcaab25889d7bf1496369e7916e17c7b670b26da7b530980b088bf5e2db28",
+        "bytes": 3223072
+      },
+      "answer": {
+        "filename": "sandra-bullock-answer.webp",
+        "sha256": "cba3cd09737d8e791e6d4330d12952231dd7f2c25518d0b8ed0e112026d0eb50",
+        "sourceFilename": "Sandra_Bullock_Answer.png",
+        "sourceSha256": "b0cf2b35996d5fbf9a99a239d2eb74584d4940f0acc67cd301b5c1aa50f4281c",
+        "bytes": 3222398
+      }
+    },
+    {
+      "number": 7,
+      "performer": "Nicolas Cage",
+      "width": 1254,
+      "height": 1254,
+      "unchangedPixelFraction": 0.88461,
+      "question": {
+        "filename": "nicolas-cage-question.webp",
+        "sha256": "73ef3f2be9d73984e5df6d9e4c05248d71bd8ba938207695954556a39d74c966",
+        "sourceFilename": "Nicolas_Cage_Question.png",
+        "sourceSha256": "1a7fef07db92efd08614913dffdc9e1888150643587a02e5287f093be7ef04e5",
+        "bytes": 3353026
+      },
+      "answer": {
+        "filename": "nicolas-cage-answer.webp",
+        "sha256": "fd9c1b4e4bb92c74681643e5b3d618ebc4a3afb9b1335ad5c4f50298ac2c1606",
+        "sourceFilename": "Nicolas_Cage_Answer.png",
+        "sourceSha256": "ba64a0c092547dba11cee98748a3a945189b8c44fe6dde880c828ba4a4ee50c3",
+        "bytes": 3324342
+      }
+    },
+    {
+      "number": 8,
+      "performer": "Arnold Schwarzenegger",
+      "width": 1254,
+      "height": 1254,
+      "unchangedPixelFraction": 0.88744,
+      "question": {
+        "filename": "arnold-schwarzenegger-question.webp",
+        "sha256": "8e2ba85aa984154f1a81870303b72520bc5e26574e7b1cf64f9a03b83ff2abf1",
+        "sourceFilename": "Arnold_Schwarzenegger_Subtle_Question.png",
+        "sourceSha256": "a50e59ec8fae65a15e349ade32f88fda687abcae81de3ba5d87aa998d9efb148",
+        "bytes": 3226224
+      },
+      "answer": {
+        "filename": "arnold-schwarzenegger-answer.webp",
+        "sha256": "e85ab9093be6442e53074a98587b4c964ed0c70d8356efebe3c51980ade6f8d8",
+        "sourceFilename": "Arnold_Schwarzenegger_Subtle_Answer_Final.png",
+        "sourceSha256": "86e215850695a3fa30196a669a8e6ba79ed9b3fc5a52bd11e0c890755fac4a8b",
+        "bytes": 3170418
+      }
+    },
+    {
+      "number": 9,
+      "performer": "Meryl Streep",
+      "width": 1254,
+      "height": 1254,
+      "unchangedPixelFraction": 0.90912,
+      "question": {
+        "filename": "meryl-streep-question.webp",
+        "sha256": "a2a035ac541e94c05e7cfb7310255664a23bc819e25da39274f44cceb65449d7",
+        "sourceFilename": "Meryl_Streep_Question.png",
+        "sourceSha256": "4ba70ee33d4b3a56b8d8c05defd36d8ed8b6165a3e3734a535d4dadad20360bc",
+        "bytes": 3239072
+      },
+      "answer": {
+        "filename": "meryl-streep-answer.webp",
+        "sha256": "0c72eb2fc00a88d5e209a786d9cbec840d610fc9ed29146674dad50004221e1d",
+        "sourceFilename": "Meryl_Streep_Answer.png",
+        "sourceSha256": "ff68d6575665d5308da0a83b054917893a0c22456acb34bdca60d84ea3d23c78",
+        "bytes": 3233926
+      }
+    },
+    {
+      "number": 10,
+      "performer": "Paul Rudd",
+      "width": 1254,
+      "height": 1254,
+      "unchangedPixelFraction": 0.92681,
+      "question": {
+        "filename": "paul-rudd-question.webp",
+        "sha256": "879440d374038588ea30e9c08d2914b3c68f287befdfc764c6da96a6968d7f6a",
+        "sourceFilename": "Paul_Rudd_Question_V2.png",
+        "sourceSha256": "599d0b658faf85dba0e70f9efc39bde8419884b1d865795ebab026f187440880",
+        "bytes": 3167710
+      },
+      "answer": {
+        "filename": "paul-rudd-answer.webp",
+        "sha256": "b45960b99b192b52e8949540a71717f7dc73c823de4c4af2e1caa42de44f12e9",
+        "sourceFilename": "Paul_Rudd_Answer_V2.png",
+        "sourceSha256": "0d28b882c468a44b9a3b30dfa7718b9f2ef52c1146459301318acfdf21973858",
+        "bytes": 3158042
+      }
+    }
+  ]
+}
