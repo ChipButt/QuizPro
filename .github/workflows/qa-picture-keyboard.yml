@@ -49,7 +49,7 @@ jobs:
               await page.waitForTimeout(250);
               const result=await field.evaluate(el=>{
                 const box=el.getBoundingClientRect(), wrapper=el.closest('.your-answer-section').getBoundingClientRect();
-                const canvas=el.closest('.picture-round-team-page');
+                const canvas=el.closest('.team-page.live-team-page.picture-round-team-page');
                 return {top:box.top,bottom:box.bottom,wrapperTop:wrapper.top,wrapperBottom:wrapper.bottom,scroll:canvas.scrollTop,open:canvas.classList.contains('picture-keyboard-open'),viewportTop:visualViewport.offsetTop,viewportBottom:visualViewport.offsetTop+visualViewport.height};
               });
               console.log('OPEN',width,height,JSON.stringify(result));
