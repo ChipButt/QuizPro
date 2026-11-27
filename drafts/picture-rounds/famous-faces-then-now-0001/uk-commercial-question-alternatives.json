@@ -1,0 +1,18 @@
+{
+  "purpose": "Replacement files for Q1/Q3 which failed strict legal or visual gate. All are from photographer-owned, Flickr-reviewed Creative Commons releases; must be stored, inspected and explicitly approved before replacing prior images.",
+  "items": [
+    {
+      "id": "Q01-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Richard_Branson_2001.jpg",
+      "subject": "Richard Branson, 2000",
+      "notes": "CC BY-SA 2.0 photographer John Mathew Smith; Flickr licence reviewed"
+    },
+    {
+      "id": "Q03-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Robbie_Williams_catzi.jpg",
+      "subject": "Robbie Williams, 2006",
+      "notes": "CC BY 2.0 photographer catzi; Flickr licence reviewed"
+    }
+  ],
+  "reviewGate": "Not presented until exact files are saved and licensing plus face framing checked."
+}

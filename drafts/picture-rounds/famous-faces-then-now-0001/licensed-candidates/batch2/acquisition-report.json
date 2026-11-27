@@ -1,0 +1,58 @@
+{
+  "filesSaved": 0,
+  "sources": [],
+  "failures": [
+    {
+      "id": "Q01-answer",
+      "error": "Refusing to replace a previously sourced image: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch2/01-answer.webp"
+    },
+    {
+      "id": "Q02-question",
+      "error": "Refusing to replace a previously sourced image: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch2/02-question.webp"
+    },
+    {
+      "id": "Q02-answer",
+      "error": "Refusing to replace a previously sourced image: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch2/02-answer.webp"
+    },
+    {
+      "id": "Q03-question",
+      "error": "Refusing to replace a previously sourced image: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch2/03-question.webp"
+    },
+    {
+      "id": "Q03-answer",
+      "error": "Refusing to replace a previously sourced image: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch2/03-answer.webp"
+    },
+    {
+      "id": "Q05-answer",
+      "error": "Refusing to replace a previously sourced image: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch2/05-answer.webp"
+    },
+    {
+      "id": "Q06-answer",
+      "error": "Refusing to replace a previously sourced image: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch2/06-answer.webp"
+    },
+    {
+      "id": "Q07-question",
+      "error": "HTTP Error 429: Too many requests (f061ab2)"
+    },
+    {
+      "id": "Q07-answer",
+      "error": "Refusing to replace a previously sourced image: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch2/07-answer.webp"
+    },
+    {
+      "id": "Q08-answer",
+      "error": "Refusing to replace a previously sourced image: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch2/08-answer.webp"
+    },
+    {
+      "id": "Q09-answer",
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    {
+      "id": "Q10-question",
+      "error": "HTTP Error 429: Too Many Requests"
+    },
+    {
+      "id": "Q10-answer",
+      "error": "HTTP Error 429: Too Many Requests"
+    }
+  ]
+}

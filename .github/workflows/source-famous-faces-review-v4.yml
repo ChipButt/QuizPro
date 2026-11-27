@@ -1,0 +1,75 @@
+name: Source verified Famous Faces Review 4 photograph pairs
+on:
+  push:
+    branches: [picture-rounds-14-formats-20261126]
+    paths:
+      - .github/workflows/source-famous-faces-review-v4.yml
+      - drafts/picture-rounds/famous-faces-then-now-0001/review-v4-source-candidates.json
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  source-v4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Prepare source-first Commons pipeline
+        run: python -m pip install pillow
+      - name: Fetch 8 genuine freely-licensed photographs and convert to review WebP
+        id: acquire
+        continue-on-error: true
+        run: |
+          python scripts/source-commons-picture-assets.py \
+            drafts/picture-rounds/famous-faces-then-now-0001/review-v4-source-candidates.json \
+            --out drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced
+      - name: Check captured files are complete and evidence agrees with real bytes
+        id: inspect
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import json,hashlib,pathlib
+          root=pathlib.Path("drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced")
+          report=json.loads((root/"acquisition-report.json").read_text())
+          required={f"{n:02}-{kind}" for n in [2,5,6,8] for kind in ("question","answer")}
+          actual={p.stem for p in root.glob("*.webp")}
+          missing=required-actual
+          assert not missing, f"Missing image files: {sorted(missing)}; failures: {report.get('failures')}"
+          for k in sorted(required):
+            img=root/(k+".webp")
+            proof=json.loads((root/(k+".source.json")).read_text())
+            digest=hashlib.sha256(img.read_bytes()).hexdigest()
+            assert digest==proof["imageSha256"], f"Mismatch: {k}"
+            assert proof["license"]["name"].lower().startswith(("cc by","cc0")), f"Uncleared: {k}"
+            assert proof["published"] is False
+            print(k,proof["sourcePage"],digest,proof["license"]["name"])
+          print("Eight archived original photographs have valid evidence; status remains pending user review.")
+          PY
+      - name: Store acquisition report and source files for inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: famous-faces-review4-source-first-photos
+          path: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced/
+          if-no-files-found: warn
+      - name: Commit saved image bytes and source/licence evidence only to draft branch
+        if: always()
+        run: |
+          git config user.name "QuizPro source-first picture review"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced/
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive Review 4 genuine celebrity WebPs and rights metadata (not approved)"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin picture-rounds-14-formats-20261126
+              git rebase origin/picture-rounds-14-formats-20261126
+              if git push; then break; fi
+              if [ "$attempt" = "5" ]; then exit 1; fi
+              sleep 3
+            done
+          fi
+      - name: Fail if any source image or QA check failed
+        if: steps.acquire.outcome == 'failure' || steps.inspect.outcome == 'failure'
+        run: exit 1

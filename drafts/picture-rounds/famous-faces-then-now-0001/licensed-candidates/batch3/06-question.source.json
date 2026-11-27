@@ -1,0 +1,25 @@
+{
+  "id": "Q06-question",
+  "fileName": "06-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Vladimir_Bouchler_and_Emma_Thompson%2C_working_on_narration_of_the_documentary_film_%22DRY_TEARS._Aral_Sea_Legend%22%2C_London_(1998).jpg",
+  "commonsFileTitle": "File:Vladimir Bouchler and Emma Thompson, working on narration of the documentary film \"DRY TEARS. Aral Sea Legend\", London (1998).jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Vladimir_Bouchler_and_Emma_Thompson%2C_working_on_narration_of_the_documentary_film_%22DRY_TEARS._Aral_Sea_Legend%22%2C_London_%281998%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AVladimir+Bouchler+and+Emma+Thompson%2C+working+on+narration+of+the+documentary+film+%22DRY+TEARS.+Aral+Sea+Legend%22%2C+London+%281998%29.jpg",
+  "license": {
+    "name": "CC BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "author": "Helen Ibra",
+    "credit": "Self-photographed",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "f87099ad6cd9ba7d1d3e57876fdd962efab007f9f1855a1af5b9aebb18ea899c",
+  "imageSha256": "02194711a4b600b1c236d3c02d91a458a53c5a46fa5f329c2007f260e2d6b178",
+  "bytes": 22730,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

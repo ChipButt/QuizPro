@@ -1,0 +1,13 @@
+{
+  "purpose": "Download, preserve and prepare legally reusable alternative photos for Tom Jones. These are NOT the user-approved pictures; must be separately approved before replacing any current round selection.",
+  "items": [
+    {
+      "id": "Q04-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Tom_Jones_voor_TV-optreden_in_Nederland._Hier_tijdens_persconferentie,_Bestanddeelnr_920-9037.jpg"
+    },
+    {
+      "id": "Q04-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Sir_Tom_Jones_at_The_Queen%27s_Birthday_Party_(cropped).jpg"
+    }
+  ]
+}

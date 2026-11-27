@@ -1,0 +1,27 @@
+{
+  "id": "Q02-question",
+  "fileName": "02-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Petula_Clark_b.jpg",
+  "commonsFileTitle": "File:Petula Clark b.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/af/Petula_Clark_b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3APetula+Clark+b.jpg",
+  "license": {
+    "name": "CC BY-SA 4.0",
+    "url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "author": "Lindeboom, Henk/Anefo",
+    "credit": "Petula Clark arriving in Holland, 1960",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "2f3d96308d4a1346fffff763e366ba17b2162d8e3f6c645a1494ab27fa0fefba",
+  "imageSha256": "1a959e5ffd885fe45ae12fc0645fb8d41b4a08b36c692e7c3646a65468911802",
+  "bytes": 62696,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

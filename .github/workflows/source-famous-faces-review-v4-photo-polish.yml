@@ -1,0 +1,67 @@
+name: Source Famous Faces Review 4 portrait quality alternatives
+on:
+  push:
+    branches: [picture-rounds-14-formats-20261126]
+    paths:
+      - .github/workflows/source-famous-faces-review-v4-photo-polish.yml
+      - drafts/picture-rounds/famous-faces-then-now-0001/review-v4-photo-polish-sources.json
+  workflow_dispatch:
+permissions: { contents: write }
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: { persist-credentials: true }
+      - run: python -m pip install pillow
+      - name: Acquire real Wikimedia Commons photographs with licence metadata
+        id: fetch
+        continue-on-error: true
+        run: |
+          python scripts/source-commons-picture-assets.py \
+            drafts/picture-rounds/famous-faces-then-now-0001/review-v4-photo-polish-sources.json \
+            --out drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-polish
+      - name: Validate exact saved files
+        id: verify
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import hashlib,json,pathlib
+          p=pathlib.Path("drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-polish")
+          wanted={"02-question","02-answer","08-answer"}
+          report=json.loads((p/"acquisition-report.json").read_text())
+          assert report["filesSaved"]==3 and not report["failures"], str(report)
+          for name in sorted(wanted):
+            image=(p/(name+".webp")).read_bytes()
+            proof=json.loads((p/(name+".source.json")).read_text())
+            assert hashlib.sha256(image).hexdigest()==proof["imageSha256"]
+            assert proof["published"] is False
+            print(name,proof["imageSha256"],proof["license"]["name"])
+          PY
+      - name: Archive sources for audit even if incomplete
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: review-v4-real-portrait-polish
+          path: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-polish/
+          if-no-files-found: warn
+      - name: Commit only saved candidate photo bytes and provenance to draft branch
+        if: always()
+        run: |
+          git config user.name "QuizPro picture sourcing"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-polish/
+          if ! git diff --cached --quiet; then
+            git commit -m "Store higher-quality real Review 4 portrait alternatives and licence proofs"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin picture-rounds-14-formats-20261126
+              git rebase origin/picture-rounds-14-formats-20261126
+              if git push; then break; fi
+              if [ "$attempt" = "5" ]; then exit 1; fi
+              sleep 3
+            done
+          fi
+      - name: Block incomplete sourcing
+        if: steps.fetch.outcome == 'failure' || steps.verify.outcome == 'failure'
+        run: exit 1

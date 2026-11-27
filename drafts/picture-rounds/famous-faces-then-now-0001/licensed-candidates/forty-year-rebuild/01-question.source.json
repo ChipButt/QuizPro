@@ -1,0 +1,27 @@
+{
+  "id": "Q01-question",
+  "fileName": "01-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Paul_McCartney_Headshot_(cropped).jpg",
+  "commonsFileTitle": "File:Paul McCartney Headshot (cropped).jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/00/Paul_McCartney_Headshot_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3APaul+McCartney+Headshot+%28cropped%29.jpg",
+  "license": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "author": "Eric Koch  for  Anefo",
+    "credit": "http://proxy.handle.net/10648/aa6be4d4-d0b4-102d-bcf8-003048976d84",
+    "attributionRequired": false,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "53dcecc9a66212685cd2ca9aaf99babfcc6d071ac1315ab9a3c4607749cce945",
+  "imageSha256": "25b69f6db1989fadcafed4355f3d3e6ee4cecc79ac90cffcc609163a6f782e05",
+  "bytes": 59152,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": false
+}

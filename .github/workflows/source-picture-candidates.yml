@@ -1,0 +1,45 @@
+name: Source verified picture candidate files
+on:
+  push:
+    branches:
+      - picture-rounds-14-formats-20261126
+    paths:
+      - .github/workflows/source-picture-candidates.yml
+      - scripts/source-commons-picture-assets.py
+      - drafts/picture-rounds/famous-faces-then-now-0001/licensed-alternatives.tom-jones.json
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  acquire-photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out current draft branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install Pillow for real photograph encoding
+        run: python -m pip install pillow
+      - name: Download and validate Commons image candidates
+        run: |
+          python scripts/source-commons-picture-assets.py \
+            drafts/picture-rounds/famous-faces-then-now-0001/licensed-alternatives.tom-jones.json \
+            --out drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/tom-jones
+      - name: Keep candidate files as a downloadable ZIP, regardless of commit permissions
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tom-jones-real-licensed-picture-candidates
+          path: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/tom-jones/
+          if-no-files-found: warn
+      - name: Commit verified candidate files to draft branch
+        if: success()
+        run: |
+          git config user.name "QuizPro picture asset bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/tom-jones/
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive actual Commons photo candidates and usage metadata"
+            git push
+          fi

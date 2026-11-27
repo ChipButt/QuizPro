@@ -1,0 +1,27 @@
+{
+  "id": "Q09-answer",
+  "fileName": "09-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Elton_John_2023.jpg",
+  "commonsFileTitle": "File:Elton John 2023.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Elton_John_2023.jpg/1280px-Elton_John_2023.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AElton+John+2023.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Raph_PH",
+    "credit": "Glasto2023 (419 of 468)",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "ace2e8d6573e51a589c4d99ee572139a4be678eb38c86b215bedbd7d627b6a7f",
+  "imageSha256": "f5b9bffe03d60574fa4012916ae5a8b6fa4a7ba8d04f53fb6e5bf4a895dbc5f1",
+  "bytes": 81272,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

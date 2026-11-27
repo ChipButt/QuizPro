@@ -209,6 +209,7 @@ export default function SimpleQuizBuilder({ state, updateState }) {
   const [roundChooserMode, setRoundChooserMode] = useState("new");
   const [roundLibraryFilter, setRoundLibraryFilter] = useState("All");
   const [mediaStatus, setMediaStatus] = useState({});
+  const [roundImportStatus, setRoundImportStatus] = useState('');
 
   useEffect(() => {
     if (!quiz) {
@@ -330,6 +331,90 @@ export default function SimpleQuizBuilder({ state, updateState }) {
         } : round),
       } : item),
     }));
+  }
+
+  async function importValidatedPictureRound(file) {
+    if (!file) return;
+    setRoundImportStatus("Checking picture round package…");
+    try {
+      if (file.size > 8_000_000) throw new Error("Picture package is too large. Optimise its images before importing.");
+      const packageData = JSON.parse(await file.text());
+      if (packageData?.type !== "Picture round" || packageData?.answerMode !== "text") {
+        throw new Error("The file is not a QuizPro picture-round package.");
+      }
+      if (packageData?.assetProof?.schema !== "quizpro-picture-pack-v1"
+        || packageData.assetProof.photoCount !== 20
+        || packageData.assetProof.rightsEvidenceCount !== 20
+        || !Array.isArray(packageData.assetProof.sources)
+        || packageData.assetProof.sources.length !== 20
+        || !packageData.assetProof.sources.every((item) => item.permissionEvidenceRecorded)) {
+        throw new Error("The package has not passed the image-file and usage-rights checks.");
+      }
+      const questions = packageData.questions;
+      if (!Array.isArray(questions) || questions.length !== 10) {
+        throw new Error("A picture round must have exactly 10 questions.");
+      }
+      const answers = new Set();
+      questions.forEach((question, index) => {
+        if (question.number !== index + 1 || question.type !== "Picture" || !String(question.answer || "").trim()) {
+          throw new Error(`Question ${index + 1} is incomplete.`);
+        }
+        const answer = question.answer.trim().toLowerCase();
+        if (answers.has(answer)) throw new Error("Two questions have the same answer.");
+        answers.add(answer);
+        ["image", "answerImage"].forEach((key) => {
+          const value = String(question[key] || "");
+          const comma = value.indexOf(",");
+          if (comma < 0 || !/^data:image\/(webp|png|jpeg);base64$/i.test(value.slice(0, comma))
+            || value.length - comma - 1 < 1000 || value.length - comma - 1 > 190000
+            || !/^[a-z\d+/=]+$/i.test(value.slice(comma + 1))) {
+            throw new Error(`Question ${index + 1} has a missing or invalid ${key} file.`);
+          }
+        });
+      });
+      // The imported images must be byte-for-byte identical to the reviewed and signed-off files.
+      if (!window.crypto?.subtle?.digest) {
+        throw new Error("This browser cannot verify image hashes. Import stopped safely.");
+      }
+      for (let index = 0; index < questions.length; index += 1) {
+        for (const [slotKey, imageKey] of [["questionImage", "image"], ["answerImage", "answerImage"]]) {
+          const proof = packageData.assetProof.sources.find((source) => (
+            source.questionNumber === index + 1 && source.kind === slotKey
+          ));
+          if (!/^[a-f0-9]{64}$/i.test(String(proof?.approvedSha256 || ""))) {
+            throw new Error(`Question ${index + 1} is missing the approved image fingerprint.`);
+          }
+          const encoded = questions[index][imageKey].split(",")[1];
+          const bytes = Uint8Array.from(atob(encoded), (character) => character.charCodeAt(0));
+          const digest = await window.crypto.subtle.digest("SHA-256", bytes);
+          const actualHash = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+          if (actualHash !== proof.approvedSha256.toLowerCase()) {
+            throw new Error(`Question ${index + 1} ${imageKey} differs from the approved file.`);
+          }
+        }
+      }
+      const title = String(packageData.title || "").trim();
+      if (!title) throw new Error("Picture round title is missing.");
+      if ((state.roundLibrary ?? []).some((item) => item.title?.toLowerCase() === title.toLowerCase())) {
+        throw new Error("That named picture round is already in your saved library. Import cancelled; nothing replaced.");
+      }
+      const now = new Date().toISOString();
+      const imported = {
+        ...packageData, id: createId("saved-round"), category: "Picture", createdAt: now, updatedAt: now,
+        questions: questions.map((q, index) => ({
+          ...q, id: createId("question"), number: index + 1,
+          alternatives: Array.isArray(q.alternatives) ? q.alternatives : [],
+        })),
+      };
+      updateState((current) => ({
+        ...current,
+        roundLibrary: [...(current.roundLibrary ?? []), imported],
+      }));
+      setRoundLibraryFilter("Picture");
+      setRoundImportStatus(`Added "${title}" to the Round Library. Check Shared Library shows Saved before closing.`);
+    } catch (error) {
+      setRoundImportStatus(`Import blocked: ${error?.message || "Invalid package"}`);
+    }
   }
 
   function moveRound(direction) {
@@ -617,6 +702,18 @@ export default function SimpleQuizBuilder({ state, updateState }) {
                           {availableCategories.map((category) => <option key={category} value={category}>{category}</option>)}
                         </select>
                       </label>
+
+                      <div className="round-library-import">
+                        <label className="file-button">
+                          <FileImage size={16} /> Import verified picture round
+                          <input type="file" accept=".json,application/json" onChange={async (event) => {
+                            const file = event.target.files?.[0];
+                            event.target.value = "";
+                            await importValidatedPictureRound(file);
+                          }} />
+                        </label>
+                        {roundImportStatus ? <p role="status">{roundImportStatus}</p> : null}
+                      </div>
 
                       {!savedRounds.length ? (
                         <div className="round-library-empty">

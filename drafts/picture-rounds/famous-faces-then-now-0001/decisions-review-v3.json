@@ -1,0 +1,390 @@
+{
+  "schema": "quizpro-then-now-editorial-decisions-v3",
+  "title": "Famous Faces – Then & Now 0001",
+  "updatedDate": "2026-11-26",
+  "assetSource": "drafts/picture-rounds/famous-faces-then-now-0001/usable-40-year-review.json",
+  "publicationStatus": "BLOCKED_PENDING_FIVE_NEW_APPROVALS",
+  "requirements": {
+    "minYears": 40,
+    "under15FirstPhotoMinYears": 30,
+    "preferFirstAgeUnder25": true,
+    "sourceBeforeReview": true,
+    "commercialUKRightsRequired": true
+  },
+  "decisions": [
+    {
+      "number": 1,
+      "previousPerson": "Paul McCartney",
+      "decision": "approve-both",
+      "questionImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/01-question.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/01-question.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Paul_McCartney_Headshot_(cropped).jpg",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "author": "Eric Koch  for  Anefo",
+        "sourceSha256": "53dcecc9a66212685cd2ca9aaf99babfcc6d071ac1315ab9a3c4607749cce945",
+        "approvedImageSha256": "25b69f6db1989fadcafed4355f3d3e6ee4cecc79ac90cffcc609163a6f782e05",
+        "photoTakenYear": 1964,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Paul_McCartney_Headshot_(cropped).jpg",
+        "bytes": 59152
+      },
+      "answerImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/01-answer.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/01-answer.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Paul_McCartney_2022.jpg",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Raph_PH",
+        "sourceSha256": "6f6f332660ebd152000d9f2c327120ef37e4b05b4cdb2492260f98e419fa0492",
+        "approvedImageSha256": "e432cbf75702f03957e2a83f045ddc383c9b18c8dfb1020c3fd54c2419881929",
+        "photoTakenYear": 2022,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Paul_McCartney_2022.jpg",
+        "bytes": 41136
+      },
+      "questionImageStatus": "locked-approved",
+      "answerImageStatus": "locked-approved",
+      "replacementNeeded": null,
+      "approvedAssetSha256": {
+        "question": "25b69f6db1989fadcafed4355f3d3e6ee4cecc79ac90cffcc609163a6f782e05",
+        "answer": "e432cbf75702f03957e2a83f045ddc383c9b18c8dfb1020c3fd54c2419881929"
+      }
+    },
+    {
+      "number": 2,
+      "previousPerson": "Mick Jagger",
+      "decision": "replace-person",
+      "questionImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/02-question.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/02-question.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Rolling_Stones_at_Schiphol_1966_-_Jagger_%26_Richards.png",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "author": "Jac. de Nijs (ANEFO)",
+        "sourceSha256": "da7bd6cbadc9f8f47a8f6cfa27799b649dcfb4cb0df4820bd6458226fd134754",
+        "approvedImageSha256": "ce61223d29ee472fe283c63e29465b3cf80b7a320379d773f806c9b33f0a5113",
+        "photoTakenYear": 1966,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Rolling_Stones_at_Schiphol_1966_-_Jagger_%26_Richards.png",
+        "bytes": 48512
+      },
+      "answerImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/02-answer.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/02-answer.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:RStonesHydePark030722_(49_of_125)_(52193656268)_(cropped).jpg",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Raph_PH",
+        "sourceSha256": "f52adf08865f672e6d154cdf2adbc9a7d6525f0fe8b27280db018f732cb98ec7",
+        "approvedImageSha256": "a817bad2b5593e60ec5d571839f3606007454b6ce024f8c44527a08fda190fa6",
+        "photoTakenYear": 2022,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:RStonesHydePark030722_(49_of_125)_(52193656268)_(cropped).jpg",
+        "bytes": 51758
+      },
+      "questionImageStatus": "retired-keep-for-history",
+      "answerImageStatus": "retired-keep-for-history",
+      "replacementNeeded": "both-new-person-photos",
+      "approvedAssetSha256": null
+    },
+    {
+      "number": 3,
+      "previousPerson": "Keith Richards",
+      "decision": "approve-both",
+      "questionImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/03-question.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/03-question.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Keith_Richards_1965_(cropped).jpg",
+        "license": "CC BY-SA 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+        "author": "Kevin Delaney",
+        "sourceSha256": "0892cc0c06bd85449082edcfd7efcc9ae01277fa2ab9237d6b3d693afdb6c901",
+        "approvedImageSha256": "2b6d3c857e505a9f43fbf974690e3247823c53792d4f9b11f2af4b393dd9e1d7",
+        "photoTakenYear": 1965,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Keith_Richards_1965_(cropped).jpg",
+        "bytes": 30406
+      },
+      "answerImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/03-answer.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/03-answer.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Keith_Richards_2018.jpg",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Raph_PH",
+        "sourceSha256": "9eac4dd18cc65ce60ab381c1c0b73c16213c5e158006bf8574a4d982acb595ec",
+        "approvedImageSha256": "3b6679bb96a69f55f02d51d46fc2c778f9473eed836cee855603655ce8e4f906",
+        "photoTakenYear": 2018,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Keith_Richards_2018.jpg",
+        "bytes": 46636
+      },
+      "questionImageStatus": "locked-approved",
+      "answerImageStatus": "locked-approved",
+      "replacementNeeded": null,
+      "approvedAssetSha256": {
+        "question": "2b6d3c857e505a9f43fbf974690e3247823c53792d4f9b11f2af4b393dd9e1d7",
+        "answer": "3b6679bb96a69f55f02d51d46fc2c778f9473eed836cee855603655ce8e4f906"
+      }
+    },
+    {
+      "number": 4,
+      "previousPerson": "Tom Jones",
+      "decision": "locked-both",
+      "questionImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/tom-jones/04-question.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/tom-jones/04-question.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Tom_Jones_voor_TV-optreden_in_Nederland._Hier_tijdens_persconferentie,_Bestanddeelnr_920-9037.jpg",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "author": "Ron Kroon  for  Anefo",
+        "sourceSha256": "9c796c7223d70005371708f3127b47271e06d95903771b4d7bc348e66edba1eb",
+        "approvedImageSha256": "9adeadcbdc185150e96a551c53957a0b756a21e08d73d94c195a38c061e77016",
+        "photoTakenYear": 1967,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Tom_Jones_voor_TV-optreden_in_Nederland._Hier_tijdens_persconferentie,_Bestanddeelnr_920-9037.jpg",
+        "bytes": 72336
+      },
+      "answerImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/tom-jones/04-answer.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/tom-jones/04-answer.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Sir_Tom_Jones_at_The_Queen%27s_Birthday_Party_(cropped).jpg",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Raph_PH",
+        "sourceSha256": "4f9386736fcdb6d4dcc620ae7706d44487b75d9d899d33f02ffd69fc1ddc48be",
+        "approvedImageSha256": "911d713fa3b758d55d28ecfa2def8a8842f9a3f44f9f4ce5bc007cefdf3784f5",
+        "photoTakenYear": 2018,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Sir_Tom_Jones_at_The_Queen%27s_Birthday_Party_(cropped).jpg",
+        "bytes": 40714
+      },
+      "questionImageStatus": "locked-approved",
+      "answerImageStatus": "locked-approved",
+      "replacementNeeded": null,
+      "approvedAssetSha256": {
+        "question": "9adeadcbdc185150e96a551c53957a0b756a21e08d73d94c195a38c061e77016",
+        "answer": "911d713fa3b758d55d28ecfa2def8a8842f9a3f44f9f4ce5bc007cefdf3784f5"
+      }
+    },
+    {
+      "number": 5,
+      "previousPerson": "Rod Stewart",
+      "decision": "replace-person",
+      "questionImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/05-question.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/05-question.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Popsinger_Rod_Stewart_krijgt_gouden_LPs%2C_Edison_en_Oscar_in_Hilton_Amsterdam%2C_Ro%2C_Bestanddeelnr_925-1082.jpg",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "author": "W. Punt  for  Anefo",
+        "sourceSha256": "237683d7854f8405c0ef2a751f5741aae24169e24c506bb28419dfc6ae322e0d",
+        "approvedImageSha256": "06cdf8cff220d96e22a39e76162cb9e767d31d6f58c656c0caeb98a4bb4e146b",
+        "photoTakenYear": 1971,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Popsinger_Rod_Stewart_krijgt_gouden_LPs%2C_Edison_en_Oscar_in_Hilton_Amsterdam%2C_Ro%2C_Bestanddeelnr_925-1082.jpg",
+        "bytes": 59682
+      },
+      "answerImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-polish/05-answer.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-polish/05-answer.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:JeffBeckTribute2RAH230523_(53_of_81)_(52922038276).jpg",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Raph_PH",
+        "sourceSha256": "b0f2a73865786923cb77b7d9cedba8fb3575b30a9be298edf33f968b15d5fc49",
+        "approvedImageSha256": "4d8d46423ad83b792ea67b10a1eb6ab4b21adce392176c1f4d609494a9897eac",
+        "photoTakenYear": 2023,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:JeffBeckTribute2RAH230523_(53_of_81)_(52922038276).jpg",
+        "bytes": 47896
+      },
+      "questionImageStatus": "retired-keep-for-history",
+      "answerImageStatus": "retired-keep-for-history",
+      "replacementNeeded": "both-new-person-photos",
+      "approvedAssetSha256": null
+    },
+    {
+      "number": 6,
+      "previousPerson": "Joan Baez",
+      "decision": "replace-person",
+      "questionImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/06-question.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/06-question.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Joan_Baez_1966.jpg",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "author": "Ron Kroon / Anefo",
+        "sourceSha256": "d11047f20a3db49a0a1ff37f8218504150677b8f5532878d29dfddcdf7274f97",
+        "approvedImageSha256": "357fd274e493f2bb56064ed781a79965660200c8a9257f566480c38ea8ca7152",
+        "photoTakenYear": 1966,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Joan_Baez_1966.jpg",
+        "bytes": 47602
+      },
+      "answerImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/06-answer.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/06-answer.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Festival_des_Vieilles_Charrues_2015_-_Joan_Baez_-_025.jpg",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "author": "Thesupermat",
+        "sourceSha256": "72421c448417d51f2adc16c3b1d2cd69a4547ee31b6bdfeeb2eef62ba1bc1d89",
+        "approvedImageSha256": "977695a094c87df00eac81890c8d5db0a0442d974e1051448a1d83c49f65aeae",
+        "photoTakenYear": 2015,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Festival_des_Vieilles_Charrues_2015_-_Joan_Baez_-_025.jpg",
+        "bytes": 25698
+      },
+      "questionImageStatus": "retired-keep-for-history",
+      "answerImageStatus": "retired-keep-for-history",
+      "replacementNeeded": "both-new-person-photos",
+      "approvedAssetSha256": null
+    },
+    {
+      "number": 7,
+      "previousPerson": "Cliff Richard",
+      "decision": "redo-answer-only",
+      "questionImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/cliff-solo/07-question.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/cliff-solo/07-question.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_%2C_aankomst_op_Schiphol_met_Willeke_Alberti_tijdens_persconferentie%2C_Bestanddeelnr_916-3949.jpg",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "author": "Jack de Nijs  for  Anefo   / Anefo",
+        "sourceSha256": "0c540d7f9eecac565e6ea311a151031a54a3c76673f86bd8143ec5d30f499d86",
+        "approvedImageSha256": "b9803de8f8ffc1c965c5cc7b19248030c4e779e5b26fdbd77693688997902f8d",
+        "photoTakenYear": 1964,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_%2C_aankomst_op_Schiphol_met_Willeke_Alberti_tijdens_persconferentie%2C_Bestanddeelnr_916-3949.jpg",
+        "bytes": 101574
+      },
+      "answerImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/07-answer.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/07-answer.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_-_Old_Royal_Naval_Yard_Greenwich_-_Saturday_1st_July_2017_CliffGreenwich010717-41_(35672274140).jpg",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Raph_PH",
+        "sourceSha256": "7dee3cc1165a38278a0e27f7452066dfa7ca434f0e119e04c32d2ef15d26da3d",
+        "approvedImageSha256": "7a9f36cdf402cf23d3730f72567cb9b7acf15ae92294345f056e27ff17765285",
+        "photoTakenYear": 2017,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_-_Old_Royal_Naval_Yard_Greenwich_-_Saturday_1st_July_2017_CliffGreenwich010717-41_(35672274140).jpg",
+        "bytes": 36454
+      },
+      "questionImageStatus": "locked-approved",
+      "answerImageStatus": "retired-redo-only",
+      "replacementNeeded": "answer-photo-only",
+      "approvedAssetSha256": {
+        "question": "b9803de8f8ffc1c965c5cc7b19248030c4e779e5b26fdbd77693688997902f8d"
+      }
+    },
+    {
+      "number": 8,
+      "previousPerson": "Nana Mouskouri",
+      "decision": "replace-person",
+      "questionImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/08-question.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/08-question.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Opdracht_Telegraaf_Nana_Mouskouri_%2C_Griekse_zangeres%2C_Bestanddeelnr_915-4940.jpg",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "author": "Harry Pot  for  Anefo",
+        "sourceSha256": "fdddac90213ff15e584e2d5917951644fd1bf036c0a6c43af31e01f28f1e4baa",
+        "approvedImageSha256": "a97313e8d1e99eda4032a1df891c890a8bba2aa8d71f1f66c2d592c3266d0fe9",
+        "photoTakenYear": 1963,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Opdracht_Telegraaf_Nana_Mouskouri_%2C_Griekse_zangeres%2C_Bestanddeelnr_915-4940.jpg",
+        "bytes": 21650
+      },
+      "answerImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/08-answer.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-rebuild/08-answer.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Nana_Mouskouri_2012_04_(cropped).jpg",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "author": "SpreeTom",
+        "sourceSha256": "72128f44da0572a378c033b5eb00b7d8a8a04df8d0c8c9d1d468b6cb5820d49e",
+        "approvedImageSha256": "91c88c5ffb21070e063aa4d351b289eb1ba409d50891729dd3b019d583684cff",
+        "photoTakenYear": 2012,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Nana_Mouskouri_2012_04_(cropped).jpg",
+        "bytes": 26774
+      },
+      "questionImageStatus": "retired-keep-for-history",
+      "answerImageStatus": "retired-keep-for-history",
+      "replacementNeeded": "both-new-person-photos",
+      "approvedAssetSha256": null
+    },
+    {
+      "number": 9,
+      "previousPerson": "Elton John",
+      "decision": "approve-both",
+      "questionImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-polish/09-question.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-polish/09-question.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Popzanger_Elton_John_in_Nederland_Elton_John_%2C_kop%2C_Bestanddeelnr_924-2767.jpg",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "author": "Bert Verhoeff  for  Anefo",
+        "sourceSha256": "6cbc1e5da73487c32c32f92ea3a80c9922fc30033cd9fa6a053807d80c6308a4",
+        "approvedImageSha256": "3786f124941253296b608e58bf0f020ec260924928eaf1d30c1b02637cff68f0",
+        "photoTakenYear": 1971,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Popzanger_Elton_John_in_Nederland_Elton_John_%2C_kop%2C_Bestanddeelnr_924-2767.jpg",
+        "bytes": 55140
+      },
+      "answerImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-polish/09-answer.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-polish/09-answer.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Elton_John_2023.jpg",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Raph_PH",
+        "sourceSha256": "ace2e8d6573e51a589c4d99ee572139a4be678eb38c86b215bedbd7d627b6a7f",
+        "approvedImageSha256": "f5b9bffe03d60574fa4012916ae5a8b6fa4a7ba8d04f53fb6e5bf4a895dbc5f1",
+        "photoTakenYear": 2023,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Elton_John_2023.jpg",
+        "bytes": 81272
+      },
+      "questionImageStatus": "locked-approved",
+      "answerImageStatus": "locked-approved",
+      "replacementNeeded": null,
+      "approvedAssetSha256": {
+        "question": "3786f124941253296b608e58bf0f020ec260924928eaf1d30c1b02637cff68f0",
+        "answer": "f5b9bffe03d60574fa4012916ae5a8b6fa4a7ba8d04f53fb6e5bf4a895dbc5f1"
+      }
+    },
+    {
+      "number": 10,
+      "previousPerson": "Helen Mirren",
+      "decision": "approve-both",
+      "questionImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch3/10-question.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch3/10-question.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Helen_Mirren_1985_IPTC_(cropped).jpg",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "author": "MaryMotleyKalergisPhotography",
+        "sourceSha256": "a9e2225e41a1ef2f348cd1ca4336addebcd47e639755ce0d2fcc0bbcbaf9c891",
+        "approvedImageSha256": "4a7013b2d4f633a1f5febe37ab912c3ea34cccbfef6e3d66e5caa62adf91f62e",
+        "photoTakenYear": 1985,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Helen_Mirren_1985_IPTC_(cropped).jpg",
+        "bytes": 49252
+      },
+      "answerImage": {
+        "file": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch3/10-answer.webp",
+        "sourceEvidenceFile": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch3/10-answer.source.json",
+        "originalCommonsUrl": "https://commons.wikimedia.org/wiki/File:Helen_Mirren_at_the_2026_Toronto_International_Film_Festival._4_(cropped).jpg",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "author": "Patrick.suechan",
+        "sourceSha256": "a4d6d1ef04bb00b620d0e9bf18daccfefb145a531a49977ee7b755b17c48e2f5",
+        "approvedImageSha256": "1054c61a0002b37eee49841d1f7c3908eddaf651d6c102ba5df1e1ea026991fc",
+        "photoTakenYear": 2026,
+        "captureDateEvidenceUrl": "https://commons.wikimedia.org/wiki/File:Helen_Mirren_at_the_2026_Toronto_International_Film_Festival._4_(cropped).jpg",
+        "bytes": 46228
+      },
+      "questionImageStatus": "locked-approved",
+      "answerImageStatus": "locked-approved",
+      "replacementNeeded": null,
+      "approvedAssetSha256": {
+        "question": "4a7013b2d4f633a1f5febe37ab912c3ea34cccbfef6e3d66e5caa62adf91f62e",
+        "answer": "1054c61a0002b37eee49841d1f7c3908eddaf651d6c102ba5df1e1ea026991fc"
+      }
+    }
+  ],
+  "notes": [
+    "All retired selections and original editorial review documents retained unchanged",
+    "Q7 Cliff Richard question image remains approved; only answer can change",
+    "Q1 Paul, Q3 Keith, Q4 Tom, Q9 Elton, Q10 Helen both exact assets locked by SHA256",
+    "Q2/Q5/Q6/Q8 need distinct new people, sourced and licensed files, no recycling those existing answers",
+    "Do not publish or advance until five pending decisions are approved."
+  ]
+}

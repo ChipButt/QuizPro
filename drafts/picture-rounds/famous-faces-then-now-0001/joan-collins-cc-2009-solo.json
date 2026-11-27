@@ -1,0 +1,17 @@
+{
+  "purpose": "UK worldwide CC BY-SA 3.0 photograph by its original creator. Crop ONLY left subject Joan Collins from original 2009 group photo; new alternative pending user approval and not replacing the 1954 rights-blocked file.",
+  "items": [
+    {
+      "id": "Q09-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Joan_Collins_and_Sophia_Loren.jpg",
+      "focusRect": [
+        0.055,
+        0.025,
+        0.51,
+        0.97
+      ],
+      "subject": "Joan Collins, left; photograph by Prince Power; CC BY-SA 3.0",
+      "requiresCredit": true
+    }
+  ]
+}

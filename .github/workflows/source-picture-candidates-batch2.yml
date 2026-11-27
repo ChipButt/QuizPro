@@ -1,0 +1,44 @@
+name: Source more verified picture candidate files
+on:
+  push:
+    branches:
+      - picture-rounds-14-formats-20261126
+    paths:
+      - .github/workflows/source-picture-candidates-batch2.yml
+      - drafts/picture-rounds/famous-faces-then-now-0001/licensed-alternatives.batch2.json
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  acquire-photo-candidates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up image encoder
+        run: python -m pip install pillow
+      - name: Download permitted candidates and source evidence
+        id: acquire
+        continue-on-error: true
+        run: |
+          python scripts/source-commons-picture-assets.py \
+            drafts/picture-rounds/famous-faces-then-now-0001/licensed-alternatives.batch2.json \
+            --out drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch2
+      - name: Archive all actual acquired images
+        uses: actions/upload-artifact@v4
+        with:
+          name: more-source-first-picture-candidates
+          path: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch2/
+          if-no-files-found: warn
+      - name: Commit actual files and their licences to draft branch
+        run: |
+          git config user.name "QuizPro picture asset bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/batch2/
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive more real-source picture candidates with licences"
+            git push
+          fi
+      - name: Fail if some candidates did not pass licence or image requirements
+        if: steps.acquire.outcome == 'failure'
+        run: exit 1

@@ -1,0 +1,27 @@
+{
+  "id": "Q05-answer",
+  "fileName": "05-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Pele_rio_2016.jpg",
+  "commonsFileTitle": "File:Pele rio 2016.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5b/Pele_rio_2016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3APele+rio+2016.jpg",
+  "license": {
+    "name": "CC BY-SA 3.0",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "author": "Atr1992",
+    "credit": "Own work",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "f9857e95bdda88e83ce1d594437c6a4b834be28c830776e342dcb369d0382ec0",
+  "imageSha256": "680e7312751b82a570c1325fa29376bf4cc7ec99a0da9fd83313e489e5e5081a",
+  "bytes": 26020,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

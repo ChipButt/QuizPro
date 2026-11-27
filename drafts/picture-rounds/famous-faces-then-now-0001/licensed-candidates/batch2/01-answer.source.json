@@ -1,0 +1,25 @@
+{
+  "id": "Q01-answer",
+  "fileName": "01-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Richard_Branson_March_2015.jpg",
+  "commonsFileTitle": "File:Richard Branson March 2015.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/Richard_Branson_March_2015.jpg/1280px-Richard_Branson_March_2015.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ARichard+Branson+March+2015.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Chatham House",
+    "credit": "https://www.flickr.com/photos/chathamhouse/16528067458/",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "5a90c82c8f1f05257c65b0b6c23d309743ce54c02d22bab8857f1c12ff039554",
+  "imageSha256": "78670cc1da09eddcd33bdbc1e5797da00c9d6a448d36d759c135b9f011ac344b",
+  "bytes": 30036,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

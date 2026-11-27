@@ -1,0 +1,25 @@
+{
+  "id": "Q03-question",
+  "fileName": "03-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Robbie_Williams_(148950528).jpg",
+  "commonsFileTitle": "File:Robbie Williams (148950528).jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Robbie_Williams_%28148950528%29.jpg/1280px-Robbie_Williams_%28148950528%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ARobbie+Williams+%28148950528%29.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "wonker  from London, United Kingdom",
+    "credit": "Robbie Williams",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "968904479f891f6ef56328d4df90b3e6e30d12f35cfe1e4b3882bcb71b52240e",
+  "imageSha256": "377fa4efb6459c5e15ae2df15ecd9b1a63aa932af9fcfb6381875b97ce9c6aaf",
+  "bytes": 30834,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

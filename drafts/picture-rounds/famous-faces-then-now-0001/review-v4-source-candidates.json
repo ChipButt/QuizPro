@@ -1,0 +1,98 @@
+{
+  "schema": "quizpro-then-now-review-v4-source-first-pairs-v1",
+  "title": "Famous Faces – Then & Now 0001",
+  "stage": "SOURCING_ONLY_PENDING_ASSET_VERIFICATION_AND_USER_APPROVAL",
+  "sourceDate": "2026-11-27",
+  "branch": "picture-rounds-14-formats-20261126",
+  "sourceDecisionFile": "drafts/picture-rounds/famous-faces-then-now-0001/decisions-review-v4.json",
+  "photoTimelineRule": "40 years unless first photograph explicitly shows subject under 15, in which case 30; first-photo age under 25 preferred",
+  "rightsRule": "Only original Wikimedia Commons CC0 or properly credited CC BY/CC BY-SA with commercial reuse; retain source pages, photographers, exact file SHA256, actual dates, crop notices. Verify UK suitability and subject/publicity rights separately.",
+  "publish": false,
+  "advance": false,
+  "pairs": [
+    {
+      "number": 2,
+      "person": "Petula Clark",
+      "subjectBirthDate": "1932-11-15",
+      "earlyYear": 1960,
+      "lateYear": 2010,
+      "early": "https://commons.wikimedia.org/wiki/File:Aankomst_Petula_Clark_op_Schiphol,_Petula_Clark_met_bloemen,_Bestanddeelnr_911-1040.jpg",
+      "late": "https://commons.wikimedia.org/wiki/File:Petula_Clark_(4980154444)_(cropped).jpg",
+      "guaranteedGapYears": 50,
+      "minGapYears": 40,
+      "editorialStatus": "UNAPPROVED_CANDIDATE_SOURCE_ONLY"
+    },
+    {
+      "number": 5,
+      "person": "Pelé",
+      "subjectBirthDate": "1940-10-23",
+      "earlyYear": 1963,
+      "lateYear": 2009,
+      "early": "https://commons.wikimedia.org/wiki/File:Braziliaanse_voetbalelftal_uit_Parijs_op_Schiphol_aangekomen_Pele_(kop),_Bestanddeelnr_915-0967.jpg",
+      "late": "https://commons.wikimedia.org/wiki/File:Pele_rio_2016.jpg",
+      "guaranteedGapYears": 46,
+      "minGapYears": 40,
+      "editorialStatus": "UNAPPROVED_CANDIDATE_SOURCE_ONLY"
+    },
+    {
+      "number": 6,
+      "person": "Lulu",
+      "subjectBirthDate": "1948-11-03",
+      "earlyYear": 1965,
+      "lateYear": 2022,
+      "early": "https://commons.wikimedia.org/wiki/File:Fanclub1965Lulu_(cropped).jpg",
+      "late": "https://commons.wikimedia.org/wiki/File:Sound007RAH041022_(25_of_69)_(52405441477)_(cropped)_(cropped).jpg",
+      "guaranteedGapYears": 57,
+      "minGapYears": 40,
+      "editorialStatus": "UNAPPROVED_CANDIDATE_SOURCE_ONLY",
+      "sourceCorrection": "2022 clear close-up of Lulu, Raph_PH, CC BY 2.0. Replaces inadequate 143×251 2012 source (blocked by image validation)."
+    },
+    {
+      "number": 8,
+      "person": "Jackie Stewart",
+      "subjectBirthDate": "1939-06-11",
+      "earlyYear": 1969,
+      "lateYear": 2014,
+      "early": "https://commons.wikimedia.org/wiki/File:Anefo_922-5524_Jackie_Stewart,_Prins_Bernhard_Zandvoort_21.06.1969_crop.jpg",
+      "late": "https://commons.wikimedia.org/wiki/File:Jackie_Stewart_at_the_2014_WEC_Silverstone_round.jpg",
+      "guaranteedGapYears": 45,
+      "minGapYears": 40,
+      "editorialStatus": "UNAPPROVED_CANDIDATE_SOURCE_ONLY"
+    }
+  ],
+  "items": [
+    {
+      "id": "Q02-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Aankomst_Petula_Clark_op_Schiphol,_Petula_Clark_met_bloemen,_Bestanddeelnr_911-1040.jpg"
+    },
+    {
+      "id": "Q02-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Petula_Clark_(4980154444)_(cropped).jpg"
+    },
+    {
+      "id": "Q05-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Braziliaanse_voetbalelftal_uit_Parijs_op_Schiphol_aangekomen_Pele_(kop),_Bestanddeelnr_915-0967.jpg"
+    },
+    {
+      "id": "Q05-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Pele_rio_2016.jpg"
+    },
+    {
+      "id": "Q06-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Fanclub1965Lulu_(cropped).jpg"
+    },
+    {
+      "id": "Q06-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Sound007RAH041022_(25_of_69)_(52405441477)_(cropped)_(cropped).jpg"
+    },
+    {
+      "id": "Q08-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Anefo_922-5524_Jackie_Stewart,_Prins_Bernhard_Zandvoort_21.06.1969_crop.jpg"
+    },
+    {
+      "id": "Q08-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Jackie_Stewart_at_the_2014_WEC_Silverstone_round.jpg"
+    }
+  ],
+  "lastSourceCorrectionDate": "2026-11-27"
+}

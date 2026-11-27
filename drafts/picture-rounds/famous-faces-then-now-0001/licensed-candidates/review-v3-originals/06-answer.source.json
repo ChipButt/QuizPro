@@ -1,0 +1,27 @@
+{
+  "id": "Q06-answer",
+  "fileName": "06-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Diana_Ross_(2022).jpg",
+  "commonsFileTitle": "File:Diana Ross (2022).jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Diana_Ross_%282022%29.jpg/1280px-Diana_Ross_%282022%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ADiana+Ross+%282022%29.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Raph_PH",
+    "credit": "https://www.flickr.com/photos/raph_ph/52189002504/",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "3dae04e8b3b3a301f4bdb23df17a965b5ce71dc54498b54a7e8e784ce1d49754",
+  "imageSha256": "13082b9a876ed25c709d0a6bc7f474ab81359a3bc512c9081cd50055e9311626",
+  "bytes": 60858,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

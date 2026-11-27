@@ -1,0 +1,45 @@
+name: Source clear face photos for 40-year quiz review
+on:
+  push:
+    branches: [picture-rounds-14-formats-20261126]
+    paths:
+      - .github/workflows/acquire-forty-year-photo-polish.yml
+      - drafts/picture-rounds/famous-faces-then-now-0001/forty-year-polish-sources.json
+  workflow_dispatch:
+permissions: {contents: write}
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install pillow
+      - name: Acquire actual photo assets with strict CC/CC0 gate
+        id: acquire
+        continue-on-error: true
+        run: |
+          python scripts/source-commons-picture-assets.py \
+            drafts/picture-rounds/famous-faces-then-now-0001/forty-year-polish-sources.json \
+            --out drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-polish
+      - uses: actions/upload-artifact@v4
+        with:
+          name: forty-year-polish-saved-photos
+          path: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-polish/
+      - name: Save actual files with evidence, retaining previous source snapshots
+        run: |
+          git config user.name "QuizPro picture photos"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/forty-year-polish/
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive closer photos and Elton John candidate pair with licences"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin picture-rounds-14-formats-20261126
+              git rebase origin/picture-rounds-14-formats-20261126
+              if git push; then break; fi
+              if [ "$attempt" = "5" ]; then exit 1; fi
+              sleep 3
+            done
+          fi
+      - name: No incomplete sourcing silently counted as approved
+        if: steps.acquire.outcome == 'failure'
+        run: exit 1

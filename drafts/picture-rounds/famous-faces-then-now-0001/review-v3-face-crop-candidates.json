@@ -1,0 +1,66 @@
+{
+  "schema": "quizpro-review-v3-crop-candidates",
+  "purpose": "Prepare APPROVAL-READY solo faces from retained, rights-verified source images. User approvals unchanged until review.",
+  "items": [
+    {
+      "id": "Q02-question",
+      "subject": "Sophia Loren",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Sophia_Loren_Com_X-L060-007.jpg",
+      "focusRect": [
+        0.22,
+        0.08,
+        0.8,
+        0.76
+      ],
+      "notes": "Archive image 1955–1960, tighten crop around young Sophia"
+    },
+    {
+      "id": "Q05-question",
+      "subject": "Jane Fonda",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Jane_Fonda_1975c.jpg",
+      "focusRect": [
+        0.08,
+        0.03,
+        0.78,
+        0.69
+      ],
+      "notes": "Crop out Jane Fonda printed name on lectern; preserve face"
+    },
+    {
+      "id": "Q05-answer",
+      "subject": "Jane Fonda",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Jane_Fonda_at_the_2026_Cannes_Film_Festival_01.jpg",
+      "focusRect": [
+        0.25,
+        0.03,
+        0.7,
+        0.75
+      ],
+      "notes": "Tighten to face and upper body, remove press distractions"
+    },
+    {
+      "id": "Q06-question",
+      "subject": "Diana Ross",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Supremes1965NL.jpg",
+      "focusRect": [
+        0.59,
+        0.09,
+        0.88,
+        0.48
+      ],
+      "notes": "Isolate right-most singer Diana Ross from 1965 Supremes"
+    },
+    {
+      "id": "Q08-question",
+      "subject": "Cher",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Sonny-and-Cher.jpg",
+      "focusRect": [
+        0.16,
+        0,
+        0.59,
+        0.7
+      ],
+      "notes": "Isolate Cher, taller standing figure at left, exclude Sonny"
+    }
+  ]
+}

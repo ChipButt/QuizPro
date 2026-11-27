@@ -1,0 +1,25 @@
+{
+  "id": "Q08-answer",
+  "fileName": "08-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Gary_Barlow_performing_in_Glasgow%2C_2017.jpg",
+  "commonsFileTitle": "File:Gary Barlow performing in Glasgow, 2017.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/Gary_Barlow_performing_in_Glasgow%2C_2017.jpg/1280px-Gary_Barlow_performing_in_Glasgow%2C_2017.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AGary+Barlow+performing+in+Glasgow%2C+2017.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Marc E.",
+    "credit": "https://www.flickr.com/photos/marcen27/33994842414",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "c07fd79781e2ef6e803dc4b205edf79fe67fe17b49cc6697502ef280a5d2f2e6",
+  "imageSha256": "b81c02050a5376947d3c506f09d67f4f109205dce987e91a16c1e4553510ec13",
+  "bytes": 30794,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

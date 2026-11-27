@@ -1,0 +1,349 @@
+{
+  "schema": "quizpro-approved-picture-round-manifest-v1",
+  "title": "Famous Faces – Then & Now 0001",
+  "libraryId": "saved-round-famous-faces-then-now-0001",
+  "type": "Picture round",
+  "answerMode": "text",
+  "category": "Picture",
+  "instructions": "Who is this famous person? Identify each person shown in the earlier photograph.",
+  "scoringRules": "One point per correct person; 10 points maximum.",
+  "editorialApprovals": 10,
+  "productionStatus": "blocked-pending-original-files-and-usage-licences",
+  "questions": [
+    {
+      "number": 1,
+      "answer": "Richard Branson",
+      "question": "Who is this famous person?",
+      "approval": "approved",
+      "points": 1,
+      "questionImage": {
+        "approvedPreviewRef": "turn873224image4",
+        "sourcePage": "https://www.virgin.com/branson-family/richard-branson-blog/my-career-was-my-education",
+        "approvedIn": "Review 3",
+        "expectedAssetFile": "01-question.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      },
+      "answerImage": {
+        "approvedPreviewRef": "turn530676image1",
+        "sourcePage": null,
+        "approvedIn": "Review 1",
+        "expectedAssetFile": "01-answer.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      }
+    },
+    {
+      "number": 2,
+      "answer": "Kylie Minogue",
+      "question": "Who is this famous person?",
+      "approval": "approved",
+      "points": 1,
+      "questionImage": {
+        "approvedPreviewRef": "turn243175image7",
+        "sourcePage": "https://www.time-tunnel.com.au/books/signed-ultra-rare-kylie-minogue-promotional-book-1987/",
+        "approvedIn": "Review 2",
+        "expectedAssetFile": "02-question.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      },
+      "answerImage": {
+        "approvedPreviewRef": "turn991827image6",
+        "sourcePage": null,
+        "approvedIn": "Review 1",
+        "expectedAssetFile": "02-answer.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      }
+    },
+    {
+      "number": 3,
+      "answer": "Robbie Williams",
+      "question": "Who is this famous person?",
+      "approval": "approved",
+      "points": 1,
+      "questionImage": {
+        "approvedPreviewRef": "turn806078image2",
+        "sourcePage": "https://www.gettyimages.co.uk/photos/robbie-williams-take-that",
+        "approvedIn": "Review 8",
+        "expectedAssetFile": "03-question.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      },
+      "answerImage": {
+        "approvedPreviewRef": "turn806078image0",
+        "sourcePage": "https://robbiewilliamsmusic.com/presse/2025-2026/item/the-hollywood-reporter-janvier-2025",
+        "approvedIn": "Review 8",
+        "expectedAssetFile": "03-answer.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      }
+    },
+    {
+      "number": 4,
+      "answer": "Tom Jones",
+      "question": "Who is this famous person?",
+      "approval": "approved",
+      "points": 1,
+      "questionImage": {
+        "approvedPreviewRef": "turn816724image1",
+        "sourcePage": "https://www.womansday.com/relationships/family-friends/g61939494/1960s-baby-names/",
+        "approvedIn": "Review 9",
+        "expectedAssetFile": "04-question.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      },
+      "answerImage": {
+        "approvedPreviewRef": "turn816724image0",
+        "sourcePage": "https://www.tomjones.com/blog/photo-gallery/tom-jones-gallery",
+        "approvedIn": "Review 9",
+        "expectedAssetFile": "04-answer.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      }
+    },
+    {
+      "number": 5,
+      "answer": "Samuel L. Jackson",
+      "question": "Who is this famous person?",
+      "approval": "approved",
+      "points": 1,
+      "questionImage": {
+        "approvedPreviewRef": "turn212053image3",
+        "sourcePage": "https://www.infobae.com/historias/2024/12/21/la-vida-de-samuel-jackson-de-las-adicciones-que-casi-arruinan-su-carrera-a-coronarse-como-una-estrella-de-hollywood/",
+        "approvedIn": "Review 2",
+        "expectedAssetFile": "05-question.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      },
+      "answerImage": {
+        "approvedPreviewRef": "turn991827image2",
+        "sourcePage": null,
+        "approvedIn": "Review 1",
+        "expectedAssetFile": "05-answer.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      }
+    },
+    {
+      "number": 6,
+      "answer": "Emma Thompson",
+      "question": "Who is this famous person?",
+      "approval": "approved",
+      "points": 1,
+      "questionImage": {
+        "approvedPreviewRef": "turn580461image3",
+        "sourcePage": null,
+        "approvedIn": "Review 1",
+        "expectedAssetFile": "06-question.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      },
+      "answerImage": {
+        "approvedPreviewRef": "turn991827image0",
+        "sourcePage": null,
+        "approvedIn": "Review 1",
+        "expectedAssetFile": "06-answer.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      }
+    },
+    {
+      "number": 7,
+      "answer": "Daniel Radcliffe",
+      "question": "Who is this famous person?",
+      "approval": "approved",
+      "points": 1,
+      "questionImage": {
+        "approvedPreviewRef": "turn160394image3",
+        "sourcePage": "https://www.thewrap.com/daniel-radcliffe-evolution-harry-potter/",
+        "approvedIn": "Review 2",
+        "expectedAssetFile": "07-question.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      },
+      "answerImage": {
+        "approvedPreviewRef": "turn991827image1",
+        "sourcePage": null,
+        "approvedIn": "Review 1",
+        "expectedAssetFile": "07-answer.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      }
+    },
+    {
+      "number": 8,
+      "answer": "Gary Barlow",
+      "question": "Who is this famous person?",
+      "approval": "approved",
+      "points": 1,
+      "questionImage": {
+        "approvedPreviewRef": "turn580461image1",
+        "sourcePage": null,
+        "approvedIn": "Review 1",
+        "expectedAssetFile": "08-question.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      },
+      "answerImage": {
+        "approvedPreviewRef": "turn155677image0",
+        "sourcePage": null,
+        "approvedIn": "Review 1",
+        "expectedAssetFile": "08-answer.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      }
+    },
+    {
+      "number": 9,
+      "answer": "Joan Collins",
+      "question": "Who is this famous person?",
+      "approval": "approved",
+      "points": 1,
+      "questionImage": {
+        "approvedPreviewRef": "turn580461image2",
+        "sourcePage": null,
+        "approvedIn": "Review 1",
+        "expectedAssetFile": "09-question.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      },
+      "answerImage": {
+        "approvedPreviewRef": "turn155677image1",
+        "sourcePage": null,
+        "approvedIn": "Review 1",
+        "expectedAssetFile": "09-answer.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      }
+    },
+    {
+      "number": 10,
+      "answer": "Helen Mirren",
+      "question": "Who is this famous person?",
+      "approval": "approved",
+      "points": 1,
+      "questionImage": {
+        "approvedPreviewRef": "turn583598image4",
+        "sourcePage": "https://okmagazine.ro/vedete/news/helen-mirren-eram-fata-plinuta-cu-multe-545222.html",
+        "approvedIn": "Review 7",
+        "expectedAssetFile": "10-question.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      },
+      "answerImage": {
+        "approvedPreviewRef": "turn583598image0",
+        "sourcePage": null,
+        "approvedIn": "Review 7",
+        "expectedAssetFile": "10-answer.webp",
+        "actualAssetPresent": false,
+        "licensing": {
+          "status": "not-cleared",
+          "evidence": null,
+          "usage": "public-online-pub-quiz"
+        },
+        "note": "Preview refs are NOT downloadable file URLs or persistent production assets."
+      }
+    }
+  ],
+  "retiredSelections": {
+    "David Beckham answer image": "Retained in Review 1–5 records; not assigned to active question 3",
+    "Hugh Laurie answer image": "Retained in Review 5–8 records; not assigned to active question 4"
+  },
+  "safety": "Only build a library entry when BOTH approved image files and appropriate rights evidence for ALL twenty image slots are supplied. Do not replace approved images or publish blank placeholders."
+}

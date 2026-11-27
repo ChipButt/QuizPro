@@ -1,0 +1,25 @@
+{
+  "id": "Q08-question",
+  "fileName": "08-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Take_That_(3604213897)_(cropped).jpg",
+  "commonsFileTitle": "File:Take That (3604213897) (cropped).jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Take_That_%283604213897%29_%28cropped%29.jpg/1280px-Take_That_%283604213897%29_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ATake+That+%283604213897%29+%28cropped%29.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "vagueonthehow  from Tadcaster, York, England",
+    "credit": "Take That \n \n  Uploaded by  MaybeMaybeMaybe",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "6ad5064fa2561d64ad05179430ed62da52a5ee8dfcf4461e49d27dc802c2a6a0",
+  "imageSha256": "c0dd1e4455660d6165bdc22f8894a79b0fee5a7d0bc2e1bc2b39719eb77daf44",
+  "bytes": 26620,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

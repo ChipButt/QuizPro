@@ -1,0 +1,27 @@
+{
+  "id": "Q06-question",
+  "fileName": "06-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Fanclub1965Lulu_(cropped).jpg",
+  "commonsFileTitle": "File:Fanclub1965Lulu (cropped).jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Fanclub1965Lulu_%28cropped%29.jpg/1280px-Fanclub1965Lulu_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AFanclub1965Lulu+%28cropped%29.jpg",
+  "license": {
+    "name": "CC BY-SA 3.0 nl",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0/nl/deed.en",
+    "author": "Photographer: R. Frings",
+    "credit": "Beeld & Geluid Wiki: TV Programme  Fanclub , 11 Dec. 1965",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "5fc308dae142b15b11462018bf04d1d84eef632323fa69e55730e82c3b000c0f",
+  "imageSha256": "dabe1a8eb132304f86e15dc2fe82e68aa8076b1b68da228aef0b00e165a2ee09",
+  "bytes": 25484,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

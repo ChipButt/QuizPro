@@ -1,0 +1,25 @@
+{
+  "id": "Q02-question",
+  "fileName": "02-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Kylie_Minogue_live_in_Paris_-_Can't_get_you_out_of_my_head_-_April_20th_2005_(202111763)_(cropped_2).jpg",
+  "commonsFileTitle": "File:Kylie Minogue live in Paris - Can't get you out of my head - April 20th 2005 (202111763) (cropped 2).jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/08/Kylie_Minogue_live_in_Paris_-_Can%27t_get_you_out_of_my_head_-_April_20th_2005_%28202111763%29_%28cropped_2%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AKylie+Minogue+live+in+Paris+-+Can%27t+get+you+out+of+my+head+-+April+20th+2005+%28202111763%29+%28cropped+2%29.jpg",
+  "license": {
+    "name": "CC BY-SA 2.0",
+    "url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "author": "Keven Law  from Los Angeles, USA",
+    "credit": "Kylie Minogue live in Paris - Can't get you out of my head - April 20th 2005",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "5ee7fb1253ff34b004481abf7338668eff2a95edf31262e2c831eb7377cca8df",
+  "imageSha256": "240212dd0102ab22836e52d7d9312a3f355f39719279c75da36ad7f3ac6ec4c1",
+  "bytes": 49928,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

@@ -1,0 +1,25 @@
+{
+  "id": "Q09-answer",
+  "fileName": "09-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Joan_Collins_2023_(headcrop).jpg",
+  "commonsFileTitle": "File:Joan Collins 2023 (headcrop).jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/77/Joan_Collins_2023_%28headcrop%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AJoan+Collins+2023+%28headcrop%29.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Raph_PH",
+    "credit": "GylesDamesPalladium050323 (35 of 74)",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "227a1ae88a80ba10ca3e78595afe2ac219da2d5c3f93be22b35e82c1d5b47f87",
+  "imageSha256": "58e2d6ea7cc3d5aacc5f47c362b27fdb3449b95c5f68a66b6f4270bb495ece85",
+  "bytes": 50488,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

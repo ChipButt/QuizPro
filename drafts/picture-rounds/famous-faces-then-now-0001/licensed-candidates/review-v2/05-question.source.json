@@ -1,0 +1,25 @@
+{
+  "id": "Q05-question",
+  "fileName": "05-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Samuel_L._Jackson.jpg",
+  "commonsFileTitle": "File:Samuel L. Jackson.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/Samuel_L._Jackson.jpg/1280px-Samuel_L._Jackson.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ASamuel+L.+Jackson.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Kevin Tostado  from San Diego, USA",
+    "credit": "Samuel L Jackson",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "81093b50d2686130e9e224bc71c6ec8b791c090a8ae4ee0144a8eb6debbbff6e",
+  "imageSha256": "72b6e6e34017e0b91e54e844797b0daa638b126568816ad0f8793f8e07019a11",
+  "bytes": 53326,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

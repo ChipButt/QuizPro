@@ -1,0 +1,27 @@
+{
+  "id": "Q03-question",
+  "fileName": "03-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Keith_Richards_1965_(cropped).jpg",
+  "commonsFileTitle": "File:Keith Richards 1965 (cropped).jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/26/Keith_Richards_1965_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AKeith+Richards+1965+%28cropped%29.jpg",
+  "license": {
+    "name": "CC BY-SA 2.0",
+    "url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "author": "Kevin Delaney",
+    "credit": "https://www.flickr.com/photos/thinhippo/377872207/in/faves-24788065@N02/",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "0892cc0c06bd85449082edcfd7efcc9ae01277fa2ab9237d6b3d693afdb6c901",
+  "imageSha256": "2b6d3c857e505a9f43fbf974690e3247823c53792d4f9b11f2af4b393dd9e1d7",
+  "bytes": 30406,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

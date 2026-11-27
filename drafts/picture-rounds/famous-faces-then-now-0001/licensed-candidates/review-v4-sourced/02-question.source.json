@@ -1,0 +1,27 @@
+{
+  "id": "Q02-question",
+  "fileName": "02-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Aankomst_Petula_Clark_op_Schiphol,_Petula_Clark_met_bloemen,_Bestanddeelnr_911-1040.jpg",
+  "commonsFileTitle": "File:Aankomst Petula Clark op Schiphol, Petula Clark met bloemen, Bestanddeelnr 911-1040.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Aankomst_Petula_Clark_op_Schiphol%2C_Petula_Clark_met_bloemen%2C_Bestanddeelnr_911-1040.jpg/1280px-Aankomst_Petula_Clark_op_Schiphol%2C_Petula_Clark_met_bloemen%2C_Bestanddeelnr_911-1040.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AAankomst+Petula+Clark+op+Schiphol%2C+Petula+Clark+met+bloemen%2C+Bestanddeelnr+911-1040.jpg",
+  "license": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "author": "Henk Lindeboom/ Anefo",
+    "credit": "http://proxy.handle.net/10648/a9aa6fb6-d0b4-102d-bcf8-003048976d84",
+    "attributionRequired": false,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "656a481fde5bd4b86793c7b47d7bc18c74cc3c8a8a70814ec50edd5be2eeb6c6",
+  "imageSha256": "9a504073e7d1404ece341cca855e092eb11e4fe5396c2583db8e3c57e8c3bb98",
+  "bytes": 67344,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": false
+}

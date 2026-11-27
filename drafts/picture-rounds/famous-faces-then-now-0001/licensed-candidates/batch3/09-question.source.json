@@ -1,0 +1,25 @@
+{
+  "id": "Q09-question",
+  "fileName": "09-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Joan_Collins_-_1954.jpg",
+  "commonsFileTitle": "File:Joan Collins - 1954.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Joan_Collins_-_1954.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AJoan+Collins+-+1954.jpg",
+  "license": {
+    "name": "Public domain",
+    "url": "",
+    "author": "Template:Files by Simon www.Simiak.com",
+    "credit": "https://www.icollector.com/Joan-Collins_i12108254",
+    "attributionRequired": false,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "9ac54ee325e2444375640292563124cf7d724d67af31dd79912e836e54d9deff",
+  "imageSha256": "3f453d2e8e490ca342f022389d5a3c1075911393d689e5a4fb8f26f0489f5236",
+  "bytes": 32374,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": false
+}

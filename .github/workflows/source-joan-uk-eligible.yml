@@ -1,0 +1,41 @@
+name: Acquire Joan Collins legally eligible candidate
+on:
+  push:
+    branches: [picture-rounds-14-formats-20261126]
+    paths:
+      - .github/workflows/source-joan-uk-eligible.yml
+      - drafts/picture-rounds/famous-faces-then-now-0001/joan-collins-cc-2009-solo.json
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install pillow
+      - name: Download creator-released CC BY-SA image and verify commercial worldwide licence
+        run: |
+          python scripts/source-commons-picture-assets.py \
+            drafts/picture-rounds/famous-faces-then-now-0001/joan-collins-cc-2009-solo.json \
+            --out drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/joan-cc-solo
+      - uses: actions/upload-artifact@v4
+        with:
+          name: joan-collins-uk-commercial-licensed-solo
+          path: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/joan-cc-solo/
+      - name: Persist verified, actual files without overwriting original approvals
+        run: |
+          git config user.name "QuizPro picture asset bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/joan-cc-solo
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive Joan Collins CC BY-SA image as unapproved candidate"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin picture-rounds-14-formats-20261126
+              git rebase origin/picture-rounds-14-formats-20261126
+              if git push; then break; fi
+              if [ "$attempt" = "5" ]; then exit 1; fi
+              sleep 3
+            done
+          fi

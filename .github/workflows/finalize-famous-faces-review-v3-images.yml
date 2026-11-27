@@ -1,0 +1,42 @@
+name: Save QA-checked Diana Ross and Cher portraits
+on:
+  push:
+    branches: [picture-rounds-14-formats-20261126]
+    paths:
+      - .github/workflows/finalize-famous-faces-review-v3-images.yml
+      - scripts/finalize-famous-faces-review-v3.py
+  workflow_dispatch:
+permissions: {contents: write}
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Pillow
+        run: python -m pip install pillow
+      - name: Derive full-size single-person images from byte-verified CC originals
+        run: |
+          python scripts/finalize-famous-faces-review-v3.py \
+          --cropped-dir drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-face-crops \
+          --original-dir drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-originals \
+          --out drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-final-fixes
+      - uses: actions/upload-artifact@v4
+        with:
+          name: diana-and-cher-final-image-files
+          path: drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-final-fixes/
+      - name: Archive final WebPs, licence and modification metadata
+        run: |
+          git config user.name "QuizPro picture QA"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v3-final-fixes/
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive source-verified final portrait crops for Diana Ross and Cher"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin picture-rounds-14-formats-20261126
+              git rebase origin/picture-rounds-14-formats-20261126
+              if git push; then break; fi
+              if [ "$attempt" = "5" ]; then exit 1; fi
+              sleep 3
+            done
+          fi

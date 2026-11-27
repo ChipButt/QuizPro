@@ -1,0 +1,27 @@
+{
+  "id": "Q02-answer",
+  "fileName": "02-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:RStonesHydePark030722_(49_of_125)_(52193656268)_(cropped).jpg",
+  "commonsFileTitle": "File:RStonesHydePark030722 (49 of 125) (52193656268) (cropped).jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7a/RStonesHydePark030722_%2849_of_125%29_%2852193656268%29_%28cropped%29.jpg/1280px-RStonesHydePark030722_%2849_of_125%29_%2852193656268%29_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ARStonesHydePark030722+%2849+of+125%29+%2852193656268%29+%28cropped%29.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Raph_PH",
+    "credit": "RStonesHydePark030722 (49 of 125)",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "f52adf08865f672e6d154cdf2adbc9a7d6525f0fe8b27280db018f732cb98ec7",
+  "imageSha256": "a817bad2b5593e60ec5d571839f3606007454b6ce024f8c44527a08fda190fa6",
+  "bytes": 51758,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

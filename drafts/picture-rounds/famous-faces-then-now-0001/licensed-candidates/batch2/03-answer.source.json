@@ -1,0 +1,25 @@
+{
+  "id": "Q03-answer",
+  "fileName": "03-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Robbie_Williams_2024.jpg",
+  "commonsFileTitle": "File:Robbie Williams 2024.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Robbie_Williams_2024.jpg/1280px-Robbie_Williams_2024.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ARobbie+Williams+2024.jpg",
+  "license": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "author": "ManoSolo13241324",
+    "credit": "Own work",
+    "attributionRequired": false,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "4286ccf8c9fbefa2ca6b90d847620789f0428db7ba3caba008d73cc721ded5c1",
+  "imageSha256": "e242f4018fa8f61b090298e45af6012f1633ed6851cf51a39881969b78b1e140",
+  "bytes": 85182,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": false
+}

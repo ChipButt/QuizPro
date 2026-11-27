@@ -1,0 +1,27 @@
+{
+  "id": "Q09-question",
+  "fileName": "09-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Fleetwood_mac_mick_fleetwood_2.jpg",
+  "commonsFileTitle": "File:Fleetwood mac mick fleetwood 2.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dd/Fleetwood_mac_mick_fleetwood_2.jpg/1280px-Fleetwood_mac_mick_fleetwood_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AFleetwood+mac+mick+fleetwood+2.jpg",
+  "license": {
+    "name": "CC BY-SA 3.0",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "author": "W.W.Thaler - H. Weber, Hildesheim",
+    "credit": "Own work",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "96bbac2de311d63bc4f88132c52deeb547da27b07d2f561d8e8e44e64d554140",
+  "imageSha256": "b7ea0b8e82e2688b659dfd6872a231c4bc100d606e70d3df40a58ae95e2612ce",
+  "bytes": 82762,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

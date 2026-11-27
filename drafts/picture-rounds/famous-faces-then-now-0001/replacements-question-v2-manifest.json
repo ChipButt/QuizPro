@@ -1,0 +1,51 @@
+{
+  "purpose": "Source-first second question-photo candidates for questions 1,2,3,5,6,7,8,10. Preserve all approved answer images and both Q4 and Q9 approved image pairs. These are not approvals. Reject if under-licensed or visually unsuitable.",
+  "items": [
+    {
+      "id": "Q01-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Richard_Branson.jpg",
+      "notes": "2005 NASA archival photo; actual subject Branson; 2005 not 1970s"
+    },
+    {
+      "id": "Q02-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Kylie_Minogue_live_in_Paris_-_Can't_get_you_out_of_my_head_-_April_20th_2005_(202111763)_(cropped_2).jpg",
+      "notes": "2005 concert close-up; different from 2000 Olympics image"
+    },
+    {
+      "id": "Q03-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Robbie_Williams_(148951162).jpg",
+      "notes": "2005 Live 8 concert; alternate to distant stage panorama"
+    },
+    {
+      "id": "Q05-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Samuel_L._Jackson.jpg",
+      "notes": "2006 Comic-Con; substantially earlier than 2022 answer"
+    },
+    {
+      "id": "Q06-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:EmmaThompson05_(cropped).jpg",
+      "notes": "2005 solo premiere image (if composition verified)"
+    },
+    {
+      "id": "Q07-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Daniel_Radcliffe.jpg",
+      "notes": "2006 Empire Awards; earlier solo subject"
+    },
+    {
+      "id": "Q08-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Take_That_(3604213897)_(cropped).jpg",
+      "notes": "2009 group-event photo cropped toward Gary Barlow; verify face"
+    },
+    {
+      "id": "Q10-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Mirren0407.jpg",
+      "notes": "2007 solo Helen Mirren at awards luncheon; distinct from rejected 1985 portrait"
+    }
+  ],
+  "previousReviewFile": "docs/famous-faces-0001-file-review-decisions.md",
+  "approvedQuestionPairs": [
+    4,
+    9
+  ],
+  "reviewPurpose": "New real files for exactly eight question-image redos; submitted for visual approval only. Original locked answer images, Tom Jones and Joan Collins pairs remain unchanged."
+}

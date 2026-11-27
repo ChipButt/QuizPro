@@ -1,0 +1,27 @@
+{
+  "id": "Q08-question",
+  "fileName": "08-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Opdracht_Telegraaf_Nana_Mouskouri_%2C_Griekse_zangeres%2C_Bestanddeelnr_915-4940.jpg",
+  "commonsFileTitle": "File:Opdracht Telegraaf Nana Mouskouri , Griekse zangeres, Bestanddeelnr 915-4940.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Opdracht_Telegraaf_Nana_Mouskouri_%2C_Griekse_zangeres%2C_Bestanddeelnr_915-4940.jpg/1280px-Opdracht_Telegraaf_Nana_Mouskouri_%2C_Griekse_zangeres%2C_Bestanddeelnr_915-4940.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AOpdracht+Telegraaf+Nana+Mouskouri+%2C+Griekse+zangeres%2C+Bestanddeelnr+915-4940.jpg",
+  "license": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "author": "Harry Pot  for  Anefo",
+    "credit": "http://proxy.handle.net/10648/aa444028-d0b4-102d-bcf8-003048976d84",
+    "attributionRequired": false,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "fdddac90213ff15e584e2d5917951644fd1bf036c0a6c43af31e01f28f1e4baa",
+  "imageSha256": "a97313e8d1e99eda4032a1df891c890a8bba2aa8d71f1f66c2d592c3266d0fe9",
+  "bytes": 21650,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": false
+}

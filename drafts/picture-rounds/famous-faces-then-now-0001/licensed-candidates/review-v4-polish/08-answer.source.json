@@ -1,0 +1,27 @@
+{
+  "id": "Q08-answer",
+  "fileName": "08-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Jackie_Stewart_Viennale_2013_a.jpg",
+  "commonsFileTitle": "File:Jackie Stewart Viennale 2013 a.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Jackie_Stewart_Viennale_2013_a.jpg/1280px-Jackie_Stewart_Viennale_2013_a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AJackie+Stewart+Viennale+2013+a.jpg",
+  "license": {
+    "name": "CC BY-SA 3.0",
+    "url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "author": "Manfred Werner /  Tsui",
+    "credit": "Own work",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "a996225ee98ef29b72014b04c0cff1a320c44a9a8044019c364d54926282e77b",
+  "imageSha256": "f38b8526659b87a67768f291694d8e8cde5b62459a87b3d718314e156e487acb",
+  "bytes": 18558,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

@@ -1,0 +1,25 @@
+{
+  "id": "Q06-question",
+  "fileName": "06-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:EmmaThompson05_(cropped).jpg",
+  "commonsFileTitle": "File:EmmaThompson05 (cropped).jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/EmmaThompson05_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AEmmaThompson05+%28cropped%29.jpg",
+  "license": {
+    "name": "CC BY 3.0",
+    "url": "https://creativecommons.org/licenses/by/3.0",
+    "author": "Caroline Bonarde Ucci at  https://www.flickr.com/photos/caroline_bonarde/",
+    "credit": "https://www.flickr.com/photos/caroline_bonarde/369960559/in/set-72157594501080666/",
+    "attributionRequired": true,
+    "caution": "Check personality rights and applicable copyright law for intended publication"
+  },
+  "sourceSha256": "f742f19b9761fb04100f623f5e9f9f6b6572d00aebd0bde38ff07604b9796e8b",
+  "imageSha256": "7701ecc9ee444097a70d3ab78163b8fda1d64e2b8ac89388ad57240155576206",
+  "bytes": 38438,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

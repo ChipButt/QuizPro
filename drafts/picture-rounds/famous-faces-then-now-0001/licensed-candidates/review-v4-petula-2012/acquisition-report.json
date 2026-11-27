@@ -1,0 +1,33 @@
+{
+  "filesSaved": 1,
+  "sources": [
+    {
+      "id": "Q02-answer",
+      "fileName": "02-answer.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Petula_Clark_2012.jpg",
+      "commonsFileTitle": "File:Petula Clark 2012.jpg",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Petula_Clark_2012.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3APetula+Clark+2012.jpg",
+      "license": {
+        "name": "CC BY-SA 3.0",
+        "url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "author": "Georges Biard",
+        "credit": "Own work",
+        "attributionRequired": true,
+        "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+      },
+      "sourceSha256": "b09c92ffdcfe2033642d73118a47f209fdf7e3d182f5e1516fb8b1109d6f4c75",
+      "imageSha256": "bd6775f5b085eca7d600f6fcc3a193b6afb928dc0a769ec9ec8edc26565b2fc0",
+      "bytes": 45508,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "cropRect": null,
+      "modificationNotice": "Photo resized for QuizPro",
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    }
+  ],
+  "failures": []
+}

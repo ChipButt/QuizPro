@@ -1,0 +1,27 @@
+{
+  "id": "Q07-question",
+  "fileName": "07-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Cliff_Richard_%2C_aankomst_op_Schiphol_op_het_platform_en_trap%2C_Bestanddeelnr_916-3957.jpg",
+  "commonsFileTitle": "File:Cliff Richard , aankomst op Schiphol op het platform en trap, Bestanddeelnr 916-3957.jpg",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/Cliff_Richard_%2C_aankomst_op_Schiphol_op_het_platform_en_trap%2C_Bestanddeelnr_916-3957.jpg/1280px-Cliff_Richard_%2C_aankomst_op_Schiphol_op_het_platform_en_trap%2C_Bestanddeelnr_916-3957.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ACliff+Richard+%2C+aankomst+op+Schiphol+op+het+platform+en+trap%2C+Bestanddeelnr+916-3957.jpg",
+  "license": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "author": "Jack de Nijs  for  Anefo   / Anefo",
+    "credit": "http://proxy.handle.net/10648/aa67c3d6-d0b4-102d-bcf8-003048976d84",
+    "attributionRequired": false,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "d5501eeac8b5e5470674d9dacdccc43d8a8d6357117be475060ea434740d602f",
+  "imageSha256": "a76f0242ee54ec621a4a0b61c037069e757eb57e7a95403d071e18bccd573690",
+  "bytes": 47592,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": false
+}

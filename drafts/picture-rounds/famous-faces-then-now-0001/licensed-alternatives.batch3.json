@@ -1,0 +1,41 @@
+{
+  "purpose": "Additional source-first alternatives for currently missing photo slots. All are unapproved replacement candidates until the user sees the exact stored WebP bytes. Historic photographs may require additional UK copyright review.",
+  "items": [
+    {
+      "id": "Q01-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Richard_Branson_2000.jpg"
+    },
+    {
+      "id": "Q05-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Samuel_L._Jackson_(2006_Pebble_Beach).jpg"
+    },
+    {
+      "id": "Q06-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Vladimir_Bouchler_and_Emma_Thompson%2C_working_on_narration_of_the_documentary_film_%22DRY_TEARS._Aral_Sea_Legend%22%2C_London_(1998).jpg"
+    },
+    {
+      "id": "Q07-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Daniel_Radcliffe_NY11.jpg"
+    },
+    {
+      "id": "Q08-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Gary_Barlow_on_stage_in_2009_crop.jpg"
+    },
+    {
+      "id": "Q09-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Joan_Collins_-_1954.jpg"
+    },
+    {
+      "id": "Q09-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Joan_Collins_2023_(headcrop).jpg"
+    },
+    {
+      "id": "Q10-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Helen_Mirren_1985_IPTC_(cropped).jpg"
+    },
+    {
+      "id": "Q10-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Helen_Mirren_at_the_2026_Toronto_International_Film_Festival._4_(cropped).jpg"
+    }
+  ]
+}
