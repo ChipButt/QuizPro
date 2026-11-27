@@ -35,10 +35,11 @@ jobs:
           const browser=await chromium.launch({headless:true,executablePath,args:['--no-sandbox']});
           try {
             for (const [width,height,keyboardHeight,offset] of [[390,844,350,0],[430,932,410,45],[360,740,270,0]]) {
-              const page=await browser.newPage({viewport:{width,height},isMobile:true,hasTouch:true,deviceScaleFactor:1});
+              const page=await browser.newPage({viewport:{width,height},isMobile:true,hasTouch:true,deviceScaleFactor:1,reducedMotion:'reduce'});
               await page.goto('http://127.0.0.1:5173/index.dev.html#/join/__PREVIEW__/picture-question-editor');
               const field=page.locator('.picture-round-question-layout .answer-input-shell textarea');
               await field.waitFor({state:'visible',timeout:20000});
+              await page.waitForTimeout(900);
               const before=await field.boundingBox();
               await field.tap();
               await page.evaluate(({keyboardHeight,offset,width})=>{
@@ -60,7 +61,7 @@ jobs:
                 Object.defineProperties(visualViewport,{height:{configurable:true,get:()=>height},offsetTop:{configurable:true,get:()=>0}});
                 visualViewport.dispatchEvent(new Event('resize'));
               },{height});
-              await page.waitForTimeout(400);
+              await page.waitForTimeout(1250);
               const after=await field.boundingBox();
               if(await page.locator('.picture-keyboard-open').count() || Math.abs(before.y-after.y)>2 || Math.abs(before.height-after.height)>1)throw Error('Layout did not restore: '+JSON.stringify({before,after}));
               console.log('RESTORED',width,height,JSON.stringify({before,after}));
