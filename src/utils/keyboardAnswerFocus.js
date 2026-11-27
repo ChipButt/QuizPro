@@ -37,18 +37,39 @@ function clearPictureKeyboardViewport() {
   );
 }
 
-function ensurePictureAnswerVisible(active) {
-  const page = active.closest(".team-page.live-team-page.picture-round-team-page");
+function pictureAnswerPage(active) {
+  return active.closest(".team-page.live-team-page.picture-round-team-page");
+}
+
+function pictureViewportMetrics() {
+  const viewport = window.visualViewport;
+  const height = Math.min(
+    viewport?.height || Infinity,
+    window.innerHeight || Infinity,
+    document.documentElement.clientHeight || Infinity,
+  );
+  const top = viewport?.offsetTop ?? 0;
+  const left = viewport?.offsetLeft ?? 0;
+  const width = viewport?.width ?? document.documentElement.clientWidth;
+  const keyboard = navigator.virtualKeyboard?.boundingRect;
+  const keyboardTop = keyboard?.height > 0 ? keyboard.top : Infinity;
+  return { height: Math.max(1, Math.min(height, keyboardTop - top)), top, left, width };
+}
+
+function ensurePictureAnswerVisible(active, fallback = false) {
+  const page = pictureAnswerPage(active);
   if (!page || !window.matchMedia("(max-width: 979px)").matches) {
     clearPictureKeyboardViewport();
     return;
   }
 
-  const viewport = window.visualViewport;
-  const height = viewport?.height ?? window.innerHeight;
-  const top = viewport?.offsetTop ?? 0;
-  const left = viewport?.offsetLeft ?? 0;
-  const width = viewport?.width ?? document.documentElement.clientWidth;
+  const metrics = pictureViewportMetrics();
+  const { top, left, width } = metrics;
+  // On touch browsers that overlay the keyboard without reporting a smaller
+  // viewport, reserve a conservative upper editing area.
+  const height = fallback
+    ? Math.min(metrics.height, Math.max(1, Math.floor(answerKeyboardLayoutHeight * .40)))
+    : metrics.height;
   page.style.setProperty("--picture-keyboard-top", `${top}px`);
   page.style.setProperty("--picture-keyboard-left", `${left}px`);
   page.style.setProperty("--picture-keyboard-width", `${width}px`);
@@ -57,7 +78,10 @@ function ensurePictureAnswerVisible(active) {
 
   const field = active.closest(".your-answer-section") || active;
   const bounds = field.getBoundingClientRect();
-  const visible = page.getBoundingClientRect();
+  const pageRect = page.getBoundingClientRect();
+  const visibleTop = Math.max(pageRect.top, top);
+  const visibleBottom = Math.min(pageRect.bottom, top + height);
+  const visible = { top: visibleTop, bottom: visibleBottom, height: visibleBottom - visibleTop };
   const gap = 12;
   // If a very short viewport cannot fit the wrapper, prioritise the textarea.
   const target = bounds.height + 2 * gap > visible.height
@@ -141,10 +165,12 @@ function resetQuestionPageOrigin({ force = false, preserveBaseline = false } = {
 }
 
 function answerKeyboardReduction() {
-  const viewportHeight = Math.max(
-    180,
-    window.visualViewport?.height ?? window.innerHeight,
-  );
+  const active = document.activeElement;
+  const picture = active instanceof HTMLTextAreaElement && active.matches(ANSWER_SELECTOR)
+    && pictureAnswerPage(active);
+  const viewportHeight = picture
+    ? pictureViewportMetrics().height
+    : Math.max(180, window.visualViewport?.height ?? window.innerHeight);
   return Math.max(0, answerKeyboardLayoutHeight - viewportHeight);
 }
 
@@ -171,10 +197,18 @@ function startAnswerViewportWatcher() {
   clearAnswerViewportWatcher();
 
   const viewport = window.visualViewport;
+  const initial = document.activeElement;
+  const isPicture = initial instanceof HTMLTextAreaElement && Boolean(pictureAnswerPage(initial));
+  const touchPicture = isPicture && window.matchMedia("(max-width: 979px) and (pointer: coarse)").matches;
+  let fallbackReady = false;
+  let fallbackArmed = touchPicture;
+  let frame = 0;
+  let timers = [];
 
   const checkViewport = () => {
     const active = document.activeElement;
-    if (!(active instanceof HTMLTextAreaElement) || !active.matches(ANSWER_SELECTOR)) {
+    if (!(active instanceof HTMLTextAreaElement) || !active.matches(ANSWER_SELECTOR) || active.disabled) {
+      if (isPicture) clearPictureKeyboardViewport();
       return;
     }
 
@@ -188,9 +222,18 @@ function startAnswerViewportWatcher() {
       return;
     }
 
-    if (!answerKeyboardWasOpen) return;
+    if (!answerKeyboardWasOpen) {
+      if (fallbackArmed && fallbackReady && pictureAnswerPage(active)) {
+        setQuestionKeyboardLayoutHeight();
+        forceKeyboardClasses(true);
+        ensurePictureAnswerVisible(active, true);
+      }
+      return;
+    }
 
     answerKeyboardWasOpen = false;
+    // After a measured dismissal, only rearm on a fresh tap.
+    fallbackArmed = false;
     restoreHiddenKeyboardState();
 
     /*
@@ -203,17 +246,48 @@ function startAnswerViewportWatcher() {
     });
   };
 
+  const afterPaint = () => {
+    if (frame) window.cancelAnimationFrame(frame);
+    frame = window.requestAnimationFrame(() => {
+      frame = 0;
+      checkViewport();
+    });
+  };
+
   viewport?.addEventListener("resize", checkViewport);
   viewport?.addEventListener("scroll", checkViewport);
   window.addEventListener("resize", checkViewport);
+  if (isPicture) {
+    // Native panning and React answer updates may occur after the first resize.
+    viewport?.addEventListener("resize", afterPaint);
+    viewport?.addEventListener("scroll", afterPaint);
+    window.addEventListener("scroll", afterPaint);
+    initial.addEventListener("input", afterPaint);
+    navigator.virtualKeyboard?.addEventListener("geometrychange", checkViewport);
+    timers = [60, 180, 320, 500, 800, 1200].map((delay) =>
+      window.setTimeout(() => {
+        if (delay >= 320) fallbackReady = true;
+        checkViewport();
+      }, delay)
+    );
+  } else {
+    timers = [window.setTimeout(checkViewport, 120)];
+  }
 
   answerViewportCleanup = () => {
+    timers.forEach((timer) => window.clearTimeout(timer));
+    if (frame) window.cancelAnimationFrame(frame);
     viewport?.removeEventListener("resize", checkViewport);
     viewport?.removeEventListener("scroll", checkViewport);
     window.removeEventListener("resize", checkViewport);
+    if (isPicture) {
+      viewport?.removeEventListener("resize", afterPaint);
+      viewport?.removeEventListener("scroll", afterPaint);
+      window.removeEventListener("scroll", afterPaint);
+      initial.removeEventListener("input", afterPaint);
+      navigator.virtualKeyboard?.removeEventListener("geometrychange", checkViewport);
+    }
   };
-
-  window.setTimeout(checkViewport, 120);
 }
 
 function finishQuestionKeyboardClose() {
@@ -277,7 +351,7 @@ document.addEventListener("pointerdown", (event) => {
    * resize event can put keyboard mode back when the keyboard reopens.
    */
   const active = document.activeElement;
-  if (active === target && answerViewportCleanup === null) {
+  if (active === target && (answerViewportCleanup === null || pictureAnswerPage(target))) {
     startAnswerViewportWatcher();
   }
 }, true);
