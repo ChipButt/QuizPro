@@ -1,0 +1,27 @@
+{
+  "id": "Q02-answer",
+  "fileName": "02-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Petula_Clark_performing_in_2008.jpg",
+  "commonsFileTitle": "File:Petula Clark performing in 2008.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Petula_Clark_performing_in_2008.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3APetula+Clark+performing+in+2008.jpg",
+  "license": {
+    "name": "CC BY 2.0",
+    "url": "https://creativecommons.org/licenses/by/2.0",
+    "author": "Michael Borkson",
+    "credit": "https://www.flickr.com/photos/protestphotos1/6087404271/in/set-72157627534915776",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "99091b3cdb89517cf20e3e37dbbc24937209e7bbb08ac25d75cf4cc29a3147e7",
+  "imageSha256": "887e18d515b7a5a36eda787ebcda023085933548483367253979dc957a672cff",
+  "bytes": 37772,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}
