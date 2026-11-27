@@ -22,7 +22,55 @@ function clearAnswerViewportWatcher() {
   answerViewportCleanup = null;
 }
 
+
+/* Picture questions keep their approved full-size layout. While a software
+ * keyboard is actually open, make the visible part of that canvas scrollable
+ * and bring the existing answer box above the keyboard. */
+function clearPictureKeyboardViewport() {
+  const page = document.querySelector(".picture-keyboard-open");
+  if (!page) return;
+  page.scrollTop = 0;
+  page.classList.remove("picture-keyboard-open");
+  ["--picture-keyboard-top", "--picture-keyboard-left",
+    "--picture-keyboard-width", "--picture-keyboard-height"].forEach(
+    (property) => page.style.removeProperty(property),
+  );
+}
+
+function ensurePictureAnswerVisible(active) {
+  const page = active.closest(".team-page.live-team-page.picture-round-team-page");
+  if (!page || !window.matchMedia("(max-width: 979px)").matches) {
+    clearPictureKeyboardViewport();
+    return;
+  }
+
+  const viewport = window.visualViewport;
+  const height = viewport?.height ?? window.innerHeight;
+  const top = viewport?.offsetTop ?? 0;
+  const left = viewport?.offsetLeft ?? 0;
+  const width = viewport?.width ?? document.documentElement.clientWidth;
+  page.style.setProperty("--picture-keyboard-top", `${top}px`);
+  page.style.setProperty("--picture-keyboard-left", `${left}px`);
+  page.style.setProperty("--picture-keyboard-width", `${width}px`);
+  page.style.setProperty("--picture-keyboard-height", `${height}px`);
+  page.classList.add("picture-keyboard-open");
+
+  const field = active.closest(".your-answer-section") || active;
+  const bounds = field.getBoundingClientRect();
+  const visible = page.getBoundingClientRect();
+  const gap = 12;
+  // If a very short viewport cannot fit the wrapper, prioritise the textarea.
+  const target = bounds.height + 2 * gap > visible.height
+    ? active.getBoundingClientRect() : bounds;
+  if (target.bottom > visible.bottom - gap) {
+    page.scrollTop += target.bottom - (visible.bottom - gap);
+  } else if (target.top < visible.top + gap) {
+    page.scrollTop -= visible.top + gap - target.top;
+  }
+}
+
 function forceKeyboardClasses(enabled) {
+  if (!enabled) clearPictureKeyboardViewport();
   document.querySelector(PAGE_SELECTOR)?.classList.toggle("keyboard-active-page", enabled);
   document.querySelector(SHELL_SELECTOR)?.classList.toggle("keyboard-active", enabled);
 }
@@ -136,6 +184,7 @@ function startAnswerViewportWatcher() {
       answerKeyboardWasOpen = true;
       setQuestionKeyboardLayoutHeight();
       forceKeyboardClasses(true);
+      ensurePictureAnswerVisible(active);
       return;
     }
 
