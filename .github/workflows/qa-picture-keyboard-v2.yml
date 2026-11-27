@@ -1,0 +1,95 @@
+name: Picture keyboard V2 regression
+on:
+  push:
+    branches: [qa/picture-keyboard-v2-20261127]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm install --no-save playwright
+      - run: npx playwright install --with-deps webkit
+        if: matrix.engine == 'webkit'
+      - name: Start actual app
+        run: |
+          (npm run dev -- --host 127.0.0.1 > /tmp/quizpro.log 2>&1 &)
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:5173/index.dev.html >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/quizpro.log
+          exit 1
+      - name: Verify picture keyboard simulated visual viewport
+        run: |
+          node --input-type=module <<'JS'
+          import { chromium, webkit } from 'playwright';
+          import fs from 'node:fs';
+          const executablePath=['/usr/bin/google-chrome','/usr/bin/chromium','/usr/bin/google-chrome-stable'].find(fs.existsSync);
+          const engine='${{ matrix.engine }}';
+          const browser=engine==='webkit'?await webkit.launch({headless:true}):await chromium.launch({headless:true,executablePath,args:['--no-sandbox']});
+          try {
+            for (const [width,height,keyboardHeight,offset] of [[390,844,350,0],[430,932,410,45],[360,740,270,0]]) {
+              const page=await browser.newPage({viewport:{width,height},isMobile:true,hasTouch:true,deviceScaleFactor:1,reducedMotion:'reduce'});
+              await page.goto('http://127.0.0.1:5173/index.dev.html#/join/__PREVIEW__/picture-question-editor');
+              const field=page.locator('.picture-round-question-layout .answer-input-shell textarea');
+              await field.waitFor({state:'visible',timeout:20000});
+              await page.waitForTimeout(900);
+              const before=await field.boundingBox();
+              await field.tap();
+              await page.evaluate(({keyboardHeight,offset,width})=>{
+                const vv=window.visualViewport;
+                Object.defineProperties(vv,{height:{configurable:true,get:()=>keyboardHeight},width:{configurable:true,get:()=>width},offsetTop:{configurable:true,get:()=>offset},offsetLeft:{configurable:true,get:()=>0}});
+                vv.dispatchEvent(new Event('resize'));
+              },{keyboardHeight,offset,width});
+              await page.waitForTimeout(250);
+              const result=await field.evaluate(el=>{
+                const box=el.getBoundingClientRect(), wrapper=el.closest('.your-answer-section').getBoundingClientRect();
+                const canvas=el.closest('.team-page.live-team-page.picture-round-team-page');
+                return {top:box.top,bottom:box.bottom,wrapperTop:wrapper.top,wrapperBottom:wrapper.bottom,scroll:canvas.scrollTop,open:canvas.classList.contains('picture-keyboard-open'),viewportTop:visualViewport.offsetTop,viewportBottom:visualViewport.offsetTop+visualViewport.height};
+              });
+              console.log('OPEN',width,height,JSON.stringify(result));
+              if(!result.open || result.wrapperTop<result.viewportTop-1 || result.wrapperBottom>result.viewportBottom+1)throw Error('Answer wrapper obscured: '+JSON.stringify(result));
+              await field.fill('Example answer');
+              if(await field.inputValue()!=='Example answer')throw Error('Answer input failed');
+              await page.evaluate(({height})=>{
+                Object.defineProperties(visualViewport,{height:{configurable:true,get:()=>height},offsetTop:{configurable:true,get:()=>0}});
+                visualViewport.dispatchEvent(new Event('resize'));
+              },{height});
+              await page.waitForTimeout(1250);
+              const after=await field.boundingBox();
+              if(await page.locator('.picture-keyboard-open').count() || Math.abs(before.y-after.y)>2 || Math.abs(before.height-after.height)>1)throw Error('Layout did not restore: '+JSON.stringify({before,after}));
+              console.log('RESTORED',width,height,JSON.stringify({before,after}));
+              // Reopen while still focused. Do not report any viewport reduction:
+              // an overlay-only or delayed keyboard must still expose the whole box.
+              await field.tap();
+              await page.waitForTimeout(650);
+              const fallback=await field.evaluate(el=>{
+                const wrapper=el.closest('.your-answer-section').getBoundingClientRect();
+                const canvas=el.closest('.team-page.live-team-page.picture-round-team-page');
+                return {top:wrapper.top,bottom:wrapper.bottom,open:canvas.classList.contains('picture-keyboard-open'),pointer:matchMedia('(pointer: coarse)').matches,active:document.activeElement===el,viewport:canvas.getBoundingClientRect().height};
+              });
+              console.log('OVERLAY',width,height,JSON.stringify(fallback));
+              if(!fallback.open || fallback.bottom>Math.floor(height*.4)+1 || fallback.top<0)throw Error('Overlay keyboard obscured: '+JSON.stringify(fallback));
+              await field.fill('Second answer');
+              await field.evaluate(el=>el.blur());
+              await page.waitForTimeout(1300);
+              const end=await field.boundingBox();
+              if(await page.locator('.picture-keyboard-open').count() || Math.abs(before.y-end.y)>2 || Math.abs(before.height-end.height)>1)throw Error('Overlay layout did not restore: '+JSON.stringify({before,end}));
+              console.log('OVERLAY RESTORED',width,height,JSON.stringify({before,end}));
+              await page.close();
+            }
+          } finally {await browser.close()}
+          JS
