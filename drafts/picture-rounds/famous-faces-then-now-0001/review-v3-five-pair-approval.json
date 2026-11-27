@@ -1,9 +1,9 @@
 {
   "schema": "quizpro-famous-faces-review-v3-five-real-picture-pairs",
   "round": "Famous Faces – Then & Now 0001",
-  "reviewStatus": "5 QUESTIONS PENDING (2,5,6,7,8); 5 FULL PAIRS LOCKED (1,3,4,9,10)",
+  "reviewStatus": "REVIEW 3 DECIDED — FOUR PERSON REPLACEMENTS PENDING SOURCING / APPROVAL (2,5,6,8); Q7 ANSWER APPROVED AND LOCKED",
   "lockedDecisionsFile": "drafts/picture-rounds/famous-faces-then-now-0001/decisions-review-v3.json",
-  "publicationStatus": "NOT LIVE",
+  "publicationStatus": "NOT LIVE — DO NOT PUBLISH OR ADVANCE",
   "userApprovalRequired": true,
   "licenceAttributionsRequiredOnPublish": true,
   "items": [
@@ -11,7 +11,7 @@
       "number": 2,
       "person": "Sophia Loren",
       "subjectBirthDate": "1934-09-20",
-      "approval": "PENDING",
+      "approval": "REJECTED_REPLACE_PERSON",
       "chronology": {
         "earlier": "1955–1960",
         "later": "2016",
@@ -41,13 +41,15 @@
           "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
           "modification": "Photo resized for QuizPro"
         }
-      }
+      },
+      "status": "RETIRED_HISTORICAL_IMAGES_KEEP_UNCHANGED",
+      "nextAction": "SOURCE_AND_STORE_NEW_PERSON_PHOTOS_BEFORE_SHOWING"
     },
     {
       "number": 5,
       "person": "Jane Fonda",
       "subjectBirthDate": "1937-12-21",
-      "approval": "PENDING",
+      "approval": "REJECTED_REPLACE_PERSON",
       "chronology": {
         "earlier": "1975",
         "later": "2026",
@@ -77,13 +79,15 @@
           "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
           "modification": "Photo resized and cropped to isolate subject"
         }
-      }
+      },
+      "status": "RETIRED_HISTORICAL_IMAGES_KEEP_UNCHANGED",
+      "nextAction": "SOURCE_AND_STORE_NEW_PERSON_PHOTOS_BEFORE_SHOWING"
     },
     {
       "number": 6,
       "person": "Diana Ross",
       "subjectBirthDate": "1944-03-26",
-      "approval": "PENDING",
+      "approval": "REJECTED_REPLACE_PERSON",
       "chronology": {
         "earlier": "1965",
         "later": "2022",
@@ -113,13 +117,15 @@
           "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
           "modification": "Cropped to isolate celebrity, resampled to fit quiz card; no changes to the person or original scene"
         }
-      }
+      },
+      "status": "RETIRED_HISTORICAL_IMAGES_KEEP_UNCHANGED",
+      "nextAction": "SOURCE_AND_STORE_NEW_PERSON_PHOTOS_BEFORE_SHOWING"
     },
     {
       "number": 7,
       "person": "Cliff Richard",
       "subjectBirthDate": "1940-10-14",
-      "approval": "PENDING",
+      "approval": "APPROVED",
       "chronology": {
         "earlier": "1964",
         "later": "2021",
@@ -149,13 +155,19 @@
           "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
           "modification": "Photo resized for QuizPro"
         }
-      }
+      },
+      "status": "BOTH_EXACT_IMAGES_LOCKED",
+      "lockedApprovedAssetSha256": {
+        "question": "b9803de8f8ffc1c965c5cc7b19248030c4e779e5b26fdbd77693688997902f8d",
+        "answer": "7f62ba7d47d7771029a34fa6cf8deefb44a84b310b32c6813e4317809d7a7bd2"
+      },
+      "nextAction": "NO_CHANGES"
     },
     {
       "number": 8,
       "person": "Cher",
       "subjectBirthDate": "1946-05-20",
-      "approval": "PENDING",
+      "approval": "REJECTED_REPLACE_PERSON",
       "chronology": {
         "earlier": "1966",
         "later": "2019",
@@ -185,8 +197,12 @@
           "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
           "modification": "Photo resized for QuizPro"
         }
-      }
+      },
+      "status": "RETIRED_HISTORICAL_IMAGES_KEEP_UNCHANGED",
+      "nextAction": "SOURCE_AND_STORE_NEW_PERSON_PHOTOS_BEFORE_SHOWING"
     }
   ],
-  "retiredHistoricalImages": "PRESERVED; no overwrites"
+  "retiredHistoricalImages": "PRESERVED; no overwrites",
+  "finalReviewDecisionsFile": "drafts/picture-rounds/famous-faces-then-now-0001/decisions-review-v4.json",
+  "reviewDecisionDate": "2026-11-27"
 }
