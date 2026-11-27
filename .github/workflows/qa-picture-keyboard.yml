@@ -1,0 +1,70 @@
+name: Isolated picture keyboard regression
+on:
+  push:
+    branches: [qa/picture-keyboard-20261127]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm install --no-save playwright-core
+      - name: Start actual app
+        run: |
+          (npm run dev -- --host 127.0.0.1 > /tmp/quizpro.log 2>&1 &)
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:5173/index.dev.html >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/quizpro.log
+          exit 1
+      - name: Verify picture keyboard simulated visual viewport
+        run: |
+          node --input-type=module <<'JS'
+          import { chromium } from 'playwright-core';
+          import fs from 'node:fs';
+          const executablePath=['/usr/bin/google-chrome','/usr/bin/chromium','/usr/bin/google-chrome-stable'].find(fs.existsSync);
+          const browser=await chromium.launch({headless:true,executablePath,args:['--no-sandbox']});
+          try {
+            for (const [width,height,keyboardHeight,offset] of [[390,844,350,0],[430,932,410,45],[360,740,270,0]]) {
+              const page=await browser.newPage({viewport:{width,height},isMobile:true,hasTouch:true,deviceScaleFactor:1});
+              await page.goto('http://127.0.0.1:5173/index.dev.html#/join/__PREVIEW__/picture-question-editor');
+              const field=page.locator('.picture-round-question-layout .answer-input-shell textarea');
+              await field.waitFor({state:'visible',timeout:20000});
+              const before=await field.boundingBox();
+              await field.tap();
+              await page.evaluate(({keyboardHeight,offset,width})=>{
+                const vv=window.visualViewport;
+                Object.defineProperties(vv,{height:{configurable:true,get:()=>keyboardHeight},width:{configurable:true,get:()=>width},offsetTop:{configurable:true,get:()=>offset},offsetLeft:{configurable:true,get:()=>0}});
+                vv.dispatchEvent(new Event('resize'));
+              },{keyboardHeight,offset,width});
+              await page.waitForTimeout(250);
+              const result=await field.evaluate(el=>{
+                const box=el.getBoundingClientRect(), wrapper=el.closest('.your-answer-section').getBoundingClientRect();
+                const canvas=el.closest('.picture-round-team-page');
+                return {top:box.top,bottom:box.bottom,wrapperTop:wrapper.top,wrapperBottom:wrapper.bottom,scroll:canvas.scrollTop,open:canvas.classList.contains('picture-keyboard-open'),viewportTop:visualViewport.offsetTop,viewportBottom:visualViewport.offsetTop+visualViewport.height};
+              });
+              console.log('OPEN',width,height,JSON.stringify(result));
+              if(!result.open || result.wrapperTop<result.viewportTop-1 || result.wrapperBottom>result.viewportBottom+1)throw Error('Answer wrapper obscured: '+JSON.stringify(result));
+              await field.fill('Example answer');
+              if(await field.inputValue()!=='Example answer')throw Error('Answer input failed');
+              await page.evaluate(({height})=>{
+                Object.defineProperties(visualViewport,{height:{configurable:true,get:()=>height},offsetTop:{configurable:true,get:()=>0}});
+                visualViewport.dispatchEvent(new Event('resize'));
+              },{height});
+              await page.waitForTimeout(400);
+              const after=await field.boundingBox();
+              if(await page.locator('.picture-keyboard-open').count() || Math.abs(before.y-after.y)>2 || Math.abs(before.height-after.height)>1)throw Error('Layout did not restore: '+JSON.stringify({before,after}));
+              console.log('RESTORED',width,height,JSON.stringify({before,after}));
+              await page.close();
+            }
+          } finally {await browser.close()}
+          JS
