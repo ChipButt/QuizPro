@@ -1,5 +1,5 @@
 {
-  "filesSaved": 7,
+  "filesSaved": 8,
   "sources": [
     {
       "id": "Q02-question",
@@ -137,6 +137,33 @@
       "attributionDisplayNeeded": true
     },
     {
+      "id": "Q06-answer",
+      "fileName": "06-answer.webp",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Sound007RAH041022_(25_of_69)_(52405441477)_(cropped)_(cropped).jpg",
+      "commonsFileTitle": "File:Sound007RAH041022 (25 of 69) (52405441477) (cropped) (cropped).jpg",
+      "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Sound007RAH041022_%2825_of_69%29_%2852405441477%29_%28cropped%29_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3ASound007RAH041022+%2825+of+69%29+%2852405441477%29+%28cropped%29+%28cropped%29.jpg",
+      "license": {
+        "name": "CC BY 2.0",
+        "url": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Raph_PH",
+        "credit": "Sound007RAH041022 (25 of 69)",
+        "attributionRequired": true,
+        "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+      },
+      "sourceSha256": "a83b12c285b749187c0870a79e03301a0468c7a3624ead4bb8ecd7097e3bf9dc",
+      "imageSha256": "f683782ed8fa01667e9e9db39e47f52fbbe78efcdcfe5deead9df686be73ef64",
+      "bytes": 84402,
+      "width": 720,
+      "height": 720,
+      "cropApplied": false,
+      "cropRect": null,
+      "modificationNotice": "Photo resized for QuizPro",
+      "editorialStatus": "PENDING USER REVIEW",
+      "published": false,
+      "attributionDisplayNeeded": true
+    },
+    {
       "id": "Q08-question",
       "fileName": "08-question.webp",
       "sourcePage": "https://commons.wikimedia.org/wiki/File:Anefo_922-5524_Jackie_Stewart,_Prins_Bernhard_Zandvoort_21.06.1969_crop.jpg",
@@ -191,10 +218,5 @@
       "attributionDisplayNeeded": true
     }
   ],
-  "failures": [
-    {
-      "id": "Q06-answer",
-      "error": "Source is too low-resolution"
-    }
-  ]
+  "failures": []
 }
