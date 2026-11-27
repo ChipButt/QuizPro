@@ -1,0 +1,21 @@
+{
+  "schema": "quizpro-review-v4-selective-quality-replacements-v1",
+  "title": "Famous Faces – Then & Now 0001",
+  "updated": "2026-11-27",
+  "purpose": "Retain all review v3 approvals; prepare higher-quality exact commercially reusable photographs for Q2 earlier and later, Q8 later. Never overwrite historical assets or publish.",
+  "publish": false,
+  "items": [
+    {
+      "id": "Q02-question",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Petula_Clark_b.jpg"
+    },
+    {
+      "id": "Q02-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Petula_Clark_performing_in_2008.jpg"
+    },
+    {
+      "id": "Q08-answer",
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Jackie_Stewart_Viennale_2013_a.jpg"
+    }
+  ]
+}
