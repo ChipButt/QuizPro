@@ -8,13 +8,30 @@ let peerPromise;
 function loadPeerJs() {
   if (window.Peer) return Promise.resolve(window.Peer);
   if (peerPromise) return peerPromise;
-  peerPromise = new Promise((resolve, reject) => {
+  const sources = [PEERJS_CDN, "https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"];
+  const load = (url) => new Promise((resolve, reject) => {
     const script = document.createElement("script");
-    script.src = PEERJS_CDN;
+    let settled = false;
+    const finish = (error) => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timer);
+      script.onload = script.onerror = null;
+      if (error) {
+        script.remove();
+        reject(error);
+      } else resolve(window.Peer);
+    };
+    const timer = window.setTimeout(() => finish(new Error("Live connection library timed out.")), 8000);
+    script.src = url;
     script.async = true;
-    script.onload = () => (window.Peer ? resolve(window.Peer) : reject(new Error("Peer connection library did not load.")));
-    script.onerror = () => reject(new Error("Could not load the live connection service."));
+    script.onload = () => finish(window.Peer ? null : new Error("Peer connection library did not load."));
+    script.onerror = () => finish(new Error("Could not load the live connection service."));
     document.head.appendChild(script);
+  });
+  peerPromise = load(sources[0]).catch(() => window.Peer || load(sources[1])).catch((error) => {
+    peerPromise = undefined;
+    throw error;
   });
   return peerPromise;
 }
@@ -251,47 +268,98 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
       return undefined;
     }
 
+    // A peer socket opening is not proof that the quiz host has supplied a snapshot.
+    // Invalidate every previous attempt before closing it: PeerJS can emit close synchronously.
     let cancelled = false;
+    let attempt = 0;
+    let failures = 0;
     let retryTimer;
+    let watchdog;
+    let terminal = false;
 
     function closeTransport() {
-      try { connectionRef.current?.close(); } catch { /* ignore */ }
-      try { peerRef.current?.destroy(); } catch { /* ignore */ }
+      const conn = connectionRef.current;
+      const peer = peerRef.current;
       connectionRef.current = null;
       peerRef.current = null;
+      try { conn?.close(); } catch { /* ignore */ }
+      try { peer?.destroy(); } catch { /* ignore */ }
     }
 
-    function retry() {
-      if (cancelled || finishedRef.current) return;
+    function isCurrent(id) {
+      return !cancelled && !terminal && !finishedRef.current && id === attempt;
+    }
+
+    function clearTimers() {
       window.clearTimeout(retryTimer);
+      window.clearTimeout(watchdog);
+    }
+
+    function retry(id, reason) {
+      if (!isCurrent(id)) return;
+      attempt += 1;
+      failures += 1;
+      clearTimers();
       closeTransport();
-      retryTimer = window.setTimeout(connect, 1600);
+      setStatus("reconnecting");
+      setError(failures >= 2
+        ? "Still trying to reach the quiz host. Open this link in Chrome or switch between Wi-Fi and mobile data."
+        : reason || "Trying to reconnect to the quizmaster…");
+      retryTimer = window.setTimeout(connect, Math.min(1600 * failures, 5000));
+    }
+
+    function stop(id, reason) {
+      if (!isCurrent(id)) return;
+      terminal = true;
+      attempt += 1;
+      clearTimers();
+      closeTransport();
+      setStatus("error");
+      setError(reason);
+    }
+
+    function watch(id, delay, reason) {
+      window.clearTimeout(watchdog);
+      watchdog = window.setTimeout(() => retry(id, reason), delay);
     }
 
     async function connect() {
-      if (cancelled) return;
-      setStatus("connecting");
-      setError("");
+      if (cancelled || terminal || finishedRef.current) return;
+      const id = ++attempt;
+      clearTimers();
+      closeTransport();
+      setStatus(failures ? "reconnecting" : "connecting");
+      if (!failures) setError("");
+      watch(id, 20000, "The live connection service is taking too long. Retrying…");
       try {
         const Peer = RELAY_READY && RELAY_URL ? RelayPeer : await loadPeerJs();
-        if (cancelled) return;
-        closeTransport();
+        if (!isCurrent(id)) return;
+        watch(id, 18000, "The connection to the quiz host timed out. Retrying…");
         const peer = new Peer();
         peerRef.current = peer;
 
         peer.on("open", () => {
-          if (cancelled) return;
-          const conn = peer.connect(peerIdForSession(sessionCode), { reliable: true });
+          if (!isCurrent(id)) return;
+          let conn;
+          try {
+            conn = peer.connect(peerIdForSession(sessionCode), { reliable: true });
+          } catch {
+            retry(id, "Could not open the team connection. Retrying…");
+            return;
+          }
           connectionRef.current = conn;
-
           conn.on("open", () => {
-            setStatus("online");
-            setError("");
-            conn.send({ type: "hello", teamToken });
+            if (!isCurrent(id)) return;
+            watch(id, 30000, "Connected, but the quiz host has not sent the quiz data. Retrying…");
+            try { conn.send({ type: "hello", teamToken }); }
+            catch { retry(id, "Could not send the join request. Retrying…"); }
           });
           conn.on("data", (message) => {
+            if (!isCurrent(id)) return;
             if (message?.type === "snapshot") {
               const hydratedMessage = hydrateSnapshotMedia(message, mediaCacheRef.current);
+              window.clearTimeout(watchdog);
+              failures = 0;
               if (hydratedMessage.live?.teamScreen === "finished") {
                 finishedRef.current = true;
                 storeFinishedSnapshot(sessionCode, teamToken, hydratedMessage);
@@ -302,9 +370,11 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
               }
               setSnapshot(hydratedMessage);
               setStatus("online");
+              setError("");
               return;
             }
             if (message?.type === "session-finished") {
+              window.clearTimeout(watchdog);
               finishedRef.current = true;
               setSnapshot((current) => {
                 const finishedSnapshot = {
@@ -329,39 +399,24 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
               return;
             }
             if (message?.type === "rejected") {
-              setStatus("error");
-              setError(message.reason || "This team QR code is not valid.");
+              stop(id, message.reason || "This team QR code is not valid.");
             }
           });
-          conn.on("close", () => {
-            if (cancelled || finishedRef.current) return;
-            setStatus("reconnecting");
-            setError("Connection lost. Rejoining the quizmaster…");
-            retry();
-          });
-          conn.on("error", () => {
-            if (cancelled || finishedRef.current) return;
-            setStatus("reconnecting");
-            retry();
-          });
+          conn.on("close", () => retry(id, "Connection lost. Rejoining the quizmaster…"));
+          conn.on("error", () => retry(id, "Connection lost. Rejoining the quizmaster…"));
         });
 
+        peer.on("disconnected", () => retry(id, "Connection lost. Rejoining the quizmaster…"));
         peer.on("error", (peerError) => {
-          if (cancelled || finishedRef.current) return;
-          if (["peer-unavailable", "network", "server-error", "socket-error", "disconnected"].includes(peerError?.type)) {
-            setStatus("reconnecting");
-            setError("Trying to reconnect to the quizmaster…");
-            retry();
+          if (!isCurrent(id)) return;
+          if (["peer-unavailable", "network", "server-error", "socket-error", "disconnected", "webrtc", "browser-incompatible", "ssl-unavailable"].includes(peerError?.type)) {
+            retry(id, "Trying to reconnect to the quizmaster…");
           } else {
-            setStatus("error");
-            setError(peerError?.message || "Could not connect to the quizmaster.");
+            stop(id, peerError?.message || "Could not connect to the quizmaster.");
           }
         });
       } catch (connectError) {
-        if (cancelled) return;
-        setStatus("reconnecting");
-        setError(connectError?.message || "Could not start the live connection. Retrying…");
-        retry();
+        retry(id, connectError?.message || "Could not start the live connection. Retrying…");
       }
     }
 
@@ -369,7 +424,8 @@ export function useLiveTeamNetwork(sessionCode, teamToken) {
 
     return () => {
       cancelled = true;
-      window.clearTimeout(retryTimer);
+      attempt += 1;
+      clearTimers();
       closeTransport();
     };
   }, [sessionCode, teamToken, previewMode, resumeNonce]);
