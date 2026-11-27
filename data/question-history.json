@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "sourceUpdatedAt": "2026-11-27T03:43:19.793Z",
-  "distinctQuestions": 1701,
+  "sourceUpdatedAt": "2026-11-27T14:56:29.930Z",
+  "distinctQuestions": 1692,
   "note": "Exact and punctuation-normalised question history. A human/semantic check is still required for rewordings that test the same fact.",
   "questions": [
     {
@@ -13235,99 +13235,13 @@
       ]
     },
     {
-      "question": "Which country is represented by flag 1?",
+      "question": "Which country is represented by this flag?",
       "answer": "Jamaica",
       "occurrences": [
         {
-          "quiz": "[Saved round]",
+          "quiz": "TPC Nov 2026",
           "round": "World Flags – 0001"
-        }
-      ]
-    },
-    {
-      "question": "Which country is represented by flag 10?",
-      "answer": "Greece",
-      "occurrences": [
-        {
-          "quiz": "[Saved round]",
-          "round": "World Flags – 0001"
-        }
-      ]
-    },
-    {
-      "question": "Which country is represented by flag 2?",
-      "answer": "Ghana",
-      "occurrences": [
-        {
-          "quiz": "[Saved round]",
-          "round": "World Flags – 0001"
-        }
-      ]
-    },
-    {
-      "question": "Which country is represented by flag 3?",
-      "answer": "Laos",
-      "occurrences": [
-        {
-          "quiz": "[Saved round]",
-          "round": "World Flags – 0001"
-        }
-      ]
-    },
-    {
-      "question": "Which country is represented by flag 4?",
-      "answer": "North Macedonia",
-      "occurrences": [
-        {
-          "quiz": "[Saved round]",
-          "round": "World Flags – 0001"
-        }
-      ]
-    },
-    {
-      "question": "Which country is represented by flag 5?",
-      "answer": "South Africa",
-      "occurrences": [
-        {
-          "quiz": "[Saved round]",
-          "round": "World Flags – 0001"
-        }
-      ]
-    },
-    {
-      "question": "Which country is represented by flag 6?",
-      "answer": "Argentina",
-      "occurrences": [
-        {
-          "quiz": "[Saved round]",
-          "round": "World Flags – 0001"
-        }
-      ]
-    },
-    {
-      "question": "Which country is represented by flag 7?",
-      "answer": "Ukraine",
-      "occurrences": [
-        {
-          "quiz": "[Saved round]",
-          "round": "World Flags – 0001"
-        }
-      ]
-    },
-    {
-      "question": "Which country is represented by flag 8?",
-      "answer": "Iceland",
-      "occurrences": [
-        {
-          "quiz": "[Saved round]",
-          "round": "World Flags – 0001"
-        }
-      ]
-    },
-    {
-      "question": "Which country is represented by flag 9?",
-      "answer": "Thailand",
-      "occurrences": [
+        },
         {
           "quiz": "[Saved round]",
           "round": "World Flags – 0001"
