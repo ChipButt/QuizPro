@@ -1,7 +1,7 @@
 {
   "schema": "quizpro-famous-faces-review-v4-four-sourced-person-pairs",
   "round": "Famous Faces – Then & Now 0001",
-  "status": "PENDING_USER_APPROVAL",
+  "status": "REJECTED_ALL_FOUR_CELEBRITIES_TOO_OLD",
   "publish": false,
   "advance": false,
   "publicationStatus": "NOT LIVE",
@@ -28,7 +28,7 @@
       "number": 2,
       "person": "Petula Clark",
       "subjectBirthDate": "1932-11-15",
-      "approval": "PENDING",
+      "approval": "REJECTED_REPLACE_PERSON",
       "minimumYearGap": 40,
       "conservativeGapYears": 52,
       "questionImage": {
@@ -56,13 +56,14 @@
         "author": "Georges Biard",
         "modification": "Photo resized for QuizPro",
         "photoTakenYear": 2012
-      }
+      },
+      "retiredKeepHistoricalImages": true
     },
     {
       "number": 5,
       "person": "Pelé",
       "subjectBirthDate": "1940-10-23",
-      "approval": "PENDING",
+      "approval": "REJECTED_REPLACE_PERSON",
       "minimumYearGap": 40,
       "conservativeGapYears": 46,
       "questionImage": {
@@ -90,13 +91,14 @@
         "author": "Atr1992",
         "modification": "Photo resized for QuizPro",
         "photoTakenYear": 2009
-      }
+      },
+      "retiredKeepHistoricalImages": true
     },
     {
       "number": 6,
       "person": "Lulu",
       "subjectBirthDate": "1948-11-03",
-      "approval": "PENDING",
+      "approval": "REJECTED_REPLACE_PERSON",
       "minimumYearGap": 40,
       "conservativeGapYears": 57,
       "questionImage": {
@@ -124,13 +126,14 @@
         "author": "Raph_PH",
         "modification": "Photo resized for QuizPro",
         "photoTakenYear": 2022
-      }
+      },
+      "retiredKeepHistoricalImages": true
     },
     {
       "number": 8,
       "person": "Jackie Stewart",
       "subjectBirthDate": "1939-06-11",
-      "approval": "PENDING",
+      "approval": "REJECTED_REPLACE_PERSON",
       "minimumYearGap": 40,
       "conservativeGapYears": 44,
       "questionImage": {
@@ -158,7 +161,10 @@
         "author": "Manfred Werner /  Tsui",
         "modification": "Photo resized for QuizPro",
         "photoTakenYear": 2013
-      }
+      },
+      "retiredKeepHistoricalImages": true
     }
-  ]
+  ],
+  "reviewDecisionDate": "2026-11-27",
+  "userDecision": "All too old. Replace all four people with more contemporary, recognisable celebrities while retaining genuine 40-year-gap real photos."
 }
