@@ -1,0 +1,27 @@
+{
+  "id": "Q02-answer",
+  "fileName": "02-answer.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Petula_Clark_(4980154444)_(cropped).jpg",
+  "commonsFileTitle": "File:Petula Clark (4980154444) (cropped).jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Petula_Clark_%284980154444%29_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3APetula+Clark+%284980154444%29+%28cropped%29.jpg",
+  "license": {
+    "name": "CC BY-SA 2.0",
+    "url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "author": "Bob Bekian  from Thousand Oaks Ca., USA",
+    "credit": "Petula Clark",
+    "attributionRequired": true,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "857e430d2af2b0bd3757bfc38ba08fdacac68d34f52fe5b78634cb3f19118455",
+  "imageSha256": "2ed8a4816cd0f69720b0ad7bc410e434d4843d26fbcaeff636304317db07c9c8",
+  "bytes": 10948,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": true
+}

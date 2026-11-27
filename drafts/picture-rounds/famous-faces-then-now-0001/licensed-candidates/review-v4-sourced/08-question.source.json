@@ -1,0 +1,27 @@
+{
+  "id": "Q08-question",
+  "fileName": "08-question.webp",
+  "sourcePage": "https://commons.wikimedia.org/wiki/File:Anefo_922-5524_Jackie_Stewart,_Prins_Bernhard_Zandvoort_21.06.1969_crop.jpg",
+  "commonsFileTitle": "File:Anefo 922-5524 Jackie Stewart, Prins Bernhard Zandvoort 21.06.1969 crop.jpg",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/48/Anefo_922-5524_Jackie_Stewart%2C_Prins_Bernhard_Zandvoort_21.06.1969_crop.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+  "sourceMetadataApi": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url%7Cextmetadata%7Csize&iiurlwidth=1200&titles=File%3AAnefo+922-5524+Jackie+Stewart%2C+Prins+Bernhard+Zandvoort+21.06.1969+crop.jpg",
+  "license": {
+    "name": "CC0",
+    "url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "author": "Z105space",
+    "credit": "This image has been  extracted  from another file",
+    "attributionRequired": false,
+    "caution": "Licence permits commercial reuse globally with conditions; include attribution, licence and modification notices. Check subject/publicity rights separately."
+  },
+  "sourceSha256": "1cf13c84f93564359424f8c98359765a23f92d2b7cd9ca64717464c8743627ee",
+  "imageSha256": "2f8316de35e24898c0a62002c0dc720dd73cb4500fc9a7e9cbe113711a2a5f67",
+  "bytes": 41824,
+  "width": 720,
+  "height": 720,
+  "cropApplied": false,
+  "cropRect": null,
+  "modificationNotice": "Photo resized for QuizPro",
+  "editorialStatus": "PENDING USER REVIEW",
+  "published": false,
+  "attributionDisplayNeeded": false
+}
