@@ -25,15 +25,19 @@ jobs:
           node-version: '22'
       - name: Import only the approved round into QuizPro's saved round library
         run: node data/imports/import-world-flags-0001.mjs
-      - name: Safely commit the additive round-library update
+      - name: Verify question checker tests
+        run: node --test scripts/check-questions.test.mjs
+      - name: Refresh question-history index from current shared quiz library
+        run: node scripts/build-question-history.mjs
+      - name: Safely commit the additive round library and derived history
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/quiz-library.json
+          git add data/quiz-library.json data/question-history.json
           if git diff --cached --quiet; then
-            echo "World Flags 0001 is already imported."
+            echo "World Flags 0001 and question history are already up to date."
             exit 0
           fi
-          git commit -m "Import approved World Flags 0001 into QuizPro saved rounds"
+          git commit -m "Refresh QuizPro historical index after approved World Flags import"
           git pull --rebase origin main
           git push origin HEAD:main
