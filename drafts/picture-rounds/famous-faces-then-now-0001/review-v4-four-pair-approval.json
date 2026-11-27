@@ -1,0 +1,164 @@
+{
+  "schema": "quizpro-famous-faces-review-v4-four-sourced-person-pairs",
+  "round": "Famous Faces – Then & Now 0001",
+  "status": "PENDING_USER_APPROVAL",
+  "publish": false,
+  "advance": false,
+  "publicationStatus": "NOT LIVE",
+  "previousDecisionsFile": "drafts/picture-rounds/famous-faces-then-now-0001/decisions-review-v4.json",
+  "approvalRule": "Approve only exact saved WebP file bytes by SHA-256, not search images, rendered interpretations, fake/transformed photos or source-page thumbnails.",
+  "chronologyRule": "Minimum 40 years between genuine photo capture dates unless subject under 15 in earliest photo, when minimum 30 years; earliest age under 25 preferred.",
+  "rightsNote": "Source page and permissive licence proven for each photo; publication requires proper credit including modification notices, and separate review of personality/subject rights.",
+  "lockedQuestions": [
+    1,
+    3,
+    4,
+    7,
+    9,
+    10
+  ],
+  "retiredQuestions": [
+    2,
+    5,
+    6,
+    8
+  ],
+  "items": [
+    {
+      "number": 2,
+      "person": "Petula Clark",
+      "subjectBirthDate": "1932-11-15",
+      "approval": "PENDING",
+      "minimumYearGap": 40,
+      "conservativeGapYears": 52,
+      "questionImage": {
+        "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-polish/02-question.webp",
+        "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-polish/02-question.source.json",
+        "sha256": "1a959e5ffd885fe45ae12fc0645fb8d41b4a08b36c692e7c3646a65468911802",
+        "bytes": 62696,
+        "originalCommonsFilePage": "https://commons.wikimedia.org/wiki/File:Petula_Clark_b.jpg",
+        "sourceFileSha256": "2f3d96308d4a1346fffff763e366ba17b2162d8e3f6c645a1494ab27fa0fefba",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "author": "Lindeboom, Henk/Anefo",
+        "modification": "Photo resized for QuizPro",
+        "photoTakenYear": 1960
+      },
+      "answerImage": {
+        "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-petula-2012/02-answer.webp",
+        "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-petula-2012/02-answer.source.json",
+        "sha256": "bd6775f5b085eca7d600f6fcc3a193b6afb928dc0a769ec9ec8edc26565b2fc0",
+        "bytes": 45508,
+        "originalCommonsFilePage": "https://commons.wikimedia.org/wiki/File:Petula_Clark_2012.jpg",
+        "sourceFileSha256": "b09c92ffdcfe2033642d73118a47f209fdf7e3d182f5e1516fb8b1109d6f4c75",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "author": "Georges Biard",
+        "modification": "Photo resized for QuizPro",
+        "photoTakenYear": 2012
+      }
+    },
+    {
+      "number": 5,
+      "person": "Pelé",
+      "subjectBirthDate": "1940-10-23",
+      "approval": "PENDING",
+      "minimumYearGap": 40,
+      "conservativeGapYears": 46,
+      "questionImage": {
+        "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced/05-question.webp",
+        "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced/05-question.source.json",
+        "sha256": "ca456aed778be3d31da9c58fcb1bdec4318f12c357efe5db0ae256cbfdd0e8e3",
+        "bytes": 40380,
+        "originalCommonsFilePage": "https://commons.wikimedia.org/wiki/File:Braziliaanse_voetbalelftal_uit_Parijs_op_Schiphol_aangekomen_Pele_(kop),_Bestanddeelnr_915-0967.jpg",
+        "sourceFileSha256": "9d1b352fd1067bdf5e82f3ee523ea172eeb1bd178b0eef8feeab5221fdbaac28",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "author": "Hugo van Gelderen / Anefo",
+        "modification": "Photo resized for QuizPro",
+        "photoTakenYear": 1963
+      },
+      "answerImage": {
+        "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced/05-answer.webp",
+        "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced/05-answer.source.json",
+        "sha256": "680e7312751b82a570c1325fa29376bf4cc7ec99a0da9fd83313e489e5e5081a",
+        "bytes": 26020,
+        "originalCommonsFilePage": "https://commons.wikimedia.org/wiki/File:Pele_rio_2016.jpg",
+        "sourceFileSha256": "f9857e95bdda88e83ce1d594437c6a4b834be28c830776e342dcb369d0382ec0",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "author": "Atr1992",
+        "modification": "Photo resized for QuizPro",
+        "photoTakenYear": 2009
+      }
+    },
+    {
+      "number": 6,
+      "person": "Lulu",
+      "subjectBirthDate": "1948-11-03",
+      "approval": "PENDING",
+      "minimumYearGap": 40,
+      "conservativeGapYears": 57,
+      "questionImage": {
+        "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced/06-question.webp",
+        "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced/06-question.source.json",
+        "sha256": "dabe1a8eb132304f86e15dc2fe82e68aa8076b1b68da228aef0b00e165a2ee09",
+        "bytes": 25484,
+        "originalCommonsFilePage": "https://commons.wikimedia.org/wiki/File:Fanclub1965Lulu_(cropped).jpg",
+        "sourceFileSha256": "5fc308dae142b15b11462018bf04d1d84eef632323fa69e55730e82c3b000c0f",
+        "license": "CC BY-SA 3.0 nl",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/nl/deed.en",
+        "author": "Photographer: R. Frings",
+        "modification": "Photo resized for QuizPro",
+        "photoTakenYear": 1965
+      },
+      "answerImage": {
+        "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced/06-answer.webp",
+        "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced/06-answer.source.json",
+        "sha256": "f683782ed8fa01667e9e9db39e47f52fbbe78efcdcfe5deead9df686be73ef64",
+        "bytes": 84402,
+        "originalCommonsFilePage": "https://commons.wikimedia.org/wiki/File:Sound007RAH041022_(25_of_69)_(52405441477)_(cropped)_(cropped).jpg",
+        "sourceFileSha256": "a83b12c285b749187c0870a79e03301a0468c7a3624ead4bb8ecd7097e3bf9dc",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "author": "Raph_PH",
+        "modification": "Photo resized for QuizPro",
+        "photoTakenYear": 2022
+      }
+    },
+    {
+      "number": 8,
+      "person": "Jackie Stewart",
+      "subjectBirthDate": "1939-06-11",
+      "approval": "PENDING",
+      "minimumYearGap": 40,
+      "conservativeGapYears": 44,
+      "questionImage": {
+        "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced/08-question.webp",
+        "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-sourced/08-question.source.json",
+        "sha256": "2f8316de35e24898c0a62002c0dc720dd73cb4500fc9a7e9cbe113711a2a5f67",
+        "bytes": 41824,
+        "originalCommonsFilePage": "https://commons.wikimedia.org/wiki/File:Anefo_922-5524_Jackie_Stewart,_Prins_Bernhard_Zandvoort_21.06.1969_crop.jpg",
+        "sourceFileSha256": "1cf13c84f93564359424f8c98359765a23f92d2b7cd9ca64717464c8743627ee",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "author": "Z105space",
+        "modification": "Photo resized for QuizPro",
+        "photoTakenYear": 1969
+      },
+      "answerImage": {
+        "path": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-polish/08-answer.webp",
+        "proof": "drafts/picture-rounds/famous-faces-then-now-0001/licensed-candidates/review-v4-polish/08-answer.source.json",
+        "sha256": "f38b8526659b87a67768f291694d8e8cde5b62459a87b3d718314e156e487acb",
+        "bytes": 18558,
+        "originalCommonsFilePage": "https://commons.wikimedia.org/wiki/File:Jackie_Stewart_Viennale_2013_a.jpg",
+        "sourceFileSha256": "a996225ee98ef29b72014b04c0cff1a320c44a9a8044019c364d54926282e77b",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "author": "Manfred Werner /  Tsui",
+        "modification": "Photo resized for QuizPro",
+        "photoTakenYear": 2013
+      }
+    }
+  ]
+}
