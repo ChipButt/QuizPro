@@ -39,12 +39,13 @@
       "person": "Lulu",
       "subjectBirthDate": "1948-11-03",
       "earlyYear": 1965,
-      "lateYear": 2012,
+      "lateYear": 2022,
       "early": "https://commons.wikimedia.org/wiki/File:Fanclub1965Lulu_(cropped).jpg",
-      "late": "https://commons.wikimedia.org/wiki/File:Lulu_at_Scotland_House.jpg",
-      "guaranteedGapYears": 47,
+      "late": "https://commons.wikimedia.org/wiki/File:Sound007RAH041022_(25_of_69)_(52405441477)_(cropped)_(cropped).jpg",
+      "guaranteedGapYears": 57,
       "minGapYears": 40,
-      "editorialStatus": "UNAPPROVED_CANDIDATE_SOURCE_ONLY"
+      "editorialStatus": "UNAPPROVED_CANDIDATE_SOURCE_ONLY",
+      "sourceCorrection": "2022 clear close-up of Lulu, Raph_PH, CC BY 2.0. Replaces inadequate 143×251 2012 source (blocked by image validation)."
     },
     {
       "number": 8,
@@ -82,7 +83,7 @@
     },
     {
       "id": "Q06-answer",
-      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Lulu_at_Scotland_House.jpg"
+      "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Sound007RAH041022_(25_of_69)_(52405441477)_(cropped)_(cropped).jpg"
     },
     {
       "id": "Q08-question",
@@ -92,5 +93,6 @@
       "id": "Q08-answer",
       "commonsFilePage": "https://commons.wikimedia.org/wiki/File:Jackie_Stewart_at_the_2014_WEC_Silverstone_round.jpg"
     }
-  ]
+  ],
+  "lastSourceCorrectionDate": "2026-11-27"
 }
