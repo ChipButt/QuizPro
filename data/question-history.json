@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "sourceUpdatedAt": "2026-11-27T16:21:50.666Z",
-  "distinctQuestions": 1693,
+  "sourceUpdatedAt": "2026-11-28T06:14:16.484Z",
+  "distinctQuestions": 1694,
   "note": "Exact and punctuation-normalised question history. A human/semantic check is still required for rewordings that test the same fact.",
   "questions": [
     {
@@ -243,7 +243,7 @@
       ]
     },
     {
-      "question": "Despite their nickname, what colour are aircraft flight data recorders normally painted?",
+      "question": "Despite their nickname, what colour are modern aircraft flight data recorders normally painted?",
       "answer": "Bright orange",
       "occurrences": [
         {
@@ -3433,6 +3433,16 @@
         {
           "quiz": "09. September 2025",
           "round": "Geography"
+        }
+      ]
+    },
+    {
+      "question": "Name the performer",
+      "answer": "Eddie Redmayne",
+      "occurrences": [
+        {
+          "quiz": "[Saved round]",
+          "round": "Guess the Performer"
         }
       ]
     },
@@ -10817,10 +10827,6 @@
         {
           "quiz": "[Saved round]",
           "round": "Guess the Performer – 0001"
-        },
-        {
-          "quiz": "[Saved round]",
-          "round": "Guess the Performer – 0002"
         }
       ]
     },
